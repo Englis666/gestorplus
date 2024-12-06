@@ -55,12 +55,10 @@ const Login = () => {
             localStorage.setItem('token', token); 
             localStorage.setItem('session', JSON.stringify(session)); 
             login(session);  
-
             setIsSubmitting(false);
-
             const userRole = Number(session.rol); 
             console.log("Rol del usuario", userRole);
-            
+    
             // Redirigir dependiendo del rol del usuario
             if (userRole === 1) {
                 window.location.href = 'http://localhost/Adso/administrador/inicio.php';
