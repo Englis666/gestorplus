@@ -1,0 +1,2 @@
+RewriteCond %{REQUEST_METHOD} ^(GET|POST)$
+RewriteRule ^(.*)$ - [F,L]
