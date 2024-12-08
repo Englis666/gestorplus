@@ -38,33 +38,82 @@ class Usuario {
         }
     }
 
-   public function inicioSesion($data){
-    header("Content-Type: application/json");
-    $sql = "SELECT * FROM usuario WHERE num_doc = ?";
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute([$data['num_doc']]);
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($usuario && password_verify($data['password'], $usuario['password'])) {
-
-        session_start(); 
-        $_SESSION['usuario'] = [
-            'num_doc' => $usuario['num_doc'],
-            'nombres' => $usuario['nombres'],
-            'rol' => $usuario['rol_idrol'],  
-            'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
-        ];
-
-        return [
-            'num_doc' => $usuario['num_doc'],
-            'nombres' => $usuario['nombres'],
-            'rol' => $usuario['rol_idrol'],  
-            'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
-        ];
-    } else {
-        return false; 
+    public function inicioSesion($data){
+        // Configurar la zona horaria para Bogotá
+        date_default_timezone_set('America/Bogota');
+    
+        // Consulta para verificar al usuario
+        $sql = "SELECT * FROM usuario WHERE num_doc = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$data['num_doc']]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        // Si el usuario existe y la contraseña es correcta
+        if ($usuario && password_verify($data['password'], $usuario['password'])) {
+    
+            // Iniciar la sesión
+            session_start(); 
+            $_SESSION['usuario'] = [
+                'num_doc' => $usuario['num_doc'],
+                'nombres' => $usuario['nombres'],
+                'rol' => $usuario['rol_idrol'],  
+                'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
+            ];
+    
+            // Verificar si el rol del usuario es diferente a 4
+            if ($usuario['rol_idrol'] != 4) {
+    
+                // Obtener los datos para registrar la jornada y la notificación
+                $num_doc = $usuario['num_doc'];
+                $nombres = $usuario['nombres'];
+                $fecha = date('Y-m-d'); // Fecha actual en la zona horaria de Bogotá
+                $horaEntrada = date('H:i'); // Hora de entrada actual en la zona horaria de Bogotá
+                $horaSalida = date('H:i', strtotime('+8 hours')); // Hora de salida (8 horas de jornada)
+                $estadoJornada = 1; // Estado de la jornada (activo)
+    
+                // 1. Insertar la jornada automáticamente al iniciar sesión
+                $insertarMiJornada = $this->db->prepare("INSERT INTO jornada (fecha, horaEntrada, horaSalida, usuario_num_doc, estadoJornada) 
+                                                          VALUES (?, ?, ?, ?, ?)");
+                if ($insertarMiJornada->execute([$fecha, $horaEntrada, $horaSalida, $num_doc, $estadoJornada])) {
+    
+                    // 2. Insertar la notificación
+                    $descripcionNotificacion = "Nueva jornada registrada por inicio de sesión para el usuario con documento: $num_doc y con el nombre $nombres";
+                    
+                    $insertarNotificacion = $this->db->prepare("INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
+                                                               VALUES (?, ?, ?, ?)");
+                    if ($insertarNotificacion->execute([$descripcionNotificacion, 1, 'Jornada', $num_doc])) {
+                        // Si ambas inserciones fueron exitosas, retornar los datos del usuario
+                        return [
+                            'num_doc' => $usuario['num_doc'],
+                            'nombres' => $usuario['nombres'],
+                            'rol' => $usuario['rol_idrol'],  
+                            'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
+                        ];
+                    } else {
+                        // Si hubo un error en la inserción de la notificación, manejarlo aquí
+                        return false;
+                    }
+                } else {
+                    // Si hubo un error al insertar la jornada, manejarlo aquí
+                    return false;
+                }
+    
+            } else {
+                // Si el rol es 4, no registrar jornada ni notificación
+                return [
+                    'num_doc' => $usuario['num_doc'],
+                    'nombres' => $usuario['nombres'],
+                    'rol' => $usuario['rol_idrol'],  
+                    'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
+                ];
+            }
+    
+        } else {
+            // Si el usuario no existe o la contraseña es incorrecta
+            return false; 
+        }
     }
-}
+    
    
 
     public function obtenerConvocatorias(){

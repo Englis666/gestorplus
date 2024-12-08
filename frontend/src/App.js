@@ -27,7 +27,10 @@ function App() {
       <BrowserRouter>
     <div className="App">
         <Routes>
+          
           <Route path='/' element={<Injerto/>}/>
+
+          
           <Route path='/Login' element={<Login/>}/>
           <Route path='/Registro' element={<Registro/>}/>
           <Route path='/aspirante/Trabajo' element={<Trabajo/>}/>

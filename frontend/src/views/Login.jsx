@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import imagen from '../assets/1.png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useUser } from "../context/userContext"; 
+import { useUser } from "../context/userContext";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -11,11 +11,12 @@ const Login = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
-    const { login } = useUser(); 
+    const { login } = useUser();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        
+
+        // Validar que num_doc solo contenga números
         if (name === 'num_doc' && !/^\d*$/.test(value)) {
             return;
         }
@@ -42,49 +43,59 @@ const Login = () => {
     
         setIsSubmitting(true);
     
-         
-    axios
-    .post("http://localhost/gestorplus/backend/", data)
-    .then((response) => {
-        const serverMessage = response.data;  
-        console.log(serverMessage);  
-
-        if (serverMessage?.status === 'success') {
-            const { token, session } = serverMessage;
-                    
-            localStorage.setItem('token', token); 
-            localStorage.setItem('session', JSON.stringify(session)); 
-            login(session);  
-            setIsSubmitting(false);
-            const userRole = Number(session.rol); 
-            console.log("Rol del usuario", userRole);
+        axios
+            .post("http://localhost/gestorplus/backend/", data, { withCredentials: true }) 
+            .then((response) => {
+                const serverMessage = response.data;
+                console.log('Respuesta del servidor:', serverMessage);
     
-            // Redirigir dependiendo del rol del usuario
-            if (userRole === 1) {
-                window.location.href = 'http://localhost/Adso/administrador/inicio.php';
-            } else if (userRole === 2) {
-                window.location.href = 'http://localhost/Adso/recursos%20humanos/inicio.php';
-            } else if (userRole === 3) {
-                window.location.href = 'http://localhost/Adso/empleados/inicio.php';
-            } else if (userRole === 4) {
-                window.location.href = 'http://localhost/Adso/sin_usuario/index.php';
-            } else {
-                console.error("Rol desconocido", userRole);
-                alert("Rol desconocido");
-            }
-        } else {
-            alert(serverMessage?.message || "Error en el inicio de sesión");
-            setIsSubmitting(false);
-        }
-    })
-    .catch((error) => {
-        console.log("Error al iniciar sesión", error);
-        alert("Error en el inicio de sesión, intenta otra vez");
-        setIsSubmitting(false);
-    });
+                if (serverMessage?.status === 'success') {
+                    const sessionData = serverMessage.session;
+                    console.log("Datos de la sesión:", sessionData);  
 
+                    if (!sessionData || !sessionData.num_doc || !sessionData.nombres) {
+                        alert("Error: Datos de sesión no encontrados.");
+                        setIsSubmitting(false);
+                        return;
+                    }
+                    login(sessionData);
+
+                    const userRole = Number(sessionData.rol);
+                    console.log("Rol del usuario:", userRole);
+
+                    // Redirigir al usuario según su rol
+                        switch (userRole) {
+                            case 1:
+                                window.location.href = 'http://localhost/Adso/administrador/inicio.php'; // Página externa
+                                break;
+                            case 2:
+                                window.location.href = 'http://localhost/Adso/recursos%20humanos/inicio.php'; // Página externa
+                                break;
+                            case 3:
+                                window.location.href = 'http://localhost/Adso/empleados/inicio.php'; // Página externa
+                                break;
+                            case 4:
+                                window.location.href = 'http://localhost/Adso/aspirantes/index.php'; // Página externa
+                                break;
+                            default:
+                                document.cookie = "auth_token=; path=/; domain=localhost; expires=Thu, 01 Jan 1970 00:00:00 GMT";  // Destruir la cookie
+                                console.error("Rol desconocido:", userRole);
+                                window.location.href = 'http://localhost/Adso/sin_usuario/index.php'; 
+                                alert("Rol desconocido");
+                        }
+                        
+                } else {
+                    alert(serverMessage?.message || "Error en el inicio de sesión");
+                    setIsSubmitting(false);
+                }
+            })
+            .catch((error) => {
+                console.error("Error al iniciar sesión:", error);
+                alert("Error en el inicio de sesión. Intenta de nuevo.");
+                setIsSubmitting(false);
+            });
+    };
     
-    }
     return (
         <div className="container d-flex justify-content-center align-items-center min-vh-100">
             <div 

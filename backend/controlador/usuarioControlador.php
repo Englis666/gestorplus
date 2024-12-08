@@ -36,7 +36,7 @@ class UsuarioControlador {
     
     public function iniciar($data) {
         $this->usuario = new Usuario($this->db);
-
+    
         $num_doc = isset($data['num_doc']) ? trim($data['num_doc']) : null;
         $password = isset($data['password']) ? trim($data['password']) : null;
     
@@ -47,19 +47,18 @@ class UsuarioControlador {
             ]);
             return;
         }
-        
+    
         $respuesta = $this->usuario->inicioSesion(['num_doc' => $num_doc, 'password' => $password]);
         if ($respuesta) {
             try {
-                // Guardar la información del usuario en la sesión
                 $_SESSION['usuario'] = [
                     'num_doc' => $respuesta['num_doc'],
                     'nombres' => $respuesta['nombres'],
                     'rol' => $respuesta['rol'],
                     'hojadevida_idHojadevida' => $respuesta['hojadevida_idHojadevida']
                 ];
-
-                // Generar el JWT para el cliente
+    
+                // Generación del JWT
                 $secretKey = SECRET_KEY;
                 $payload = [
                     'iss' => 'localhost',     
@@ -73,13 +72,17 @@ class UsuarioControlador {
                         'hojadevida_idHojadevida' => $respuesta['hojadevida_idHojadevida']
                     ]
                 ];
-                $jwt = JWT::encode($payload, $secretKey, 'HS256');                
-
+                $jwt = JWT::encode($payload, $secretKey, 'HS256');
+    
+                // Almacenar el JWT en una cookie
+                $cookieExpiration = time() + 3600; // 1 hora de expiración
+                setcookie("auth_token", $jwt, $cookieExpiration, "/", "localhost", true, true); // Secure and HttpOnly flags
+    
                 echo json_encode([
                     'status' => 'success',
                     'message' => 'Credenciales correctas',
-                    'token' => $jwt, 
-                    'session' => $_SESSION['usuario']  
+                    'token' => $jwt,  // Si quieres seguir enviando el token también en la respuesta
+                    'session' => $_SESSION['usuario']
                 ]);
             } catch (Exception $e) {
                 echo json_encode([
@@ -94,6 +97,9 @@ class UsuarioControlador {
             ]);
         }
     }
+    
+    
+    
     
 
     public function obtenerConvocatorias(){
