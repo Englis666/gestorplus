@@ -49,6 +49,7 @@ class UsuarioControlador {
         }
     
         $respuesta = $this->usuario->inicioSesion(['num_doc' => $num_doc, 'password' => $password]);
+
         if ($respuesta) {
             try {
                 $_SESSION['usuario'] = [
@@ -58,8 +59,8 @@ class UsuarioControlador {
                     'hojadevida_idHojadevida' => $respuesta['hojadevida_idHojadevida']
                 ];
     
-                // Generación del JWT
                 $secretKey = SECRET_KEY;
+
                 $payload = [
                     'iss' => 'localhost',     
                     'aud' => 'localhost',      
@@ -72,16 +73,17 @@ class UsuarioControlador {
                         'hojadevida_idHojadevida' => $respuesta['hojadevida_idHojadevida']
                     ]
                 ];
+
                 $jwt = JWT::encode($payload, $secretKey, 'HS256');
     
                 // Almacenar el JWT en una cookie
                 $cookieExpiration = time() + 3600; // 1 hora de expiración
-                setcookie("auth_token", $jwt, $cookieExpiration, "/", "localhost", true, true); // Secure and HttpOnly flags
+                setcookie("auth_token", $jwt, $cookieExpiration, "/", "localhost", true, true); 
     
                 echo json_encode([
                     'status' => 'success',
                     'message' => 'Credenciales correctas',
-                    'token' => $jwt,  // Si quieres seguir enviando el token también en la respuesta
+                    'token' => $jwt, 
                     'session' => $_SESSION['usuario']
                 ]);
             } catch (Exception $e) {

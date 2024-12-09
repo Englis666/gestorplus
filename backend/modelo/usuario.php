@@ -69,9 +69,8 @@ class Usuario {
                 $fecha = date('Y-m-d'); // Fecha actual en la zona horaria de Bogotá
                 $horaEntrada = date('H:i'); // Hora de entrada actual en la zona horaria de Bogotá
                 $horaSalida = date('H:i', strtotime('+8 hours')); // Hora de salida (8 horas de jornada)
-                $estadoJornada = 1; // Estado de la jornada (activo)
+                $estadoJornada = 1;
     
-                // 1. Insertar la jornada automáticamente al iniciar sesión
                 $insertarMiJornada = $this->db->prepare("INSERT INTO jornada (fecha, horaEntrada, horaSalida, usuario_num_doc, estadoJornada) 
                                                           VALUES (?, ?, ?, ?, ?)");
                 if ($insertarMiJornada->execute([$fecha, $horaEntrada, $horaSalida, $num_doc, $estadoJornada])) {
