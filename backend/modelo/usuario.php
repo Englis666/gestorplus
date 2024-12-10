@@ -31,7 +31,7 @@ class Usuario {
                 $idHojadevida 
             ]);
             $this->db->commit();
-            return json_encode(['message' => 'Usuario registrado']);       
+            return json_encode(['message' => 'Usuario registrado Correctamente']);
         } catch (PDOException $e) {
             $this->db->rollBack();
             return json_encode(['message' => 'Error al registrar: ' . $e->getMessage()]);
@@ -62,8 +62,6 @@ class Usuario {
     
             // Verificar si el rol del usuario es diferente a 4
             if ($usuario['rol_idrol'] != 4) {
-    
-                // Obtener los datos para registrar la jornada y la notificación
                 $num_doc = $usuario['num_doc'];
                 $nombres = $usuario['nombres'];
                 $fecha = date('Y-m-d'); // Fecha actual en la zona horaria de Bogotá

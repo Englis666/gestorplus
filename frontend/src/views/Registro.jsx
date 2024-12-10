@@ -69,7 +69,7 @@ const Registro = () => {
                     console.log("No es un JSON válido:", error);
                 }
 
-                if (serverMessage?.message === 'Usuario registrado') {
+                if (serverMessage?.message === 'Usuario registrado Correctamente') {
                     setIsSubmitting(false);
                     alert("Usuario Registrado Correctamente");
                     navigate("/Login");
