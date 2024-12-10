@@ -62,8 +62,8 @@ const Login = () => {
 
                     const userRole = Number(sessionData.rol);
                     console.log("Rol del usuario:", userRole);
+                    console.log("Token almacenado en cookies:", document.cookie);
 
-                    // Redirigir al usuario según su rol
                         switch (userRole) {
                             case 1:
                                 window.location.href = 'http://localhost/Adso/administrador/inicio.php'; // Página externa
