@@ -42,58 +42,67 @@ const Login = () => {
         };
     
         setIsSubmitting(true);
-    
         axios
-            .post("http://localhost/gestorplus/backend/", data, { withCredentials: true }) 
-            .then((response) => {
-                const serverMessage = response.data;
-                console.log('Respuesta del servidor:', serverMessage);
+        .post("http://localhost/gestorplus/backend/", data) 
+        .then((response) => {
+            const serverMessage = response.data;
+            console.log('Respuesta del servidor:', serverMessage);
+            
+            if (serverMessage?.status === 'success') {
+                // Verificar si el token está presente
+                const token = serverMessage.token;
+                document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
+                console.log("Token almacenado:", token);
     
-                if (serverMessage?.status === 'success') {
-                    const sessionData = serverMessage.session;
-                    console.log("Datos de la sesión:", sessionData);  
-
-                    if (!sessionData || !sessionData.num_doc || !sessionData.nombres) {
-                        alert("Error: Datos de sesión no encontrados.");
-                        setIsSubmitting(false);
-                        return;
-                    }
-                    login(sessionData);
-
-                    const userRole = Number(sessionData.rol);
-                    console.log("Rol del usuario:", userRole);
-                    console.log("Token almacenado en cookies:", document.cookie);
-
-                        switch (userRole) {
-                            case 1:
-                                window.location.href = 'http://localhost/Adso/administrador/inicio.php'; // Página externa
-                                break;
-                            case 2:
-                                window.location.href = 'http://localhost/Adso/recursos%20humanos/inicio.php'; // Página externa
-                                break;
-                            case 3:
-                                window.location.href = 'http://localhost/Adso/empleados/inicio.php'; // Página externa
-                                break;
-                            case 4:
-                                window.location.href = 'http://localhost/Adso/aspirantes/index.php'; // Página externa
-                                break;
-                            default:
-                                document.cookie = "auth_token=; path=/; domain=localhost; expires=Thu, 01 Jan 1970 00:00:00 GMT";  // Destruir la cookie
-                                console.error("Rol desconocido:", userRole);
-                                window.location.href = 'http://localhost/Adso/sin_usuario/index.php'; 
-                                alert("Rol desconocido");
-                        }
-                        
-                } else {
-                    alert(serverMessage?.message || "Error en el inicio de sesión");
-                    setIsSubmitting(false);
+                // Llamar al login con el token
+                login({ token });
+    
+                // Decodificar el token si es necesario para obtener el rol
+                const decodedToken = decodeToken(token);
+                const userRole = decodedToken?.data?.rol; // Asumiendo que 'rol' está en 'data' del token
+                
+                switch (userRole) {
+                    case 1:
+                        navigate("/views/administrador/inicioAdmin");
+                        break;
+                    case 2:
+                        navigate("/views/recursoshumanos/inicioRRHH");
+                        break;
+                    case 3:
+                        navigate("/views/empleado/inicioEmpleado");
+                        break;
+                    case 4:
+                        navigate("/aspirante/inicio");
+                        break;
+                    default:
+                        document.cookie = "auth_token=; path=/; domain=localhost; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                        console.error("Rol desconocido:", userRole);
+                        navigate("/");
+                        alert("Rol desconocido");
                 }
-            })
-            .catch((error) => {
-                console.error("Error al iniciar sesión:", error);
-                alert("Error en el inicio de sesión. Intenta de nuevo.");
+            } else {
+                alert(serverMessage?.message || "Error en el inicio de sesión");
                 setIsSubmitting(false);
-            });
+            }
+        })
+        .catch((error) => {
+            console.error("Error al iniciar sesión:", error);
+            alert("Error en el inicio de sesión. Intenta de nuevo.");
+            setIsSubmitting(false);
+        });
+    
+    };
+
+    const decodeToken = (token) => {
+        try {
+            const payload = token.split('.')[1];
+            const decoded = JSON.parse(atob(payload)); 
+            console.log("Token decodificado:", decoded);
+            return decoded;
+        } catch (e) {
+            console.error("Error decodificando el token:", e);
+            return null; 
+        }
     };
     
     return (

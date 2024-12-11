@@ -8,8 +8,8 @@ import { UserProvider } from './context/userContext';
 //Importaciones de vistas
 import Login from './views/Login';
 import Registro from './views/Registro';
-//import Layout from './views/Layout';
-import Injerto from './views/injerto';
+import Layout from './views/Layout';
+//import Injerto from './views/injerto';
 import Trabajo from './views/aspirante/Trabajo';
 //VISTAS EMPLEADO
 import InicioEmpleado from './views/empleado/InicioEmpleado';
@@ -20,6 +20,7 @@ import Quejas from './views/empleado/Quejas';
 import InicioAdmin from './views/administrador/InicioAdmin';
 //VISTAS RRH
 import InicioRRHH from './views/recursoshumanos/InicioRRHH';
+import InicioAspirante from './views/aspirante/InicioAspirante';
 
 function App() {
   return (
@@ -28,11 +29,10 @@ function App() {
     <div className="App">
         <Routes>
           
-          <Route path='/' element={<Injerto/>}/>
-
-          
+          <Route path='/' element={<Layout/>}/>
           <Route path='/Login' element={<Login/>}/>
           <Route path='/Registro' element={<Registro/>}/>
+          <Route path='/aspirante/inicio' element={<InicioAspirante/>}/>
           <Route path='/aspirante/Trabajo' element={<Trabajo/>}/>
           <Route path='/empleado/InicioEmpleado' element={<InicioEmpleado/>}/>
           <Route path='/empleado/Jornadas' element={<Jornadas/>}/>

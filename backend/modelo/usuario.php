@@ -51,15 +51,6 @@ class Usuario {
         // Si el usuario existe y la contraseña es correcta
         if ($usuario && password_verify($data['password'], $usuario['password'])) {
     
-            // Iniciar la sesión
-            session_start(); 
-            $_SESSION['usuario'] = [
-                'num_doc' => $usuario['num_doc'],
-                'nombres' => $usuario['nombres'],
-                'rol' => $usuario['rol_idrol'],  
-                'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
-            ];
-    
             // Verificar si el rol del usuario es diferente a 4
             if ($usuario['rol_idrol'] != 4) {
                 $num_doc = $usuario['num_doc'];

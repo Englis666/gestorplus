@@ -33,7 +33,8 @@ class UsuarioControlador {
         $respuesta = $this->usuario->registrar($data);
         echo json_encode(['message' => $respuesta]);
     }
-    
+
+
     public function iniciar($data) {
         $this->usuario = new Usuario($this->db);
     
@@ -52,17 +53,10 @@ class UsuarioControlador {
 
         if ($respuesta) {
             try {
-                $_SESSION['usuario'] = [
-                    'num_doc' => $respuesta['num_doc'],
-                    'nombres' => $respuesta['nombres'],
-                    'rol' => $respuesta['rol'],
-                    'hojadevida_idHojadevida' => $respuesta['hojadevida_idHojadevida']
-                ];
-    
                 $secretKey = SECRET_KEY;
 
                 $payload = [
-                    'iss' => 'localhost',     
+                    'iss' => '/',     
                     'aud' => 'localhost',      
                     'iat' => time(),           
                     'exp' => time() + 3600,    
@@ -78,13 +72,12 @@ class UsuarioControlador {
     
                 // Almacenar el JWT en una cookie
                 $cookieExpiration = time() + 3600; // 1 hora de expiración
-                setcookie("auth_token", $jwt, $cookieExpiration, "/", "localhost", true, true); 
-    
+                setcookie("auth_token", $jwt, $cookieExpiration, "/", "localhost", true,true);
+
                 echo json_encode([
                     'status' => 'success',
                     'message' => 'Credenciales correctas',
-                    'token' => $jwt, 
-                    'session' => $_SESSION['usuario']
+                    'token' => $jwt
                 ]);
             } catch (Exception $e) {
                 echo json_encode([
@@ -100,10 +93,6 @@ class UsuarioControlador {
         }
     }
     
-    
-    
-    
-
     public function obtenerConvocatorias(){
         $this->usuario  = new Usuario($this->db);
         $resultado = $this->usuario->obtenerConvocatorias();
