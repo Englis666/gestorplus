@@ -16,7 +16,6 @@ const Login = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // Validar que num_doc solo contenga números
         if (name === 'num_doc' && !/^\d*$/.test(value)) {
             return;
         }
@@ -49,17 +48,14 @@ const Login = () => {
             console.log('Respuesta del servidor:', serverMessage);
             
             if (serverMessage?.status === 'success') {
-                // Verificar si el token está presente
                 const token = serverMessage.token;
                 document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
                 console.log("Token almacenado:", token);
     
-                // Llamar al login con el token
-                login({ token });
+                login(token);  
     
-                // Decodificar el token si es necesario para obtener el rol
                 const decodedToken = decodeToken(token);
-                const userRole = decodedToken?.data?.rol; // Asumiendo que 'rol' está en 'data' del token
+                const userRole = decodedToken?.data?.rol; 
                 
                 switch (userRole) {
                     case 1:

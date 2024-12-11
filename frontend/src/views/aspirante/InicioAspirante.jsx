@@ -9,11 +9,9 @@ const InicioAspirante = () => {
 
     return(
         <div>
-        <UserProvider>
         <Navbar></Navbar>
         <Banner></Banner>
         <Convocatoria></Convocatoria>
-        </UserProvider>
         </div>
 
     )
