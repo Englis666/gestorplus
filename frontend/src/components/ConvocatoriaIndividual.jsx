@@ -13,22 +13,20 @@ const ConvocatoriaIndividual = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    //Se usa useEffect que ya definido en la importacion de ract
     useEffect(() => {
-    axios.get('http://localhost/gestorplus/backend/', {
+    axios.get('http://localhost:8005/convocatorias', {
         params: {
             action: 'obtenerConvocatorias',
         },
     })
         .then(response => {
-            //Si responde dependiendo guardara las convocatorias y ademas desactiva el indicador de carga
             console.log("respuesta completa: ",response.data);
-            if(Array.isArray(response.data.convocatorias)){
-                setConvocatorias(response.data.convocatorias);
-            }else{
-                console.error('Convocatorias no es un array');
-                setConvocatorias([]);
-            }
+            if (Array.isArray(response.data)) {
+        setConvocatorias(response.data);
+    } else {
+        console.error('Convocatorias no es un array');
+        setConvocatorias([]);
+    }
             setLoading(false);
         })
         .catch(err => {

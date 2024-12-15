@@ -59,7 +59,7 @@ const Registro = () => {
         setIsSubmitting(true);
 
         axios
-            .post("http://localhost/gestorplus/backend/", data)
+            .post("http://localhost:8000/registrarse", data)
             .then((response) => {
                 let serverMessage = response.data.message;
 

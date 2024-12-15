@@ -7,31 +7,35 @@ import axios from "axios";
 
 const Convocatoria = () => {
 
-    // Para almacenar las convocatorias toca hacerle un estado, eso significa que toca hacer una constante y dentor el nombre de lo que quiero y luego setYnombre de lo que quiero
-    //Tambien debo meter en constante lo que es el loading y el error
+
     const navigate = useNavigate();
     const [convocatorias, setConvocatorias] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-    axios.get('http://localhost:8000/api/convocatorias')
-        .then(response => {
-            console.log("respuesta completa: ",response.data);
-            if(Array.isArray(response.data.convocatorias)){
-                setConvocatorias(response.data.convocatorias);
-            }else{
-                console.error('Convocatorias no es un array');
-                setConvocatorias([]);
-            }
-            setLoading(false);
+        axios.get('http://localhost:8005/convocatorias', {
+            params: {
+                action: 'obtenerConvocatorias',
+            },
         })
-        .catch(err => {
-            setError('Error al cargar las convocatorias');
-            setLoading(false);
-            console.log('Error fetch ' , err);
-        });
-    }, []); 
+            .then(response => {
+                console.log("respuesta completa: ",response.data);
+                if (Array.isArray(response.data)) {
+            setConvocatorias(response.data);
+        } else {
+            console.error('Convocatorias no es un array');
+            setConvocatorias([]);
+        }
+                setLoading(false);
+            })
+            .catch(err => {
+                //Manejo de errores
+                setError('Error al cargar las convocatorias');
+                setLoading(false);
+                console.log('Error fetch ' , err);
+            });
+        }, []); //Aqui va a ir el array cuando se ejecute (se crea un espacio)
 
     if (loading){
         return <div>Cargando convocatorias</div>;

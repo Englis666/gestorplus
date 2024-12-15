@@ -8,23 +8,28 @@ const CategoriaDeTrabajo = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/convocatorias')
+        axios.get('http://localhost:8005/convocatorias', {
+            params: {
+                action: 'obtenerConvocatorias',
+            },
+        })
             .then(response => {
                 console.log("respuesta completa: ",response.data);
-                if(Array.isArray(response.data.convocatorias)){
-                    setConvocatorias(response.data.convocatorias);
-                }else{
-                    console.error('Convocatorias no es un array');
-                    setConvocatorias([]);
-                }
+                if (Array.isArray(response.data)) {
+            setConvocatorias(response.data);
+        } else {
+            console.error('Convocatorias no es un array');
+            setConvocatorias([]);
+        }
                 setLoading(false);
             })
             .catch(err => {
+                //Manejo de errores
                 setError('Error al cargar las convocatorias');
                 setLoading(false);
                 console.log('Error fetch ' , err);
             });
-        }, []); 
+        }, []); //Aqui va a ir el array cuando se ejecute (se crea un espacio)
         if(loading){
             return <div>Cargando</div>
         }

@@ -6,14 +6,8 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
-    'App\\Http\\Controllers\\UsuarioController' => $baseDir . '/app/Http/Controllers/UsuarioController.php',
-    'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
-    'App\\Models\\Ausencia' => $baseDir . '/app/Models/Ausencia.php',
-    'App\\Models\\Convocatoria' => $baseDir . '/app/Models/Convocatoria.php',
-    'App\\Models\\Jornada' => $baseDir . '/app/Models/Jornada.php',
-    'App\\Models\\Notificacion' => $baseDir . '/app/Models/Notificacion.php',
-    'App\\Models\\Usuario' => $baseDir . '/app/Models/Usuario.php',
+    'App\\Http\\Controllers\\ConvocatoriaController' => $baseDir . '/app/Http/Controllers/ConvocatoriaController.php',
+    'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Brick\\Math\\BigDecimal' => $vendorDir . '/brick/math/src/BigDecimal.php',
