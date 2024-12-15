@@ -15,7 +15,7 @@ const Convocatoria = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-    axios.get('http://localhost/gestorplus/backendLaravel/', {
+    axios.get('http://localhost:8000/api/convocatorias', {
         params: {
             action: 'obtenerConvocatorias',
         },
