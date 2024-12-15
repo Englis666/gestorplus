@@ -1,23 +1,26 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Convocatoria extends Model
 {
-    use HasFactory;
-    protected $table = 'convocatoria';
-    public $timestamps = false;
+    protected $table = 'convocatoria';  
 
+    // Define los campos que pueden ser asignados masivamente
     protected $fillable = [
-        ''
+        'nombreConvocatoria',
+        'descripcion',
+        'requisitos',
+        'salario',
+        'cantidadConvocatoria',
+        'cargo_idcargo',
     ];
 
-    public function cargo()
-    {
-        return $this->belongsTo(Cargo::class, 'cargo_idcargo');
-    }
-}
+    // Si el campo 'id' no es el nombre predeterminado, también lo puedes especificar
+    protected $primaryKey = 'idconvocatoria';
 
-?>
+    // Si tu tabla no usa el formato de fecha predeterminado (created_at y updated_at),
+    // puedes desactivarlo así:
+    public $timestamps = false;
+}
