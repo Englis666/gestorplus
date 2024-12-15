@@ -15,7 +15,7 @@ const Convocatoria = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-    axios.get('http://localhost/gestorplus/backend/', {
+    axios.get('http://localhost/gestorplus/backendLaravel/', {
         params: {
             action: 'obtenerConvocatorias',
         },
@@ -31,12 +31,11 @@ const Convocatoria = () => {
             setLoading(false);
         })
         .catch(err => {
-            //Manejo de errores
             setError('Error al cargar las convocatorias');
             setLoading(false);
             console.log('Error fetch ' , err);
         });
-    }, []); //Aqui va a ir el array cuando se ejecute (se crea un espacio)
+    }, []); 
 
     if (loading){
         return <div>Cargando convocatorias</div>;

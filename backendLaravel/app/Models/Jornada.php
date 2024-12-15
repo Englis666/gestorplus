@@ -15,7 +15,7 @@ class Jornada extends Model
     ];
     public function usuario()
     {
-        return $this->belongsTo(Usuario::class, 'usuario_num_doc');
+        return $this->belongsTo(Usuario::class, 'usuario_num_doc', 'num_doc');
     }
     
 }

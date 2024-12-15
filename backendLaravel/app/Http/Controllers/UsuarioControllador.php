@@ -84,7 +84,7 @@ class UsuarioController extends Controller
 
     public function obtenerConvocatorias()
     {
-        $convocatorias = Usuario::getConvocatorias(); // Asumimos que el modelo tiene este método
+        $convocatorias = Usuario::obtenerConvocatorias();
 
         if ($convocatorias) {
             return response()->json(['convocatorias' => $convocatorias]);
