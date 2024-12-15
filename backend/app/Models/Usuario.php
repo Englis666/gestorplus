@@ -107,11 +107,9 @@ class Usuario extends Model
         ];
     }
 
-    public function obtenerConvocatorias()
+    public static function obtenerConvocatorias()
     {
-        return Convocatoria::join('cargo as ca', 'ca.idcargo', '=', 'convocatoria.cargo_idcargo')
-            ->select('convocatoria.*', 'ca.*')
-            ->get();
+        return \DB::table('convocatoria')->get();
     }
 
     public function obtenerTotalEstadisticas()

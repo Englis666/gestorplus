@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Firebase\JWT\JWT;
 use Exception;
+use App\Http\Controllers\Controller;
 
 class UsuarioController extends Controller
 {
@@ -84,7 +85,8 @@ class UsuarioController extends Controller
 
     public function obtenerConvocatorias()
     {
-        $convocatorias = Usuario::obtenerConvocatorias();
+        $usuario = new Usuario();
+        $convocatorias = $usuario->obtenerConvocatorias();
 
         if ($convocatorias) {
             return response()->json(['convocatorias' => $convocatorias]);

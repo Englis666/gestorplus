@@ -8,11 +8,7 @@ const CategoriaDeTrabajo = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost/gestorplus/backend/', {
-            params: {
-                action: 'obtenerConvocatorias',
-            },
-        })
+        axios.get('http://localhost:8000/api/convocatorias')
             .then(response => {
                 console.log("respuesta completa: ",response.data);
                 if(Array.isArray(response.data.convocatorias)){
