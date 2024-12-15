@@ -5,6 +5,10 @@ Este archivo README está diseñado para estudiar los principales estilos y clas
 
 ---
 
+### LARAVEL
+/opt/lampp/bin/php artisan migrate:status
+
+
 ### `npm start`
 Este comando ejecuta la aplicación en modo de desarrollo.\
 La página se recargará automáticamente cada vez que realices cambios.\
