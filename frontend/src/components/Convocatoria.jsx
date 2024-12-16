@@ -14,11 +14,10 @@ const Convocatoria = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:8005/convocatorias', {
-            params: {
-                action: 'obtenerConvocatorias',
-            },
-        })
+        axios.get('http://localhost:8000/api/convocatorias', {
+         headers: {
+            'Content-Type': 'application/json',
+          }})
             .then(response => {
                 console.log("respuesta completa: ",response.data);
                 if (Array.isArray(response.data)) {
