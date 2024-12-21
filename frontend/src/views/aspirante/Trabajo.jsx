@@ -7,9 +7,11 @@ const Trabajo = () => {
     
     return(
         <div>
+        <UserProvider>
             <Navbar/>
             <FiltroTrabajo/>
             <ConvocatoriaIndividual/>
+         </UserProvider>
         </div>
     );
 };

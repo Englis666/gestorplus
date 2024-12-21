@@ -5,8 +5,6 @@ import axios from 'axios';
 import { useUser } from "../context/userContext";
 
 const Login = () => {
-    axios.defaults.withCredentials = false; 
-
     const [formData, setFormData] = useState({
         num_doc: '',
         password: '',
@@ -18,6 +16,7 @@ const Login = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
+        // Validar que num_doc solo contenga números
         if (name === 'num_doc' && !/^\d*$/.test(value)) {
             return;
         }
@@ -30,76 +29,82 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
+    
         if (!formData.num_doc || !formData.password) {
             alert("Por favor complete todos los campos.");
             return;
         }
-
-
+    
+        const data = {
+            action: 'login',
+            num_doc: formData.num_doc,
+            password: formData.password,
+        };
+    
         setIsSubmitting(true);
-
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt_token')}`;
         axios
-            .post("http://localhost:8000/login", {
-                num_doc: formData.num_doc,
-                password: formData.password
-            })
-            .then((response) => {
-                const serverMessage = response.data;
-                console.log('Respuesta del servidor:', serverMessage);
-                if (serverMessage?.status === 'success') {
-                    const token = serverMessage.token;
-                    if (token) {
-                        localStorage.setItem("jwt_token", token);
-                        login(token);
-
-                        const decodedToken = decodeToken(token);
-                        if (decodedToken) {
-                            const userRole = decodedToken?.data?.rol;
-                            switch (userRole) {
-                                case 1:
-                                    navigate("/views/administrador/inicioAdmin");
-                                    break;
-                                case 2:
-                                    navigate("/views/recursoshumanos/inicioRRHH");
-                                    break;
-                                case 3:
-                                    navigate("/views/empleado/inicioEmpleado");
-                                    break;
-                                case 4:
-                                    navigate("/aspirante/inicio");
-                                    break;
-                                default:
-                                    navigate("/");
-                                    alert("Rol desconocido");
-                            }
-                        }
-                    } else {
-                        alert(serverMessage?.message || "Error en el inicio de sesión");
-                    }
+        .post("http://localhost/gestorplus/backend/", data) 
+        .then((response) => {
+            const serverMessage = response.data;
+            console.log('Respuesta del servidor:', serverMessage);
+            
+            if (serverMessage?.status === 'success') {
+                // Verificar si el token está presente
+                const token = serverMessage.token;
+                document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
+                console.log("Token almacenado:", token);
+    
+                // Llamar al login con el token
+                login({ token });
+    
+                // Decodificar el token si es necesario para obtener el rol
+                const decodedToken = decodeToken(token);
+                const userRole = decodedToken?.data?.rol; // Asumiendo que 'rol' está en 'data' del token
+                
+                switch (userRole) {
+                    case 1:
+                        navigate("/views/administrador/inicioAdmin");
+                        break;
+                    case 2:
+                        navigate("/views/recursoshumanos/inicioRRHH");
+                        break;
+                    case 3:
+                        navigate("/views/empleado/inicioEmpleado");
+                        break;
+                    case 4:
+                        navigate("/aspirante/inicio");
+                        break;
+                    default:
+                        document.cookie = "auth_token=; path=/; domain=localhost; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                        console.error("Rol desconocido:", userRole);
+                        navigate("/");
+                        alert("Rol desconocido");
                 }
+            } else {
+                alert(serverMessage?.message || "Error en el inicio de sesión");
                 setIsSubmitting(false);
-            })
-            .catch((error) => {
-                console.error("Error al iniciar sesión:", error);
-                alert("Error en el inicio de sesión. Intenta de nuevo.");
-                setIsSubmitting(false);
-            });
+            }
+        })
+        .catch((error) => {
+            console.error("Error al iniciar sesión:", error);
+            alert("Error en el inicio de sesión. Intenta de nuevo.");
+            setIsSubmitting(false);
+        });
+    
     };
 
     const decodeToken = (token) => {
         try {
             const payload = token.split('.')[1];
-            const decoded = JSON.parse(atob(payload));
+            const decoded = JSON.parse(atob(payload)); 
             console.log("Token decodificado:", decoded);
             return decoded;
         } catch (e) {
             console.error("Error decodificando el token:", e);
-            return null;
+            return null; 
         }
     };
-
+    
     return (
         <div className="container d-flex justify-content-center align-items-center min-vh-100">
             <div 
@@ -128,7 +133,7 @@ const Login = () => {
                             <p>Bienvenido otra vez</p>
                             <p>Estamos felices de volver a ver</p>
                         </div>
-                        <form onSubmit={handleSubmit}>                       
+                        <form onSubmit={handleSubmit}>
                             <div className="input-group mb-3">
                                 <input 
                                     type="text" 

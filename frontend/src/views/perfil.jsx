@@ -5,7 +5,8 @@ import axios from "axios";
 
 const Perfil = () => {
 
-
+    // Para almacenar las convocatorias toca hacerle un estado, eso significa que toca hacer una constante y dentor el nombre de lo que quiero y luego setYnombre de lo que quiero
+    //Tambien debo meter en constante lo que es el loading y el error
     const navigate = useNavigate();
     const [convocatorias, setConvocatorias] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -19,6 +20,8 @@ const Perfil = () => {
         },
     })
         .then(response => {
+            //Si responde dependiendo guardara las convocatorias y ademas desactiva el indicador de carga
+            console.log("respuesta completa: ",response.data);
             if(Array.isArray(response.data.convocatorias)){
                 setConvocatorias(response.data.convocatorias);
             }else{
