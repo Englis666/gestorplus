@@ -3,14 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
 
 const NavbarClosed = ({ numDoc, activeLink }) => {
-  const { user , logout } = useUser();
+  const { user, logout } = useUser();
   const navigate = useNavigate();
-  
-  const handleLogout = () =>{
+
+  const handleLogout = () => {
     logout();
-    navigate('/')
-  }
-  console.log(user);
+    navigate('/');
+  };
 
   return (
     <aside className="col-12 col-md-3 col-lg-2">
@@ -20,14 +19,10 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
       </div>
       <nav
         className="d-md-block"
-        id="menuLateral"
         style={{
-          backgroundColor: "white",
-          boxShadow: "0px 4px 16px rgba(0, 0, 0, 0.1)", 
           height: "100vh",
-          borderTopRightRadius: "1rem", 
           borderBottomRightRadius: "1rem",
-          padding: "20px 0", 
+          padding: "10px 0", 
         }}
       >
         <h1
@@ -35,8 +30,8 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           style={{
             fontSize: "1.75rem",
             fontWeight: "600",
-            color: "#2980b9", 
-            marginBottom: "2rem",
+            color: "#2980b9",
+            marginBottom: "1.5rem", 
           }}
         >
           Gestorplus
@@ -44,31 +39,24 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
 
         {/* Enlace "Jornadas" */}
         <div
-          className={`d-flex align-items-center p-3 mt-5 text-dark text-decoration-none ${
-            activeLink === "jornadas" ? "bg-light" : "hover-bg"
-          }`}
-          style={{
-            transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out", 
-            borderRadius: "0.5rem", 
-          }}
+          className={`d-flex align-items-center p-3 text-dark text-decoration-none`}
         >
           <span
-            className="material-icons me-2"
+            className="material-icons"
             style={{
-              fontSize: "1.5rem",
-              color: "#3498db", 
+              color: "#3498db",
             }}
           >
-            insights
+           receipt_long
           </span>
           <h3
             className="m-0"
             style={{
               fontSize: "1.2rem",
-              fontWeight: "500", // Peso de fuente medio
+              fontWeight: "500",
               color: "#333",
             }}
-            onClick={() => navigate('/empleado/Jornadas')}
+            onClick={() => navigate("/empleado/Jornadas")}
           >
             Jornadas
           </h3>
@@ -80,16 +68,16 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
             activeLink === "ausencias" ? "bg-light" : "hover-bg"
           }`}
           style={{
-            transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out", // Transición suave
-            borderRadius: "0.5rem", 
+            borderRadius: "0.5rem",
+            marginBottom: "0.5rem", // Menos espacio entre los enlaces
           }}
-          onClick={() => navigate('/empleado/Ausencias')}
+          onClick={() => navigate("/empleado/Ausencias")}
         >
           <span
             className="material-icons me-2"
             style={{
-              fontSize: "1.5rem", 
-              color: "#3498db", 
+              fontSize: "1.5rem",
+              color: "#3498db",
             }}
           >
             receipt_long
@@ -97,9 +85,9 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           <h3
             className="m-0"
             style={{
-              fontSize: "1.2rem", 
+              fontSize: "1.2rem",
               fontWeight: "500",
-              color: "#333", 
+              color: "#333",
             }}
           >
             Ausencias
@@ -112,15 +100,16 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
             activeLink === "pazysalvos" ? "bg-light" : "hover-bg"
           }`}
           style={{
-            transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out", 
-            borderRadius: "0.5rem", 
+            transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
+            borderRadius: "0.5rem",
+            marginBottom: "0.5rem", // Menos espacio entre los enlaces
           }}
         >
           <span
             className="material-icons me-2"
             style={{
-              fontSize: "1.5rem", 
-              color: "#3498db", 
+              fontSize: "1.5rem",
+              color: "#3498db",
             }}
           >
             receipt_long
@@ -128,9 +117,9 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           <h3
             className="m-0"
             style={{
-              fontSize: "1.2rem", 
+              fontSize: "1.2rem",
               fontWeight: "500",
-              color: "#333", 
+              color: "#333",
             }}
           >
             Paz y salvos
@@ -144,15 +133,16 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           }`}
           style={{
             transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
-            borderRadius: "0.5rem", 
+            borderRadius: "0.5rem",
+            marginBottom: "0.5rem", // Menos espacio entre los enlaces
           }}
-          onClick={() => navigate('/empleado/Quejas')}
+          onClick={() => navigate("/empleado/Quejas")}
         >
           <span
             className="material-icons me-2"
             style={{
-              fontSize: "1.5rem", 
-              color: "#3498db", 
+              fontSize: "1.5rem",
+              color: "#3498db",
             }}
           >
             report
@@ -160,9 +150,9 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           <h3
             className="m-0"
             style={{
-              fontSize: "1.2rem", 
-              fontWeight: "500", 
-              color: "#333", 
+              fontSize: "1.2rem",
+              fontWeight: "500",
+              color: "#333",
             }}
           >
             Quejas y reclamos
@@ -175,15 +165,16 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
             activeLink === "perfil" ? "bg-light" : "hover-bg"
           }`}
           style={{
-            transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out", 
-            borderRadius: "0.5rem", 
+            transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
+            borderRadius: "0.5rem",
+            marginBottom: "0.5rem", // Menos espacio entre los enlaces
           }}
         >
           <span
             className="material-icons me-2"
             style={{
-              fontSize: "1.5rem", 
-              color: "#3498db", 
+              fontSize: "1.5rem",
+              color: "#3498db",
             }}
           >
             settings
@@ -191,9 +182,9 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           <h3
             className="m-0"
             style={{
-              fontSize: "1.2rem", 
-              fontWeight: "500", 
-              color: "#333", 
+              fontSize: "1.2rem",
+              fontWeight: "500",
+              color: "#333",
             }}
           >
             Mi perfil
@@ -204,27 +195,27 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
         <div
           className="d-flex align-items-center p-3 text-dark text-decoration-none"
           style={{
-            transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out", 
-            borderRadius: "0.5rem", 
+            transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
+            borderRadius: "0.5rem",
+            marginBottom: "0.5rem", // Menos espacio entre los enlaces
           }}
           onClick={handleLogout}
-
         >
           <span
             className="material-icons me-2"
             style={{
-              fontSize: "1.5rem", // Iconos más grandes y visibles
-              color: "#e74c3c", 
+              fontSize: "1.5rem",
+              color: "#e74c3c",
             }}
           >
-            logout
+            close
           </span>
           <h3
             className="m-0"
             style={{
-              fontSize: "1.2rem", 
-              fontWeight: "500", 
-              color: "#e74c3c", 
+              fontSize: "1.2rem",
+              fontWeight: "500",
+              color: "#e74c3c",
             }}
           >
             Cerrar sesión

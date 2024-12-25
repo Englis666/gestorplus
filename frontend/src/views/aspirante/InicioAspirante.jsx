@@ -7,6 +7,8 @@ import { UserProvider } from "../../context/userContext";
 
 const InicioAspirante = () => {
 
+
+
     return(
         <div>
         <UserProvider>

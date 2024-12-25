@@ -7,28 +7,45 @@ class Empleado {
         $this->db = $db;
     }
 
-    public function obtenerNotificaciones(){
-        $sql = "SELECT * FROM notificacion";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado){
-            return $resultado;
+    public function obtenerNotificaciones($num_doc){
+        try{
+            $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            if($resultado){
+                return $resultado;
+            }
+            return [];
+        }catch (PDOException $e) {
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return [];
         }
-    return [];
     }
     
-    public function obtenerJornadas(){
-        $sql = "SELECT * FROM jornada as j
-                INNER JOIN usuario as u ON j.usuario_num_doc = u.num_doc";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado){
-            return $resultado;
-        }
+    public function obtenerJornadas($num_doc){
+        try{
+            $sql = "SELECT * FROM jornada as j
+                    INNER JOIN usuario as u ON j.usuario_num_doc = u.num_doc
+                    WHERE u.num_doc = :num_doc";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_STR);  
+            $stmt->execute();
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+            if($resultado){
+                return $resultado;
+            }
+        }catch (PDOException $e) {
+        echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+        http_response_code(500);
         return [];
+        }
     }
+    
 
      
     public function obtenerAusencias(){

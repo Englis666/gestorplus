@@ -49,17 +49,20 @@ class UsuarioControlador {
             return;
         }
     
-        $respuesta = $this->usuario->inicioSesion(['num_doc' => $num_doc, 'password' => $password]);
+        $respuesta = $this->usuario->inicioSesion(['num_doc' => $num_doc, 'password' => $password]);               
 
         if ($respuesta) {
             try {
                 $secretKey = SECRET_KEY;
+                $firma = JWT_ALGO;
+                $issuedAt = time();
+                $expirantionTime = $issuedAt + 3600;
 
                 $payload = [
                     'iss' => '/',     
                     'aud' => 'localhost',      
-                    'iat' => time(),           
-                    'exp' => time() + 3600,    
+                    'iat' => $issuedAt,           
+                    'exp' => $expirantionTime,    
                     'data' => [
                         'num_doc' => $respuesta['num_doc'],
                         'nombres' => $respuesta['nombres'],
@@ -68,11 +71,8 @@ class UsuarioControlador {
                     ]
                 ];
 
-                $jwt = JWT::encode($payload, $secretKey, 'HS256');
+                $jwt = JWT::encode($payload, $secretKey, $firma);
     
-                // Almacenar el JWT en una cookie
-                $cookieExpiration = time() + 3600; // 1 hora de expiración
-                setcookie("auth_token", $jwt, $cookieExpiration, "/", "localhost", true,true);
 
                 echo json_encode([
                     'status' => 'success',

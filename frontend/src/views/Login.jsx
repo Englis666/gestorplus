@@ -52,24 +52,21 @@ const Login = () => {
                 // Verificar si el token está presente
                 const token = serverMessage.token;
                 document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
-                console.log("Token almacenado:", token);
     
-                // Llamar al login con el token
                 login({ token });
     
-                // Decodificar el token si es necesario para obtener el rol
                 const decodedToken = decodeToken(token);
-                const userRole = decodedToken?.data?.rol; // Asumiendo que 'rol' está en 'data' del token
+                const userRole = decodedToken?.data?.rol; 
                 
                 switch (userRole) {
                     case 1:
-                        navigate("/views/administrador/inicioAdmin");
+                        navigate("/administrador/inicioAdmin");
                         break;
                     case 2:
-                        navigate("/views/recursoshumanos/inicioRRHH");
+                        navigate("/recursoshumanos/inicioRRHH");
                         break;
                     case 3:
-                        navigate("/views/empleado/inicioEmpleado");
+                        navigate("/empleado/inicioEmpleado");
                         break;
                     case 4:
                         navigate("/aspirante/inicio");
@@ -97,7 +94,6 @@ const Login = () => {
         try {
             const payload = token.split('.')[1];
             const decoded = JSON.parse(atob(payload)); 
-            console.log("Token decodificado:", decoded);
             return decoded;
         } catch (e) {
             console.error("Error decodificando el token:", e);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Estadisticas from "./Estadisticas";
 import Grafica from "./Grafica";
+import { jwtDecode } from 'jwt-decode';
 
 const TablaEmpleado = () => {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -9,26 +10,61 @@ const TablaEmpleado = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost/gestorplus/backend/', {
-      params: { action: 'obtenerNotificaciones', },
-      timeout: 10000,
-    })
-    .then(response => {
-      console.log('Respuesta completa:', response);
-      const notificaciones = response.data.Notificaciones;
-      if (Array.isArray(notificaciones)) {
-        setNotificaciones(notificaciones); 
-      } else {
-        console.error('Las notificaciones no son un array');
-        setNotificaciones([]); 
+
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+    };
+
+    const token = getCookie("auth_token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+
+        const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
+        if (isTokenExpired) {
+          console.error("El token ha expirado.");
+          setError("El token ha expirado.");
+          setLoading(false);
+          return;
+        }
+  
+        axios.get('http://localhost/gestorplus/backend/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          params: { action: 'obtenerNotificaciones' }
+        })
+        .then(response => {
+          console.log('Respuesta completa:', response.data);
+
+          const notificaciones = response.data?.Notificaciones;
+
+          if (Array.isArray(notificaciones)) {
+            setNotificaciones(notificaciones);
+          } else {
+            console.error('Las notificaciones no son un array');
+            setNotificaciones([]);
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('Error al obtener las notificaciones:', err);
+          setError('Hubo un problema al cargar las notificaciones.');
+          setLoading(false);
+        });
+      } catch (error) {
+        console.error('Error al decodificar el token:', error);
+        setError('Token inválido o malformado.');
+        setLoading(false);
       }
-      setLoading(false); 
-    })
-    .catch(err => {
-      console.error('Error al obtener las notificaciones:', err);
-      setError('Hubo un problema al cargar las notificaciones.');  
-      setLoading(false); 
-    });
+    } else {
+      console.error('No se encontró el token en las cookies o localStorage.');
+      setError('Token no encontrado.');
+      setLoading(false);
+    }
   }, []);
 
   if (loading) {
@@ -39,10 +75,13 @@ const TablaEmpleado = () => {
     return <div>{error}</div>;
   }
 
-  // Se filtran según el tipo
   const jornadaNotificaciones = notificaciones.filter(n => n.tipo === 'Jornada');
   const actualizacionNotificaciones = notificaciones.filter(n => n.tipo === 'Actualizacion');
   const generalNotificaciones = notificaciones.filter(n => n.tipo === 'General');
+
+  const handleVerClick = (notificacion) => {
+    console.log('Ver detalles de notificación', notificacion);
+  };
 
   return (
     <div className="container mt-5">
@@ -72,9 +111,13 @@ const TablaEmpleado = () => {
                             <span className="text-dark">{notificacion.descripcionNotificacion}</span>
                           </td>
                           <td className="py-3 px-4">
-                            <button className="btn btn-primary btn-sm" style={{ borderRadius: "20px", transition: "all 0.3s ease" }}
+                            <button
+                              className="btn btn-primary btn-sm"
+                              style={{ borderRadius: "20px", transition: "all 0.3s ease" }}
+                              onClick={() => handleVerClick(notificacion)}
                               onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
-                              onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}>
+                              onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
+                            >
                               Ver
                             </button>
                           </td>

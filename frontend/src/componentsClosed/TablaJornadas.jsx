@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import { jwtDecode } from 'jwt-decode';
 
 const TablaJornadas = () => {
   const [Jornadas, setJornadas] = useState([]);
@@ -8,28 +8,62 @@ const TablaJornadas = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost/gestorplus/backend/', {
-      params: { action: 'obtenerJornadas', },
-      timeout: 10000,
-    })
-    .then(response => {
-      console.log('Respuesta completa:', response);
-      const Jornadas = response.data.Jornadas;
-      if (Array.isArray(Jornadas)) {
-        setJornadas(Jornadas); 
-      } else {
-        console.error('Las Jornadas no son un array');
-        setJornadas([]); 
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+    };
+
+    const token = getCookie("auth_token");
+
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);  
+        const isTokenExpired = decodedToken?.exp * 1000 < Date.now(); 
+        if (isTokenExpired) {
+          console.error("El token ha expirado");
+          setError("El token ha expirado.");
+          setLoading(false);
+          return;
+        }
+
+        axios.get('http://localhost/gestorplus/backend/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          params: { action: 'obtenerJornadas' },
+        })
+        .then(response => {
+          console.log('Respuesta completa:', response.data);
+          const Jornadas = response.data?.Jornadas;  
+          if (Array.isArray(Jornadas)) {
+            setJornadas(Jornadas); 
+          } else {
+            console.error('Las Jornadas no son un array');
+            setJornadas([]); 
+          }
+          setLoading(false); 
+        })
+        .catch(err => {
+          console.error('Error al obtener las Jornadas:', err);
+          setError('Hubo un problema al cargar las Jornadas.');  
+          setLoading(false); 
+        });
+      } catch (error) {
+        console.error('Error al decodificar el token:', error);
+        setError('Token inválido o malformado.');
+        setLoading(false);
       }
-      setLoading(false); 
-    })
-    .catch(err => {
-      console.error('Error al obtener las Jornadas:', err);
-      setError('Hubo un problema al cargar las Jornadas.');  
-      setLoading(false); 
-    });
+    } else {
+      console.error('No se encontró el token en las cookies o localStorage.');
+      setError('Token no encontrado.');
+      setLoading(false);
+    }
   }, []);
 
+       
+    
   if (loading) {
     return <div>Cargando notificaciones...</div>;
   }
