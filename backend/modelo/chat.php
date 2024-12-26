@@ -10,20 +10,20 @@ class Chat {
         $this->db = $db;
     }
 
-    public function insertarMensajes($mensajes, $idEntrante){
-        $sql = "INSERT INTO chat (mensajes, idEntrante) VALUES (?, ?)";
+    public function enviarMensajes($message, $num_doc){
+        $sql = "INSERT INTO quejareclamo (mensajes, usuario_num_doc) VALUES (?, ?)";
         
         $stmt = $this->db->prepare($sql);
         
-        return $stmt->execute([$mensajes, $idEntrante]);
+        return $stmt->execute([$message, $num_doc]);
     }
 
-    public function obtenerMensajes($idEntrante){
-        $sql = "SELECT * FROM chat WHERE idEntrante = ? ORDER BY created_at DESC";
+    public function obtenerMensajes($num_doc){
+        $sql = "SELECT * FROM quejareclamo WHERE usuario_num_doc = ? ORDER BY created_at DESC";
         
         $stmt = $this->db->prepare($sql);
         
-        $stmt->execute([$idEntrante]);
+        $stmt->execute([$num_doc]);
 
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
         

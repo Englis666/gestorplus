@@ -2,6 +2,7 @@
 //MODELOS 
 require_once 'modelo/empleado.php';
 require_once 'config/config.php';
+//JWT
 require_once 'config/clave.php';
 require_once 'vendor/autoload.php';  
 use \Firebase\JWT\JWT;
@@ -52,10 +53,7 @@ class EmpleadoControlador {
             echo json_encode(['error' => 'Token con firma inválida']);
         } catch (Exception $e) {
             echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
-        }
-        
-        
-       
+        } 
     }
 
     public function obtenerJornadas(){

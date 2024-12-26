@@ -1,92 +1,94 @@
-// src/pages/Quejas.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 import Chat from '../../componentsClosed/Chat';
+import SidebarChat from '../../componentsClosed/sidebarChat';
 
 const Quejas = () => {
   const [message, setMessage] = useState('');
-  const [chatMessages, setChatMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [noMessages, setNoMessages] = useState(false);
-  const chatBoxRef = useRef(null);
-  const idEntrante = 'userId';
-
-  const scrollToBottom = () => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  };
+  const [error, setError] = useState('');
+  const [chatMessages, setChatMessages] = useState([]); 
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setMessage(e.target.value);
   };
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`); 
+    return parts.length === 2 ? parts.pop().split(";").shift() : null;
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (message.trim()) {
-      setLoading(true);
-      try {
-        await axios.post('http://localhost/gestorplus/backend/', {
-          action: 'enviarMensaje',
-          message,
-          idEntrante: idEntrante,
-        });
-        setMessage('');
-        fetchMessages();
-      } catch (error) {
-        setError('Error al enviar el mensaje.');
-        console.error('Error enviando el mensaje:', error);
-      } finally {
-        setLoading(false);
-      }
+    if (!message.trim()) {
+        console.error("El mensaje está vacío");
+        return;
     }
-  };
 
-  const fetchMessages = async () => {
+    const token = getCookie("auth_token");
+    if (!token) {
+        console.error("No se encontró ningún token. Redirigiendo al login...");
+        navigate("/login");
+        return;
+    }
+
+    const data = {
+        action: 'enviarMensajes',
+        message: message,
+    };
+
     setLoading(true);
-    setError(null);
-    setNoMessages(false);
-
+    setError(''); 
     try {
-      const response = await axios.post('http://localhost/gestorplus/backend/', {
-        action: 'obtenerMensajes',
-        idEntrante: idEntrante,
-      });
+        const response = await axios.post('http://localhost/gestorplus/backend/', data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
 
-      if (response.data.length === 0) {
-        setNoMessages(true);
-      } else {
-        setChatMessages(response.data);
-      }
+        console.log("Respuesta del servidor:", response); 
 
-      scrollToBottom();
+
+        if (response.data && response.data.status === 'success') {
+            console.log('Mensaje enviado');
+            // Agregar el mensaje al chat
+            setChatMessages((prevMessages) => [...prevMessages, { message }]);
+        } else {
+            console.error('Error en el backend:', response.data.message);
+            setError(response.data.message || 'Error desconocido');
+        }
+
     } catch (error) {
-      setError('Error al obtener los mensajes.');
-      console.error('Error obteniendo los mensajes:', error);
+        console.error('Error enviando el mensaje:', error);
+        setError('Error enviando el mensaje');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
 
-  useEffect(() => {
-    fetchMessages();
-    const interval = setInterval(fetchMessages, 500); // Intervalo de 500ms para obtener mensajes
-    return () => clearInterval(interval);
-  }, []);
+    setMessage('');
+};
 
   return (
     <div style={{
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       minHeight: '100vh',
       background: '#f0f0f0',
+      padding: '20px',
     }}>
+      
+    {/* Componente de Sidebar */}
+      <SidebarChat/>
+
+    {/* Contenedor de Chat */}
       <div style={{
         background: '#fff',
-        maxWidth: '450px',
         width: '100%',
+        marginTop: '30px',
         borderRadius: '16px',
         boxShadow: '0 0 128px 0 rgba(0,0,0,0.1), 0 32px 64px -48px rgba(0,0,0,0.5)',
         overflow: 'hidden',
@@ -97,17 +99,15 @@ const Quejas = () => {
               <i className="fas fa-arrow-left"></i>
             </a>
             <div style={{ flexGrow: 1, marginLeft: '10px' }}>
-              <span style={{ fontSize: '17px', fontWeight: '500' }}>Nombre y apellido</span>
+              <span style={{ fontSize: '17px', fontWeight: '500' }}>Nombre de usuario</span>
+              <p style={{ fontSize: '17px', fontWeight: '500' }}>Cargo de la empresa</p>
             </div>
           </header>
 
-          <Chat
-            chatMessages={chatMessages}
-            error={error}
-            loading={loading}
-            noMessages={noMessages}
-          />
+          {/* Chat de mensajes (interior) */}
+          <Chat chatMessages={chatMessages} error={error} loading={loading} noMessages={chatMessages.length === 0} />
 
+          {/* Formulario de envío de mensaje */}
           <form onSubmit={handleSendMessage} style={{
             display: 'flex',
             justifyContent: 'space-between',

@@ -37,6 +37,30 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           Gestorplus
         </h1>
 
+          <div className="d-flex allign-items-center p-3 text-dark text-decoration-none">
+            <span
+            className="material-icons"
+            style={{
+              color: "#3498db",
+            }}
+            >
+              receipt_long
+            </span>
+            <h3
+            className="m-0"
+            style={{
+              fontSize: "1.2rem",
+              fontWeight: "500",
+              color: "#333",
+            }}
+            onClick={() => navigate("/empleado/inicioEmpleado")}
+            >
+              Inicio
+            </h3>
+          </div>
+
+
+
         {/* Enlace "Jornadas" */}
         <div
           className={`d-flex align-items-center p-3 text-dark text-decoration-none`}

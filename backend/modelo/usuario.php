@@ -117,22 +117,39 @@ class Usuario {
     return [];
     }
 
-    public function obtenerTotalEstadisticas() {
-        $sql = "
-            SELECT 
-                SUM(CASE WHEN tipo = 'Jornada' THEN 1 ELSE 0 END) AS totalEntradas,
-                SUM(CASE WHEN tipo = 'Ausencias' THEN 1 ELSE 0 END) AS totalAusencias
-            FROM notificacion
-        ";
-        
+    public function obtenerRRHH() {
+        $sql = "SELECT * FROM usuario as u
+                INNER JOIN rol as r ON u.rol_idrol = idrol
+                WHERE r.nombreRol = 'Recursos humanos'";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resultado){
+            return $resultado;
+        }
+        return [];
+    }
+    
+    
+    
+    public function obtenerTotalEstadisticas($num_doc) {
+        $sql = "
+           SELECT 
+            SUM(CASE WHEN tipo = 'Jornada' THEN 1 ELSE 0 END) AS totalEntradas,
+             SUM(CASE WHEN tipo = 'Ausencias' THEN 1 ELSE 0 END) AS totalAusencias
+                FROM notificacion
+                    WHERE num_doc = :num_doc
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
+        $stmt->execute();
+    
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+    
         if ($resultado) {
             return [
-                'totalEntradas' => (int)$resultado['totalEntradas'],
+                'totalEntradas' => (int)$resultado['totalEntradas'],    
                 'totalAusencias' => (int)$resultado['totalAusencias']
             ];
         } else {
@@ -142,6 +159,7 @@ class Usuario {
             ];
         }
     }
+    
 }
 
 ?>

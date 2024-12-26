@@ -23,7 +23,12 @@ switch ($method) {
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->iniciar($data);
                     break;
-                
+
+                case 'enviarMensajes':
+                    $chatControlador = new ChatControlador();
+                    $chatControlador->enviarMensajes($data);
+                    break;
+
                 default:
                     http_response_code(400);
                     echo json_encode(['message' => 'Acción no encontrada.']);
@@ -52,6 +57,12 @@ switch ($method) {
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->obtenerTotalEstadisticas();
                     break;
+
+                case 'obtenerRRHH':
+                    $usuarioControlador = new UsuarioControlador();
+                    $usuarioControlador->obtenerRRHH();
+                    break;
+
                 case 'obtenerJornadas':
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerJornadas();
@@ -60,10 +71,9 @@ switch ($method) {
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerAusencias();
                     break;
-                case 'obtenerMensajes':
-                    $chatControlador = new ChatControlador();
-                    $chatControlador->obtenerChat($data);
-                    break;
+               
+               
+
                 default:
                     http_response_code(400);
                     echo json_encode(['message' => 'Acción no encontrada.']);

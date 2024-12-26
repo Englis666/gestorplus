@@ -9,7 +9,6 @@ import { UserProvider } from './context/userContext';
 import Login from './views/Login';
 import Registro from './views/Registro';
 import Layout from './views/Layout';
-//import Injerto from './views/injerto';
 import Trabajo from './views/aspirante/Trabajo';
 //VISTAS EMPLEADO
 import InicioEmpleado from './views/empleado/InicioEmpleado';

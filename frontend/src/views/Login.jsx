@@ -46,7 +46,6 @@ const Login = () => {
         .post("http://localhost/gestorplus/backend/", data) 
         .then((response) => {
             const serverMessage = response.data;
-            console.log('Respuesta del servidor:', serverMessage);
             
             if (serverMessage?.status === 'success') {
                 // Verificar si el token está presente

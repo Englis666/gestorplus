@@ -7,6 +7,8 @@ require_once 'config/config.php';
 require_once 'config/clave.php';
 require_once 'vendor/autoload.php';  
 use \Firebase\JWT\JWT;
+use \Firebase\JWT\Key;
+
 
 class UsuarioControlador {
 
@@ -104,21 +106,63 @@ class UsuarioControlador {
     }
 
     public function obtenerTotalEstadisticas() {
-        $this->usuario = new Usuario($this->db);
-        
-        $resultados = $this->usuario->obtenerTotalEstadisticas();
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if (!$authHeader) {
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401);
+            return;
+        }
     
-        if ($resultados) {
-            echo json_encode([
-                'totalEntradas' => $resultados['totalEntradas'],
-                'totalAusencias' => $resultados['totalAusencias']
-            ]);
-        } else {
-            echo json_encode([
-                'totalEntradas' => 0,
-                'totalAusencias' => 0
-            ]);
+        $token = str_replace('Bearer ', '', $authHeader);
+    
+        try {
+            $secretKey = SECRET_KEY;
+            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+            $num_doc = $decoded->data->num_doc;
+
+            if (!$num_doc) {
+                echo json_encode(['error' => 'No se encontró el número de documento en el token']);
+                http_response_code(400);
+                return;
+            }    
+    
+            $this->usuario = new Usuario($this->db);
+            $resultados = $this->usuario->obtenerTotalEstadisticas($num_doc);
+    
+            if ($resultados) {
+                echo json_encode([
+                    'totalEntradas' => $resultados['totalEntradas'],
+                    'totalAusencias' => $resultados['totalAusencias']
+                ]);
+            } else {
+                echo json_encode([
+                    'totalEntradas' => 0,
+                    'totalAusencias' => 0,
+                ]);
+            }
+    
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            echo json_encode(['error' => 'Token expirado']);
+            http_response_code(401);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            echo json_encode(['error' => 'Token con firma inválida']);
+            http_response_code(401);
+        } catch (Exception $e) {
+            echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
+            http_response_code(500);
         }
     }
+    
+    public function obtenerRRHH(){
+        $this->usuario = new Usuario($this->db);
+        $resultado = $this->usuario->obtenerRRHH();
+        if($resultado){
+            echo json_encode(['RRHH' => $resultado]);
+        }else{
+            echo json_encode(['RRH' => []]);
+        }
+    }
+
+
 }
 ?>

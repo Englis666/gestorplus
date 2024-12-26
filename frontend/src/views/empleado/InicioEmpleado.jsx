@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // Importación correcta
+import { jwtDecode } from "jwt-decode"; 
 import TablaEmpleado from "../../componentsClosed/TablaEmpleado";
 import NavbarClosed from "../../componentsClosed/Navbar";
 
@@ -9,7 +9,6 @@ const InicioEmpleado = () => {
 
   useEffect(() => {
     const token = getCookie("auth_token");
-
     if (!token) {
       console.error("No se encontró ningún token. Redirigiendo al login...");
       navigate("/login"); 
@@ -27,9 +26,7 @@ const InicioEmpleado = () => {
         document.cookie = "auth_token=; path=/; domain=localhost; expires=Thu, 01 Jan 1970 00:00:00 GMT"; 
         navigate("/login");
       } else {
-        console.log("Token válido:", decoded);
         console.log("Número de documento del usuario:", userNumDoc);
-        // Usa el `userNumDoc` como necesites en el componente
       }
     } catch (error) {
       console.error("Error al decodificar el token:", error.message);
