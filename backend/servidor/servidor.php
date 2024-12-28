@@ -28,6 +28,10 @@ switch ($method) {
                     $chatControlador = new ChatControlador();
                     $chatControlador->enviarMensajes($data);
                     break;
+                case 'iniciarChat':
+                    $chatControlador = new ChatControlador();
+                    $chatControlador->iniciarChat($data);
+                    break;
 
                 default:
                     http_response_code(400);

@@ -9,6 +9,7 @@ const Quejas = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [chatMessages, setChatMessages] = useState([]); 
+  const [selectedUser, setSelectedUser] = useState(null);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -82,7 +83,7 @@ const Quejas = () => {
     }}>
       
     {/* Componente de Sidebar */}
-      <SidebarChat/>
+      <SidebarChat onUserSelect={setSelectedUser} />
 
     {/* Contenedor de Chat */}
       <div style={{
@@ -99,8 +100,14 @@ const Quejas = () => {
               <i className="fas fa-arrow-left"></i>
             </a>
             <div style={{ flexGrow: 1, marginLeft: '10px' }}>
-              <span style={{ fontSize: '17px', fontWeight: '500' }}>Nombre de usuario</span>
-              <p style={{ fontSize: '17px', fontWeight: '500' }}>Cargo de la empresa</p>
+              {selectedUser ? (
+                <>
+                  <span style={{ fontSize: '17px', fontWeight: '500' }}>{selectedUser.nombres}</span>
+                  <p style={{ fontSize: '17px', fontWeight: '500' }}>{selectedUser.nombreRol}</p>
+                </>
+              ) : (
+                <span>Selecciona un usuario</span>
+              )}
             </div>
           </header>
 
@@ -129,24 +136,36 @@ const Quejas = () => {
               }}
               disabled={loading}
             />
-            <button
-              type="submit"
+           <button
+            type="submit" 
+            style={{
+              width: "55px",
+              border: "none",
+              outline: "none",
+              background: "#007bff", 
+              color: "#fff",
+              fontSize: "19px",
+              cursor: "pointer",
+              borderRadius: "0 5px 5px 0", 
+              transition: "all 0.3s ease",
+              opacity: message.trim() === "" || loading ? 0.5 : 1,
+              pointerEvents: message.trim() === "" || loading ? "none" : "auto",
+              display: "flex", 
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <i
+              className="material-icons"
               style={{
-                width: '55px',
-                border: 'none',
-                outline: 'none',
-                background: '#333',
-                color: '#fff',
-                fontSize: '19px',
-                cursor: 'pointer',
-                borderRadius: '0 5px 5px 0',
-                transition: 'all 0.3s ease',
-                opacity: message.trim() === '' || loading ? 0.5 : 1,
-                pointerEvents: message.trim() === '' || loading ? 'none' : 'auto',
+                color: "#fff", 
+                fontSize: "24px", 
               }}
             >
-              <i className="fab fa-telegram-plane"></i>
-            </button>
+              send
+            </i>
+          </button>
+
           </form>
         </section>
       </div>
