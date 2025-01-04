@@ -39,6 +39,7 @@ const Quejas = () => {
     const data = {
         action: 'enviarMensajes',
         message: message,
+        targetNum_doc: selectedUser.num_doc,
     };
 
     setLoading(true);
@@ -50,12 +51,8 @@ const Quejas = () => {
             }
         });
 
-        console.log("Respuesta del servidor:", response); 
-
-
         if (response.data && response.data.status === 'success') {
             console.log('Mensaje enviado');
-            // Agregar el mensaje al chat
             setChatMessages((prevMessages) => [...prevMessages, { message }]);
         } else {
             console.error('Error en el backend:', response.data.message);
@@ -112,7 +109,7 @@ const Quejas = () => {
           </header>
 
           {/* Chat de mensajes (interior) */}
-          <Chat chatMessages={chatMessages} error={error} loading={loading} noMessages={chatMessages.length === 0} />
+          <Chat selectedUser={selectedUser}  chatMessages={chatMessages} error={error} loading={loading} noMessages={chatMessages.length === 0} />
 
           {/* Formulario de envío de mensaje */}
           <form onSubmit={handleSendMessage} style={{

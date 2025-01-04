@@ -96,6 +96,13 @@ class EmpleadoControlador {
     }
 
     public function obtenerAusencias(){
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if($authHeader){
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401);
+            return;
+        }
+        
         $this->empleado = new Empleado($this->db);
         $resultado = $this->empleado->obtenerAusencias();
         if($resultado){

@@ -68,7 +68,7 @@ class UsuarioControlador {
                     'data' => [
                         'num_doc' => $respuesta['num_doc'],
                         'nombres' => $respuesta['nombres'],
-                        'rol' => $respuesta['rol'],  
+                        'rol' => (string) $respuesta['rol'],  
                         'hojadevida_idHojadevida' => $respuesta['hojadevida_idHojadevida']
                     ]
                 ];

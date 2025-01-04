@@ -87,7 +87,6 @@ class Usuario {
                 }
     
             } else {
-                // Si el rol es 4, no registrar jornada ni notificación
                 return [
                     'num_doc' => $usuario['num_doc'],
                     'nombres' => $usuario['nombres'],

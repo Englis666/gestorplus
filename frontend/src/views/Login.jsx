@@ -16,7 +16,6 @@ const Login = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // Validar que num_doc solo contenga números
         if (name === 'num_doc' && !/^\d*$/.test(value)) {
             return;
         }
@@ -55,19 +54,20 @@ const Login = () => {
                 login({ token });
     
                 const decodedToken = decodeToken(token);
+                console.log(decodeToken);
                 const userRole = decodedToken?.data?.rol; 
                 
                 switch (userRole) {
-                    case 1:
+                    case "1":
                         navigate("/administrador/inicioAdmin");
                         break;
-                    case 2:
+                    case "2":
                         navigate("/recursoshumanos/inicioRRHH");
                         break;
-                    case 3:
+                    case "3":
                         navigate("/empleado/inicioEmpleado");
                         break;
-                    case 4:
+                    case "4":
                         navigate("/aspirante/inicio");
                         break;
                     default:
@@ -75,6 +75,7 @@ const Login = () => {
                         console.error("Rol desconocido:", userRole);
                         navigate("/");
                         alert("Rol desconocido");
+                        
                 }
             } else {
                 alert(serverMessage?.message || "Error en el inicio de sesión");

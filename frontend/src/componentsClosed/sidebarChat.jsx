@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-// SidebarChat ahora espera `onUserSelect` como una prop
 const SidebarChat = ({ onUserSelect }) => {
   const [usuariosRRHH, setUsuariosRRHH] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleUserClick = (targetNum_doc) => {
-    // Cuando un usuario es clickeado, se invoca la función `onUserSelect` que es pasada desde el componente padre
-    onUserSelect(targetNum_doc); // Notifica al componente padre sobre el usuario seleccionado
+    onUserSelect(targetNum_doc); 
   };
 
   useEffect(() => {

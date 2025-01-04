@@ -24,6 +24,11 @@ switch ($method) {
                     $usuarioControlador->iniciar($data);
                     break;
 
+                case 'obtenerMensajes':
+                    $chatControlador = new ChatControlador();
+                    $chatControlador->obtenerMensajes($data);
+                    break;
+        
                 case 'enviarMensajes':
                     $chatControlador = new ChatControlador();
                     $chatControlador->enviarMensajes($data);
@@ -32,6 +37,7 @@ switch ($method) {
                     $chatControlador = new ChatControlador();
                     $chatControlador->iniciarChat($data);
                     break;
+
 
                 default:
                     http_response_code(400);
@@ -75,8 +81,8 @@ switch ($method) {
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerAusencias();
                     break;
-               
-               
+
+            
 
                 default:
                     http_response_code(400);
