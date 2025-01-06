@@ -73,6 +73,11 @@ switch ($method) {
                     $usuarioControlador->obtenerRRHH();
                     break;
 
+                case 'datosPerfil':
+                    $usuarioControlador = new UsuarioControlador();
+                    $usuarioControlador->datosPerfil();
+                    break;
+
                 case 'obtenerJornadas':
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerJornadas();
@@ -82,7 +87,7 @@ switch ($method) {
                     $empleadoControlador->obtenerAusencias();
                     break;
 
-            
+                
 
                 default:
                     http_response_code(400);
@@ -101,7 +106,7 @@ switch ($method) {
             switch($action){
                 case 'actualizarPerfil':
                     $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->actualizarPerfil();
+                    $usuarioControlador->actualizarPerfil($data);
                     break;
             }
         }

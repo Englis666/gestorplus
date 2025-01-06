@@ -92,8 +92,35 @@ class Usuario {
         }
     }
     
-    public function datosPerfil(){
-        $sql = "SELECT * FROM usuario "
+    public function datosPerfil($num_doc){
+        $sql = "SELECT * FROM usuario WHERE num_doc = :num_doc";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        if($resultado){
+            return $resultado;
+        }
+
+    return [];
+    }
+
+
+    public function actualizarPerfil($data,$num_doc){
+    
+        $sql = "UPDATE usuario SET nombres =:nombres,apellidos = :apellidos,tipodDoc = :tipodDoc, email = :email
+                WHERE num_doc = :num_doc";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':nombres', $data['nombres']);
+        $stmt->bindParam(':apellidos', $data['apellidos']);
+        $stmt->bindParam(':email', $data['email']);
+        $stmt->bindParam(':tipoDoc', $data['tipoDoc']);
+        $stmt->bindParam(':num_doc', $num_doc);
+        
+        return $stmt->execute();
+    
     }
    
 
