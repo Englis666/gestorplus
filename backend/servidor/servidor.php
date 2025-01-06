@@ -94,6 +94,17 @@ switch ($method) {
             echo json_encode(['message' => 'No se recibió la acción.']);
         }
         break;
+
+    case 'PUT':
+        if(isset($_GET['action'])){
+            $action = $_GET['action'];
+            switch($action){
+                case 'actualizarPerfil':
+                    $usuarioControlador = new UsuarioControlador();
+                    $usuarioControlador->actualizarPerfil();
+                    break;
+            }
+        }
     
     default:
         http_response_code(405);

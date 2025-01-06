@@ -47,14 +47,12 @@ const Login = () => {
             const serverMessage = response.data;
             
             if (serverMessage?.status === 'success') {
-                // Verificar si el token está presente
                 const token = serverMessage.token;
                 document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
     
                 login({ token });
     
                 const decodedToken = decodeToken(token);
-                console.log(decodeToken);
                 const userRole = decodedToken?.data?.rol; 
                 
                 switch (userRole) {

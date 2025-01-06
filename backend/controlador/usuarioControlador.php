@@ -95,6 +95,134 @@ class UsuarioControlador {
         }
     }
     
+    public function datosPerfil(){
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if(!$authHeader){
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401);
+            return;
+        }
+        $token = str_replace('Bearer ', '', $authHeader);
+        try{
+            $secretKey = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+            $num_doc = $decoded->data->num_doc;
+
+            if(!$num_doc){
+                echo json_encode(['error' => 'No se encontro el numero de documento']);
+                http_response_code(400);
+                return;
+            }
+            $this->usuario = new Usuario($this->db);
+            $resultado = $this->usuario->datosPerfil($num_doc);
+            if($resultado){
+                return $resultado[];
+            }
+        }
+    }
+
+    public function actualizarPerfil(){
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if(!$authHeader){
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401);
+            return;
+        }
+        $token = str_replace('Bearer ', '', $authHeader);
+
+        try{
+            $secretKey = SECRET_KEY;
+            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+            $num_doc = $decoded->data->num_doc;
+            if(!$num_doc){
+                echo json_encode(['error' => 'No se encontro el numero de documento']);
+                http_response_code(400);
+                return;
+            }
+            $this->usuario = new Usuario($this->db);
+            $resultado = $this->usuario->actualizarPerfil($num_doc);
+            if($resultado){
+                return $resultado[];
+            }
+        }
+
+    }
+
+    public function actualizacionHojaDevida(){
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if(!$authHeader){
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401);
+            return;
+        }
+        $token = str_replace('Bearer ', '', $authHeader);
+
+        try{
+            $secretKey = SECRET_KEY;
+            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+            $num_doc = $decoded->data->num_doc;
+            if(!$num_doc){
+                echo json_encode(['error' => 'No se encontro el numero de documento']);
+                http_response_code(400);
+                return;
+            }
+            $this->usuario = new Usuario($this->db);
+            $resultado = $this->usuario->actualizacionHojadevida($num_doc);
+            if($resultado){
+                return $resultado[];
+            }
+        }
+    }
+
+    public function subirEstudios(){
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if(!$authHeader){
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401);
+            return;
+        }        
+        $token = str_replace('Bearer ', '', $authHeader);
+        try{
+            $secretKey = SECRET_KEY;
+            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+            $num_doc = $decoded->data->num_doc;
+            if(!$num_doc){
+                echo json_encode(['error' => 'No se encontro el numero de documento']);
+                http_response_code(400);
+                return;
+            }
+            $this->usuario = new Usuario($this->db);
+            $resultado = $this->usuario->subirEstudios($num_doc);
+            if($resultado){
+                return $resultado[];
+            }
+        }
+    }
+    public function subirExp(){
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if(!$authHeader){
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401);
+            return;
+        }
+        $token = str_replace('Bearer ', '', $authHeader);
+        try{
+            $secretKey = SECRET_KEY;
+            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+            $num_doc = $decoded->data->num_doc;
+            if(!$num_doc){
+                echo json_encode(['error' => 'No se encontro el numero de documento']);
+                http_response_code(400);
+                return;
+            }
+            $this->usuario = new Usuario($this->db);
+            $resultado = $this->usuario->subirExp($num_doc);
+            if($resultado){
+                return $resultado[];
+            }
+        }
+    }
+
+    
     public function obtenerConvocatorias(){
         $this->usuario  = new Usuario($this->db);
         $resultado = $this->usuario->obtenerConvocatorias();

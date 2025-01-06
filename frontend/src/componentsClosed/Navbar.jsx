@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
 
-const NavbarClosed = ({ numDoc, activeLink }) => {
+const NavbarClosed = ({ activeLink }) => {
   const { user, logout } = useUser();
   const navigate = useNavigate();
 
@@ -93,7 +93,7 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           }`}
           style={{
             borderRadius: "0.5rem",
-            marginBottom: "0.5rem", // Menos espacio entre los enlaces
+            marginBottom: "0.5rem",
           }}
           onClick={() => navigate("/empleado/Ausencias")}
         >
@@ -126,7 +126,7 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           style={{
             transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
             borderRadius: "0.5rem",
-            marginBottom: "0.5rem", // Menos espacio entre los enlaces
+            marginBottom: "0.5rem",
           }}
         >
           <span
@@ -158,7 +158,7 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           style={{
             transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
             borderRadius: "0.5rem",
-            marginBottom: "0.5rem", // Menos espacio entre los enlaces
+            marginBottom: "0.5rem", 
           }}
           onClick={() => navigate("/empleado/Quejas")}
         >
@@ -188,10 +188,11 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           className={`d-flex align-items-center p-3 text-dark text-decoration-none ${
             activeLink === "perfil" ? "bg-light" : "hover-bg"
           }`}
+          onClick={() => navigate("/Perfil")}
           style={{
             transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
             borderRadius: "0.5rem",
-            marginBottom: "0.5rem", // Menos espacio entre los enlaces
+            marginBottom: "0.5rem", 
           }}
         >
           <span
@@ -213,6 +214,7 @@ const NavbarClosed = ({ numDoc, activeLink }) => {
           >
             Mi perfil
           </h3>
+        
         </div>
 
         {/* Enlace "Cerrar sesión" */}

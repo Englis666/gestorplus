@@ -8,6 +8,7 @@ import { UserProvider } from './context/userContext';
 //Importaciones de vistas
 import Login from './views/Login';
 import Registro from './views/Registro';
+import Perfil from './views/perfil';
 import Layout from './views/Layout';
 import Trabajo from './views/aspirante/Trabajo';
 //VISTAS EMPLEADO
@@ -31,6 +32,7 @@ function App() {
           <Route path='/' element={<Layout/>}/>
           <Route path='/Login' element={<Login/>}/>
           <Route path='/Registro' element={<Registro/>}/>
+          <Route path='/Perfil' element={<Perfil/>}/>
           <Route path='/aspirante/inicio' element={<InicioAspirante/>}/>
           <Route path='/aspirante/Trabajo' element={<Trabajo/>}/>
           <Route path='/empleado/InicioEmpleado' element={<InicioEmpleado/>}/>
