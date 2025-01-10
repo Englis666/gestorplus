@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {jwtDecode} from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 import ModalHojaDeVida from "../componentsClosed/ModalHojadevida";
 import Estudios from "../componentsClosed/ModalEstudios";
 import Experiencia from "../componentsClosed/ModalExperienciaLaboral";
@@ -11,19 +11,18 @@ const Perfil = () => {
     nombres: "",
     apellidos: "",
     email: "",
-    tipodDoc: "cedula de ciudadania",
-    password: "",
+    tipodDoc: "",
+    password: "", 
     hojaDeVida: {},
     estudios: {},
     experienciaLaboral: {},
+    originalData: {},  
   });
 
-  // Control de estados de los modales
   const [modalHojaDeVida, setModalHojaDeVida] = useState(false);
   const [modalEstudios, setModalEstudios] = useState(false);
   const [modalExperiencia, setModalExperiencia] = useState(false);
 
-  // Obtener cookie
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -53,55 +52,74 @@ const Perfil = () => {
       });
 
       if (response.status === 200) {
-        console.log("Datos recibidos del backend:", response.data);
-
         const mappedData = mapData(response.data);
-        console.log("Datos mapeados:", mappedData);
-
-        setFormData((prevFormData) => ({ ...prevFormData, ...mappedData }));
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          ...mappedData,
+          originalData: { ...mappedData } 
+        }));
       } else {
-        console.error("Error al obtener los datos del usuario");
+        alert("Error al obtener los datos del usuario");
       }
     } catch (error) {
-      console.error("Error al obtener los datos del usuario", error);
+      alert("Error al obtener los datos del usuario", error);
     }
   };
 
   const mapData = (data) => ({
-    num_doc: data.num_doc || "", 
+    num_doc: data.num_doc || "",
     nombres: data.nombres || "",
     apellidos: data.apellidos || "",
-    email: data.email || "", 
-    tipodDoc: data.tipodDoc|| "",
-    password: "", 
+    email: data.email || "",
+    tipodDoc: data.tipodDoc || "",
+    password: data.password || "", 
     hojaDeVida: data.hojaDeVida || {},
     estudios: data.estudios || {},
     experienciaLaboral: data.experienciaLaboral || {},
   });
 
-  // Ejecutar al montar el componente
   useEffect(() => {
     getUserData();
   }, []);
 
-  // Manejador de cambios en los campos
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value
+    }));
   };
 
-  // Función para manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = {
-      action: "actualizarPerfil",
-      num_doc: formData.num_doc,
-      nombres: formData.nombres,
-      apellidos: formData.apellidos,
-      email: formData.email,
-      tipodDoc: formData.tipodDoc,
-    };
+    const updatedData = {};
+
+    if (formData.email !== formData.originalData.email) {
+      updatedData.email = formData.email;
+    }
+
+    if (formData.tipodDoc !== formData.originalData.tipodDoc) {
+      updatedData.tipodDoc = formData.tipodDoc;
+    }
+
+    if (formData.password !== formData.originalData.password) {
+      updatedData.password = formData.password;
+    }
+
+    if (formData.nombres !== formData.originalData.nombres) {
+      updatedData.nombres = formData.nombres;
+    }
+
+    if (formData.apellidos !== formData.originalData.apellidos) {
+      updatedData.apellidos = formData.apellidos;
+    }
+
+    if (!updatedData.email) updatedData.email = formData.email;
+    if (!updatedData.tipodDoc) updatedData.tipodDoc = formData.tipodDoc;
+    if (!updatedData.password) updatedData.password = formData.password;
+    if (!updatedData.nombres) updatedData.nombres = formData.nombres;
+    if (!updatedData.apellidos) updatedData.apellidos = formData.apellidos;
 
     const token = getCookie("auth_token");
 
@@ -113,18 +131,22 @@ const Perfil = () => {
           return;
         }
 
-        const response = await axios.put("http://localhost/gestorplus/backend/", data, {
+        const response = await axios.patch("http://localhost/gestorplus/backend/", updatedData, {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "actualizarPerfil" },
         });
 
         if (response.status === 200) {
           alert("Perfil actualizado correctamente.");
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            originalData: { ...prevFormData }  
+          }));
         } else {
           alert("Hubo un error al actualizar el perfil.");
         }
       } catch (error) {
-        console.error("Error al enviar los datos", error);
+        console.error("Error al enviar los datos", error.response ? error.response.data : error.message);
         alert("Ocurrió un error al actualizar los datos.");
       }
     } else {
@@ -132,7 +154,6 @@ const Perfil = () => {
     }
   };
 
-  // Funciones para controlar los modales
   const toggleModalHojaDeVida = () => setModalHojaDeVida(!modalHojaDeVida);
   const toggleModalEstudios = () => setModalEstudios(!modalEstudios);
   const toggleModalExperiencia = () => setModalExperiencia(!modalExperiencia);
@@ -143,7 +164,6 @@ const Perfil = () => {
         <div className="col-md-12 col-12 p-4 bg-white shadow rounded">
           <h2 className="text-primary">Configuración de perfil</h2>
           <p>Bienvenido, aquí podrás actualizar tu hoja de vida y tus datos.</p>
-
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="num_doc" className="form-label">Número de documento</label>
@@ -175,7 +195,7 @@ const Perfil = () => {
                 name="apellidos"
                 id="apellidos"
                 value={formData.apellidos}
-                onChange={handleChange}
+                readOnly
               />
             </div>
             <div className="mb-3">

@@ -38,7 +38,6 @@ const TablaEmpleado = () => {
           params: { action: 'obtenerNotificaciones' }
         })
         .then(response => {
-          console.log('Respuesta completa:', response.data);
 
           const notificaciones = response.data?.Notificaciones;
 

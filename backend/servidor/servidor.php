@@ -7,6 +7,7 @@ header("Content-Type: application/json");
 
 require_once 'controlador/chatControlador.php';
 require_once 'controlador/usuarioControlador.php';
+require_once 'controlador/aspiranteControlador.php';
 require_once 'controlador/empleadoControlador.php';
 
 switch ($method) {
@@ -23,6 +24,19 @@ switch ($method) {
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->iniciar($data);
                     break;
+                case 'agregarEstudio':
+                    $usuarioControlador = new UsuarioControlador();
+                    $usuarioControlador->agregarEstudio($data);
+                    break;
+                case 'agregarExp':
+                    $usuarioControlador = new UsuarioControlador();
+                    $usuarioControlador->agregarExp($data);
+                    break;
+
+                case 'postularse':
+                    $aspiranteControlador = new AspiranteControlador();
+                    $aspiranteControlador->postularse($data);
+                    break;
 
                 case 'obtenerMensajes':
                     $chatControlador = new ChatControlador();
@@ -37,7 +51,7 @@ switch ($method) {
                     $chatControlador = new ChatControlador();
                     $chatControlador->iniciarChat($data);
                     break;
-
+               
 
                 default:
                     http_response_code(400);
@@ -86,9 +100,16 @@ switch ($method) {
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerAusencias();
                     break;
-
+                case 'obtenerNotificaciones':
+                    $aspiranteControlador = new AspiranteControlador();
+                    $aspiranteControlador->obtenerNotificaciones();
+                    break;
                 
-
+                case 'obtenerDetalleConvocatoria':
+                    $aspiranteControlador = new AspiranteControlador();
+                    $aspiranteControlador->obtenerDetalleConvocatoria();
+                    break;
+                    
                 default:
                     http_response_code(400);
                     echo json_encode(['message' => 'Acción no encontrada.']);
@@ -100,7 +121,8 @@ switch ($method) {
         }
         break;
 
-    case 'PUT':
+    case 'PATCH':
+        $data = json_decode(file_get_contents('php://input'), true);
         if(isset($_GET['action'])){
             $action = $_GET['action'];
             switch($action){
@@ -108,8 +130,21 @@ switch ($method) {
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->actualizarPerfil($data);
                     break;
+
+                case 'actualizacionHojaDevida':
+                    $usuarioControlador = new UsuarioControlador();
+                    $usuarioControlador->actualizacionHojaDevida($data);
+                    break;
+            default:
+                http_response_code(400);
+                echo json_encode(['message' => 'Acción no encontrada.']);
+                break;
             }
+        } else{
+            http_response_code(400);
+            echo json_encode(['message' => 'No se recibio la accion']);
         }
+        break;
     
     default:
         http_response_code(405);

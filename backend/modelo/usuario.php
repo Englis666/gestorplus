@@ -1,4 +1,9 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 require_once 'config/config.php';
 class Usuario {
 
@@ -107,22 +112,93 @@ class Usuario {
     }
 
 
-    public function actualizarPerfil($data,$num_doc){
+    // public function actualizarPerfil($data,$num_doc){
     
-        $sql = "UPDATE usuario SET nombres =:nombres,apellidos = :apellidos,tipodDoc = :tipodDoc, email = :email
-                WHERE num_doc = :num_doc";
+    //     $sql = "UPDATE usuario SET num_doc = :num_doc, nombres =:nombres , apellidos = :apellidos, email = :email , tipodDoc = :tipodDoc,
+    //             password = :password, 
+    //             WHERE num_doc = :num_doc";
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':nombres', $data['nombres']);
-        $stmt->bindParam(':apellidos', $data['apellidos']);
-        $stmt->bindParam(':email', $data['email']);
-        $stmt->bindParam(':tipoDoc', $data['tipoDoc']);
-        $stmt->bindParam(':num_doc', $num_doc);
+    //     $stmt = $this->db->prepare($sql);
+    //     $stmt->bindParam(':num_doc', $data['num_doc']);
+    //     $stmt->bindParam(':nombres', $data['nombres']);
+    //     $stmt->bindParam(':apellidos', $data['apellidos']);
+    //     $stmt->bindParam(':email', $data['email']);
+    //     $stmt->bindParam(':tipoDoc', $data['tipoDoc']);
+    //     $stmt->bindParam(':password', $data['password']);
         
-        return $stmt->execute();
+    //     return $stmt->execute();
     
-    }
+    // }
    
+    public function actualizacionHojadeVida($data, $hojadevida_idHojadevida) {
+        $query = "UPDATE hojadevida SET 
+                    fechaNacimiento = ?,
+                    direccion = ?,
+                    ciudad = ?,
+                    ciudadNacimiento = ?,
+                    telefono = ?,
+                    telefonoFijo = ?,
+                    estadohojadevida = ?
+                  WHERE idHojadevida = ?";  
+    
+        $stmt = $this->db->prepare($query);
+    
+        $stmt->execute([
+            $data['fechaNacimiento'],
+            $data['direccion'],
+            $data['ciudad'],
+            $data['ciudadNacimiento'],
+            $data['telefono'],
+            $data['telefonoFijo'],
+            $data['estadohojadevida'],
+            $hojadevida_idHojadevida
+        ]);
+    
+        return json_encode(['message' => 'Hoja de vida actualizada']);
+    }
+
+    public function agregarEstudio($data, $hojadevida_idHojadevida) {
+        $sql = "INSERT INTO estudio 
+                (nivelEstudio, areaEstudio, estadoEstudio, fechaInicioEstudio, 
+                fechaFinEstudio, tituloEstudio, institucionEstudio, ubicacionEstudio, hojadevida_idHojadevida) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmtUsuario = $this->db->prepare($sql);    
+        $stmtUsuario->execute([
+                    $data['nivelEstudio'],
+                    $data['areaEstudio'],
+                    $data['estadoEstudio'],
+                    $data['fechaInicioEstudio'],
+                    $data['fechaFinEstudio'],
+                    $data['tituloEstudio'],
+                    $data['institucionEstudio'],
+                    $data['ubicacionEstudio'],
+                    $hojadevida_idHojadevida
+        ]);    
+    
+        return json_encode(['message' => 'Experiencia agregada']);
+    }
+
+    public function agregarExp($data, $hojadevida_idHojadevida) {
+        $sql = "INSERT INTO experienciaLaboral 
+                (profesion, descripcionPerfil, fechaInicioExp, fechaFinExp, hojadevida_idHojadevida) 
+                VALUES (?, ?, ?, ?, ?)";
+        
+        $stmtUsuario = $this->db->prepare($sql);    
+        
+        $stmtUsuario->execute([
+            $data['profesion'],
+            $data['descripcionPerfil'],
+            $data['fechaInicioExp'],
+            $data['fechaFinExp'],
+            $hojadevida_idHojadevida
+        ]);    
+    
+        return json_encode(['message' => 'Experiencia agregada']);
+    }
+    
+    
+    
 
     public function obtenerConvocatorias(){
         $sql = "SELECT * FROM convocatoria as c

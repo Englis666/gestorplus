@@ -10,7 +10,9 @@ import Login from './views/Login';
 import Registro from './views/Registro';
 import Perfil from './views/perfil';
 import Layout from './views/Layout';
+//Aspirante
 import Trabajo from './views/aspirante/Trabajo';
+import DetallesDeTrabajo from './views/aspirante/DetallesTrabajo';
 //VISTAS EMPLEADO
 import InicioEmpleado from './views/empleado/InicioEmpleado';
 import Jornadas from './views/empleado/Jornadas';
@@ -35,6 +37,7 @@ function App() {
           <Route path='/Perfil' element={<Perfil/>}/>
           <Route path='/aspirante/inicio' element={<InicioAspirante/>}/>
           <Route path='/aspirante/Trabajo' element={<Trabajo/>}/>
+          <Route path='/aspirante/DetallesDeTrabajo' element={<DetallesDeTrabajo/>}/>
           <Route path='/empleado/InicioEmpleado' element={<InicioEmpleado/>}/>
           <Route path='/empleado/Jornadas' element={<Jornadas/>}/>
           <Route path='/empleado/Ausencias' element={<Ausencias/>}/>

@@ -37,7 +37,6 @@ const Estadisticas = () => {
           params: { action: 'obtenerTotalEstadisticas' }, 
         })
         .then(response => {
-          console.log(response.data);
           const { totalEntradas, totalAusencias } = response.data;  
           setTotalEntradas(totalEntradas);
           setTotalAusencias(totalAusencias);
