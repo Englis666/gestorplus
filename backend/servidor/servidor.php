@@ -6,6 +6,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 header("Content-Type: application/json");
 
 require_once 'controlador/chatControlador.php';
+require_once 'controlador/administradorControlador.php';
 require_once 'controlador/usuarioControlador.php';
 require_once 'controlador/aspiranteControlador.php';
 require_once 'controlador/empleadoControlador.php';
@@ -33,9 +34,9 @@ switch ($method) {
                     $usuarioControlador->agregarExp($data);
                     break;
 
-                case 'postularse':
+                case 'aplicacionDeAspirante':
                     $aspiranteControlador = new AspiranteControlador();
-                    $aspiranteControlador->postularse($data);
+                    $aspiranteControlador->aplicacionDeAspirante();
                     break;
 
                 case 'obtenerMensajes':
@@ -109,7 +110,25 @@ switch ($method) {
                     $aspiranteControlador = new AspiranteControlador();
                     $aspiranteControlador->obtenerDetalleConvocatoria();
                     break;
-                    
+
+                case 'obtenerTodasLasNotificaciones':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerTodasLasNotificaciones();
+                    break;
+                case 'obtenerTodasLasJornadas':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerTodasLasJornadas();
+                    break;
+                case 'obtenerTodasLasAusencias':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerTodasLasAusencias();
+                    break;
+
+                case 'obtenerUsuarios':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerUsuarios();
+                    break;
+
                 default:
                     http_response_code(400);
                     echo json_encode(['message' => 'Acción no encontrada.']);

@@ -9,7 +9,7 @@ const InicioRRHH = () => {
         <NavbarClosed />
       {/* Contenido principal */}
       <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
-        <TablaEmpleado />
+        <TablaEmpleado action="obtenerTodasLasNotificaciones" />
       </div>
     </div>
   );

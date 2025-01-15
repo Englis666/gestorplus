@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Estadisticas from "./Estadisticas";
 import Grafica from "./Grafica";
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
-const TablaEmpleado = () => {
+const TablaEmpleado = ({ action }) => {
   const [notificaciones, setNotificaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-
     const getCookie = (name) => {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
@@ -30,41 +29,42 @@ const TablaEmpleado = () => {
           setLoading(false);
           return;
         }
-  
-        axios.get('http://localhost/gestorplus/backend/', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          params: { action: 'obtenerNotificaciones' }
-        })
-        .then(response => {
 
-          const notificaciones = response.data?.Notificaciones;
+        axios
+          .get("http://localhost/gestorplus/backend/", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: { action },
+          })
+          .then((response) => {
+            const notificaciones = response.data?.Notificaciones;
+            console.log(response.data);
 
-          if (Array.isArray(notificaciones)) {
-            setNotificaciones(notificaciones);
-          } else {
-            console.error('Las notificaciones no son un array');
-            setNotificaciones([]);
-          }
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error('Error al obtener las notificaciones:', err);
-          setError('Hubo un problema al cargar las notificaciones.');
-          setLoading(false);
-        });
+            if (Array.isArray(notificaciones)) {
+              setNotificaciones(notificaciones);
+            } else {
+              console.error("Las notificaciones no son un array");
+              setNotificaciones([]);
+            }
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.error("Error al obtener las notificaciones:", err);
+            setError("Hubo un problema al cargar las notificaciones.");
+            setLoading(false);
+          });
       } catch (error) {
-        console.error('Error al decodificar el token:', error);
-        setError('Token inválido o malformado.');
+        console.error("Error al decodificar el token:", error);
+        setError("Token inválido o malformado.");
         setLoading(false);
       }
     } else {
-      console.error('No se encontró el token en las cookies o localStorage.');
-      setError('Token no encontrado.');
+      console.error("No se encontró el token en las cookies o localStorage.");
+      setError("Token no encontrado.");
       setLoading(false);
     }
-  }, []);
+  }, [action]);
 
   if (loading) {
     return <div>Cargando notificaciones...</div>;
@@ -74,13 +74,14 @@ const TablaEmpleado = () => {
     return <div>{error}</div>;
   }
 
-  const jornadaNotificaciones = notificaciones.filter(n => n.tipo === 'Jornada');
-  const actualizacionNotificaciones = notificaciones.filter(n => n.tipo === 'Actualizacion');
-  const generalNotificaciones = notificaciones.filter(n => n.tipo === 'General');
+  const jornadaNotificaciones = notificaciones.filter((n) => n.tipo === "Jornada");
+  const actualizacionNotificaciones = notificaciones.filter((n) => n.tipo === "Actualizacion");
+  const generalNotificaciones = notificaciones.filter((n) => n.tipo === "General");
 
   const handleVerClick = (notificacion) => {
-    console.log('Ver detalles de notificación', notificacion);
+    console.log("Ver detalles de notificación", notificacion);
   };
+
 
   return (
     <div className="container mt-5">

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { jwtDecode }  from "jwt-decode";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode"; 
 
 const TablaAusencias = () => {
   const [Ausencias, setAusencias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rol, setRol] = useState(null);
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -28,18 +29,40 @@ const TablaAusencias = () => {
           return;
         }
 
-        axios.get("http://localhost/gestorplus/backend/", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          params: { action: "obtenerAusencias" },
+        const Rol = decodedToken?.data?.rol;
+        setRol(Rol);
+
+        const action = (() => {
+          switch (Rol) {
+            case "1":
+              return "obtenerTodasLasAusencias";
+            case "2":
+              return "obtenerTodasLasAusencias";
+            case "3":
+              return "obtenerAusencias";
+            default:
+              console.error("Rol no válido");
+              setError("Rol no reconocido.");
+              setLoading(false);
+              return null;
+          }
+        })();
+
+        if (!action) return;
+
+        axios
+          .get("http://localhost/gestorplus/backend/", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: { action },
           })
           .then((response) => {
-            const Ausencias = response.data.Ausencias;
+            const Ausencias = response.data?.Ausencias;
             if (Array.isArray(Ausencias)) {
               setAusencias(Ausencias);
             } else {
-              console.error("Las Ausencias no son un array");
+              console.error("Las Ausencias no son un array.");
               setAusencias([]);
             }
             setLoading(false);
@@ -51,17 +74,65 @@ const TablaAusencias = () => {
           });
       } catch (error) {
         console.error("Error al decodificar el token:", error);
-        setError("Hubo un problema con el token.");
+        setError("Token inválido o malformado.");
         setLoading(false);
       }
+    } else {
+      console.error("No se encontró el token en las cookies.");
+      setError("Token no encontrado.");
+      setLoading(false);
     }
-  }, []); 
+  }, []);
+
+  const handleAceptar = (idausencia) => {
+    axios
+      .post("http://localhost/gestorplus/backend/", {
+        action: "notificacionAceptada",
+        data: {idausencia},
+      })
+      .then(() => {
+        alert("Notificación aceptada con éxito.");
+      })
+      .catch((err) => {
+        console.error("Error al aceptar la notificación:", err);
+        alert("Hubo un problema al aceptar la notificación.");
+      });
+  };
+
+  const handleRechazar = (idausencia) => {
+    axios
+      .post("http://localhost/gestorplus/backend/", {
+        action: "notificacionRechazada",
+        data: {idausencia},
+      })
+      .then(() => {
+        alert("Notificación rechazada con éxito.");
+      })
+      .catch((err) => {
+        console.error("Error al rechazar la notificación:", err);
+        alert("Hubo un problema al rechazar la notificación.");
+      });
+  };
+
+  const handleSolicitarJustificacion = (idausencia) => {
+    axios
+      .post("http://localhost/gestorplus/backend/", {
+        action: "solicitarJustificacion",
+        data: {idausencia},
+      })
+      .then(() => {
+        alert("Se ha solicitado una justificación. Espere la respuesta.");
+      })
+      .catch((err) => {
+        console.error("Error al solicitar la justificación:", err);
+        alert("Hubo un problema al solicitar la justificación.");
+      });
+  };
 
   if (loading) {
     return <div>Cargando Ausencias...</div>;
   }
 
-  // Si hay un error
   if (error) {
     return <div>{error}</div>;
   }
@@ -76,7 +147,7 @@ const TablaAusencias = () => {
             style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}
           >
             <div className="card-body">
-              <p>Control de Entradas de Trabajo</p>
+              <p>Control de Ausencias</p>
               <div className="table-responsive">
                 <table
                   className="table table-hover"
@@ -85,47 +156,46 @@ const TablaAusencias = () => {
                   <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                     <tr>
                       <th>Fecha de inicio</th>
-                      <th>Fecha de Fin</th>
+                      <th>Fecha de fin</th>
                       <th>Tipo de Ausencia</th>
-                      <th>Descripcion</th>
-                      <th>Justificacion</th>
-                      <th>Accion</th>
+                      <th>Descripción</th>
+                      <th>Justificación</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
                   <tbody className="text-center">
                     {Ausencias.length > 0 ? (
                       Ausencias.map((ausencia) => (
                         <tr key={ausencia.idausencia}>
-                          <td className="py-3 px-4">
-                            <span className="text-dark">{ausencia.fechaInicio}</span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span className="text-dark">{ausencia.fechaFin}</span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span className="text-dark">{ausencia.tipoAusencia}</span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span className="text-dark">{ausencia.descripcion}</span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span className="text-dark">{ausencia.justificada}</span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span className="text-dark">{ausencia.fechaRegistro}</span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <button
-                              className="btn btn-primary btn-sm"
-                              style={{
-                                borderRadius: "20px",
-                                transition: "all 0.3s ease",
-                              }}
-                              onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
-                              onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
-                            >
-                              Ver
-                            </button>
+                          <td>{ausencia.fechaInicio}</td>
+                          <td>{ausencia.fechaFin}</td>
+                          <td>{ausencia.tipoAusencia}</td>
+                          <td>{ausencia.descripcion}</td>
+                          <td>{ausencia.justificada ? "Sí" : "No"}</td>
+                          <td>
+                            {rol === "1" || rol === "2" ? (
+                              <>
+                                <button
+                                  className="btn btn-success btn-sm me-2"
+                                  onClick={() => handleAceptar(ausencia.idausencia)}
+                                >
+                                  Aceptar
+                                </button>
+                                <button
+                                  className="btn btn-danger btn-sm"
+                                  onClick={() => handleRechazar(ausencia.idausencia)}
+                                >
+                                  Rechazar
+                                </button>
+                              </>
+                            ) : rol === "3" ? (
+                              <button
+                                className="btn btn-warning btn-sm"
+                                onClick={() => handleSolicitarJustificacion(ausencia.idausencia)}
+                              >
+                                Solicitar Justificación
+                              </button>
+                            ) : null}
                           </td>
                         </tr>
                       ))

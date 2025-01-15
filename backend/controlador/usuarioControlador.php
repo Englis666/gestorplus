@@ -383,7 +383,7 @@ class UsuarioControlador {
         if($resultado){
             echo json_encode(['RRHH' => $resultado]);
         }else{
-            echo json_encode(['RRH' => []]);
+            echo json_encode(['RRHH' => []]);
         }
     }
 

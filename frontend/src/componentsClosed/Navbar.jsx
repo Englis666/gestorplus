@@ -95,11 +95,10 @@ const NavbarClosed = ({ activeLink }) => {
   };
 
   const menuItems = [
-    { label: "Inicio", icon: "home", path: "/empleado/inicioEmpleado" },
-    { label: "Jornadas", icon: "event", path: "/empleado/Jornadas" },
-    { label: "Ausencias", icon: "hourglass_empty", path: "/empleado/Ausencias" },
-    { label: "Paz y salvos", icon: "check_circle", path: "/empleado/Paz" },
-    { label: "Quejas", icon: "report_problem", path: "/empleado/Quejas" },
+    { label: "Jornadas", icon: "event", path: "/Jornadas" },
+    { label: "Ausencias", icon: "hourglass_empty", path: "/Ausencias" },
+    { label: "Paz y salvos", icon: "check_circle", path: "/Paz" },
+    { label: "Quejas", icon: "report_problem", path: "/Quejas" },
     { label: "Mi perfil", icon: "person", path: "/Perfil" },
   ];
 
@@ -145,7 +144,7 @@ const NavbarClosed = ({ activeLink }) => {
           onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
         >
           <span className="material-icons" style={styles.icon}>
-            exit_to_app {/* Icono mejorado */}
+            exit_to_app 
           </span>
           <span style={styles.text}>Cerrar sesión</span>
         </div>

@@ -15,9 +15,9 @@ import Trabajo from './views/aspirante/Trabajo';
 import DetallesDeTrabajo from './views/aspirante/DetallesTrabajo';
 //VISTAS EMPLEADO
 import InicioEmpleado from './views/empleado/InicioEmpleado';
-import Jornadas from './views/empleado/Jornadas';
-import Ausencias from './views/empleado/Ausencias';
-import Quejas from './views/empleado/Quejas';
+import Jornadas from './views/Jornadas';
+import Ausencias from './views/Ausencias';
+import Quejas from './views/Quejas';
 //VISTAS ADMIN
 import InicioAdmin from './views/administrador/InicioAdmin';
 //VISTAS RRH
@@ -39,9 +39,9 @@ function App() {
           <Route path='/aspirante/Trabajo' element={<Trabajo/>}/>
           <Route path='/aspirante/DetallesDeTrabajo' element={<DetallesDeTrabajo/>}/>
           <Route path='/empleado/InicioEmpleado' element={<InicioEmpleado/>}/>
-          <Route path='/empleado/Jornadas' element={<Jornadas/>}/>
-          <Route path='/empleado/Ausencias' element={<Ausencias/>}/>
-          <Route path='/empleado/Quejas' element={<Quejas/>}/>
+          <Route path='/Jornadas' element={<Jornadas/>}/>
+          <Route path='/Ausencias' element={<Ausencias/>}/>
+          <Route path='/Quejas' element={<Quejas/>}/>
           <Route path='/administrador/InicioAdmin' element={<InicioAdmin/>}/>
           <Route path='/recursoshumanos/InicioRRHH' element={<InicioRRHH/>}/>
 

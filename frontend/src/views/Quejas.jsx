@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import Chat from '../../componentsClosed/Chat';
-import SidebarChat from '../../componentsClosed/sidebarChat';
+import Chat from '../componentsClosed/Chat';
+import SidebarChat from '../componentsClosed/sidebarChat';
 
 const Quejas = () => {
   const [message, setMessage] = useState('');

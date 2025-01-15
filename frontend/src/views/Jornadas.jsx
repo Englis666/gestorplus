@@ -1,6 +1,6 @@
 import React from "react";
-import NavbarClosed from "../../componentsClosed/Navbar";
-import TablaJornadas from "../../componentsClosed/TablaJornadas";
+import NavbarClosed from "../componentsClosed/Navbar";
+import TablaJornadas from "../componentsClosed/TablaJornadas";
 
 const Jornadas = () => {
   return (

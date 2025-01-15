@@ -37,6 +37,7 @@ class Aspirante {
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$num_doc, $idconvocatoria]);
     
+            //Si la insercion es correcta se notifica al aspirante y a RRHH
             if ($stmt->rowCount() > 0) {
 
                 //CLASE DE NOTIFICACION  
@@ -62,8 +63,6 @@ class Aspirante {
     }
     
     
-    
-    
 }
 
 class Notificaciones {
@@ -73,7 +72,7 @@ class Notificaciones {
         $this->db = $db;
     }
 
-    public function crearNotificacion($descripcion, $estado, $tipo, $num_doc) {
+    public function crearNotificacion($descripcionNotificacion, $estado, $tipo, $num_doc) {
         try {
             $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
                     VALUES (?, ?, ?, ?)";
@@ -85,9 +84,9 @@ class Notificaciones {
         }
     }
 
-    public function crearNotificacionRRHH($descripcion, $estado, $tipo, $num_doc) {
+    public function crearNotificacionRRHH($descripcionParaRRHH, $estado, $tipo, $num_doc) {
         try {
-            $sql = "INSERT INTO notificacion (descripcionParaRRHH, estadoNotificacion, tipo, num_doc) 
+            $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
                     VALUES (?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$descripcion, $estado, $tipo, $num_doc]);

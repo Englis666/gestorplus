@@ -1,6 +1,6 @@
 import React from "react";
-import NavbarClosed from "../../componentsClosed/Navbar";
-import TablaAusencias from "../../componentsClosed/TablaAusencias";
+import NavbarClosed from "../componentsClosed/Navbar";
+import TablaAusencias from "../componentsClosed/TablaAusencias";
 
 const Ausencias = () => {
   return (

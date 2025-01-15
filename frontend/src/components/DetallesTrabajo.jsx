@@ -5,6 +5,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
     const [detalleConvocatoria, setDetalleConvocatoria] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     useEffect(() => {
         axios
@@ -30,7 +31,36 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                 setLoading(false);
             });
     }, [idconvocatoria]);
-    
+
+    const handleApply = () => {
+
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(";").shift();
+            return null;
+          };
+          
+          const token = getCookie("auth_token");
+
+        axios
+            .post("http://localhost/gestorplus/backend/", {
+                action: "aplicacionDeAspirante",
+                idconvocatoria: idconvocatoria,
+                headers: { Authorization: `Bearer ${token}` }  
+            })
+            .then((response) => {
+                if (response.data.success) {
+                    setSuccessMessage("Aplicación enviada con éxito.");
+                } else {
+                    setError("No se pudo completar la aplicación.");
+                }
+            })
+            .catch((err) => {
+                console.error("Error al enviar la aplicación: ", err);
+                setError("Error al enviar la aplicación.");
+            });
+    };
 
     if (loading) {
         return <div>Cargando detalles...</div>;
@@ -67,8 +97,23 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                                         <p>{detalleConvocatoria?.descripcion}</p>
                                     </div>
 
+                                    {successMessage && (
+                                        <div className="alert alert-success">
+                                            {successMessage}
+                                        </div>
+                                    )}
+                                    {error && (
+                                        <div className="alert alert-danger">
+                                            {error}
+                                        </div>
+                                    )}
+
                                     <div className="d-flex justify-content-center">
-                                        <button type="submit" className="btn btn-primary px-5 py-2">
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary px-5 py-2"
+                                            onClick={handleApply}
+                                        >
                                             Aplicar ahora
                                         </button>
                                     </div>

@@ -101,8 +101,8 @@ class AspiranteControlador {
                 return;
             }
 
-            if(isset($_GET['idconvocatoria'])){
-                $idconvocatoria = $_GET['idconvocatoria'];
+            if(isset($_POST['idconvocatoria'])){
+                $idconvocatoria = $_POST['idconvocatoria'];
             } else{
                 echo json_encode(['error' => 'No se recibió el id de la convocatoria']);
                 http_response_code(400);
@@ -126,5 +126,9 @@ class AspiranteControlador {
         }
     }
 
+
+
 }
+
+
 ?>
