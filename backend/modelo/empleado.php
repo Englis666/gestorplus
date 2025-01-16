@@ -48,7 +48,7 @@ class Empleado {
 
 
     public function obtenerAusencias($num_doc){
-    try{
+     try{
         $sql = "SELECT * FROM ausencia WHERE usuario_num_doc = :num_doc";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':num_doc' , $num_doc , PDO::PARAM_STR);
@@ -57,11 +57,35 @@ class Empleado {
         if($resultado){
             return $resultado;
         }
-    }catch (PDOException $e) {
+     }catch (PDOException $e) {
         echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
         http_response_code(500);
         return [];
         }
+    }
+
+    public function solicitarQueja($num_doc,$data){
+        try{
+            $descripcionNotificacion = 'El usuario identificado con el número de documento '.$num_doc.' ha realizado una queja relacionada con la jornada ' . $data['fecha'];
+
+            $sql = "INSERT INTO notificacion (descripcionNotificacion,estadoNotificacion,tipo,num_doc) VALUES (:descripcionNotificacion,:estadoNotificacion,:tipo,:num_doc)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':descripcionNotificacion', $descripcionNotificacion, PDO::PARAM_STR);
+            $stmt->bindParam(':estadoNotificacion', 'Pendiente', PDO::PARAM_STR);
+            $stmt->bindParam(':tipo', 'Queja', PDO::PARAM_STR);
+            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_STR);
+            $stmt->execute();
+            $id = $this->db->lastInsertId();
+            if($id){
+                return $id;
+            }
+            return 0;
+        }catch (PDOException $e) {
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return 0;
+        }
+
     }
 
 }

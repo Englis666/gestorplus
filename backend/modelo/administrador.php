@@ -77,6 +77,29 @@ class Administrador {
         return [];
     }
 
+
+    public function corroborrarJornada($data){
+        $sql = "UPDATE jornada SET corroborado = 1 WHERE idjornada = :idjornada";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':idjornada', $data['idjornada'], PDO::PARAM_INT);
+        $stmt->execute();
+        if($stmt->rowCount() > 0){
+            return true;
+        }
+        return false;
+    }
+    public function noCorroborrarJornada($data){
+        $sql = "UPDATE jornada SET corroborado = 0 WHERE idjornada = :idjornada";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':idjornada', $data['idjornada'], PDO::PARAM_INT);
+        $stmt->execute();
+        if($stmt->rowCount() > 0){
+            return true;
+        }
+        return false;
+    }
+
+
 }
 
 

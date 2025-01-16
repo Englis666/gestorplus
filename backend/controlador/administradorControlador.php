@@ -142,6 +142,26 @@ class AdministradorControlador {
         }
     }
 
+    public function corroborrarJornada($data){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->corroborrarJornada($data);
+        if($resultados){
+            echo json_encode(['Jornada' => $resultados]);
+        } else{
+            echo json_encode(['Jornada' =>[]]);
+        }
+    }
+
+    public function noCorroborrarJornada($data){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->noCorroborrarJornada($data);
+        if($resultados){
+            echo json_encode(['Jornada' => $resultados]);
+        } else{
+            echo json_encode(['Jornada' =>[]]);
+        }
+    }
+
 }
 
 

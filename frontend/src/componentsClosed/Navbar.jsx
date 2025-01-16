@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
 
@@ -6,6 +7,40 @@ const NavbarClosed = ({ activeLink }) => {
   const { logout } = useUser();
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [rol, setRol] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+    };
+
+    const token = getCookie("auth_token");
+    if (!token) {
+      console.error("No se encontró el token en las cookies");
+      setError("No se encontró el token en las cookies.");
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode(token);
+      const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
+      if (isTokenExpired) {
+        console.error("El token ha expirado");
+        setError("El token ha expirado.");
+        return;
+      }
+
+      const userRole = decodedToken?.data?.rol;
+      setRol(userRole);
+    } catch (err) {
+      console.error("Error al decodificar el token:", err);
+      setError("Error al decodificar el token.");
+    }
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -35,7 +70,7 @@ const NavbarClosed = ({ activeLink }) => {
     title: {
       fontSize: "1.8rem",
       fontWeight: "600",
-      color: "#3498db", 
+      color: "#3498db",
       padding: "1rem",
       borderRadius: "10px",
       margin: "1rem",
@@ -53,7 +88,7 @@ const NavbarClosed = ({ activeLink }) => {
       display: "flex",
       flexDirection: "column",
       marginTop: "1rem",
-      flexGrow: 1, 
+      flexGrow: 1,
     },
     menuItem: {
       display: "flex",
@@ -61,9 +96,6 @@ const NavbarClosed = ({ activeLink }) => {
       padding: "1rem",
       transition: "background 0.3s ease, color 0.3s ease",
       cursor: "pointer",
-    },
-    menuItemHover: {
-      background: "#f0f8ff",
     },
     menuItemActive: {
       background: "#eaf6ff",
@@ -77,20 +109,17 @@ const NavbarClosed = ({ activeLink }) => {
     text: {
       fontSize: "1.2rem",
       fontWeight: "500",
-      color: "#black",
+      color: "#000",
       display: isCollapsed ? "none" : "block",
     },
     logout: {
       display: "flex",
       alignItems: "center",
-      justifyContent: "flex-start", 
+      justifyContent: "flex-start",
       padding: "1rem",
       cursor: "pointer",
       color: "#e74c3c",
       transition: "background 0.3s ease",
-    },
-    logoutHover: {
-      background: "#ffecec",
     },
   };
 
@@ -102,20 +131,20 @@ const NavbarClosed = ({ activeLink }) => {
     { label: "Mi perfil", icon: "person", path: "/Perfil" },
   ];
 
+  if (rol === "1" || rol === "2") {
+    menuItems.push({ label: "Empleados", icon: "people", path: "/Empleados" });
+  }
+  
   return (
     <aside style={styles.navbarContainer}>
       <button style={styles.toggleButton} onClick={toggleCollapse}>
-          <span className="material-icons">
-            {isCollapsed ? "menu_open" : "menu"}
-          </span>
-        </button>
-      {/* Header */}
+        <span className="material-icons">
+          {isCollapsed ? "menu_open" : "menu"}
+        </span>
+      </button>
       <div style={styles.header}>
-        <h1 style={styles.title}>{isCollapsed ? "G+" : "Gestorplus"}</h1> 
-        
+        <h1 style={styles.title}>{isCollapsed ? "G+" : "Gestorplus"}</h1>
       </div>
-
-      {/* Navigation */}
       <nav style={styles.menu}>
         {menuItems.map((item) => (
           <div
@@ -126,25 +155,15 @@ const NavbarClosed = ({ activeLink }) => {
             }}
             onClick={() => navigate(item.path)}
           >
-            <span
-              className="material-icons"
-              style={styles.icon}
-            >
+            <span className="material-icons" style={styles.icon}>
               {item.icon}
             </span>
             <span style={styles.text}>{item.label}</span>
           </div>
         ))}
-
-        {/* Logout */}
-        <div
-          style={styles.logout}
-          onClick={handleLogout}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "#ffecec")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-        >
+        <div style={styles.logout} onClick={handleLogout}>
           <span className="material-icons" style={styles.icon}>
-            exit_to_app 
+            exit_to_app
           </span>
           <span style={styles.text}>Cerrar sesión</span>
         </div>

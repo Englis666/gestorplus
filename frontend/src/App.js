@@ -13,17 +13,18 @@ import Layout from './views/Layout';
 //Aspirante
 import Trabajo from './views/aspirante/Trabajo';
 import DetallesDeTrabajo from './views/aspirante/DetallesTrabajo';
-//VISTAS EMPLEADO
 import InicioEmpleado from './views/empleado/InicioEmpleado';
+
 import Jornadas from './views/Jornadas';
 import Ausencias from './views/Ausencias';
 import Quejas from './views/Quejas';
+import Empleados from './views/Empleados';
+
 //VISTAS ADMIN
 import InicioAdmin from './views/administrador/InicioAdmin';
 //VISTAS RRH
 import InicioRRHH from './views/recursoshumanos/InicioRRHH';
 import InicioAspirante from './views/aspirante/InicioAspirante';
-
 function App() {
   return (
     <UserProvider>
@@ -42,6 +43,7 @@ function App() {
           <Route path='/Jornadas' element={<Jornadas/>}/>
           <Route path='/Ausencias' element={<Ausencias/>}/>
           <Route path='/Quejas' element={<Quejas/>}/>
+          <Route path='/Empleados' element={<Empleados/>}/>
           <Route path='/administrador/InicioAdmin' element={<InicioAdmin/>}/>
           <Route path='/recursoshumanos/InicioRRHH' element={<InicioRRHH/>}/>
 

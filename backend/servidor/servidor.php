@@ -17,6 +17,7 @@ switch ($method) {
         if (isset($data['action'])) {
             $action = $data['action'];
             switch ($action) {
+                // USUARIOS
                 case 'registrarse':
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->registrar($data);
@@ -34,11 +35,18 @@ switch ($method) {
                     $usuarioControlador->agregarExp($data);
                     break;
 
+                //EMPLEADOS
+                case 'solicitarQueja':
+                    $empleadoControlador = new EmpleadoControlador();
+                    $empleadoControlador->solicitarQueja($data);
+                    break;
+                   
                 case 'aplicacionDeAspirante':
                     $aspiranteControlador = new AspiranteControlador();
                     $aspiranteControlador->aplicacionDeAspirante();
                     break;
 
+                //CHAT
                 case 'obtenerMensajes':
                     $chatControlador = new ChatControlador();
                     $chatControlador->obtenerMensajes($data);
@@ -52,7 +60,16 @@ switch ($method) {
                     $chatControlador = new ChatControlador();
                     $chatControlador->iniciarChat($data);
                     break;
-               
+                
+                //ADMINISTRADOR- RECURSOS HUMANOS
+                case 'corroborrarJornada':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->corroborrarJornada($data);
+                    break;
+                case 'noCorroborrarJornada':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->noCorroborrarJornada($data);
+                    break;
 
                 default:
                     http_response_code(400);
@@ -69,15 +86,12 @@ switch ($method) {
         if (isset($_GET['action'])) {
             $action = $_GET['action'];
             switch ($action) {
+                //USUARIOS
                 case 'obtenerConvocatorias':
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->obtenerConvocatorias();
                     break;
-                case 'obtenerNotificaciones':
-                    $empleadoControlador = new EmpleadoControlador();
-                    $empleadoControlador->obtenerNotificaciones();
-                    break;
-                    
+                
                 case 'obtenerTotalEstadisticas':
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->obtenerTotalEstadisticas();
@@ -93,6 +107,12 @@ switch ($method) {
                     $usuarioControlador->datosPerfil();
                     break;
 
+                //EMPLEADO
+                case 'obtenerNotificaciones':
+                    $empleadoControlador = new EmpleadoControlador();
+                    $empleadoControlador->obtenerNotificaciones();
+                    break;
+                
                 case 'obtenerJornadas':
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerJornadas();
@@ -101,6 +121,8 @@ switch ($method) {
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerAusencias();
                     break;
+
+                //ASPIRANTE 
                 case 'obtenerNotificaciones':
                     $aspiranteControlador = new AspiranteControlador();
                     $aspiranteControlador->obtenerNotificaciones();
@@ -111,6 +133,7 @@ switch ($method) {
                     $aspiranteControlador->obtenerDetalleConvocatoria();
                     break;
 
+                //ADMINISTRADOR RECURSOS HUMANOS
                 case 'obtenerTodasLasNotificaciones':
                     $administradorControlador = new AdministradorControlador();
                     $administradorControlador->obtenerTodasLasNotificaciones();
@@ -128,6 +151,7 @@ switch ($method) {
                     $administradorControlador = new AdministradorControlador();
                     $administradorControlador->obtenerUsuarios();
                     break;
+
 
                 default:
                     http_response_code(400);

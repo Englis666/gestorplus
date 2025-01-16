@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import  { jwtDecode } from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 
 const TablaJornadas = () => {
   const [Jornadas, setJornadas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [rol, setRol] = useState(null); 
+  const [rol, setRol] = useState(null);
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -30,25 +30,21 @@ const TablaJornadas = () => {
         }
 
         const Rol = decodedToken?.data?.rol;
-        setRol(Rol); // Guardar el rol en el estado
+        setRol(Rol);
 
-        const action = (() => {
-          switch (Rol) {
-            case "1":
-              return "obtenerTodasLasJornadas";
-            case "2":
-              return "obtenerTodasLasJornadas";
-            case "3":
-              return "obtenerJornadas";
-            default:
-              console.error("Rol no válido");
-              setError("Rol no reconocido");
-              setLoading(false);
-              return null;
-          }
-        })();
+        const roleActions = {
+          "1": "obtenerTodasLasJornadas",
+          "2": "obtenerTodasLasJornadas",
+          "3": "obtenerJornadas",
+        };
 
-        if (!action) return;
+        const action = roleActions[Rol];
+        if (!action) {
+          console.error("Rol no válido");
+          setError("Rol no reconocido");
+          setLoading(false);
+          return;
+        }
 
         axios
           .get("http://localhost/gestorplus/backend/", {
@@ -58,7 +54,6 @@ const TablaJornadas = () => {
             params: { action },
           })
           .then((response) => {
-            console.log("Respuesta completa:", response.data);
             const Jornadas = response.data?.Jornadas;
             if (Array.isArray(Jornadas)) {
               setJornadas(Jornadas);
@@ -85,18 +80,33 @@ const TablaJornadas = () => {
     }
   }, []);
 
-  const handleSolicitarQueja = (idjornada) => {
+  const handleCorroborar = (idjornada) => {
     axios
       .post("http://localhost/gestorplus/backend/", {
-        action: "solicitarQueja",
-        idjornada,
+        action: "corroborarJornada",
+        $data: { idjornada },
       })
       .then(() => {
-        alert("Se ha solicitado una queja. Espere la respuesta de recursos humanos.");
+        alert("La jornada ha sido corroborada correctamente.");
       })
       .catch((err) => {
-        console.error("Error al solicitar la queja:", err);
-        alert("Hubo un problema al solicitar la queja.");
+        console.error("Error al corroborar la jornada:", err);
+        alert("Hubo un problema al corroborar la jornada.");
+      });
+  };
+
+  const handleNoCorroborar = (idjornada) => {
+    axios
+      .post("http://localhost/gestorplus/backend/", {
+        action: "noCorroborarJornada",
+        $data: { idjornada },
+      })
+      .then(() => {
+        alert("La jornada ha sido marcada como no corroborada.");
+      })
+      .catch((err) => {
+        console.error("Error al marcar la jornada como no corroborada:", err);
+        alert("Hubo un problema al procesar la solicitud.");
       });
   };
 
@@ -146,16 +156,19 @@ const TablaJornadas = () => {
                           <td className="py-3 px-4">
                             {rol === "1" || rol === "2" ? (
                               <>
-                                <button className="btn btn-success btn-sm me-2">Aceptar</button>
-                                <button className="btn btn-danger btn-sm">Rechazar</button>
+                                <button
+                                  className="btn btn-success btn-sm me-2"
+                                  onClick={() => handleCorroborar(jornada.idjornada)}
+                                >
+                                  Corroborar
+                                </button>
+                                <button
+                                  className="btn btn-danger btn-sm"
+                                  onClick={() => handleNoCorroborar(jornada.idjornada)}
+                                >
+                                  No corroborar
+                                </button>
                               </>
-                            ) : rol === "3" ? (
-                              <button
-                                className="btn btn-warning btn-sm"
-                                onClick={() => handleSolicitarQueja(jornada.idjornada)}
-                              >
-                                Solicitar Queja
-                              </button>
                             ) : null}
                           </td>
                         </tr>
