@@ -62,13 +62,13 @@ switch ($method) {
                     break;
                 
                 //ADMINISTRADOR- RECURSOS HUMANOS
-                case 'corroborrarJornada':
+                case 'corroborarJornada':
                     $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->corroborrarJornada($data);
+                    $administradorControlador->corroborarJornada($data);
                     break;
-                case 'noCorroborrarJornada':
+                case 'noCorroborarJornada':
                     $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->noCorroborrarJornada($data);
+                    $administradorControlador->noCorroborarJornada($data);
                     break;
 
                 default:

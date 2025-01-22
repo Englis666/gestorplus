@@ -142,19 +142,35 @@ class AdministradorControlador {
         }
     }
 
-    public function corroborrarJornada($data){
+    public function corroborarJornada($data){
         $this->administrador = new Administrador($this->db);
-        $resultados = $this->administrador->corroborrarJornada($data);
+        
+        if(!isset($data['data']['idJornada'])){
+            echo json_encode(['error' => 'Falta el id de la jornada']);
+            http_response_code(400);
+            return;
+        }
+        
+        $idJornada = $data['data']['idJornada']; 
+        $resultados = $this->administrador->corroborarJornada($idJornada);
+        
         if($resultados){
             echo json_encode(['Jornada' => $resultados]);
-        } else{
-            echo json_encode(['Jornada' =>[]]);
+        } else {
+            echo json_encode(['Jornada' => []]);
         }
     }
+    
 
-    public function noCorroborrarJornada($data){
+    public function noCorroborarJornada($data){
         $this->administrador = new Administrador($this->db);
-        $resultados = $this->administrador->noCorroborrarJornada($data);
+        if(!isset($data['data']['idJornada'])){
+            echo json_encode(['error' => 'Falta el id de la jornada']);
+            http_response_code(400);
+            return;
+        }
+        $idJornada = $data['data']['idJornada']; 
+        $resultados = $this->administrador->noCorroborarJornada($idJornada);
         if($resultados){
             echo json_encode(['Jornada' => $resultados]);
         } else{

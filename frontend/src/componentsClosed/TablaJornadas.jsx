@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; 
 
 const TablaJornadas = () => {
   const [Jornadas, setJornadas] = useState([]);
@@ -80,33 +80,57 @@ const TablaJornadas = () => {
     }
   }, []);
 
-  const handleCorroborar = (idjornada) => {
+  const handleCorroborar = (idJornada) => {
+    console.log("Datos enviados al backend:", { idJornada });
     axios
       .post("http://localhost/gestorplus/backend/", {
         action: "corroborarJornada",
-        $data: { idjornada },
+        data: { idJornada },
       })
       .then(() => {
         alert("La jornada ha sido corroborada correctamente.");
       })
       .catch((err) => {
         console.error("Error al corroborar la jornada:", err);
-        alert("Hubo un problema al corroborar la jornada.");
+        if (err.response) {
+          console.error("Respuesta del servidor (error):", err.response.data);
+          alert(`Error: ${err.response.data.error || 'Hubo un problema al corroborar la jornada.'}`);
+        } else if (err.request) {
+          console.error("No hubo respuesta del servidor:", err.request);
+          alert("No se recibió respuesta del servidor.");
+        } else {
+          console.error("Error en la configuración de la solicitud:", err.message);
+          alert("Hubo un problema al procesar la solicitud.");
+        }
       });
   };
 
-  const handleNoCorroborar = (idjornada) => {
+  const handleNoCorroborar = (idJornada) => {
+    console.log("Datos enviados al backend:", { idJornada });
+    console.log("Intentando marcar como no corroborada la jornada con ID:", idJornada);
+
     axios
       .post("http://localhost/gestorplus/backend/", {
         action: "noCorroborarJornada",
-        $data: { idjornada },
+        data: { idJornada }, 
       })
-      .then(() => {
+      .then((response) => {
+        console.log("Respuesta del servidor:", response.data); 
         alert("La jornada ha sido marcada como no corroborada.");
       })
       .catch((err) => {
         console.error("Error al marcar la jornada como no corroborada:", err);
-        alert("Hubo un problema al procesar la solicitud.");
+        if (err.response) {
+          console.error("Datos de la respuesta del servidor:", err.response.data);
+          console.error("Estado de la respuesta:", err.response.status);
+          alert(`Error: ${err.response.data.error || 'Hubo un problema al procesar la solicitud.'}`);
+        } else if (err.request) {
+          console.error("No hubo respuesta del servidor:", err.request);
+          alert("No se recibió respuesta del servidor.");
+        } else {
+          console.error("Error en la configuración de la solicitud:", err.message);
+          alert("Hubo un problema al procesar la solicitud.");
+        }
       });
   };
 
@@ -147,7 +171,7 @@ const TablaJornadas = () => {
                   <tbody className="text-center">
                     {Jornadas.length > 0 ? (
                       Jornadas.map((jornada) => (
-                        <tr key={jornada.idjornada}>
+                        <tr key={jornada.idJornada}>
                           <td className="py-3 px-4">{jornada.fecha}</td>
                           <td className="py-3 px-4">{jornada.horaEntrada}</td>
                           <td className="py-3 px-4">{jornada.horaSalida}</td>
@@ -158,13 +182,13 @@ const TablaJornadas = () => {
                               <>
                                 <button
                                   className="btn btn-success btn-sm me-2"
-                                  onClick={() => handleCorroborar(jornada.idjornada)}
+                                  onClick={() => handleCorroborar(jornada.idJornada)}
                                 >
                                   Corroborar
                                 </button>
                                 <button
                                   className="btn btn-danger btn-sm"
-                                  onClick={() => handleNoCorroborar(jornada.idjornada)}
+                                  onClick={() => handleNoCorroborar(jornada.idJornada)}
                                 >
                                   No corroborar
                                 </button>

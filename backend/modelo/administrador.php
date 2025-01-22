@@ -78,20 +78,20 @@ class Administrador {
     }
 
 
-    public function corroborrarJornada($data){
-        $sql = "UPDATE jornada SET corroborado = 1 WHERE idjornada = :idjornada";
+    public function corroborarJornada($idJornada){
+        $sql = "UPDATE jornada SET estadoJornada = 1 WHERE idjornada = :idjornada";
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':idjornada', $data['idjornada'], PDO::PARAM_INT);
+        $stmt->bindParam(':idjornada', $idJornada, PDO::PARAM_INT);
         $stmt->execute();
         if($stmt->rowCount() > 0){
             return true;
         }
         return false;
     }
-    public function noCorroborrarJornada($data){
-        $sql = "UPDATE jornada SET corroborado = 0 WHERE idjornada = :idjornada";
+    public function noCorroborarJornada($idJornada){
+        $sql = "UPDATE jornada SET estadoJornada = 0 WHERE idjornada = :idjornada";
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':idjornada', $data['idjornada'], PDO::PARAM_INT);
+        $stmt->bindParam(':idjornada', $idJornada, PDO::PARAM_INT);
         $stmt->execute();
         if($stmt->rowCount() > 0){
             return true;

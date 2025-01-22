@@ -129,10 +129,12 @@ const NavbarClosed = ({ activeLink }) => {
     { label: "Paz y salvos", icon: "check_circle", path: "/Paz" },
     { label: "Quejas", icon: "report_problem", path: "/Quejas" },
     { label: "Mi perfil", icon: "person", path: "/Perfil" },
+    { label: "Certificados" , icon: "description", path: "/Certificados" },
   ];
 
   if (rol === "1" || rol === "2") {
     menuItems.push({ label: "Empleados", icon: "people", path: "/Empleados" });
+    menuItems.push({ label: "Citas Asignadas", icon: "event_note", path: "/Citas" });
   }
   
   return (
