@@ -87,7 +87,8 @@ const TablaJornadas = () => {
         action: "corroborarJornada",
         data: { idJornada },
       })
-      .then(() => {
+      .then((response) => {
+        console.log("Respuesta del servidor:", response.data); 
         alert("La jornada ha sido corroborada correctamente.");
       })
       .catch((err) => {

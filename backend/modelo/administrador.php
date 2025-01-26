@@ -99,7 +99,46 @@ class Administrador {
         return false;
     }
 
-
+    public function notificacionAceptada($idausencia){
+        $sql = "UPDATE ausencia SET justificada = 1 WHERE idausencia = :idausencia";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+        
+        if ($stmt->execute()) {
+            $descripcionNotificacion = "Ausencia aceptada";
+            $tipo = "Aceptacion";
+            $insertarNotificacion = "INSERT INTO notificacion (descripcionNotificacion, tipo) VALUES (?, ?)";
+            $stmt = $this->db->prepare($insertarNotificacion);
+            $stmt->bindParam(1, $descripcionNotificacion, PDO::PARAM_STR);
+            $stmt->bindParam(2, $tipo, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            return true; 
+        } else {
+            return false;
+        }
+    }
+    
+    public function notificacionRechazada($idausencia){
+        $sql = "UPDATE ausencia SET justificada = 0 WHERE idausencia = :idausencia";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+        
+        if ($stmt->execute()) {
+            $descripcionNotificacion = "Ausencia rechazada";
+            $tipo = "Rechazo";
+            $insertarNotificacion = "INSERT INTO notificacion (descripcionNotificacion, tipo) VALUES (?, ?)";
+            $stmt = $this->db->prepare($insertarNotificacion);
+            $stmt->bindParam(1, $descripcionNotificacion, PDO::PARAM_STR);
+            $stmt->bindParam(2, $tipo, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            return true; 
+        } else {
+            return false; 
+        }
+    }
+    
 }
 
 

@@ -178,6 +178,40 @@ class AdministradorControlador {
         }
     }
 
+    public function notificacionAceptada($data){
+        $this->administrador = new Administrador($this->db);
+        if(!isset($data['data']['idausencia'])){
+            echo json_encode(['error' => 'Falta el id de la ausencia']);
+            http_response_code(400);
+            return;
+        }
+        $idausencia = $data['data']['idausencia'];
+        $resultados = $this->administrador->notificacionAceptada($idausencia);
+        if($resultados){
+            echo json_encode(['Ausencia' => $resultados]);
+        } else{
+            echo json_encode(['Ausencia' =>[]]);
+        }
+
+    }
+
+    public function notificacionRechazada($data){
+        $this->administrador = new Administrador($this->db);
+        if(!isset($data['data']['idausencia'])){
+            echo json_encode(['error' => 'Falta el id de la ausencia']);
+            http_response_code(400);
+            return;
+        }
+        $idausencia = $data['data']['idausencia'];
+        $resultados = $this->administrador->notificacionRechazada($idausencia);
+        if($resultados){
+            echo json_encode(['Ausencia' => $resultados]);
+        } else{
+            echo json_encode(['Ausencia' =>[]]);
+        }
+
+    }
+
 }
 
 

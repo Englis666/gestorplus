@@ -96,17 +96,30 @@ const TablaEmpleados = () => {
                       <th>Rol en la empresa</th>
                       <th>Tipo de documento</th>
                       <th>Numero de documento</th>
+                      <th>Inicio de contrato</th>
+                      <th>Fin de contrato</th>
+                      <th>Accion</th>
                     </tr>
                   </thead>
                   <tbody className="text-center">
                     {empleados.length > 0 ? (
                       empleados.map((empleado) => (
-                        <tr key={empleado.id}>
+                        <tr key={empleado.num_doc}>
                           <td className="py-3 px-4">{empleado.nombres}</td>
                           <td className="py-3 px-4">{empleado.email}</td>
                           <td className="py-3 px-4">{empleado.nombreRol}</td>
                           <td className="py-3 px-4">{empleado.tipodDoc}</td>
                           <td className="py-3 px-4">{empleado.num_doc}</td>
+                          <td>12 </td>
+                          <td>55</td>
+                          <td className="py-3 px-4">
+                            <button 
+                            className="btn btn-success btn-sm me-2" >
+                              Realizar paz y salvo
+                            </button>
+
+                          </td>
+
                         </tr>
                       ))
                     ) : (

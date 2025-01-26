@@ -40,6 +40,11 @@ switch ($method) {
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->solicitarQueja($data);
                     break;
+
+                case 'solicitarAusencia':
+                    $empleadoControlador = new EmpleadoControlador();
+                    $empleadoControlador->solicitarAusencia($data);
+                    break;
                    
                 case 'aplicacionDeAspirante':
                     $aspiranteControlador = new AspiranteControlador();
@@ -69,6 +74,14 @@ switch ($method) {
                 case 'noCorroborarJornada':
                     $administradorControlador = new AdministradorControlador();
                     $administradorControlador->noCorroborarJornada($data);
+                    break;
+                case 'notificacionAceptada':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->notificacionAceptada($data);
+                    break;
+                case 'notificacionRechazada':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->notificacionRechazada($data);
                     break;
 
                 default:

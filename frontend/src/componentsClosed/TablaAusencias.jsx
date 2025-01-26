@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { jwtDecode }  from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 const TablaAusencias = () => {
@@ -7,6 +7,12 @@ const TablaAusencias = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rol, setRol] = useState(null);
+  const [solicitud, setSolicitud] = useState({
+    fechaInicio: "",
+    fechaFin: "",
+    tipoAusencia: "",
+    descripcion: "",
+  });
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -85,28 +91,54 @@ const TablaAusencias = () => {
   }, []);
 
   const handleAceptar = (idausencia) => {
+    console.log("Datos enviados al backend:", { idausencia });
     axios
       .post("http://localhost/gestorplus/backend/", {
         action: "notificacionAceptada",
-        data: {idausencia},
+        data: { idausencia },
       })
-      .then(() => {
+      .then((response) => {
+        console.log("Respuesta del servidor:", response.data);
         alert("Notificación aceptada con éxito.");
+        
+        // Actualizar la lista de ausencias
+        setAusencias((prevAusencias) =>
+          prevAusencias.map((ausencia) =>
+            ausencia.idausencia === idausencia
+              ? { ...ausencia, justificada: true }
+              : ausencia
+          )
+        );
       })
       .catch((err) => {
-        console.error("Error al aceptar la notificación:", err);
-        alert("Hubo un problema al aceptar la notificación.");
+        console.error("Error al corroborar la jornada:", err);
+        alert("Hubo un problema al corroborar la jornada.");
       });
   };
-
+  
   const handleRechazar = (idausencia) => {
+    console.log("Rechazando ausencia con id:", idausencia);
     axios
       .post("http://localhost/gestorplus/backend/", {
         action: "notificacionRechazada",
-        data: {idausencia},
+        data: { idausencia },
       })
-      .then(() => {
-        alert("Notificación rechazada con éxito.");
+      .then((response) => {
+        console.log("Respuesta del servidor al rechazar:", response.data);
+        if (response.data.success) {
+          alert("Notificación rechazada con éxito.");
+          
+          // Actualizar la lista de ausencias
+          setAusencias((prevAusencias) =>
+            prevAusencias.map((ausencia) =>
+              ausencia.idausencia === idausencia
+                ? { ...ausencia, justificada: false }
+                : ausencia
+            )
+          );
+        } else {
+          alert("Hubo un problema al rechazar la notificación.");
+        }
       })
       .catch((err) => {
         console.error("Error al rechazar la notificación:", err);
@@ -114,18 +146,23 @@ const TablaAusencias = () => {
       });
   };
 
-  const handleSolicitarJustificacion = (idausencia) => {
+  const handleSolicitarAusencia = (e) => {
+    e.preventDefault();
+
     axios
       .post("http://localhost/gestorplus/backend/", {
-        action: "solicitarJustificacion",
-        data: {idausencia},
+        action: "solicitarAusencia",
+        data: solicitud,
       })
-      .then(() => {
-        alert("Se ha solicitado una justificación. Espere la respuesta.");
+      .then((response) => {
+        console.log("Respuesta al solicitar ausencia:", response);
+
+        alert("Solicitud de ausencia enviada con éxito.");
+        setSolicitud({ fechaInicio: "", fechaFin: "", tipoAusencia: "", descripcion: "" });
       })
       .catch((err) => {
-        console.error("Error al solicitar la justificación:", err);
-        alert("Hubo un problema al solicitar la justificación.");
+        console.error("Error al enviar la solicitud de ausencia:", err);
+        alert("Hubo un problema al enviar la solicitud de ausencia.");
       });
   };
 
@@ -188,13 +225,6 @@ const TablaAusencias = () => {
                                   Rechazar
                                 </button>
                               </>
-                            ) : rol === "3" ? (
-                              <button
-                                className="btn btn-warning btn-sm"
-                                onClick={() => handleSolicitarJustificacion(ausencia.idausencia)}
-                              >
-                                Solicitar Justificación
-                              </button>
                             ) : null}
                           </td>
                         </tr>
@@ -209,6 +239,63 @@ const TablaAusencias = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="row mt-4 container mt-5 card shadow-sm border-0 mb-5"
+            style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
+        <div className="col-12">
+          <h4 className="p-2">Solicitar Ausencia</h4>
+          <form onSubmit={handleSolicitarAusencia}>
+            <div className="mb-3">
+              <label htmlFor="fechaInicio" className="form-label">Fecha de Inicio</label>
+              <input
+                type="date"
+                id="fechaInicio"
+                className="form-control"
+                value={solicitud.fechaInicio}
+                onChange={(e) => setSolicitud({ ...solicitud, fechaInicio: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="fechaFin" className="form-label">Fecha de Fin</label>
+              <input
+                type="date"
+                id="fechaFin"
+                className="form-control"
+                value={solicitud.fechaFin}
+                onChange={(e) => setSolicitud({ ...solicitud, fechaFin: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="tipoAusencia" className="form-label">Tipo de Ausencia</label>
+              <select
+                id="tipoAusencia"
+                className="form-select"
+                value={solicitud.tipoAusencia}
+                onChange={(e) => setSolicitud({ ...solicitud, tipoAusencia: e.target.value })}
+                required
+              >
+                <option value="">Seleccione un tipo</option>
+                <option value="Enfermedad">Enfermedad</option>
+                <option value="Vacaciones">Vacaciones</option>
+                <option value="Personal">Personal</option>
+              </select>
+            </div>
+            <div className="mb-3">
+              <label htmlFor="descripcion" className="form-label">Descripción</label>
+              <textarea
+                id="descripcion"
+                className="form-control"
+                value={solicitud.descripcion}
+                onChange={(e) => setSolicitud({ ...solicitud, descripcion: e.target.value })}
+                required
+              ></textarea>
+            </div>
+            <button type="submit" className="btn btn-primary">Enviar Solicitud</button>
+          </form>
         </div>
       </div>
     </div>
