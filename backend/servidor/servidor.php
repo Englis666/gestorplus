@@ -165,7 +165,12 @@ switch ($method) {
                     $administradorControlador->obtenerUsuarios();
                     break;
 
+                case 'obtenerEntrevistas':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerEntrevistas();    
+                    break;
 
+                    
                 default:
                     http_response_code(400);
                     echo json_encode(['message' => 'Acción no encontrada.']);

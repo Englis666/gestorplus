@@ -77,6 +77,22 @@ class Administrador {
         return [];
     }
 
+    public function obtenerEntrevistas(){
+        $sql = "SELECT * FROM entrevista as e 
+                INNER JOIN postulacion as p ON e.postulacion_idpostulaciones =  idpostulacion
+                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc
+                ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resultado){
+            return $resultado;
+        }
+        return [];
+    }
+
 
     public function corroborarJornada($idJornada){
         $sql = "UPDATE jornada SET estadoJornada = 1 WHERE idjornada = :idjornada";

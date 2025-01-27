@@ -142,6 +142,17 @@ class AdministradorControlador {
         }
     }
 
+    public function obtenerEntrevistas(){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerEntrevistas();
+        if($resultados){
+            echo json_encode(['Entrevista' => $resultados]);
+        } else{
+            echo json_encode(['Entrevista' => $resultados]);
+        }
+    }
+
+
     public function corroborarJornada($data){
         $this->administrador = new Administrador($this->db);
         
@@ -209,9 +220,9 @@ class AdministradorControlador {
         } else{
             echo json_encode(['Ausencia' =>[]]);
         }
-
     }
 
+   
 }
 
 
