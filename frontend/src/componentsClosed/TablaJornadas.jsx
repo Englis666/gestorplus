@@ -162,7 +162,7 @@ const TablaJornadas = () => {
                   <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                     <tr>
                       <th>Fecha</th>
-                      <th>Hora de Entrada</th>
+                      <th>Hora de Entradas</th>
                       <th>Hora de Salida</th>
                       <th>Nombre del Empleado</th>
                       <th>Estado de Jornada</th>
@@ -177,7 +177,7 @@ const TablaJornadas = () => {
                           <td className="py-3 px-4">{jornada.horaEntrada}</td>
                           <td className="py-3 px-4">{jornada.horaSalida}</td>
                           <td className="py-3 px-4">{jornada.nombres}</td>
-                          <td className="py-3 px-4">{jornada.estado}</td>
+                          <td className="py-3 px-4">{jornada.estado ? "Jornada admitida" : "Jornada no admitida"}</td>
                           <td className="py-3 px-4">
                             {rol === "1" || rol === "2" ? (
                               <>

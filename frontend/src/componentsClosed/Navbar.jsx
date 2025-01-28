@@ -134,7 +134,7 @@ const NavbarClosed = ({ activeLink }) => {
 
   if (rol === "1" || rol === "2") {
     menuItems.push({ label: "Empleados", icon: "people", path: "/Empleados" });
-    menuItems.push({ label: "Citas Asignadas", icon: "event_note", path: "/Citas" });
+    menuItems.push({ label: "Citas", icon: "event_note", path: "/Citas" });
   }
   
   return (
