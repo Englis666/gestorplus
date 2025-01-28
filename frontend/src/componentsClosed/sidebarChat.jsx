@@ -6,9 +6,19 @@ const SidebarChat = ({ onUserSelect }) => {
   const [usuariosRRHH, setUsuariosRRHH] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [rol, setRol] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); 
 
   const handleUserClick = (targetNum_doc) => {
     onUserSelect(targetNum_doc);
+  };
+
+  const handleGoBack = () => {
+    // Vuelve a la vista anterior
+    window.history.back();
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
   useEffect(() => {
@@ -89,59 +99,110 @@ const SidebarChat = ({ onUserSelect }) => {
         padding: "20px",
       }}
     >
-      <h3
-        style={{
-          fontSize: "20px",
-          fontWeight: "bold",
-          marginBottom: "20px",
-          color: "#333",
-        }}
-      >
-        Usuarios Activos
-      </h3>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+        <span
+          className="material-icons"
+          style={{
+            cursor: "pointer",
+            fontSize: "24px",
+            color: "#007bff",
+            marginRight: "10px",
+          }}
+          onClick={handleGoBack}
+        >
+          arrow_back
+        </span>
+
+        <h3
+          style={{
+            fontSize: "20px",
+            fontWeight: "bold",
+            color: "#333",
+            marginRight: "20px",
+          }}
+        >
+          Usuarios Activos
+        </h3>
+
+        
+        <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
+          <span
+            className="material-icons"
+            style={{
+              position: "absolute",
+              left: "10px",
+              color: "#888",
+              fontSize: "18px",
+            }}
+          >
+            search
+          </span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Buscar empleado"
+            style={{
+              paddingLeft: "30px",
+              paddingRight: "10px",
+              paddingTop: "5px",
+              paddingBottom: "5px",
+              width: "200px",
+              border: "1px solid #ddd",
+              borderRadius: "20px",
+              fontSize: "14px",
+            }}
+          />
+        </div>
+      </div>
 
       {errorMessage && <div style={{ color: "red", marginBottom: "10px" }}>{errorMessage}</div>}
+
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {usuariosRRHH.length > 0 ? (
-          usuariosRRHH.map((usuario) => (
-            <div
-              key={usuario.num_doc}
-              style={{
-                background: "#f9f9f9",
-                padding: "10px 15px",
-                borderRadius: "12px",
-                display: "flex",
-                alignItems: "center",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                cursor: "pointer",
-              }}
-              onClick={() => handleUserClick(usuario.num_doc)}
-            >
+          usuariosRRHH
+            .filter((usuario) =>
+              usuario.nombres.toLowerCase().includes(searchQuery.toLowerCase())
+            ) 
+            .map((usuario) => (
               <div
+                key={usuario.num_doc}
                 style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  backgroundColor: "#007bff",
-                  color: "#fff",
+                  background: "#f9f9f9",
+                  padding: "10px 15px",
+                  borderRadius: "12px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: "bold",
-                  marginRight: "15px",
-                  fontSize: "18px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  cursor: "pointer",
                 }}
+                onClick={() => handleUserClick(usuario.num_doc)}
               >
-                {usuario.nombres.charAt(0)}
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                    backgroundColor: "#007bff",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: "bold",
+                    marginRight: "15px",
+                    fontSize: "18px",
+                  }}
+                >
+                  {usuario.nombres.charAt(0)}
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: "16px", fontWeight: "bold", color: "#333" }}>
+                    {usuario.nombres}
+                  </p>
+                  <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>{usuario.nombreRol}</p>
+                </div>
               </div>
-              <div>
-                <p style={{ margin: 0, fontSize: "16px", fontWeight: "bold", color: "#333" }}>
-                  {usuario.nombres}
-                </p>
-                <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>{usuario.nombreRol}</p>
-              </div>
-            </div>
-          ))
+            ))
         ) : (
           <p style={{ color: "#888" }}>No hay usuarios disponibles.</p>
         )}

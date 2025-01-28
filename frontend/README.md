@@ -77,6 +77,24 @@ El componente **TablaEmpleado** muestra las notificaciones de los empleados de m
 
 El componente **Estadisticas** muestra información visual con tarjetas. Estas tarjetas tienen un diseño atractivo y moderno.
 
+
+### 4. `Calendario y moment` (Componente de CalendarioDeEntrevistas)
+El componente **CalendarioDeEntrevistas** que esta en las vistas de admin y recursos humanos en la vista **Citas.jsx** usa una dependencia de react que es **npm install react-big-calendar moment** eso significa que son dos 
+
+## Calendario Usos{
+  npm: 
+  react-big-calendar: Para el calendario.
+  moment: Para manejar fechas y horas.
+
+  ## Estilos personalizados para los eventos:
+
+  Se usa eventPropGetter para aplicar estilos personalizados a los eventos del calendario (color azul, bordes redondeados, etc.).
+
+  Se usa tooltipAccessor para mostrar el título del evento como un tooltip al pasar el cursor sobre él.
+   
+## };
+
+
 #### Estilos y clases:
 
 - **Clases de Bootstrap**:
@@ -91,3 +109,5 @@ El componente **Estadisticas** muestra información visual con tarjetas. Estas t
   - `boxShadow: "0px 4px 8px rgba(5, 2, 2, 0.3)"`: Añadí una sombra sutil a las tarjetas para que se vean elevadas sobre el fondo.
   - `padding: "1.4rem"`: Puse un relleno en las tarjetas para que el contenido no toque los bordes.
   - `height: "11rem"`, `width: "11rem"`: Definí un tamaño fijo para las tarjetas para que se mantuvieran proporcionales y bien alineadas.
+
+

@@ -126,7 +126,7 @@ const NavbarClosed = ({ activeLink }) => {
   const menuItems = [
     { label: "Jornadas", icon: "event", path: "/Jornadas" },
     { label: "Ausencias", icon: "hourglass_empty", path: "/Ausencias" },
-    { label: "Paz y salvos", icon: "check_circle", path: "/Paz" },
+    { label: "Paz y salvos", icon: "check_circle", path: "/PazYsalvo" },
     { label: "Quejas", icon: "report_problem", path: "/Quejas" },
     { label: "Mi perfil", icon: "person", path: "/Perfil" },
     { label: "Certificados" , icon: "description", path: "/Certificados" },

@@ -27,6 +27,7 @@ import InicioAdmin from './views/administrador/InicioAdmin';
 //VISTAS RRH
 import InicioRRHH from './views/recursoshumanos/InicioRRHH';
 import InicioAspirante from './views/aspirante/InicioAspirante';
+import PazySalvo from './views/PazYSalvos';
 function App() {
   return (
     <UserProvider>
@@ -47,6 +48,7 @@ function App() {
           <Route path='/Quejas' element={<Quejas/>}/>
           <Route path='/Empleados' element={<Empleados/>}/>
           <Route path='/Citas' element={<Citas/>}/>
+          <Route path='/PazYsalvo' element={<PazySalvo/>}/>
           <Route path='/Certificados' element={<Certificados/>}/>
           <Route path='/administrador/InicioAdmin' element={<InicioAdmin/>}/>
           <Route path='/recursoshumanos/InicioRRHH' element={<InicioRRHH/>}/>
