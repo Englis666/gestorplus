@@ -88,6 +88,42 @@ class Empleado {
 
     }
 
+    public function solicitarAusencia($num_doc, $data) {
+        try {
+            $sql = "INSERT INTO ausencia (fechaInicio, fechaFin, tipoAusencia, descripcion, fechaRegistro, usuario_num_doc) VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $data['fechaInicio'],
+                $data['fechaFin'],
+                $data['tipoAusencia'],
+                $data['descripcion'],
+                date('Y-m-d H:i:s'),
+                $num_doc
+            ]);
+    
+            if ($stmt->rowCount() > 0) {
+                $descripcionNotificacion = "El empleado identificado con la cedula $num_doc ha solicitado una ausencia para el dia " . $data['fechaInicio'] . " hasta el dia " . $data['fechaFin'];
+    
+            
+                $notificationSql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) VALUES (?, ?, ?, ?)";
+                $notificationStmt = $this->db->prepare($notificationSql);
+                $notificationStmt->execute([
+                    $descripcionNotificacion,
+                    '1', 
+                    'Ausencia', 
+                    $num_doc
+                ]);
+    
+                return true; 
+            } else {
+                return false; 
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false; 
+        }
+    }
+    
 }
 
 ?>

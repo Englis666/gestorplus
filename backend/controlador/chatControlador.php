@@ -161,6 +161,51 @@ class ChatControlador {
             http_response_code(500);
         }
     }
+
+    public function obtenerMensajesDelUsuario($data) {
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
     
+        if (!$authHeader) {
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401);
+            return;
+        }
+    
+        $token = str_replace('Bearer ', '', $authHeader);
+    
+        try {
+            $secretKey = SECRET_KEY;
+            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+            $num_doc = $decoded->data->num_doc;
+    
+            if (!$num_doc) {
+                echo json_encode(['error' => 'No se encontró el número de documento en el token']);
+                http_response_code(400);
+                return;
+            }
+    
+            $targetNum_doc = $data['targetNum_doc'];
+    
+            $this->chat = new Chat($this->db);
+    
+            $resultado = $this->chat->obtenerMensajesDelUsuario($num_doc, $targetNum_doc);
+    
+            if ($resultado && is_array($resultado) && count($resultado) > 0) {
+                echo json_encode(['status' => 'success', 'mensajes' => $resultado]);
+            } else {
+                echo json_encode(['status' => 'success', 'mensajes' => []]);
+            }
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            echo json_encode(['error' => 'Token expirado']);
+            http_response_code(401);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            echo json_encode(['error' => 'Token con firma inválida']);
+            http_response_code(401);
+        } catch (Exception $e) {
+            echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
+            http_response_code(500);
+        }
+    }
+
 }
 ?>

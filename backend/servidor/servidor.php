@@ -56,6 +56,10 @@ switch ($method) {
                     $chatControlador = new ChatControlador();
                     $chatControlador->obtenerMensajes($data);
                     break;
+                case 'obtenerMensajesDelUsuario':
+                    $chatControlador = new ChatControlador();
+                    $chatControlador->obtenerMensajesDelUsuario($data);
+                    break;
         
                 case 'enviarMensajes':
                     $chatControlador = new ChatControlador();
@@ -67,6 +71,13 @@ switch ($method) {
                     break;
                 
                 //ADMINISTRADOR- RECURSOS HUMANOS
+
+
+                case 'agregarConvocatoria':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->agregarConvocatoria($data);
+                    break;
+
                 case 'corroborarJornada':
                     $administradorControlador = new AdministradorControlador();
                     $administradorControlador->corroborarJornada($data);
@@ -83,6 +94,8 @@ switch ($method) {
                     $administradorControlador = new AdministradorControlador();
                     $administradorControlador->notificacionRechazada($data);
                     break;
+
+                
 
                 default:
                     http_response_code(400);
@@ -147,6 +160,11 @@ switch ($method) {
                     break;
 
                 //ADMINISTRADOR RECURSOS HUMANOS
+                case 'obtenerConvocatorias':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerConvocatorias();
+                    break;
+                    
                 case 'obtenerTodasLasNotificaciones':
                     $administradorControlador = new AdministradorControlador();
                     $administradorControlador->obtenerTodasLasNotificaciones();

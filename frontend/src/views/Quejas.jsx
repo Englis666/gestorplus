@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import Chat from '../componentsClosed/Chat';
 import SidebarChat from '../componentsClosed/sidebarChat';
-import NavbarClosed from '../componentsClosed/Navbar';
+
 
 const Quejas = () => {
   const [message, setMessage] = useState('');

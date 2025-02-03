@@ -149,22 +149,55 @@ const TablaAusencias = () => {
   const handleSolicitarAusencia = (e) => {
     e.preventDefault();
 
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+    };
+
+
+    const token = getCookie("auth_token");
+    if (!token) {
+      alert("Token no encontrado. Inicia sesión nuevamente.");
+      return;
+    }
+  
+    if (new Date(solicitud.fechaInicio) > new Date(solicitud.fechaFin)) {
+      alert("La fecha de inicio no puede ser posterior a la fecha de fin.");
+      return;
+    }
+  
+    // Realizar la solicitud al backend
     axios
-      .post("http://localhost/gestorplus/backend/", {
-        action: "solicitarAusencia",
-        data: solicitud,
-      })
+      .post(
+        "http://localhost/gestorplus/backend/",
+        {
+          action: "solicitarAusencia",
+          ...solicitud,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
         console.log("Respuesta al solicitar ausencia:", response);
-
         alert("Solicitud de ausencia enviada con éxito.");
-        setSolicitud({ fechaInicio: "", fechaFin: "", tipoAusencia: "", descripcion: "" });
+        setSolicitud({
+          fechaInicio: "",
+          fechaFin: "",
+          tipoAusencia: "",
+          descripcion: "",
+        });
       })
       .catch((err) => {
         console.error("Error al enviar la solicitud de ausencia:", err);
         alert("Hubo un problema al enviar la solicitud de ausencia.");
       });
   };
+  
 
   if (loading) {
     return <div>Cargando Ausencias...</div>;
@@ -252,6 +285,7 @@ const TablaAusencias = () => {
               <input
                 type="date"
                 id="fechaInicio"
+                name="fechaInicio"
                 className="form-control"
                 value={solicitud.fechaInicio}
                 onChange={(e) => setSolicitud({ ...solicitud, fechaInicio: e.target.value })}
@@ -263,6 +297,7 @@ const TablaAusencias = () => {
               <input
                 type="date"
                 id="fechaFin"
+                name="fechaFin"
                 className="form-control"
                 value={solicitud.fechaFin}
                 onChange={(e) => setSolicitud({ ...solicitud, fechaFin: e.target.value })}
@@ -273,6 +308,7 @@ const TablaAusencias = () => {
               <label htmlFor="tipoAusencia" className="form-label">Tipo de Ausencia</label>
               <select
                 id="tipoAusencia"
+                name="tipoAusencia"
                 className="form-select"
                 value={solicitud.tipoAusencia}
                 onChange={(e) => setSolicitud({ ...solicitud, tipoAusencia: e.target.value })}
@@ -288,6 +324,7 @@ const TablaAusencias = () => {
               <label htmlFor="descripcion" className="form-label">Descripción</label>
               <textarea
                 id="descripcion"
+                name="descripcion"
                 className="form-control"
                 value={solicitud.descripcion}
                 onChange={(e) => setSolicitud({ ...solicitud, descripcion: e.target.value })}

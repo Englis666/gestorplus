@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
 
 const Chat = ({ selectedUser }) => {
@@ -7,6 +8,7 @@ const Chat = ({ selectedUser }) => {
   const [chatMessages, setChatMessages] = useState([]);
   const [loadError, setLoadError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [rol, setRol] = useState(null); // Estado para guardar el rol
 
   const obtenerMensajes = async (targetNum_doc) => {
     const getCookie = (name) => {
@@ -27,15 +29,44 @@ const Chat = ({ selectedUser }) => {
       return;
     }
 
-    const data = {
-      action: 'obtenerMensajes',
-      targetNum_doc,  
-    }
-
-    console.log("Obteniendo mensajes para del chat con el usuario :", targetNum_doc);  
-
-    setLoading(true);
     try {
+      const decodedToken = jwtDecode(token);
+      const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
+      if (isTokenExpired) {
+        console.error("El token ha expirado");
+        setLoadError("El token ha expirado");
+        setLoading(false);
+        navigate("/login");
+        return;
+      }
+
+      const Rol = decodedToken?.data?.rol; 
+      setRol(Rol);
+
+      let action;
+      switch (Rol) {
+        case "1":
+        case "2":
+          action = "obtenerMensajesDelUsuario";
+          break;
+        case "3":
+          action = "obtenerMensajes";
+          break;
+        default:
+          console.error("Rol no válido");
+          setLoadError("Rol no reconocido.");
+          setLoading(false);
+          return;
+      }
+
+      const data = {
+        action,
+        targetNum_doc,  
+      };
+
+      console.log("Obteniendo mensajes para el chat con el usuario :", targetNum_doc);  
+
+      setLoading(true);
       const response = await axios.post('http://localhost/gestorplus/backend/', data, {
         headers: {
           Authorization: `Bearer ${token}`,

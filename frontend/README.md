@@ -25,6 +25,7 @@ Estas son las dependencias que instalé en el proyecto:
 - **React-Router-Dom**: `npm install react-router-dom`
 - **Material Icons**: `npm install @material-icons/font`
 - **CHARTJS**: `npm install chart.js react-chartjs-2`
+  **JSPDF**: 'npm install jspdf'
 
 
 ---

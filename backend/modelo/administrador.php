@@ -27,6 +27,18 @@ class Administrador {
             return [];
         }
     }
+    public function obtenerConvocatorias(){
+        $sql = "SELECT * FROM convocatoria";
+        $stmt = $this->prepare($sql);
+        $stmt->execute();
+        
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resultado){
+            return $resultado;
+        }
+    
+    }
+
 
     public function obtenerTodasLasJornadas(){
         try{
@@ -155,6 +167,22 @@ class Administrador {
         }
     }
     
+     public function agregarConvocatoria($data){
+        $sql = "INSERT INTO convocatoria (nombreConvocatoria,descripcion,requisitos, salario, cantidadConvocatoria)
+                                             VALUES ( ? , ? , ? , ? , ?)";
+         $stmt = $this->db->prepare($sql);
+         $stmt->execute([
+             $data['nombreConvocatoria'],
+             $data['descripcion'],
+             $data['requisitos'],
+             $data['salario'],
+             $data['cantidadConvocatoria'],
+         ]);
+         $this->db->commit();
+                
+     }
+
+
 }
 
 

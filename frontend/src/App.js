@@ -21,6 +21,7 @@ import Quejas from './views/Quejas';
 import Empleados from './views/Empleados';
 import Citas from './views/Citas';
 import Certificados from './views/Certificados';
+import Vacantes from './views/Vacantes';
 
 //VISTAS ADMIN
 import InicioAdmin from './views/administrador/InicioAdmin';
@@ -48,6 +49,7 @@ function App() {
           <Route path='/Quejas' element={<Quejas/>}/>
           <Route path='/Empleados' element={<Empleados/>}/>
           <Route path='/Citas' element={<Citas/>}/>
+          <Route path="/Vacantes" element={<Vacantes/>}/>
           <Route path='/PazYsalvo' element={<PazySalvo/>}/>
           <Route path='/Certificados' element={<Certificados/>}/>
           <Route path='/administrador/InicioAdmin' element={<InicioAdmin/>}/>

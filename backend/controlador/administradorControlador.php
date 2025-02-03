@@ -50,6 +50,17 @@ class AdministradorControlador {
         }
     }
 
+    public function obtenerConvocatorias(){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerConvocatorias();
+        if($resultados){
+            echo json_encode(['Convocatorias' => $resultados]);
+        } else{
+            echo json_encode(['Convocatorias' =>[]]);
+        }
+    }
+
+
     public function obtenerTodasLasJornadas(){
 
         $authHeader = apache_request_headers()['Authorization'] ?? null;
@@ -222,7 +233,20 @@ class AdministradorControlador {
         }
     }
 
-   
+    public function agregarConvocatoria($data){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->agregarConvocatoria($data);
+        
+        if($resultados){
+            echo json_encode(['Convocatoria' => $resultados]);
+        } else{
+            echo json_encode(['Convocatoria' =>[]]);
+        }
+
+    }
+ 
+    
+
 }
 
 
