@@ -9,7 +9,7 @@ const NavbarClosed = ({ activeLink }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [rol, setRol] = useState(null);
   const [error, setError] = useState(null);
-  const [isSubMenuVisible, setIsSubMenuVisible] = useState(false);
+  const [openSubMenu, setOpenSubMenu] = useState(null);
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -52,8 +52,8 @@ const NavbarClosed = ({ activeLink }) => {
     setIsCollapsed(!isCollapsed);
   };
 
-  const toggleSubMenu = () => {
-    setIsSubMenuVisible(!isSubMenuVisible);
+  const toggleSubMenu = (index) => {
+    setOpenSubMenu(openSubMenu === index ? null : index);
   };
 
   const styles = {
@@ -119,7 +119,7 @@ const NavbarClosed = ({ activeLink }) => {
       display: isCollapsed ? "none" : "block",
     },
     subMenu: {
-      display: isSubMenuVisible ? "block" : "none",
+      display: "block",
       paddingLeft: "2rem",
     },
     subMenuItem: {
@@ -140,8 +140,12 @@ const NavbarClosed = ({ activeLink }) => {
   };
 
   const menuItems = [
-    { label: "Jornadas", icon: "event", path: "/Jornadas" },
-    { label: "Ausencias", icon: "hourglass_empty", path: "/Ausencias" },
+    { label: "Jornadas", icon: "event", path: "/Jornadas",
+      subMenu: [{ label: "Horas Extra", icon: "timeline", path: "/HorasExtra" }],
+     },
+    { label: "Ausencias", icon: "hourglass_empty", path: "/Ausencias",
+      subMenu: [{label: "Vacaciones", icon: "flight", path:"/Vacaciones"}],
+    },
     { label: "Paz y salvos", icon: "check_circle", path: "/PazYsalvo" },
     { label: "Quejas", icon: "report_problem", path: "/Quejas" },
     { label: "Mi perfil", icon: "person", path: "/Perfil" },
@@ -170,7 +174,7 @@ const NavbarClosed = ({ activeLink }) => {
         <h1 style={styles.title}>{isCollapsed ? "G+" : "Gestorplus"}</h1>
       </div>
       <nav style={styles.menu}>
-        {menuItems.map((item) => (
+        {menuItems.map((item, index) => (
           <div key={item.label}>
             <div
               style={{
@@ -178,10 +182,9 @@ const NavbarClosed = ({ activeLink }) => {
                 ...(activeLink === item.path ? styles.menuItemActive : {}),
               }}
               onClick={() => {
+                navigate(item.path);
                 if (item.subMenu) {
-                  toggleSubMenu();
-                } else {
-                  navigate(item.path);
+                  toggleSubMenu(index);
                 }
               }}
             >
@@ -190,7 +193,7 @@ const NavbarClosed = ({ activeLink }) => {
               </span>
               <span style={styles.text}>{item.label}</span>
             </div>
-            {item.subMenu && (
+            {item.subMenu && openSubMenu === index && (
               <div style={styles.subMenu}>
                 {item.subMenu.map((subItem) => (
                   <div
