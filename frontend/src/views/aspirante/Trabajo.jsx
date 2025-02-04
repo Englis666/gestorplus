@@ -6,12 +6,10 @@ import ConvocatoriaIndividual from "../../components/ConvocatoriaIndividual";
 const Trabajo = () => {
     
     return(
-        <div>
-        <UserProvider>
+        <div style={{backgroundColor: "#ECF0F1"}}>
             <Navbar/>
             <FiltroTrabajo/>
             <ConvocatoriaIndividual/>
-         </UserProvider>
         </div>
     );
 };

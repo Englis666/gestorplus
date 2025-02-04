@@ -5,6 +5,13 @@ const TablaVacantes = () => {
     const [Convocatorias, setConvocatorias] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [agregar, setAgregar] = useState({
+      nombreConvocatoria: "",
+      descripcion: "",
+      requisitos: "",
+      salario: "",
+      cantidadConvocatoria: "",
+    });
 
     useEffect(() => {
         axios
@@ -32,7 +39,7 @@ const TablaVacantes = () => {
         e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
         console.log("Datos enviados al backend", {});
         axios
-            .post("http://localhost/gestorplus/backend", {
+            .post("http://localhost/gestorplus/backend/", {
                 params: { action: "agregarConvocatoria" },
             })
             .then((response) => {
@@ -71,6 +78,8 @@ const TablaVacantes = () => {
                                             <th>Requisitos de la convocatoria</th>
                                             <th>Salario de la convocatoria</th>
                                             <th>Cupos de la convocatoria</th>
+                                            <th>Accion</th>
+                                            <th>Accion</th>
                                         </tr>
                                     </thead>
                                     <tbody className="text-center">
@@ -82,6 +91,17 @@ const TablaVacantes = () => {
                                                     <td className="py-3 px-4">{convocatoria.requisitos}</td>
                                                     <td className="py-3 px-4">{convocatoria.salario}</td>
                                                     <td className="py-3 px-4">{convocatoria.cantidadConvocatoria}</td>
+                                                    <td>
+                                                        <button className="btn btn-success btn-sm me-2">
+                                                            Activar Convocatoria
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        <button className="btn btn-danger btn-sm">
+                                                            Desactivar Convocatoria
+                                                        </button>
+
+                                                    </td>
                                                 </tr>
                                             ))
                                         ) : (
@@ -102,25 +122,42 @@ const TablaVacantes = () => {
                     <h2 className="mt-2">Formulario para agregar Vacantes</h2>
                     <div className="mb-3">
                         <label htmlFor="" className="form-label">Nombre de la convocatoria</label>
-                        <input type="text" className="form-control" />
+                        <input type="text" 
+                        value={agregar.nombreConvocatoria} 
+                        onChange={(e) => setAgregar({ ...agregar, nombreConvocatoria: e.target.value })}
+                        className="form-control" />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="">Descripción</label>
-                        <input type="text" className="form-control" />
+                        <input type="text" 
+                        value={agregar.descripcion}
+                        onChange={(e) => setAgregar({ ...agregar, descripcion: e.target.value })}
+                        name="descripcion" className="form-control" />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="">Requisitos</label>
-                        <input type="text" className="form-control" />
+                        <input type="text" 
+                        value={agregar.requisitos} 
+                        onChange={(e) => setAgregar({...agregar, requisitos: e.target.value})}
+                        className="form-control" />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="">Salario</label>
-                        <input type="number" className="form-control" />
+                        <input type="number"
+                        value={agregar.salario}
+                        onChange={(e) => setAgregar({...agregar, salario: e.target.value})}
+                        name="salario" className="form-control" />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="">Total de cupos para la vacante</label>
-                        <input type="number" className="form-control" />
+                        <input type="number"
+                        value={agregar.cantidadConvocatoria}
+                        onChange={(e) =>setAgregar({...agregar, cantidadConvocatoria: e.target.value})} 
+                        className="form-control" />
                     </div>
-                    <button type="submit" className="btn btn-primary mb-2">Agregar Vacante</button>
+                    <button type="submit" 
+                    onClick={() => handleAgregar()}
+                    className="btn btn-primary mb-2">Agregar Vacante</button>
                 </form>
             </div>
         </div>

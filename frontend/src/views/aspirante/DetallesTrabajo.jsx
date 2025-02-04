@@ -10,6 +10,7 @@ const DetallesDeTrabajo = () => {
     return (
         <div>
             <Navbar />
+
             {idconvocatoria ? (
                 <DetallesTrabajo idconvocatoria={idconvocatoria} />
             ) : (

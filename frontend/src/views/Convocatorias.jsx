@@ -2,7 +2,7 @@ import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
 import TablaVacantes from "../componentsClosed/tablaVacantes";
 
-const Vacantes = () => {
+const Convocatorias = () => {
     return (
         <div className="bg-light min-vh-100"
         style={{ display: "flex" , transition: "all 3s ease"}}>
@@ -14,4 +14,4 @@ const Vacantes = () => {
     );
 };
 
-export default Vacantes;
+export default Convocatorias;

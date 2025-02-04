@@ -45,9 +45,9 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
 
         axios
             .post("http://localhost/gestorplus/backend/", {
+                Authorization: `Bearer ${token}` ,
                 action: "aplicacionDeAspirante",
                 idconvocatoria: idconvocatoria,
-                headers: { Authorization: `Bearer ${token}` }  
             })
             .then((response) => {
                 if (response.data.success) {
@@ -70,7 +70,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
     }
 
     return (
-        <div id="vacante" className="d-flex flex-column min-vh-100">
+        <div id="vacante" className="d-flex flex-column min-vh-100"  style={{backgroundColor: "#ECF0F1"}}>
             <section className="job-details py-5 flex-grow-1">
                 <div className="container">
                     <h1 className="heading text-center mb-4">Detalles del trabajo</h1>

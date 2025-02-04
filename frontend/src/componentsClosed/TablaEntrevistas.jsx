@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CalendarioDeEntrevistas from "./CalendarioDeEntrevistas";
 
-const TablaCitas = () => {
+const TablaEntrevistas = () => {
     const [entrevistas, setEntrevistas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedInterview, setSelectedInterview] = useState(null); // Para almacenar la entrevista seleccionada
+    const [selectedInterview, setSelectedInterview] = useState(null);
 
     useEffect(() => {
         const fetchEntrevistas = async () => {
@@ -138,4 +138,4 @@ const TablaCitas = () => {
     );
 };
 
-export default TablaCitas;
+export default TablaEntrevistas;

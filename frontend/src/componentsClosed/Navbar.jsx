@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
+import { jwtDecode } from "jwt-decode";
 
 const NavbarClosed = ({ activeLink }) => {
   const { logout } = useUser();
@@ -9,6 +9,7 @@ const NavbarClosed = ({ activeLink }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [rol, setRol] = useState(null);
   const [error, setError] = useState(null);
+  const [isSubMenuVisible, setIsSubMenuVisible] = useState(false);
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -49,6 +50,10 @@ const NavbarClosed = ({ activeLink }) => {
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const toggleSubMenu = () => {
+    setIsSubMenuVisible(!isSubMenuVisible);
   };
 
   const styles = {
@@ -96,6 +101,7 @@ const NavbarClosed = ({ activeLink }) => {
       padding: "1rem",
       transition: "background 0.3s ease, color 0.3s ease",
       cursor: "pointer",
+      position: "relative",
     },
     menuItemActive: {
       background: "#eaf6ff",
@@ -111,6 +117,16 @@ const NavbarClosed = ({ activeLink }) => {
       fontWeight: "500",
       color: "#000",
       display: isCollapsed ? "none" : "block",
+    },
+    subMenu: {
+      display: isSubMenuVisible ? "block" : "none",
+      paddingLeft: "2rem",
+    },
+    subMenuItem: {
+      display: "flex",
+      alignItems: "center",
+      padding: "1rem",
+      cursor: "pointer",
     },
     logout: {
       display: "flex",
@@ -129,15 +145,20 @@ const NavbarClosed = ({ activeLink }) => {
     { label: "Paz y salvos", icon: "check_circle", path: "/PazYsalvo" },
     { label: "Quejas", icon: "report_problem", path: "/Quejas" },
     { label: "Mi perfil", icon: "person", path: "/Perfil" },
-    { label: "Certificados" , icon: "description", path: "/Certificados" },
+    { label: "Certificados", icon: "description", path: "/Certificados" },
   ];
 
   if (rol === "1" || rol === "2") {
     menuItems.push({ label: "Empleados", icon: "people", path: "/Empleados" });
-    menuItems.push({ label: "Citas", icon: "event_note", path: "/Citas" });
-    menuItems.push({ label: "Gestion de vacantes", icon: "people", path: "/Vacantes"});
+    menuItems.push({ label: "Entrevistas", icon: "event_note", path: "/Entrevistas" });
+    menuItems.push({
+      label: "Convocatorias",
+      icon: "people",
+      path: "/Convocatorias",
+      subMenu: [{ label: "Postulaciones", icon: "assignment", path: "/Postulaciones" }],
+    });
   }
-  
+
   return (
     <aside style={styles.navbarContainer}>
       <button style={styles.toggleButton} onClick={toggleCollapse}>
@@ -150,18 +171,41 @@ const NavbarClosed = ({ activeLink }) => {
       </div>
       <nav style={styles.menu}>
         {menuItems.map((item) => (
-          <div
-            key={item.label}
-            style={{
-              ...styles.menuItem,
-              ...(activeLink === item.path ? styles.menuItemActive : {}),
-            }}
-            onClick={() => navigate(item.path)}
-          >
-            <span className="material-icons" style={styles.icon}>
-              {item.icon}
-            </span>
-            <span style={styles.text}>{item.label}</span>
+          <div key={item.label}>
+            <div
+              style={{
+                ...styles.menuItem,
+                ...(activeLink === item.path ? styles.menuItemActive : {}),
+              }}
+              onClick={() => {
+                if (item.subMenu) {
+                  toggleSubMenu();
+                } else {
+                  navigate(item.path);
+                }
+              }}
+            >
+              <span className="material-icons" style={styles.icon}>
+                {item.icon}
+              </span>
+              <span style={styles.text}>{item.label}</span>
+            </div>
+            {item.subMenu && (
+              <div style={styles.subMenu}>
+                {item.subMenu.map((subItem) => (
+                  <div
+                    key={subItem.label}
+                    style={styles.subMenuItem}
+                    onClick={() => navigate(subItem.path)}
+                  >
+                    <span className="material-icons" style={styles.icon}>
+                      {subItem.icon}
+                    </span>
+                    <span style={styles.text}>{subItem.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
         <div style={styles.logout} onClick={handleLogout}>

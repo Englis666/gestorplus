@@ -19,9 +19,9 @@ import Jornadas from './views/Jornadas';
 import Ausencias from './views/Ausencias';
 import Quejas from './views/Quejas';
 import Empleados from './views/Empleados';
-import Citas from './views/Citas';
+import Entrevistas from './views/Entrevistas';
 import Certificados from './views/Certificados';
-import Vacantes from './views/Vacantes';
+import Convocatorias from './views/Convocatorias';
 
 //VISTAS ADMIN
 import InicioAdmin from './views/administrador/InicioAdmin';
@@ -48,8 +48,8 @@ function App() {
           <Route path='/Ausencias' element={<Ausencias/>}/>
           <Route path='/Quejas' element={<Quejas/>}/>
           <Route path='/Empleados' element={<Empleados/>}/>
-          <Route path='/Citas' element={<Citas/>}/>
-          <Route path="/Vacantes" element={<Vacantes/>}/>
+          <Route path='/Entrevistas' element={<Entrevistas/>}/>
+          <Route path="/Convocatorias" element={<Convocatorias/>}/>
           <Route path='/PazYsalvo' element={<PazySalvo/>}/>
           <Route path='/Certificados' element={<Certificados/>}/>
           <Route path='/administrador/InicioAdmin' element={<InicioAdmin/>}/>

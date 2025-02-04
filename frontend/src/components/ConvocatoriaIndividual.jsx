@@ -11,6 +11,25 @@ const ConvocatoriaIndividual = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+    };
+
+    const handleClick = (convocatorias) => {
+        const token = getCookie("auth_token");
+        if(token){
+            navigate("/aspirante/DetallesDeTrabajo");
+        }else{
+            navigate("/Login");
+        }
+
+    }
+
+
     useEffect(() => {
     axios.get('http://localhost/gestorplus/backend/', {
         params: {
@@ -84,7 +103,9 @@ const ConvocatoriaIndividual = () => {
                         <div className="mt-3">
                             <a 
                             className="btn btn-primary"
-                            type="button">Detalles del trabajo</a>
+                            type="button"
+                            onClick={() => handleClick(convocatoria)}
+                            >Detalles del trabajo</a>
                         </div>
 
                     </div>
