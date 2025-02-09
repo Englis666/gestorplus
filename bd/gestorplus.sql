@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Dec 09, 2024 at 11:03 PM
+-- Host: 127.0.0.1
+-- Generation Time: Feb 09, 2025 at 03:19 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -43,7 +43,8 @@ CREATE TABLE `ausencia` (
 --
 
 INSERT INTO `ausencia` (`idausencia`, `fechaInicio`, `fechaFin`, `tipoAusencia`, `descripcion`, `justificada`, `fechaRegistro`, `usuario_num_doc`) VALUES
-(1, '2024-12-12', '2024-12-21', 'INCAPACIDAD', 'ENFERMEDAD', 1, '2024-12-05', 1014);
+(1, '2024-12-12', '2024-12-21', 'INCAPACIDAD', 'ENFERMEDAD', 0, '2024-12-05', 1014),
+(3, '2025-02-03', '2025-02-04', 'Enfermedad', 'asd', 1, '2025-02-02', 10224);
 
 -- --------------------------------------------------------
 
@@ -93,8 +94,31 @@ CREATE TABLE `certificado` (
   `idCertificado` int(11) NOT NULL,
   `certificadoLaboral` tinyint(1) NOT NULL,
   `certificadoARL` tinyint(1) NOT NULL,
+  `fechaExpedicion` date NOT NULL,
   `vinculacion_idvinculacion` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat`
+--
+
+CREATE TABLE `chat` (
+  `idChat` int(11) NOT NULL,
+  `emisor` int(11) NOT NULL,
+  `receptor` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `chat`
+--
+
+INSERT INTO `chat` (`idChat`, `emisor`, `receptor`, `created_at`, `updated_at`) VALUES
+(1, 1014, 10224, '2024-12-27 23:59:01', '2024-12-27 23:59:01'),
+(2, 10224, 1025315410, '2025-02-06 22:44:08', '2025-02-06 22:44:08');
 
 -- --------------------------------------------------------
 
@@ -117,7 +141,8 @@ CREATE TABLE `convocatoria` (
 --
 
 INSERT INTO `convocatoria` (`idconvocatoria`, `nombreConvocatoria`, `descripcion`, `requisitos`, `salario`, `cantidadConvocatoria`, `cargo_idcargo`) VALUES
-(1, 'test', 'ASDASD', 'ASDASD', 55000.00, 50, 1);
+(1, 'test', 'ASDASD', 'ASDASD', 55000.00, 50, 1),
+(2, 'Desarrollador Full Stack', 'Buscamos un Desarrollador Full Stack con experiencia en el desarrollo de aplicaciones web. El candidato ideal debe tener habilidades tanto en el front-end como en el back-end, además de un enfoque orientado a la solución de problemas y la mejora continua.', 'Experiencia mínima de 3 años como desarrollador Full Stack. Dominio de tecnologías como React, Node.js, Express, y MongoDB. Conocimiento de control de versiones con Git. Capacidad para trabajar de forma autónoma y en equipo. Buen manejo de la comunicación verbal y escrita.', 60000.00, 15, 1);
 
 -- --------------------------------------------------------
 
@@ -131,7 +156,7 @@ CREATE TABLE `entrevista` (
   `hora` time NOT NULL,
   `lugarMedio` varchar(45) NOT NULL,
   `postulacion_idpostulaciones` int(11) NOT NULL,
-  `estadoEntrevista` int(5) NOT NULL
+  `estadoEntrevista` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
@@ -139,8 +164,8 @@ CREATE TABLE `entrevista` (
 --
 
 INSERT INTO `entrevista` (`identrevista`, `fecha`, `hora`, `lugarMedio`, `postulacion_idpostulaciones`, `estadoEntrevista`) VALUES
-(2, '2024-12-12', '18:00:00', 'CHAPINERO', 7, 0),
-(3, '2024-12-10', '14:00:00', 'CHAPINERO', 8, 0);
+(2, '2024-12-12', '18:00:00', 'CHAPINERO', 7, 'Pendiente'),
+(3, '2024-12-10', '14:00:00', 'CHAPINERO', 8, 'Pendiente');
 
 -- --------------------------------------------------------
 
@@ -285,7 +310,94 @@ INSERT INTO `jornada` (`idJornada`, `fecha`, `horaEntrada`, `horaSalida`, `usuar
 (53, '2024-12-09', '14:36:00', '22:36:00', 10224, 1),
 (54, '2024-12-09', '14:37:00', '22:37:00', 10224, 1),
 (55, '2024-12-09', '14:54:00', '22:54:00', 10224, 1),
-(56, '2024-12-09', '14:58:00', '22:58:00', 10224, 1);
+(56, '2024-12-09', '14:58:00', '22:58:00', 10224, 1),
+(57, '2024-12-22', '15:50:00', '23:50:00', 1014, 1),
+(58, '2024-12-22', '15:51:00', '23:51:00', 1014, 1),
+(59, '2024-12-22', '15:55:00', '23:55:00', 1014, 1),
+(60, '2024-12-22', '16:00:00', '00:00:00', 1014, 1),
+(61, '2024-12-22', '16:50:00', '00:50:00', 1014, 1),
+(62, '2024-12-22', '16:51:00', '00:51:00', 1014, 1),
+(63, '2024-12-22', '16:53:00', '00:53:00', 1014, 1),
+(64, '2024-12-22', '16:55:00', '00:55:00', 1014, 1),
+(65, '2024-12-22', '16:56:00', '00:56:00', 1014, 1),
+(66, '2024-12-22', '17:10:00', '01:10:00', 1014, 1),
+(67, '2024-12-22', '17:15:00', '01:15:00', 1014, 1),
+(68, '2024-12-23', '16:32:00', '00:32:00', 1014, 1),
+(69, '2024-12-23', '16:39:00', '00:39:00', 1014, 1),
+(70, '2024-12-23', '16:41:00', '00:41:00', 1014, 1),
+(71, '2024-12-23', '16:48:00', '00:48:00', 1014, 1),
+(72, '2024-12-23', '16:51:00', '00:51:00', 1014, 1),
+(73, '2024-12-23', '17:10:00', '01:10:00', 1014, 1),
+(74, '2024-12-23', '17:19:00', '01:19:00', 1014, 1),
+(75, '2024-12-25', '16:10:00', '00:10:00', 1014, 1),
+(76, '2024-12-25', '16:13:00', '00:13:00', 1014, 1),
+(77, '2024-12-25', '16:15:00', '00:15:00', 1014, 1),
+(78, '2024-12-25', '16:18:00', '00:18:00', 1014, 1),
+(79, '2024-12-25', '16:19:00', '00:19:00', 1014, 1),
+(80, '2024-12-25', '16:23:00', '00:23:00', 1014, 1),
+(81, '2024-12-25', '16:27:00', '00:27:00', 1014, 1),
+(82, '2024-12-25', '16:28:00', '00:28:00', 1014, 1),
+(83, '2024-12-25', '17:30:00', '01:30:00', 1014, 1),
+(84, '2024-12-25', '19:25:00', '03:25:00', 1014, 1),
+(85, '2024-12-26', '14:29:00', '22:29:00', 1014, 1),
+(86, '2024-12-26', '16:29:00', '00:29:00', 1014, 1),
+(87, '2024-12-26', '17:31:00', '01:31:00', 1014, 1),
+(88, '2024-12-26', '18:06:00', '02:06:00', 1014, 1),
+(89, '2024-12-27', '14:34:00', '22:34:00', 1014, 1),
+(90, '2024-12-27', '16:26:00', '00:26:00', 1014, 1),
+(91, '2024-12-27', '18:49:00', '02:49:00', 1014, 1),
+(92, '2024-12-27', '18:51:00', '02:51:00', 1014, 1),
+(93, '2024-12-28', '11:23:00', '19:23:00', 1014, 1),
+(94, '2024-12-29', '13:34:00', '21:34:00', 1014, 1),
+(95, '2024-12-29', '13:34:00', '21:34:00', 1014, 1),
+(96, '2024-12-29', '13:35:00', '21:35:00', 1014, 1),
+(97, '2024-12-29', '13:37:00', '21:37:00', 1014, 1),
+(98, '2024-12-29', '13:38:00', '21:38:00', 1014, 1),
+(99, '2024-12-29', '13:39:00', '21:39:00', 1014, 1),
+(100, '2024-12-29', '13:41:00', '21:41:00', 1014, 1),
+(101, '2024-12-29', '14:41:00', '22:41:00', 1014, 1),
+(102, '2024-12-29', '15:44:00', '23:44:00', 1014, 1),
+(103, '2024-12-29', '16:30:00', '00:30:00', 10224, 1),
+(104, '2024-12-29', '16:31:00', '00:31:00', 10224, 1),
+(105, '2024-12-29', '16:31:00', '00:31:00', 1014, 1),
+(106, '2025-01-26', '19:56:00', '03:56:00', 10224, 1),
+(107, '2025-01-26', '20:02:00', '04:02:00', 10224, 1),
+(108, '2025-01-26', '20:55:00', '04:55:00', 10224, 1),
+(109, '2025-01-27', '00:21:00', '08:21:00', 10224, 1),
+(110, '2025-01-28', '20:00:00', '04:00:00', 10224, 1),
+(111, '2025-01-28', '20:10:00', '04:10:00', 10224, 1),
+(112, '2025-01-28', '22:58:00', '06:58:00', 10224, 1),
+(113, '2025-01-31', '20:02:00', '04:02:00', 10224, 1),
+(114, '2025-02-02', '06:45:00', '14:45:00', 10224, 1),
+(115, '2025-02-02', '06:49:00', '14:49:00', 1014, 1),
+(116, '2025-02-02', '06:54:00', '14:54:00', 10224, 1),
+(117, '2025-02-02', '07:16:00', '15:16:00', 1014, 1),
+(118, '2025-02-02', '07:24:00', '15:24:00', 10224, 1),
+(119, '2025-02-02', '07:31:00', '15:31:00', 1014, 1),
+(120, '2025-02-02', '11:27:00', '19:27:00', 1014, 1),
+(121, '2025-02-02', '12:50:00', '20:50:00', 10224, 1),
+(122, '2025-02-03', '12:44:00', '20:44:00', 10224, 1),
+(123, '2025-02-03', '14:59:00', '22:59:00', 10224, 1),
+(124, '2025-02-03', '15:50:00', '23:50:00', 10224, 1),
+(125, '2025-02-03', '19:00:00', '03:00:00', 10224, 1),
+(126, '2025-02-03', '19:26:00', '03:26:00', 10224, 1),
+(127, '2025-02-03', '20:06:00', '04:06:00', 10224, 1),
+(128, '2025-02-04', '17:23:00', '01:23:00', 10224, 1),
+(129, '2025-02-04', '19:18:00', '03:18:00', 10224, 1),
+(130, '2025-02-04', '20:36:00', '04:36:00', 10224, 1),
+(131, '2025-02-06', '14:57:00', '22:57:00', 10224, 1),
+(132, '2025-02-06', '15:16:00', '23:16:00', 10224, 1),
+(133, '2025-02-06', '17:19:00', '01:19:00', 10224, 1),
+(134, '2025-02-06', '17:54:00', '01:54:00', 10224, 1),
+(135, '2025-02-06', '21:03:00', '05:03:00', 10224, 1),
+(136, '2025-02-07', '16:00:00', '00:00:00', 10224, 1),
+(137, '2025-02-07', '17:05:00', '01:05:00', 10224, 1),
+(138, '2025-02-07', '18:00:00', '02:00:00', 10224, 1),
+(139, '2025-02-07', '20:54:00', '04:54:00', 10224, 1),
+(140, '2025-02-07', '21:42:00', '05:42:00', 1014, 1),
+(141, '2025-02-08', '00:24:00', '08:24:00', 10224, 1),
+(142, '2025-02-08', '19:45:00', '03:45:00', 10224, 1),
+(143, '2025-02-08', '20:25:00', '04:25:00', 10224, 1);
 
 -- --------------------------------------------------------
 
@@ -336,7 +448,100 @@ INSERT INTO `notificacion` (`idnotificacion`, `descripcionNotificacion`, `nombre
 (53, 'Nueva jornada registrada por inicio de sesiÃ³n para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
 (54, 'El usuario con nÃºmero de documento 1025315410 y con los nombres Juan ha realizado una postulaciÃ³n a la vacante con el cargo Desarollador', 'Desarollador', 1, 'postulacion', 1025315410),
 (55, 'Nueva jornada registrada por inicio de sesiÃ³n para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
-(56, 'Nueva jornada registrada por inicio de sesiÃ³n para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224);
+(56, 'Nueva jornada registrada por inicio de sesiÃ³n para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(57, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(58, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(59, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(60, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(61, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(62, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(63, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(64, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(65, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(66, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(67, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(68, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(69, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(70, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(71, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(72, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(73, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(74, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(75, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(76, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(77, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(78, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(79, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(80, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(81, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(82, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(83, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(84, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(85, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(86, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(87, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(88, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(89, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(90, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(91, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(92, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(93, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(94, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(95, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(96, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(97, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(98, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(99, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(100, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(101, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(102, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(103, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(104, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(105, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(106, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(107, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(108, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(109, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(110, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(111, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(112, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(113, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(114, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(115, 'Ausencia rechazada', NULL, 0, 'Rechazo', 0),
+(116, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(117, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(118, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(119, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(120, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(121, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(122, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(123, 'El empleado identificado con la cedula 10224 ha solicitado una ausencia para el dia 2025-02-03 hasta el dia 2025-02-04', NULL, 1, 'Ausencia', 10224),
+(124, 'Ausencia aceptada', NULL, 0, 'Aceptacion', 0),
+(125, 'Ausencia aceptada', NULL, 0, 'Aceptacion', 0),
+(126, 'Ausencia rechazada', NULL, 0, 'Rechazo', 0),
+(127, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(128, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(129, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(130, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(131, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(132, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(133, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(134, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(135, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(136, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(137, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(138, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(139, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(140, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(141, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(142, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(143, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(144, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(145, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014 y con el nombre TEST', NULL, 1, 'Jornada', 1014),
+(146, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(147, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(148, 'Nueva jornada registrada por inicio de sesión para el usuario con documento: 10224 y con el nombre Alex', NULL, 1, 'Jornada', 10224),
+(149, 'El empleado identificado con la cedula 10224 ha solicitado una vacacion', NULL, 0, 'Vacacion', 10224);
 
 -- --------------------------------------------------------
 
@@ -394,21 +599,26 @@ CREATE TABLE `postulacion_has_notificacion` (
 
 CREATE TABLE `quejareclamo` (
   `idquejaReclamo` int(11) NOT NULL,
-  `fechaRedactado` date NOT NULL,
-  `tipoQuejaReclamo` varchar(45) NOT NULL,
-  `descripcion` text NOT NULL,
-  `estadoQueja` varchar(10) NOT NULL,
-  `usuario_num_doc` int(11) NOT NULL,
-  `Respuesta` varchar(255) DEFAULT NULL
+  `chat_idChat` int(11) NOT NULL,
+  `usuario_emisor` int(11) NOT NULL,
+  `usuario_receptor` int(11) NOT NULL,
+  `mensaje_emisor` text DEFAULT NULL,
+  `mensaje_receptor` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `quejareclamo`
 --
 
-INSERT INTO `quejareclamo` (`idquejaReclamo`, `fechaRedactado`, `tipoQuejaReclamo`, `descripcion`, `estadoQueja`, `usuario_num_doc`, `Respuesta`) VALUES
-(1, '2024-12-04', 'NOSE', 'TAMPOCO SE', '1', 1014, 'TEST DE Queja'),
-(2, '2024-12-24', 'NO SE', 'CAMBIOS', '1', 1014, 'TEST RESPUESTA');
+INSERT INTO `quejareclamo` (`idquejaReclamo`, `chat_idChat`, `usuario_emisor`, `usuario_receptor`, `mensaje_emisor`, `mensaje_receptor`, `created_at`) VALUES
+(33, 1, 1014, 10224, 'asd', '', '2025-02-02 12:20:37'),
+(36, 1, 1014, 10224, 'asd', '', '2025-02-02 12:23:48'),
+(37, 1, 10224, 1014, 'asd', NULL, '2025-02-02 12:31:03'),
+(38, 1, 10224, 1014, 'asd', NULL, '2025-02-06 22:42:07'),
+(39, 2, 10224, 1025315410, 'asd', NULL, '2025-02-06 22:44:08'),
+(40, 2, 10224, 1025315410, 'asd', NULL, '2025-02-06 22:52:30'),
+(41, 1, 10224, 1014, 'a', NULL, '2025-02-06 23:10:21');
 
 -- --------------------------------------------------------
 
@@ -463,7 +673,7 @@ INSERT INTO `usuario` (`num_doc`, `nombres`, `apellidos`, `email`, `tipodDoc`, `
 (10152215, 'asd', 'asd', 'email@gmail.com', 'CEDULA', '$2y$10$psfke4GqkR6wKSKCDnsw9.I9SGDikC1mpCSu7nP4a3arp7FlJmDIK', 1, 29, 4),
 (354135, 'ASD', 'LOL', 'alex@gmail.com', 'CEDULA', '$2y$10$xyzMNWKCm/X1nV4qnmWnt.lUgE2ymXayb8VQbn0lS5CGW8nxdJple', 1, 30, 4),
 (111, 'Juan', 'Lopez', '111@gmail.com', 'CEDULA', '$2y$10$Nw3l7qwS7g8A5mJYL9iSOujiLzeOMOClt7zfRgh3iyMogzQkI12Om', 1, 31, 4),
-(1025315410, 'Juan', 'Lopez', 'JuanLopez@gmail.com', 'CEDULA', '$2y$10$.61nxCEd5mdYTfkmZBONWuA5g9u910mcbVQdGu38.Vcq1oCx4STs.', 1, 32, 4);
+(1025315410, 'Juan', 'Lopez', 'JuanLopez@gmail.com', 'CEDULA', '$2y$10$.61nxCEd5mdYTfkmZBONWuA5g9u910mcbVQdGu38.Vcq1oCx4STs.', 1, 32, 3);
 
 -- --------------------------------------------------------
 
@@ -476,9 +686,16 @@ CREATE TABLE `vacacion` (
   `fechaInicio` date NOT NULL,
   `fechaFin` date NOT NULL,
   `aprovadoPor` varchar(45) NOT NULL,
-  `estado` varchar(45) NOT NULL,
+  `estadoVacacion` varchar(45) NOT NULL,
   `usuario_num_doc` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `vacacion`
+--
+
+INSERT INTO `vacacion` (`idvacacion`, `fechaInicio`, `fechaFin`, `aprovadoPor`, `estadoVacacion`, `usuario_num_doc`) VALUES
+(0, '2025-02-08', '2025-02-15', '', 'Pendiente', 10224);
 
 -- --------------------------------------------------------
 
@@ -530,6 +747,14 @@ ALTER TABLE `cargo`
 ALTER TABLE `certificado`
   ADD PRIMARY KEY (`idCertificado`,`vinculacion_idvinculacion`),
   ADD KEY `fk_certificado_vinculacion1_idx` (`vinculacion_idvinculacion`);
+
+--
+-- Indexes for table `chat`
+--
+ALTER TABLE `chat`
+  ADD PRIMARY KEY (`idChat`),
+  ADD UNIQUE KEY `emisor` (`emisor`,`receptor`),
+  ADD UNIQUE KEY `receptor` (`receptor`);
 
 --
 -- Indexes for table `convocatoria`
@@ -632,13 +857,25 @@ ALTER TABLE `vinculacion`
 -- AUTO_INCREMENT for table `ausencia`
 --
 ALTER TABLE `ausencia`
-  MODIFY `idausencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idausencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `ausencia_has_notificacion`
 --
 ALTER TABLE `ausencia_has_notificacion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `chat`
+--
+ALTER TABLE `chat`
+  MODIFY `idChat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `convocatoria`
+--
+ALTER TABLE `convocatoria`
+  MODIFY `idconvocatoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `entrevista`
@@ -668,13 +905,13 @@ ALTER TABLE `hojadevida`
 -- AUTO_INCREMENT for table `jornada`
 --
 ALTER TABLE `jornada`
-  MODIFY `idJornada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `idJornada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
 
 --
 -- AUTO_INCREMENT for table `notificacion`
 --
 ALTER TABLE `notificacion`
-  MODIFY `idnotificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `idnotificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
 
 --
 -- AUTO_INCREMENT for table `postulacion`
@@ -686,7 +923,7 @@ ALTER TABLE `postulacion`
 -- AUTO_INCREMENT for table `quejareclamo`
 --
 ALTER TABLE `quejareclamo`
-  MODIFY `idquejaReclamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idquejaReclamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `usuario`
