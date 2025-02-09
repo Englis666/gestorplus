@@ -233,7 +233,7 @@ class Usuario {
         $sql = "
            SELECT 
             SUM(CASE WHEN tipo = 'Jornada' THEN 1 ELSE 0 END) AS totalEntradas,
-             SUM(CASE WHEN tipo = 'Ausencias' THEN 1 ELSE 0 END) AS totalAusencias
+             SUM(CASE WHEN tipo = 'Ausencia' THEN 1 ELSE 0 END) AS totalAusencias
                 FROM notificacion
                     WHERE num_doc = :num_doc
         ";
