@@ -13,8 +13,9 @@ const InicioAspirante = () => {
         <div>
         <UserProvider>
         <Navbar></Navbar>
-        <Banner></Banner>
+        <Banner></Banner> 
         <Convocatoria></Convocatoria>
+
         </UserProvider>
         </div>
 

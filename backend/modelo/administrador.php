@@ -27,6 +27,45 @@ class Administrador {
             return [];
         }
     }
+
+    public function obtenerTodasLasVacaciones(){
+        try{
+            $sql = "SELECT * FROM vacacion as v 
+                    INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if($resultado){
+                return $resultado;
+            }
+            return [];
+        } catch (PDOException $e){
+            echo json_encode(['error' => 'Error en la consulta ' . $e->getMessage()]);
+            http_response_code(500);
+            return[];
+        }
+    }
+
+
+
+    public function obtenerTodasLasHorasExtra(){
+        try{
+            $sql = "SELECT * FROM horaextra";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if($resultado){
+                return $resultado;
+            }
+            return [];
+        }catch (PDOException $e) {
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return [];
+        }
+    }
+
     public function obtenerConvocatorias(){
         $sql = "SELECT * FROM convocatoria";
         $stmt = $this->prepare($sql);
@@ -77,8 +116,8 @@ class Administrador {
 
     public function obtenerUsuarios(){
         $sql = "SELECT * FROM usuario as u
-                INNER JOIN rol as r ON u.rol_idrol = idrol
-                WHERE r.nombreRol = 'Empleados'";
+                 INNER JOIN rol as r ON u.rol_idrol = idrol
+                 WHERE r.nombreRol = 'Empleados'";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         
@@ -178,8 +217,7 @@ class Administrador {
              $data['salario'],
              $data['cantidadConvocatoria'],
          ]);
-         $this->db->commit();
-                
+            
      }
 
 

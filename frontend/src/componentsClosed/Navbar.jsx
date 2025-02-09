@@ -159,8 +159,20 @@ const NavbarClosed = ({ activeLink }) => {
       label: "Convocatorias",
       icon: "people",
       path: "/Convocatorias",
-      subMenu: [{ label: "Postulaciones", icon: "assignment", path: "/Postulaciones" }],
+      subMenu: [
+        {
+          label: "Postulaciones",
+          icon: "assignment",
+          path: "/Postulaciones",
+        },
+        {
+          label: "Cargos",
+          icon: "work",
+          path: "/Cargos",
+        },
+      ],
     });
+    
   }
 
   return (

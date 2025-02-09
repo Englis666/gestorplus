@@ -45,22 +45,22 @@ switch ($method) {
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->solicitarAusencia($data);
                     break;
-                   
+                
+                    
+                case 'solicitarVacaciones':
+                    $empleadoControlador = new EmpleadoControlador();
+                    $empleadoControlador->solicitarVacaciones($data);
+                    break;
+
                 case 'aplicacionDeAspirante':
                     $aspiranteControlador = new AspiranteControlador();
                     $aspiranteControlador->aplicacionDeAspirante();
                     break;
 
+                
+
                 //CHAT
-                case 'obtenerMensajes':
-                    $chatControlador = new ChatControlador();
-                    $chatControlador->obtenerMensajes($data);
-                    break;
-                case 'obtenerMensajesDelUsuario':
-                    $chatControlador = new ChatControlador();
-                    $chatControlador->obtenerMensajesDelUsuario($data);
-                    break;
-        
+                
                 case 'enviarMensajes':
                     $chatControlador = new ChatControlador();
                     $chatControlador->enviarMensajes($data);
@@ -113,6 +113,17 @@ switch ($method) {
             $action = $_GET['action'];
             switch ($action) {
                 //USUARIOS
+
+                case 'obtenerIdChat':
+                    $chatControlador = new ChatControlador();
+                    $chatControlador->obtenerIdChat();
+                    break;
+
+                case 'obtenerMensajes':
+                    $chatControlador = new ChatControlador();
+                    $chatControlador->obtenerMensajes($data);
+                    break;
+
                 case 'obtenerConvocatorias':
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->obtenerConvocatorias();
@@ -146,6 +157,10 @@ switch ($method) {
                 case 'obtenerAusencias':
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerAusencias();
+                    break;
+                case 'obtenerMisVacaciones':
+                    $empleadoControlador = new EmpleadoControlador();
+                    $empleadoControlador->obtenerMisVacaciones();
                     break;
 
                 //ASPIRANTE 
@@ -188,7 +203,16 @@ switch ($method) {
                     $administradorControlador->obtenerEntrevistas();    
                     break;
 
-                    
+                case 'obtenerTodasLasHorasExtra':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerTodasLasHorasExtra();
+                    break;
+
+                case 'obtenerTodasLasVacaciones':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerTodasLasVacaciones();
+                    break;
+
                 default:
                     http_response_code(400);
                     echo json_encode(['message' => 'Acción no encontrada.']);

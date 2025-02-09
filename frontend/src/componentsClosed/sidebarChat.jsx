@@ -8,8 +8,25 @@ const SidebarChat = ({ onUserSelect }) => {
   const [rol, setRol] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleUserClick = (usuario) => {
-    onUserSelect(usuario); // Pasa el objeto completo del usuario
+  const handleUserClick = async (usuario) => {
+    try {
+      const response = await axios.get('http://localhost/gestorplus/backend/', {
+        params: {
+          action: 'obtenerIdChat',
+          num_doc: usuario.num_doc  
+        }
+      });
+
+      const idChat = response.data.idChat;  
+
+      if (idChat) {
+        onUserSelect({ ...usuario, idChat });
+      } else {
+        console.error('No se encontró el idChat para este usuario');
+      }
+    } catch (error) {
+      console.error('Error al obtener el idChat del usuario:', error);
+    }
   };
 
   const handleGoBack = () => {
@@ -85,12 +102,14 @@ const SidebarChat = ({ onUserSelect }) => {
         background: "#fff",
         width: "100%",
         maxWidth: "400px",
-        height: "400px",
+        height: "45rem",
         marginTop: "3rem",
         borderRadius: "16px",
         boxShadow: "0 0 128px 0 rgba(0,0,0,0.1), 0 32px 64px -48px rgba(0,0,0,0.5)",
         marginRight: "40px",
         padding: "20px",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
@@ -150,7 +169,15 @@ const SidebarChat = ({ onUserSelect }) => {
 
       {errorMessage && <div style={{ color: "red", marginBottom: "10px" }}>{errorMessage}</div>}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+          overflowY: "auto",  // Agregado para permitir el desplazamiento cuando la lista es larga
+          maxHeight: "calc(100% - 100px)", // Ajusta el espacio restante después de los encabezados
+        }}
+      >
         {usuariosRRHH
           .filter((usuario) =>
             usuario.nombres.toLowerCase().includes(searchQuery.toLowerCase())

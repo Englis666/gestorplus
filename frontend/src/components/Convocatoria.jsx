@@ -10,35 +10,23 @@ const Convocatoria = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios
-            .get("http://localhost/gestorplus/backend/", {
-                params: {
-                    action: "obtenerConvocatorias",
-                },
-            })
+        axios.get("http://localhost/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
             .then((response) => {
-                console.log("respuesta completa: ", response.data);
                 if (Array.isArray(response.data.convocatorias)) {
                     setConvocatorias(response.data.convocatorias);
                 } else {
-                    console.error("Convocatorias no es un array");
                     setConvocatorias([]);
                 }
                 setLoading(false);
             })
-            .catch((err) => {
+            .catch(() => {
                 setError("Error al cargar las convocatorias");
                 setLoading(false);
-                console.log("Error fetch ", err);
             });
-    }, []); 
+    }, []);
 
-    if (loading) {
-        return <div>Cargando convocatorias...</div>;
-    }
-    if (error) {
-        return <div>{error}</div>;
-    }
+    if (loading) return <div className="text-center text-primary fw-bold mt-5">Cargando convocatorias...</div>;
+    if (error) return <div className="text-center text-danger mt-5">{error}</div>;
 
     const getCookie = (name) => {
         const value = `; ${document.cookie}`;
@@ -50,112 +38,58 @@ const Convocatoria = () => {
     const handleDetailsClick = (convocatoria) => {
         const token = getCookie("auth_token");
         if (token) {
-            navigate("/aspirante/DetallesDeTrabajo", { state: { idconvocatoria: convocatoria.idconvocatoria } }); 
+            navigate("/aspirante/DetallesDeTrabajo", { state: { idconvocatoria: convocatoria.idconvocatoria } });
         } else {
-            navigate("/Login"); 
+            navigate("/Login");
         }
     };
 
     return (
-        <div className="bg-light">
-            <section className="category py-5" style={{ color: "#fff" }}>
-                <h1 className="heading text-center mb-5 text-black">
-                    Categorías de trabajo
-                </h1>
-                <div className="box-container row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 justify-content-center">
+        <div style={{background: "linear-gradient(to bottom, #E3F2FD, #ECF0F1)" }}>
+            <section className="container py-5 text-center">
+                <h1 className="text-primary fw-bold mb-4">Categorías de Trabajo</h1>
+                <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     {convocatorias.map((convocatoria, index) => (
-                        <div
-                            key={convocatoria.idconvocatoria || `${convocatoria.idcargo}-${index}`}
-                            className="col"
-                        >
-                            <div className="box bg-white p-4 rounded shadow-sm border">
-                                <div className="ms-3">
-                                    <h3 className="fs-5 text-capitalize text-dark mb-2">
-                                        {convocatoria.nombreCargo}
-                                    </h3>
-                                    <span
-                                        className="text-muted"
-                                        style={{ fontSize: "1.3rem" }}
-                                    >
-                                        Convocatorias disponibles:{" "}
-                                        {convocatoria.cantidadConvocatoria}
-                                    </span>
-                                </div>
+                        <div key={convocatoria.idconvocatoria || `${convocatoria.idcargo}-${index}`} className="col">
+                            <div className="card shadow-lg rounded-4 p-4 border-0">
+                                <h3 className="fs-5 text-dark text-capitalize mb-3">{convocatoria.nombreCargo}</h3>
+                                <p className="text-muted">Convocatorias disponibles: {convocatoria.cantidadConvocatoria}</p>
                             </div>
                         </div>
                     ))}
                 </div>
             </section>
 
-            <section className="jobs-container container-fluid py-5">
-                <h1>Convocatorias recientes</h1>
-                <div className="box-container row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 ms-4">
+            <section className="container py-5 text-center">
+                <h1 className="text-primary fw-bold mb-4">Convocatorias Recientes</h1>
+                <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     {convocatorias.map((convocatoria, index) => (
-                        <div
-                            key={convocatoria.idconvocatoria || `${convocatoria.idcargo}-${index}`}
-                            className="col"
-                        >
-                            <div className="box bg-white p-4 rounded shadow-sm border">
-                                <div className="company d-flex align-items-center gap-3 mb-3">
-                                    <div>
-                                        <h3
-                                            className="fs-4 text-dark mb-2 text-capitalize"
-                                            style={{
-                                                whiteSpace: "nowrap",
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis",
-                                            }}
-                                        >
-                                            {convocatoria.nombreConvocatoria}
-                                        </h3>
-                                        <p className="text-muted">Día de publicación</p>
-                                    </div>
-                                </div>
-                                <div className="tags d-flex flex-wrap gap-3 mb-4">
-                                    <p className="p-3 rounded bg-light">
-                                        <i
-                                            className="fas fa-indian-rupee-sign me-2"
-                                            style={{ color: "#777" }}
-                                        ></i>
-                                        <span>{convocatoria.salario}</span>
+                        <div key={convocatoria.idconvocatoria || `${convocatoria.idcargo}-${index}`} className="col">
+                            <div className="card shadow-lg rounded-4 p-4 border-0">
+                                <h3 className="fs-4 text-dark text-capitalize text-truncate mb-3">{convocatoria.nombreConvocatoria}</h3>
+                                <p className="text-muted">Día de publicación</p>
+                                <div className="tags d-flex justify-content-center gap-3 mb-4">
+                                    <p className="p-2 rounded bg-light shadow-sm text-dark">
+                                        <i className="fas fa-dollar-sign me-2 text-success"></i>
+                                        {convocatoria.salario}
                                     </p>
-                                    <p className="p-3 rounded bg-light">
-                                        <i
-                                            className="fas fa-briefcase me-2"
-                                            style={{ color: "#777" }}
-                                        ></i>
-                                        <span>Parte del tiempo</span>
-                                    </p>
-                                    <p className="p-3 rounded bg-light">
-                                        <i
-                                            className="fas fa-briefcase me-2"
-                                            style={{ color: "#777" }}
-                                        ></i>
-                                        <span>{convocatoria.nombreCargo}</span>
+                                    <p className="p-2 rounded bg-light shadow-sm text-dark">
+                                        <i className="fas fa-briefcase me-2 text-primary"></i>
+                                        {convocatoria.nombreCargo}
                                     </p>
                                 </div>
-
-                                <div className="mt-3">
-                                    <button
-                                        className="btn btn-primary"
-                                        onClick={() => handleDetailsClick(convocatoria)}
-                                        type="button"
-                                    >
-                                        Detalles del trabajo
-                                    </button>
-                                </div>
+                                <button className="btn btn-primary w-100 rounded-pill py-2 fw-bold" onClick={() => handleDetailsClick(convocatoria)}>
+                                    Detalles del trabajo
+                                </button>
                             </div>
                         </div>
                     ))}
                 </div>
-
-                <a
-                    type="button"
-                    onClick={() => navigate("/aspirante/Trabajo")}
-                    className="btn btn-primary mt-5"
-                >
-                    Ver todas las convocatorias
-                </a>
+                <div className="text-center mt-5">
+                    <button onClick={() => navigate("/aspirante/Trabajo")} className="btn btn-primary rounded-pill px-4 py-2">
+                        Ver todas las convocatorias
+                    </button>
+                </div>
             </section>
             <Footer />
         </div>

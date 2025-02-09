@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
 
-const Chat = ({ selectedUser }) => {
+const Chat = ({ selectedChat }) => {
   const navigate = useNavigate();
   const [chatMessages, setChatMessages] = useState([]);
   const [loadError, setLoadError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [rol, setRol] = useState(null); // Estado para guardar el rol
+  const [rol, setRol] = useState(null);
 
-  const obtenerMensajes = async (targetNum_doc) => {
+  const obtenerMensajes = async (targetIdChat) => {
     const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`); 
+      const value = document.cookie;
+      const parts = value.split(`; ${name}=`);
       return parts.length === 2 ? parts.pop().split(";").shift() : null;
     };
 
@@ -24,8 +24,8 @@ const Chat = ({ selectedUser }) => {
       return;
     }
 
-    if (!targetNum_doc) {
-      setLoadError('No se ha seleccionado un usuario.');
+    if (!targetIdChat) {
+      setLoadError('No se ha seleccionado un chat.');
       return;
     }
 
@@ -40,40 +40,24 @@ const Chat = ({ selectedUser }) => {
         return;
       }
 
-      const Rol = decodedToken?.data?.rol; 
+      const Rol = decodedToken?.data?.rol;
       setRol(Rol);
 
-      let action;
-      switch (Rol) {
-        case "1":
-        case "2":
-          action = "obtenerMensajesDelUsuario";
-          break;
-        case "3":
-          action = "obtenerMensajes";
-          break;
-        default:
-          console.error("Rol no válido");
-          setLoadError("Rol no reconocido.");
-          setLoading(false);
-          return;
-      }
-
       const data = {
-        action,
-        targetNum_doc,  
+        targetIdChat,
       };
 
-      console.log("Obteniendo mensajes para el chat con el usuario :", targetNum_doc);  
+      console.log("Obteniendo mensajes para el chat con el idChat:", targetIdChat);
 
       setLoading(true);
-      const response = await axios.post('http://localhost/gestorplus/backend/', data, {
+      const response = await axios.get('http://localhost/gestorplus/backend/', data, {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
+        action: 'obtenerMensajes',
       });
 
-      console.log("Respuesta del backend:", response.data);
+      console.log("Respuesta del backend:", response);
 
       if (response.data.status === 'success') {
         if (Array.isArray(response.data.mensajes) && response.data.mensajes.length > 0) {
@@ -90,15 +74,15 @@ const Chat = ({ selectedUser }) => {
       console.error('Error al cargar los mensajes:', err);
       setLoadError('Error al cargar los mensajes');
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (selectedUser && selectedUser.num_doc) {
-      obtenerMensajes(selectedUser.num_doc);
+    if (selectedChat && selectedChat.idChat) {
+      obtenerMensajes(selectedChat.idChat);
     }
-  }, [selectedUser]);
+  }, [selectedChat]);
 
   return (
     <div
@@ -135,13 +119,13 @@ const Chat = ({ selectedUser }) => {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: msg.emisor === selectedUser.num_doc ? 'flex-end' : 'flex-start', 
+                  alignItems: msg.emisor === selectedChat.idChat ? 'flex-end' : 'flex-start',  // Check against idChat
                 }}
               >
                 <div
                   style={{
-                    backgroundColor: msg.emisor === selectedUser.num_doc ? '#0078FF' : '#f1f0f0',
-                    color: msg.emisor === selectedUser.num_doc ? '#fff' : '#000',
+                    backgroundColor: msg.emisor === selectedChat.idChat ? '#0078FF' : '#f1f0f0',
+                    color: msg.emisor === selectedChat.idChat ? '#fff' : '#000',
                     padding: '10px 15px',
                     borderRadius: '15px',
                     maxWidth: '75%',
@@ -155,11 +139,12 @@ const Chat = ({ selectedUser }) => {
                 <span
                   style={{
                     fontSize: '12px',
-                    color: msg.emisor === selectedUser.num_doc ? '#0078FF' : '#555',
-                    marginTop: '5px',
+                    color: '#888',
+                    fontWeight: 'bold',
+                    marginBottom: '5px',
                   }}
                 >
-                  {msg.emisor === selectedUser.num_doc ? 'Tú' : 'Tu'}
+                  {msg.nombreEmisor}
                 </span>
               </div>
             </div>
@@ -167,10 +152,10 @@ const Chat = ({ selectedUser }) => {
         </div>
       )}
 
-      {/* Mostrar cargando */}
+      {/* Indicador de carga */}
       {loading && (
-        <div style={{ textAlign: 'center', padding: '10px', fontSize: '16px' }}>
-          Cargando...
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          Cargando mensajes...
         </div>
       )}
     </div>

@@ -56,41 +56,30 @@ class Chat {
         return $stmt->execute([$message, $num_doc,$targetNum_doc,$idChat]);
     }
 
-    public function obtenerMensajes($num_doc, $targetNum_doc) {
-        $mensajes = [];
-            $consulta = "SELECT * FROM chat as c
-                         INNER JOIN quejareclamo as q ON c.idChat = q.chat_idChat
-                         WHERE c.emisor = :num_doc AND c.receptor = :target_num_doc";
-            $stmt = $this->db->prepare($consulta);
+    public function obtenerIdChat($data){
+            $stmt = $this->pdo->prepare("SELECT idChat FROM chat WHERE receptor = :num_doc");
             $stmt->bindParam(':num_doc', $num_doc);
-            $stmt->bindParam(':target_num_doc', $targetNum_doc);
             $stmt->execute();
-            
-            $mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      
+            return $result ? $result['idChat'] : null;
+
+        
+    }
+
+    public function obtenerMensajes($idChat) {
+        $consulta = "SELECT * FROM chat AS c
+                     INNER JOIN quejareclamo AS q ON c.idChat = q.chat_idChat
+                     WHERE c.idChat = :idChat";
+        $stmt = $this->db->prepare($consulta);
+        $stmt->bindParam(':idChat', $idChat, PDO::PARAM_INT);
+        $stmt->execute();
     
-            if($mensajes){
-                return $mensajes;
-            }
-            return [];
+        $mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $mensajes ? $mensajes : [];
     }
     
-    public function obtenerMensajesDelUsuario($num_doc, $targetNum_doc) {
-        $mensajes = [];
-            $consulta = "SELECT * FROM chat as c
-                         INNER JOIN quejareclamo as q ON c.idChat = q.chat_idChat
-                         WHERE q.usuario_emisor = :num_doc AND q.usuario_receptor = :target_num_doc";
-            $stmt = $this->db->prepare($consulta);
-            $stmt->bindParam(':num_doc', $num_doc);
-            $stmt->bindParam(':target_num_doc', $targetNum_doc);
-            $stmt->execute();
-            
-            $mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-            if($mensajes){
-                return $mensajes;
-            }
-            return [];
-    }
 
 }
 ?>

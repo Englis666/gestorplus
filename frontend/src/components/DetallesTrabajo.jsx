@@ -33,19 +33,18 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
     }, [idconvocatoria]);
 
     const handleApply = () => {
-
         const getCookie = (name) => {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
             if (parts.length === 2) return parts.pop().split(";").shift();
             return null;
-          };
-          
-          const token = getCookie("auth_token");
+        };
+
+        const token = getCookie("auth_token");
 
         axios
             .post("http://localhost/gestorplus/backend/", {
-                Authorization: `Bearer ${token}` ,
+                Authorization: `Bearer ${token}`,
                 action: "aplicacionDeAspirante",
                 idconvocatoria: idconvocatoria,
             })
@@ -63,56 +62,104 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
     };
 
     if (loading) {
-        return <div>Cargando detalles...</div>;
+        return <div className="text-center py-5">Cargando detalles...</div>;
     }
     if (error) {
-        return <div>{error}</div>;
+        return <div className="text-center py-5 text-danger">{error}</div>;
     }
 
     return (
-        <div id="vacante" className="d-flex flex-column min-vh-100"  style={{backgroundColor: "#ECF0F1"}}>
+        <div
+            id="vacante"
+            className="d-flex flex-column min-vh-100"
+            style={{
+                background: "linear-gradient(to bottom, #E3F2FD, #ECF0F1)",
+            }}
+        >
             <section className="job-details py-5 flex-grow-1">
                 <div className="container">
-                    <h1 className="heading text-center mb-4">Detalles del trabajo</h1>
+                    <h1 className="heading text-center mb-4 text-primary">
+                        Detalles del trabajo
+                    </h1>
                     <div className="row justify-content-center">
                         <div className="col-md-8">
-                            <div className="card shadow-sm">
-                                <div className="card-body">
-                                    <h3 className="card-title text-primary">
-                                        {detalleConvocatoria?.nombreCargo}
+                            <div
+                                className="card shadow-lg rounded-4 border-0"
+                                style={{
+                                    transition: "transform 0.3s ease-in-out",
+                                    background: "white",
+                                }}
+                                onMouseEnter={(e) =>
+                                    (e.currentTarget.style.transform =
+                                        "scale(1.02)")
+                                }
+                                onMouseLeave={(e) =>
+                                    (e.currentTarget.style.transform =
+                                        "scale(1)")
+                                }
+                            >
+                                <div className="card-body p-5">
+                                    <h3 className="card-title text-primary text-center">
+                                        {detalleConvocatoria?.nombreConvocatoria}
                                     </h3>
 
+                                    <hr className="mb-4" />
+
                                     <div className="mb-3">
-                                        <h5>Salario</h5>
-                                        <p>{detalleConvocatoria?.salario}</p>
+                                        <h5 className="text-secondary">
+                                            Salario
+                                        </h5>
+                                        <p className="fw-bold text-dark">
+                                            {detalleConvocatoria?.salario}
+                                        </p>
                                     </div>
 
                                     <div className="mb-3">
-                                        <h5>Requerimientos</h5>
-                                        <p>{detalleConvocatoria?.requerimientos}</p>
+                                        <h5 className="text-secondary">
+                                            Requerimientos
+                                        </h5>
+                                        <p className="text-dark">
+                                            {detalleConvocatoria?.requisitos}
+                                        </p>
                                     </div>
 
                                     <div className="mb-3">
-                                        <h5>Descripción del trabajo</h5>
-                                        <p>{detalleConvocatoria?.descripcion}</p>
+                                        <h5 className="text-secondary">
+                                            Descripción del trabajo
+                                        </h5>
+                                        <p className="text-dark">
+                                            {detalleConvocatoria?.descripcion}
+                                        </p>
                                     </div>
 
                                     {successMessage && (
-                                        <div className="alert alert-success">
+                                        <div className="alert alert-success text-center">
                                             {successMessage}
                                         </div>
                                     )}
                                     {error && (
-                                        <div className="alert alert-danger">
+                                        <div className="alert alert-danger text-center">
                                             {error}
                                         </div>
                                     )}
 
-                                    <div className="d-flex justify-content-center">
+                                    <div className="d-flex justify-content-center mt-4">
                                         <button
                                             type="button"
-                                            className="btn btn-primary px-5 py-2"
+                                            className="btn btn-primary rounded-pill px-5 py-2 fw-bold"
+                                            style={{
+                                                transition:
+                                                    "all 0.3s ease-in-out",
+                                            }}
                                             onClick={handleApply}
+                                            onMouseEnter={(e) =>
+                                                (e.currentTarget.style.backgroundColor =
+                                                    "#007bff")
+                                            }
+                                            onMouseLeave={(e) =>
+                                                (e.currentTarget.style.backgroundColor =
+                                                    "#0d6efd")
+                                            }
                                         >
                                             Aplicar ahora
                                         </button>

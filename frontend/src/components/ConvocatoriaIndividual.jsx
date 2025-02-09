@@ -1,16 +1,16 @@
-import React , {useEffect,useState} from "react";
+import React, { useEffect, useState } from "react";
 import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const ConvocatoriaIndividual = () => {
-
     const navigate = useNavigate();
     const [convocatorias, setConvocatorias] = useState([]);
+    const [filteredConvocatorias, setFilteredConvocatorias] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [search, setSearch] = useState("");
 
     const getCookie = (name) => {
         const value = `; ${document.cookie}`;
@@ -19,105 +19,121 @@ const ConvocatoriaIndividual = () => {
         return null;
     };
 
-    const handleClick = (convocatorias) => {
+    const handleClick = (convocatoria) => {
         const token = getCookie("auth_token");
-        if(token){
-            navigate("/aspirante/DetallesDeTrabajo");
-        }else{
+        if (token) {
+            navigate("/aspirante/DetallesDeTrabajo", { state: { idconvocatoria: convocatoria.idconvocatoria } });
+        } else {
             navigate("/Login");
         }
-
-    }
-
+    };
 
     useEffect(() => {
-    axios.get('http://localhost/gestorplus/backend/', {
-        params: {
-            action: 'obtenerConvocatorias',
-        },
-    })
-        .then(response => {
-            console.log("respuesta completa: ",response.data);
-            if(Array.isArray(response.data.convocatorias)){
-                setConvocatorias(response.data.convocatorias);
-            }else{
-                console.error('Convocatorias no es un array');
-                setConvocatorias([]);
-            }
-            setLoading(false);
+        axios.get('http://localhost/gestorplus/backend/', {
+            params: {
+                action: 'obtenerConvocatorias',
+            },
         })
-        .catch(err => {
-            setError('Error al cargar las convocatorias');
-            setLoading(false);
-            console.log('Error fetch ' , err);
-        });
-    }, []); 
+            .then(response => {
+                if (Array.isArray(response.data.convocatorias)) {
+                    setConvocatorias(response.data.convocatorias);
+                    setFilteredConvocatorias(response.data.convocatorias);
+                } else {
+                    setConvocatorias([]);
+                    setFilteredConvocatorias([]);
+                }
+                setLoading(false);
+            })
+            .catch(() => {
+                setError('Error al cargar las convocatorias');
+                setLoading(false);
+            });
+    }, []);
 
-    if (loading){
-        return <div>Cargando convocatorias</div>;
-    }
-    if(error){
-        return <div>{error}</div>;
-    }
+    useEffect(() => {
+        setFilteredConvocatorias(
+            convocatorias.filter(convocatoria =>
+                convocatoria.nombreConvocatoria.toLowerCase().includes(search.toLowerCase())
+            )
+        );
+    }, [search, convocatorias]);
 
+    if (loading) return <div className="text-center mt-5 text-primary fw-bold">Cargando convocatorias...</div>;
+    if (error) return <div className="text-center text-danger mt-5">{error}</div>;
 
     return (
-        <div className="bg-light">
-         <section className="jobs-container container-fluid py-5">
-            <h1>Convocatorias</h1>
-            <div className="box-container row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 ms-4">
-            {convocatorias.map(convocatoria =>(
-
-                <div key={convocatoria.idconvocatoria} className="col">
-                    <div className="box bg-white p-4 rounded shadow-sm border">
-                        <div className="company d-flex align-items-center gap-3 mb-3">
-                           
-
-                            <div>
-                         
-                                <h3 
-                                className="fs-4 text-dark mb-2 text-capitalize"
-                                style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}> 
-                                {convocatoria.nombreConvocatoria} 
-                                </h3>
-                                <p className="text-muted">Día de publicación</p>
-                            </div>
-                        </div>
-                        <div className="tags d-flex flex-wrap gap-3 mb-4">
-                            <p className="p-3 rounded bg-light">
-                                <i className="fas fa-indian-rupee-sign me-2" style={{ color: "#777" }}></i>
-                                <span>{convocatoria.salario}</span>
-                            </p>
-                            <p className="p-3 rounded bg-light">
-                                <i className="fas fa-briefcase me-2" style={{ color: "#777" }}></i>
-                                <span>Parte del tiempo</span>
-                            </p>
-                            <p className="p-3 rounded bg-light">
-                                <i className="fas fa-briefcase me-2" style={{ color: "#777" }}></i>
-                                <span>{convocatoria.nombreCargo}</span>
-                            </p>
-
-                        
-                        </div>
-        
-                        <div className="mt-3">
-                            <a 
-                            className="btn btn-primary"
-                            type="button"
-                            onClick={() => handleClick(convocatoria)}
-                            >Detalles del trabajo</a>
-                        </div>
-
-                    </div>
+        <div
+            className="d-flex flex-column min-vh-100"
+            style={{ background: "linear-gradient(to bottom, #E3F2FD, #ECF0F1)" }}
+        >
+            <section className="container py-5 flex-grow-1">
+                <h1 className="mb-4 text-center text-primary fw-bold">Convocatorias</h1>
+                
+                <div className="mb-4 text-center">
+                    <input
+                        type="text"
+                        className="form-control w-50 mx-auto shadow-lg border-0 rounded-pill px-4 py-2"
+                        placeholder="Buscar vacante por nombre..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        style={{
+                            transition: "all 0.3s ease-in-out",
+                        }}
+                        onFocus={(e) => (e.target.style.boxShadow = "0px 0px 12px rgba(0, 123, 255, 0.4)")}
+                        onBlur={(e) => (e.target.style.boxShadow = "none")}
+                    />
                 </div>
-            ))}
-            </div>
 
-         
-        </section>
-        <Footer/>
+                <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {filteredConvocatorias.length > 0 ? (
+                        filteredConvocatorias.map(convocatoria => (
+                            <div key={convocatoria.idconvocatoria} className="col">
+                                <div
+                                    className="card shadow-lg rounded-4 border-0 text-center p-4"
+                                    style={{
+                                        transition: "transform 0.3s ease-in-out",
+                                        background: "white",
+                                    }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
+                                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                                >
+                                    <h3 className="fs-4 text-dark mb-3 text-capitalize text-truncate">
+                                        {convocatoria.nombreConvocatoria}
+                                    </h3>
+                                    <p className="text-muted">Día de publicación</p>
+                                    
+                                    <div className="tags d-flex justify-content-center gap-3 mb-4">
+                                        <p className="p-2 rounded bg-light shadow-sm text-dark">
+                                            <i className="fas fa-dollar-sign me-2 text-success"></i>
+                                            <span>{convocatoria.salario}</span>
+                                        </p>
+                                        <p className="p-2 rounded bg-light shadow-sm text-dark">
+                                            <i className="fas fa-briefcase me-2 text-primary"></i>
+                                            <span>{convocatoria.nombreCargo}</span>
+                                        </p>
+                                    </div>
+                                    
+                                    <button 
+                                        className="btn btn-primary w-100 shadow-sm rounded-pill py-2 fw-bold"
+                                        onClick={() => handleClick(convocatoria)}
+                                        style={{
+                                            transition: "all 0.3s ease-in-out",
+                                        }}
+                                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#007bff")}
+                                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#0d6efd")}
+                                    >
+                                        Ver detalles
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center text-muted">No se encontraron resultados.</div>
+                    )}
+                </div>
+            </section>
+            <Footer className="mt-auto" />
         </div>
-        
     );
 }
 

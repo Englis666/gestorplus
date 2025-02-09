@@ -7,6 +7,7 @@ const TablaEntrevistas = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedInterview, setSelectedInterview] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const fetchEntrevistas = async () => {
@@ -47,7 +48,7 @@ const TablaEntrevistas = () => {
 
     // Función para cerrar el panel y mostrar todas las entrevistas
     const handleClosePanel = () => {
-        setSelectedInterview(null); 
+        setSelectedInterview(null);
     };
 
     return (
@@ -60,13 +61,14 @@ const TablaEntrevistas = () => {
                     <div className="card shadow-sm border-0 mb-4" style={{ borderRadius: "10px" }}>
                         <div className="card-body">
                             <p>Entrevistas en totalidad por empleado</p>
-                            <div className="table-responsive">
+                                                        <div className="table-responsive">
                                 <table className="table table-hover" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}>
                                     <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                                         <tr>
                                             <th className="py-3 px-4">Fecha de la entrevista</th>
                                             <th className="py-3 px-4">Hora de la entrevista</th>
                                             <th className="py-3 px-4">Nombre empleado</th>
+                                            <th className="py-3 px-4">Estado de entrevista</th>
                                             <th>Acción</th>
                                             <th>Acción</th>
                                         </tr>
@@ -82,6 +84,9 @@ const TablaEntrevistas = () => {
                                                 </td>
                                                 <td className="py-3 px-4">
                                                     <span className="text-dark">{entrevista.nombres}</span>
+                                                </td>
+                                                <td className="py-3 px-4">
+                                                    <span className="text-dark">{entrevista.estadoEntrevista}</span>
                                                 </td>
                                                 <td>
                                                     <button className="btn btn-primary btn-sm">Asistencia cumplida</button>
@@ -110,7 +115,7 @@ const TablaEntrevistas = () => {
                                 <button className="btn btn-secondary me-2" onClick={handleClosePanel}>
                                     Cerrar
                                 </button>
-                                <button className="btn btn-primary"> 
+                                <button className="btn btn-primary">
                                     Revisar hoja de vida de entrevistado
                                 </button>
                             </div>
@@ -131,8 +136,6 @@ const TablaEntrevistas = () => {
                     </div>
                 </div>
             </div>
-
-            <h1>Citas generales</h1>
 
         </div>
     );

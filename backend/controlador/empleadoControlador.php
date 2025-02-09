@@ -56,6 +56,41 @@ class EmpleadoControlador {
         } 
     }
 
+    public function obtenerMisVacaciones(){
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if (!$authHeader) {
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401); 
+            return;
+        }
+        $token = str_replace('Bearer ', '', $authHeader);
+        try{
+            $secretKey = SECRET_KEY;
+            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+            $num_doc = $decoded->data->num_doc;
+            if(!$num_doc){
+                echo json_encode(['error' => 'No se encontro el numero de documento en el token']);
+                http_response_code(400);
+                return;
+            }
+            $this->empleado = new Empleado($this->db);
+            $resultado = $this->empleado->obtenerMisVacaciones($num_doc);
+                if($resultado){
+                    echo json_encode(['Vacaciones' => $resultado]);
+                } else {
+                    echo json_encode(['Vacaciones' => []]);
+                }
+        }catch (\Firebase\JWT\ExpiredException $e) {
+            echo json_encode(['error' => 'Token expirado']);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            echo json_encode(['error' => 'Token con firma inválida']);
+        } catch (Exception $e) {
+            echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
+        }
+
+    }
+
+
     public function obtenerJornadas(){
         $authHeader = apache_request_headers()['Authorization'] ?? null;
     
@@ -232,6 +267,40 @@ class EmpleadoControlador {
             echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
         }
     }
+
+
+    public function solicitarVacaciones($data){
+    $authHeader = apache_request_headers()['Authorization'] ?? null;
+    if(!$authHeader){
+        echo json_encode(['error' => 'Token no proporcionado']);
+        http_response_code(401);
+        return;
+    }
+    $token = str_replace('Bearer ', '', $authHeader);
+    try{
+        $secretKey = SECRET_KEY;
+        $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+        $num_doc = $decoded->data->num_doc;
+        if(!$num_doc){
+            echo json_encode(['error' => 'No se encontro el numero de documento']);
+            http_response_code(400);
+            return;
+        }
+        $this->empleado = new Empleado($this->db);
+        $resultado = $this->empleado->solicitarVacaciones($num_doc, $data);
+        if ($resultado) {
+            echo json_encode(['message' => 'Vacaciones solicitadas']);
+        } else {
+            echo json_encode(['message' => 'Error al solicitar las vacaciones']);
+        }
+    } catch (\Firebase\JWT\ExpiredException $e){
+        echo json_encode(['error' => 'Token expirado']);
+    } catch (\Firebase\JWT\SignatureInvalidException $e){
+        echo json_encode(['error' => 'Token con firma invalida']);
+    } catch (Exception $e){
+        echo json_encode(['error' => 'Error al procesar el token' . $e->getMessage()]);
+    }
+}
 
 }
 ?>

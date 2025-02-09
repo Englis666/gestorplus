@@ -115,12 +115,6 @@ const Perfil = () => {
       updatedData.apellidos = formData.apellidos;
     }
 
-    if (!updatedData.email) updatedData.email = formData.email;
-    if (!updatedData.tipodDoc) updatedData.tipodDoc = formData.tipodDoc;
-    if (!updatedData.password) updatedData.password = formData.password;
-    if (!updatedData.nombres) updatedData.nombres = formData.nombres;
-    if (!updatedData.apellidos) updatedData.apellidos = formData.apellidos;
-
     const token = getCookie("auth_token");
 
     if (token) {
@@ -159,11 +153,11 @@ const Perfil = () => {
   const toggleModalExperiencia = () => setModalExperiencia(!modalExperiencia);
 
   return (
-    <div className="container d-flex flex-column align-items-center justify-content-center bg-light ms-5">
-      <div className="row w-100">
-        <div className="col-md-12 col-12 p-4 bg-white shadow rounded">
-          <h2 className="text-primary">Configuración de perfil</h2>
-          <p>Bienvenido, aquí podrás actualizar tu hoja de vida y tus datos.</p>
+    <div className="container d-flex flex-column align-items-center justify-content-center min-vh-100 ">
+      <div className="row w-100 justify-content-center">
+        <div className="col-md-8 col-12 p-4 bg-white shadow-lg rounded-lg">
+          <h2 className="text-primary text-center mb-4">Configuración de perfil</h2>
+          <p className="text-center mb-4">Bienvenido, aquí podrás actualizar tu hoja de vida y tus datos.</p>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="num_doc" className="form-label">Número de documento</label>
@@ -235,14 +229,22 @@ const Perfil = () => {
                 onChange={handleChange}
               />
             </div>
-            <button type="submit" className="btn btn-primary w-100 mb-3">Actualizar datos</button>
+            <button type="submit" className="btn btn-primary w-100 mb-3 shadow-sm">Actualizar datos</button>
           </form>
 
           <div className="d-flex flex-column justify-content-center bg-white shadow rounded">
-            <button onClick={toggleModalHojaDeVida} className="btn btn-primary mb-3">Agregar o actualizar Hoja de vida</button>
-            <button onClick={toggleModalEstudios} className="btn btn-primary mb-3">Agregar estudios</button>
-            <button onClick={toggleModalExperiencia} className="btn btn-primary">Agregar Experiencia</button>
+            <button onClick={toggleModalHojaDeVida} className="btn btn-outline-primary mb-3 shadow-sm">Agregar o actualizar Hoja de vida</button>
+            <button onClick={toggleModalEstudios} className="btn btn-outline-primary mb-3 shadow-sm">Agregar estudios</button>
+            <button onClick={toggleModalExperiencia} className="btn btn-outline-primary shadow-sm">Agregar Experiencia</button>
           </div>
+
+          {/* Botón para volver a la página anterior */}
+          <button
+            onClick={() => window.history.back()}
+            className="btn btn-outline-secondary w-100 mt-3"
+          >
+            Volver a la página anterior
+          </button>
         </div>
       </div>
 

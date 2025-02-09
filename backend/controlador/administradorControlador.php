@@ -50,6 +50,40 @@ class AdministradorControlador {
         }
     }
 
+    public function obtenerTodasLasHorasExtra(){
+    $authHeader = apache_request_headers()['Authorization'] ?? null;
+    
+    if (!$authHeader){
+        echo json_encode(['error' => 'Token no proporcionado']);
+        http_response_code(401);
+        return;
+    }
+    
+    $token = str_replace('Bearer ', '', $authHeader);
+    
+    try {   
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerTodasLasHorasExtra();
+        
+        if ($resultados) {
+            echo json_encode(['HorasExtra' => $resultados]);
+        } else {
+            echo json_encode(['HorasExtra' => []]);
+        }
+    } catch (\Firebase\JWT\ExpiredException $e) {
+        echo json_encode(['error' => 'Token expirado']);
+        http_response_code(401);
+    } catch (\Firebase\JWT\SignatureInvalidException $e) {
+        echo json_encode(['error' => 'Token con firma inválida']);
+        http_response_code(401);
+    } catch (\Exception $e) {
+        echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
+        http_response_code(500);
+    }
+}
+
+
+
     public function obtenerConvocatorias(){
         $this->administrador = new Administrador($this->db);
         $resultados = $this->administrador->obtenerConvocatorias();
@@ -142,6 +176,33 @@ class AdministradorControlador {
             echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
         }
     }
+    public function obtenerTodasLasVacaciones(){
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if (!$authHeader) {
+            echo json_encode(['error' => 'Token no proporcionado']);
+            http_response_code(401);
+            return;
+        }   
+        $token = str_replace('Bearer ', '', $authHeader);
+        try{
+            $this->administrador = new Administrador($this->db);
+
+            $resultados = $this->administrador->obtenerTodasLasVacaciones();
+                if($resultados){
+                    echo json_encode(['Vacaciones' => $resultados]);
+                } else {
+                    echo json_encode(['Vacaciones' => []]);
+                }
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            echo json_encode(['error' => 'Token expirado']);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            echo json_encode(['error' => 'Token con firma inválida']);
+        } catch (Exception $e) {
+            echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
+        }
+
+
+    }
 
     public function obtenerUsuarios(){
         $this->administrador = new Administrador($this->db);
@@ -233,19 +294,27 @@ class AdministradorControlador {
         }
     }
 
-    public function agregarConvocatoria($data){
+    public function agregarConvocatoria($data){    
+        if(!isset($data['nombreConvocatoria'], $data['descripcion'], $data['requisitos'], $data['salario'], $data['cantidadConvocatoria'])){
+            echo json_encode(['error' => 'Faltan datos']);
+            http_response_code(400);
+            return;
+        }
+    
         $this->administrador = new Administrador($this->db);
         $resultados = $this->administrador->agregarConvocatoria($data);
         
-        if($resultados){
+        if ($resultados) {
             echo json_encode(['Convocatoria' => $resultados]);
-        } else{
-            echo json_encode(['Convocatoria' =>[]]);
+        } else {
+            echo json_encode(['Convocatoria' => []]);
         }
-
     }
- 
     
+   
+    
+
+
 
 }
 

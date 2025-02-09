@@ -8,7 +8,7 @@ const InicioRRHH = () => {
       {/* Barra de navegación */}
         <NavbarClosed />
       {/* Contenido principal */}
-      <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
+      <div className="flex-grow-1 p-4" style={{ background: "linear-gradient(to bottom,rgb(229, 239, 247), #ECF0F1)" }}>
         <TablaEmpleado action="obtenerTodasLasNotificaciones" />
       </div>
     </div>

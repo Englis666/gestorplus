@@ -26,6 +26,26 @@ class Empleado {
         }
     }
     
+    public function obtenerMisVacaciones($num_doc){
+        try{
+            $sql = "SELECT * FROM vacacion WHERE num_doc = :num_doc";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(":num_doc" , $num_doc, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if($resultado){
+                return $resultado;
+            }
+            return[];
+        }catch (PDOException $e) {
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return [];
+        }
+    }
+
+    
     public function obtenerJornadas($num_doc){
         try{
             $sql = "SELECT * FROM jornada as j
@@ -123,7 +143,39 @@ class Empleado {
             return false; 
         }
     }
-    
-}
 
+    public function solicitarVacaciones($num_doc, $data){
+        try{
+            $estado = 'Pendiente';
+            $sql = "INSERT INTO vacacion (fechaInicio, fechaFin,estadoVacacion, usuario_num_doc) VALUES (? , ? , ? , ?)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $data['fechaInicio'],
+                $data['fechaFin'],
+                $estado,
+                $num_doc
+            ]);
+        
+            if($stmt->rowCount() > 0 ){
+                $descripcionNotificacion = "El empleado identificado con la cedula $num_doc ha solicitado una vacacion";
+                $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) VALUES ( ? , ? , ? , ? )";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    $descripcionNotificacion,
+                    'Pendiente',
+                    'Vacacion',
+                    $num_doc
+                ]);
+                
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+}
 ?>

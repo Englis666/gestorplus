@@ -22,6 +22,10 @@ import Empleados from './views/Empleados';
 import Entrevistas from './views/Entrevistas';
 import Certificados from './views/Certificados';
 import Convocatorias from './views/Convocatorias';
+import HorasExtra from './views/HorasExtra';
+import Vacaciones from './views/Vacaciones';
+import Postulaciones from './views/Postulaciones';
+import Cargos from './views/Cargos';
 
 //VISTAS ADMIN
 import InicioAdmin from './views/administrador/InicioAdmin';
@@ -45,11 +49,15 @@ function App() {
           <Route path='/aspirante/DetallesDeTrabajo' element={<DetallesDeTrabajo/>}/>
           <Route path='/empleado/InicioEmpleado' element={<InicioEmpleado/>}/>
           <Route path='/Jornadas' element={<Jornadas/>}/>
+          <Route path='/HorasExtra' element={<HorasExtra/>}/>
           <Route path='/Ausencias' element={<Ausencias/>}/>
+          <Route path='/Vacaciones' element={<Vacaciones/>}/>
           <Route path='/Quejas' element={<Quejas/>}/>
           <Route path='/Empleados' element={<Empleados/>}/>
           <Route path='/Entrevistas' element={<Entrevistas/>}/>
           <Route path="/Convocatorias" element={<Convocatorias/>}/>
+          <Route path='/Postulaciones' element={<Postulaciones/>}/>
+          <Route path='/Cargos' element={<Cargos/>}/>
           <Route path='/PazYsalvo' element={<PazySalvo/>}/>
           <Route path='/Certificados' element={<Certificados/>}/>
           <Route path='/administrador/InicioAdmin' element={<InicioAdmin/>}/>
