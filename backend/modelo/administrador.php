@@ -263,6 +263,27 @@ class Administrador {
         }
         return [];
     }
+    public function obtenerPostulaciones(){
+        $sql = "SELECT * FROM postulacion as p
+                INNER JOIN usuario as u. ON p.usuario_num_doc = u.num_doc
+                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo
+                ";
+        $sql = "SELECT * FROM usuario as u
+                INNER JOIN postulacion as p ON u.num_doc = p.usuario_num_doc
+                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resultado){
+            return $resultado;
+        }
+        return [];
+    }
+
 
 
 }

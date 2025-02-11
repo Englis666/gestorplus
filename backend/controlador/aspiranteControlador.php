@@ -79,7 +79,7 @@ class AspiranteControlador {
 
     }
 
-    public function aplicacionDeAspirante($data){
+    public function aplicacionDeAspirante($data) {
         $authHeader = apache_request_headers()['Authorization'] ?? null;
         if (!$authHeader){
             echo json_encode(['error' => 'Token no proporcionado']);
@@ -100,7 +100,7 @@ class AspiranteControlador {
                 return;
             }
 
-            if($data['idconvocatoria'] == null){
+            if(!isset($data['idconvocatoria'])){
                 echo json_encode(['error' => 'No se recibió el id de la convocatoria']);
                 http_response_code(400);
                 return;
@@ -111,9 +111,9 @@ class AspiranteControlador {
             $resultados = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
 
             if($resultados){
-                echo json_encode(['Aplicacion' => $resultados]);
+                echo json_encode(['success' => true]);
             } else{
-                echo json_encode(['Aplicacion' =>null]);
+                echo json_encode(['success' => false, 'error' => 'No se pudo completar la aplicación']);
             }
         } catch (\Firebase\JWT\ExpiredException $e) {
             echo json_encode(['error' => 'Token expirado']);

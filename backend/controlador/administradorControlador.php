@@ -356,6 +356,16 @@ class AdministradorControlador {
         }
     }
 
+    public function obtenerPostulaciones(){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerPostulaciones();
+        if($resultados){
+            echo json_encode(['Postulaciones' => $resultados]);
+        } else{
+            echo json_encode(['Postulaciones' => []]);
+        }
+    }
+
 }
 
 

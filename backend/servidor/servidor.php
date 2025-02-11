@@ -188,6 +188,10 @@ switch ($method) {
                     $administradorControlador->obtenerCargos();
                     break;
                     
+                case 'obtenerPostulaciones':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerPostulaciones();
+                    break;
 
                 case 'obtenerEmpleados':
                     $administradorControlador = new AdministradorControlador();

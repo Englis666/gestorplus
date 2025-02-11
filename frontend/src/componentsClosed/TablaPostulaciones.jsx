@@ -1,6 +1,6 @@
 import React , { useState, useEffect } from "react";
 import axios from "axios";
-import { Calendar } from "react-big-calendar";
+
 
 const TablaPostulaciones = () => {
 
@@ -8,13 +8,15 @@ const TablaPostulaciones = () => {
     const [loading, setLoading ] = useState(true);
     const [error, setError] = useState(null);
     
+
+
     useEffect(() => {
         const fetchPostulaciones = async () => {
             try{
                 const response = await axios.get("http://localhost/gestorplus/backend/", {
                     params: { action: "obtenerPostulaciones"},
                 });
-                const data = response.data.Postulacion;
+                const data = response.data.Postulaciones;
                 if (Array.isArray(data)){
                     setPostulaciones(data);
                 } else {
@@ -56,24 +58,38 @@ const TablaPostulaciones = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="text-center">
-                                        <tr>
-                                            <td className="py-3 px-4">
-                                                <span className="text-dark">Alex</span>
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                <span className="text-dark">Desarollador</span>
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                <span className="text-dark">En espera</span>
-                                            </td>
-                                            <td>
-                                                <button className="btn btn-primary btn-sm">
-                                                    Asignarle entrevista
-                                                </button>
-                                            </td>
+                                        {postulaciones.legth == 0 ? (
+                                            <tr>
+                                                <td className="py-3 px-4" colSpan="4">
+                                                <span className="text-dark">No existen postulaciones</span>
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            postulaciones.map((postulacion, index) => (
 
-                                        </tr>
+                                                <tr key={index}>
+                                                    <td className="py-3 px-4">
+                                                        <span className="text-dark">{postulacion.nombres}</span>
+                                                    </td>
 
+                                                    <td className="py-3 px-4">
+                                                        <span className="text-dark">{postulacion.nombreCargo}</span>
+                                                    </td>
+
+                                                    <td className="py-3 px-4">
+                                                        <span className="text-dark">{postulacion.estadoPostulacion}</span>
+                                                    </td>
+
+                                                    <td className="py-3 px-4">
+                                                        <button className="btn btn-primary">
+                                                            Asignar Entrevista
+                                                        </button>
+                                                    </td>
+
+                                                </tr>
+
+                                            ))
+                                        )}
 
                                     </tbody>
 

@@ -1,12 +1,10 @@
 <?php
-// MODELO
 require_once 'config/config.php';
 
 class Aspirante {
-
     private $db;
 
-    public function __construct($db){
+    public function __construct($db) {
         $this->db = $db;
     }
 
@@ -31,65 +29,43 @@ class Aspirante {
 
     public function aplicacionDeAspirante($num_doc, $idconvocatoria) {
         try {
-            $sql = "INSERT INTO postulacion (usuario_num_doc, convocatoria_idconvocatoria) VALUES (?, ?)";
+            $sql = "INSERT INTO postulacion (usuario_num_doc, convocatoria_idconvocatoria, estadoPostulacion) VALUES (?, ?, ?)";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$num_doc, $idconvocatoria]);
+            $stmt->execute([$num_doc, $idconvocatoria, "En proceso"]);
     
             // Si la inserción es correcta se notifica al aspirante y a RRHH
             if ($stmt->rowCount() > 0) {
-                // CLASE DE NOTIFICACION  
-                $notificaciones = new Notificaciones($this->db);
-                
                 // Notificación para el aspirante
                 $descripcionNotificacion = 'Has aplicado a una convocatoria';
                 $estadoNotificacion = 'No leida';
                 $tipo = 'Postulacion';
-                $notificaciones->crearNotificacion($descripcionNotificacion, $estadoNotificacion, $tipo, $num_doc);
-    
+
+
+                $insert = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc)
+                            VALUES  (? , ? , ? , ?)";
+                $stmt = $this->db->prepare($insert);
+                if (!$stmt->execute([$descripcionNotificacion, $estadoNotificacion, $tipo, $num_doc])) {
+                    throw new PDOException("Error al insertar la notificación para el aspirante: " . implode(", ", $stmt->errorInfo()));
+                }
+
                 // Notificación para RRHH
-                $descripcionParaRRHH = "El aspirante con número de documento $num_doc ha aplicado a una convocatoria";
-                $notificaciones->crearNotificacionRRHH($descripcionParaRRHH, $estadoNotificacion, $tipo, $num_doc);
-                
+                $descripcionNotificacion2 = "El aspirante con número de documento $num_doc ha aplicado a una convocatoria";
+                $insert2 = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc)
+                            VALUES (? , ? , ? , ?)";
+                $stmt = $this->db->prepare($insert2);
+                if (!$stmt->execute([$descripcionNotificacion2, $estadoNotificacion, $tipo, $num_doc])) {
+                    throw new PDOException("Error al insertar la notificación para RRHH: " . implode(", ", $stmt->errorInfo()));
+                }
+
                 return true;
+            } else {
+                echo json_encode(['error' => 'Error al insertar la aplicación']);
+                return false;
             }
-    
-            return false;
         } catch (PDOException $e) {
             echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
             http_response_code(500);
             return false;
-        }
-    }
-}
-
-class Notificaciones {
-    private $db;
-
-    public function __construct($db) {
-        $this->db = $db;
-    }
-
-    public function crearNotificacion($descripcionNotificacion, $estado, $tipo, $num_doc) {
-        try {
-            $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
-                    VALUES (?, ?, ?, ?)";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$descripcionNotificacion, $estado, $tipo, $num_doc]);
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error al insertar la notificación: ' . $e->getMessage()]);
-            http_response_code(500);
-        }
-    }
-
-    public function crearNotificacionRRHH($descripcionParaRRHH, $estado, $tipo, $num_doc) {
-        try {
-            $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
-                    VALUES (?, ?, ?, ?)";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$descripcionParaRRHH, $estado, $tipo, $num_doc]);
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error al insertar la notificación para RRHH: ' . $e->getMessage()]);
-            http_response_code(500);
         }
     }
 }

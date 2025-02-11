@@ -8,6 +8,7 @@ const TablaEmpleado = ({ action }) => {
   const [notificaciones, setNotificaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rol, setRol] = useState(null);
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -21,6 +22,7 @@ const TablaEmpleado = ({ action }) => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
+        setRol(decodedToken.data.rol); // Asumiendo que el rol está en el token
 
         const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
         if (isTokenExpired) {
@@ -75,13 +77,12 @@ const TablaEmpleado = ({ action }) => {
   }
 
   const jornadaNotificaciones = notificaciones.filter((n) => n.tipo === "Jornada");
-  const actualizacionNotificaciones = notificaciones.filter((n) => n.tipo === "Actualizacion");
+  const actualizacionNotificaciones = notificaciones.filter((n) => n.tipo === (rol === "Empleado" ? "Aceptacion" : "Actualizacion"));
   const generalNotificaciones = notificaciones.filter((n) => n.tipo === "General");
 
   const handleVerClick = (notificacion) => {
     console.log("Ver detalles de notificación", notificacion);
   };
-
 
   return (
     <div className="container mt-5">

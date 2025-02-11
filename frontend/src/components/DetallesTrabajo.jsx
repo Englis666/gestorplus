@@ -43,6 +43,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
         const token = getCookie("auth_token");
 
         const data = {
+            action: "aplicacionDeAspirante",
             idconvocatoria: idconvocatoria,
         };
 
@@ -51,13 +52,14 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-                params: {action: "aplicacionDeAspirante"},
             })
             .then((response) => {
                 if (response.data.success) {
-                    setSuccessMessage("Aplicación enviada con éxito.");
+                    console.log("respuesta", response.data.success);
+                    setSuccessMessage(response.data.message);
                 } else {
-                    setError("No se pudo completar la aplicación.");
+                    console.error("Error en la respuesta del servidor: ", response.data.error);
+                    setError(response.data.error);
                 }
             })
             .catch((err) => {
