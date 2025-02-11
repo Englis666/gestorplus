@@ -79,8 +79,7 @@ class AspiranteControlador {
 
     }
 
-    public function aplicacionDeAspirante(){
-        
+    public function aplicacionDeAspirante($data){
         $authHeader = apache_request_headers()['Authorization'] ?? null;
         if (!$authHeader){
             echo json_encode(['error' => 'Token no proporcionado']);
@@ -101,14 +100,13 @@ class AspiranteControlador {
                 return;
             }
 
-            if(isset($_POST['idconvocatoria'])){
-                $idconvocatoria = $_POST['idconvocatoria'];
-            } else{
+            if($data['idconvocatoria'] == null){
                 echo json_encode(['error' => 'No se recibió el id de la convocatoria']);
                 http_response_code(400);
                 return;
             }
-
+            $idconvocatoria = $data['idconvocatoria'];
+            
             $this->aspirante = new Aspirante($this->db);
             $resultados = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
 

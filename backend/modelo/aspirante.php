@@ -10,7 +10,6 @@ class Aspirante {
         $this->db = $db;
     }
 
-
     public function obtenerDetalleConvocatoria($idconvocatoria) {
         try {
             $sql = "SELECT * FROM convocatoria WHERE idconvocatoria = :idconvocatoria LIMIT 1";
@@ -24,12 +23,11 @@ class Aspirante {
             }
             return null;
         } catch (PDOException $e) {
-        echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-        http_response_code(500);
-        return null;
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return null;
         }
     }
-
 
     public function aplicacionDeAspirante($num_doc, $idconvocatoria) {
         try {
@@ -37,10 +35,9 @@ class Aspirante {
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$num_doc, $idconvocatoria]);
     
-            //Si la insercion es correcta se notifica al aspirante y a RRHH
+            // Si la inserción es correcta se notifica al aspirante y a RRHH
             if ($stmt->rowCount() > 0) {
-
-                //CLASE DE NOTIFICACION  
+                // CLASE DE NOTIFICACION  
                 $notificaciones = new Notificaciones($this->db);
                 
                 // Notificación para el aspirante
@@ -52,17 +49,17 @@ class Aspirante {
                 // Notificación para RRHH
                 $descripcionParaRRHH = "El aspirante con número de documento $num_doc ha aplicado a una convocatoria";
                 $notificaciones->crearNotificacionRRHH($descripcionParaRRHH, $estadoNotificacion, $tipo, $num_doc);
+                
+                return true;
             }
     
-            return null;
+            return false;
         } catch (PDOException $e) {
             echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
             http_response_code(500);
-            return null;
+            return false;
         }
     }
-    
-    
 }
 
 class Notificaciones {
@@ -77,7 +74,7 @@ class Notificaciones {
             $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
                     VALUES (?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$descripcion, $estado, $tipo, $num_doc]);
+            $stmt->execute([$descripcionNotificacion, $estado, $tipo, $num_doc]);
         } catch (PDOException $e) {
             echo json_encode(['error' => 'Error al insertar la notificación: ' . $e->getMessage()]);
             http_response_code(500);
@@ -89,13 +86,11 @@ class Notificaciones {
             $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
                     VALUES (?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$descripcion, $estado, $tipo, $num_doc]);
+            $stmt->execute([$descripcionParaRRHH, $estado, $tipo, $num_doc]);
         } catch (PDOException $e) {
             echo json_encode(['error' => 'Error al insertar la notificación para RRHH: ' . $e->getMessage()]);
             http_response_code(500);
         }
     }
 }
-
-
 ?>

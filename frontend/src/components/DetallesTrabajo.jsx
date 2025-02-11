@@ -42,11 +42,16 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
 
         const token = getCookie("auth_token");
 
+        const data = {
+            idconvocatoria: idconvocatoria,
+        };
+
         axios
-            .post("http://localhost/gestorplus/backend/", {
-                Authorization: `Bearer ${token}`,
-                action: "aplicacionDeAspirante",
-                idconvocatoria: idconvocatoria,
+            .post("http://localhost/gestorplus/backend/", data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                params: {action: "aplicacionDeAspirante"},
             })
             .then((response) => {
                 if (response.data.success) {

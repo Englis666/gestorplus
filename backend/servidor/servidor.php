@@ -54,7 +54,7 @@ switch ($method) {
 
                 case 'aplicacionDeAspirante':
                     $aspiranteControlador = new AspiranteControlador();
-                    $aspiranteControlador->aplicacionDeAspirante();
+                    $aspiranteControlador->aplicacionDeAspirante($data);
                     break;
 
                 
@@ -72,6 +72,10 @@ switch ($method) {
                 
                 //ADMINISTRADOR- RECURSOS HUMANOS
 
+                case 'agregarCargo':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->agregarCargo($data);
+                    break;
 
                 case 'agregarConvocatoria':
                     $administradorControlador = new AdministradorControlador();
@@ -162,6 +166,10 @@ switch ($method) {
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerMisVacaciones();
                     break;
+                case 'obtenerMiPazYSalvo':
+                    $empleadoControlador = new EmpleadoControlador();
+                    $empleadoControlador->obtenerMiPazYSalvo();
+                    break;
 
                 //ASPIRANTE 
                 case 'obtenerNotificaciones':
@@ -175,6 +183,22 @@ switch ($method) {
                     break;
 
                 //ADMINISTRADOR RECURSOS HUMANOS
+                case 'obtenerCargos':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerCargos();
+                    break;
+                    
+
+                case 'obtenerEmpleados':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerEmpleados();
+                    break;
+                    
+                case 'obtenerPazYSalvos':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerPazYSalvos();
+                    break;
+
                 case 'obtenerConvocatorias':
                     $administradorControlador = new AdministradorControlador();
                     $administradorControlador->obtenerConvocatorias();

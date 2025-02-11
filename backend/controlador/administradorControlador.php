@@ -21,6 +21,25 @@ class AdministradorControlador {
         $this->administrador = new Administrador($this->db);
     }
 
+    public function obtenerCargos(){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerCargos();
+        if($resultados){
+            echo json_encode(['cargos' => $resultados]);
+        } else{
+            echo json_encode(['cargos' =>[]]);
+        }
+    }
+
+    public function obtenerEmpleados(){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerEmpleados();
+        if($resultados){
+            echo json_encode(['empleados' => $resultados]);
+        } else{
+            echo json_encode(['empleados' =>[]]);
+        }
+    }
 
     public function obtenerTodasLasNotificaciones(){
         $authHeader = apache_request_headers()['Authorization'] ?? null;
@@ -294,6 +313,23 @@ class AdministradorControlador {
         }
     }
 
+    public function agregarCargo($data){
+        if (!isset($data['nombreCargo'])) {
+            echo json_encode(['success' => false, 'error' => 'Faltan datos']);
+            http_response_code(400);
+            return;
+        }
+        $nombreCargo = $data['nombreCargo'];
+
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->agregarCargo($nombreCargo);
+        if ($resultados) {
+            echo json_encode(['success' => true, 'cargo' => $resultados]);
+        } else {
+            echo json_encode(['success' => false, 'cargo' => []]);
+        }
+    }
+
     public function agregarConvocatoria($data){    
         if(!isset($data['nombreConvocatoria'], $data['descripcion'], $data['requisitos'], $data['salario'], $data['cantidadConvocatoria'])){
             echo json_encode(['error' => 'Faltan datos']);
@@ -310,11 +346,15 @@ class AdministradorControlador {
             echo json_encode(['Convocatoria' => []]);
         }
     }
-    
-   
-    
-
-
+    public function obtenerPazYSalvos(){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerPazYSalvos();
+        if($resultados){
+            echo json_encode(['Salvos' => $resultados]);
+        } else{
+            echo json_encode(['Salvos' => []]);
+        }
+    }
 
 }
 

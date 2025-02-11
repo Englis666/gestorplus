@@ -8,7 +8,6 @@ const Layout = () => {
     return(
         <div>
         <Navbar></Navbar>
-        <Banner></Banner>
         <Convocatoria></Convocatoria>
         </div>
 

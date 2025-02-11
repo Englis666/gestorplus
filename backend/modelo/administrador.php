@@ -9,6 +9,31 @@ class Administrador {
     public function __construct($db){
         $this->db = $db;
     }
+    public function obtenerCargos(){
+        $sql = "SELECT * FROM cargo";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resultado){
+            return $resultado;
+        }
+        return [];
+    }
+
+    public function obtenerEmpleados(){
+        $sql = "SELECT * FROM usuario as u
+                 INNER JOIN rol as r ON u.rol_idrol = idrol
+                 WHERE r.nombreRol = 'Empleados'";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resultado){
+            return $resultado;
+        }
+        return [];
+    }
 
     public function obtenerTodasLasNotificaciones(){
         try{
@@ -205,8 +230,16 @@ class Administrador {
             return false; 
         }
     }
+    public function agregarCargo($nombreCargo){
+        $sql = "INSERT INTO cargo (nombreCargo, estadoCargo) VALUES (?, ?)";
+        $stmt = $this->db->prepare($sql);
+        if ($stmt->execute([$nombreCargo, "1"])) {
+            return $this->db->lastInsertId(); // Devuelve el ID del cargo insertado
+        }
+        return false;
+    }
     
-     public function agregarConvocatoria($data){
+    public function agregarConvocatoria($data){
         $sql = "INSERT INTO convocatoria (nombreConvocatoria,descripcion,requisitos, salario, cantidadConvocatoria)
                                              VALUES ( ? , ? , ? , ? , ?)";
          $stmt = $this->db->prepare($sql);
@@ -218,7 +251,18 @@ class Administrador {
              $data['cantidadConvocatoria'],
          ]);
             
-     }
+    }
+    public function obtenerPazYSalvos(){
+        $sql = "SELECT * FROM pazysalvo";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resultado){
+            return $resultado;
+        }
+        return [];
+    }
 
 
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Footer from "./Footer";
+import Banner from "./Banner";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -8,6 +9,7 @@ const Convocatoria = () => {
     const [convocatorias, setConvocatorias] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         axios.get("http://localhost/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
@@ -35,6 +37,11 @@ const Convocatoria = () => {
         return null;
     };
 
+    const filteredConvocatorias = convocatorias.filter(convocatoria =>
+        convocatoria.nombreConvocatoria.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        convocatoria.nombreCargo.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const handleDetailsClick = (convocatoria) => {
         const token = getCookie("auth_token");
         if (token) {
@@ -46,10 +53,11 @@ const Convocatoria = () => {
 
     return (
         <div style={{background: "linear-gradient(to bottom, #E3F2FD, #ECF0F1)" }}>
+            <Banner setSearchTerm={setSearchTerm} />
             <section className="container py-5 text-center">
                 <h1 className="text-primary fw-bold mb-4">Categorías de Trabajo</h1>
                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    {convocatorias.map((convocatoria, index) => (
+                    {filteredConvocatorias.map((convocatoria, index) => (
                         <div key={convocatoria.idconvocatoria || `${convocatoria.idcargo}-${index}`} className="col">
                             <div className="card shadow-lg rounded-4 p-4 border-0">
                                 <h3 className="fs-5 text-dark text-capitalize mb-3">{convocatoria.nombreCargo}</h3>
@@ -63,7 +71,7 @@ const Convocatoria = () => {
             <section className="container py-5 text-center">
                 <h1 className="text-primary fw-bold mb-4">Convocatorias Recientes</h1>
                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    {convocatorias.map((convocatoria, index) => (
+                    {filteredConvocatorias.map((convocatoria, index) => (
                         <div key={convocatoria.idconvocatoria || `${convocatoria.idcargo}-${index}`} className="col">
                             <div className="card shadow-lg rounded-4 p-4 border-0">
                                 <h3 className="fs-4 text-dark text-capitalize text-truncate mb-3">{convocatoria.nombreConvocatoria}</h3>
