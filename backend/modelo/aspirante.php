@@ -38,7 +38,7 @@ class Aspirante {
                 // Notificación para el aspirante
                 $descripcionNotificacion = 'Has aplicado a una convocatoria';
                 $estadoNotificacion = 'No leida';
-                $tipo = 'Postulacion';
+                $tipo = 'PostulacionAspirantes';
 
 
                 $insert = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc)

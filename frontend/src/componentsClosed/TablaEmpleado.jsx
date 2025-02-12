@@ -77,7 +77,7 @@ const TablaEmpleado = ({ action }) => {
   }
 
   const jornadaNotificaciones = notificaciones.filter((n) => n.tipo === "Jornada");
-  const actualizacionNotificaciones = notificaciones.filter((n) => n.tipo === (rol === "Empleado" ? "Aceptacion" : "Actualizacion"));
+  const actualizacionNotificaciones = notificaciones.filter((n) => n.tipo === (rol === "Empleado" ? "Aceptacion" : "Postulacion"));
   const generalNotificaciones = notificaciones.filter((n) => n.tipo === "General");
 
   const handleVerClick = (notificacion) => {
@@ -145,7 +145,7 @@ const TablaEmpleado = ({ action }) => {
                 <table className="table table-hover" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}>
                   <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                     <tr>
-                      <th className="py-3 px-4">Actualización</th>
+                      <th className="py-3 px-4">Actualizaciones</th>
                     </tr>
                   </thead>
                   <tbody className="text-center">
