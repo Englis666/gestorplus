@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\backend",
+    "\\backend\\controlador",
+    "\\backend\\modelo",
+    "\\backend\\servidor",
+    "\\frontend",
+    "\\frontend\\src",
+    "\\frontend\\src\\componentsClosed"
+  ],
+  "SelectedNode": "\\backend\\modelo\\usuario.php",
+  "PreviewInSolutionExplorer": false
+}

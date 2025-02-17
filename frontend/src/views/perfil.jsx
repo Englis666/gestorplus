@@ -252,6 +252,7 @@ const Perfil = () => {
       <ModalHojaDeVida
         modalHojaDeVida={modalHojaDeVida}
         toggleModalHojaDeVida={toggleModalHojaDeVida}
+
       />
       <Estudios
         modalEstudios={modalEstudios}

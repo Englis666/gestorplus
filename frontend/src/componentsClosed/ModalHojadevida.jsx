@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida }) => {
@@ -11,7 +11,14 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida }) => {
     telefonoFijo: "",
     estadohojadevida: 1,
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (modalHojaDeVida) {
+      fetchHojaDeVida();
+    }
+  }, [modalHojaDeVida]);
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -20,7 +27,28 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida }) => {
     return null;
   };
 
-  const token = getCookie("auth_token");
+  const fetchHojaDeVida = async () => {
+    try {
+      const token = getCookie("auth_token");
+      if (!token) {
+        alert("No se encontró el token de autenticación.");
+        return;
+      }
+
+      const response = await axios.get("http://localhost/gestorplus/backend/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: { action: "datosPerfil" },
+      });
+
+      console.log("Datos recibidos:", response.data);
+      setFormData(response.data);
+    } catch (error) {
+      console.error("Error al obtener la hoja de vida:", error);
+      alert("Ocurrió un error al cargar los datos.");
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,18 +81,20 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida }) => {
 
     setIsSubmitting(true);
 
-    const data = {
-      ...formData,
-    };
-
+    const token = getCookie("auth_token");
+    if (!token) {
+      alert("No se encontró el token de autenticación.");
+      setIsSubmitting(false);
+      return;
+    }
 
     axios
-      .patch("http://localhost/gestorplus/backend/", data, {
+      .patch("http://localhost/gestorplus/backend/", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        },        
-        params : { action: "actualizacionHojaDevida" },
+        },
+        params: { action: "actualizacionHojaDevida" },
       })
       .then((response) => {
         const serverMessage = response.data.message;

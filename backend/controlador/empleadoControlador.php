@@ -31,8 +31,11 @@ class EmpleadoControlador {
 
         try {
             $secretKey = SECRET_KEY;
+
             $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+                                              
             $num_doc = $decoded->data->num_doc;
+
             if (!$num_doc) {
                 echo json_encode(['error' => 'No se encontró el número de documento en el token']);
                 http_response_code(400);

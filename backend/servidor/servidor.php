@@ -34,6 +34,10 @@ switch ($method) {
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->agregarExp($data);
                     break;
+                case 'registroHorasExtra':
+                    $usuarioControlador = new UsuarioControlador();
+                    $usuarioControlador->agregarHorasExtra($data);
+                    break;
 
                 //EMPLEADOS
                 case 'solicitarQueja':
@@ -98,8 +102,10 @@ switch ($method) {
                     $administradorControlador = new AdministradorControlador();
                     $administradorControlador->notificacionRechazada($data);
                     break;
-
                 
+                case 'consultarHorasExtra':
+                    $usuarioControlador = new UsuarioControlador();
+                    $usuarioControlador->agregarHorasExtra();
 
                 default:
                     http_response_code(400);
@@ -147,6 +153,7 @@ switch ($method) {
                     $usuarioControlador = new UsuarioControlador();
                     $usuarioControlador->datosPerfil();
                     break;
+                
 
                 //EMPLEADO
                 case 'obtenerNotificaciones':

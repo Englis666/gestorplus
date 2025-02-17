@@ -7,7 +7,6 @@ const TablaHorasExtra = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [rol, setRol] = useState(null);
-    const [token, setToken] = useState(null);
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -32,31 +31,13 @@ const TablaHorasExtra = () => {
     
             const Rol = decodedToken?.data?.rol;
             setRol(Rol);
-    
-            const action = (() => {
-              switch (Rol) {
-                case "1":
-                  return "obtenerTodasLasHorasExtra";
-                case "2":
-                  return "obtenerTodasLasHorasExtra";
-                case "3":
-                  return "obtenerHorasExtra";
-                default:
-                  console.error("Rol no válido");
-                  setError("Rol no reconocido.");
-                  setLoading(false);
-                  return null;
-              }
-            })();
-    
-            if (!action) return;
-    
+      
             axios
               .get("http://localhost/gestorplus/backend/", {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
-                params: { action },
+                params: { action: "obtenerTodasLasHorasExtra" },
               })
               .then((response) => {
                 const horasExtra = response.data?.horasExtra;

@@ -70,36 +70,40 @@ class AdministradorControlador {
     }
 
     public function obtenerTodasLasHorasExtra(){
-    $authHeader = apache_request_headers()['Authorization'] ?? null;
-    
-    if (!$authHeader){
-        echo json_encode(['error' => 'Token no proporcionado']);
-        http_response_code(401);
-        return;
-    }
-    
-    $token = str_replace('Bearer ', '', $authHeader);
-    
-    try {   
-        $this->administrador = new Administrador($this->db);
-        $resultados = $this->administrador->obtenerTodasLasHorasExtra();
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? null;
         
-        if ($resultados) {
-            echo json_encode(['HorasExtra' => $resultados]);
-        } else {
-            echo json_encode(['HorasExtra' => []]);
+        if (!$authHeader || !preg_match('/^Bearer\s+(\S+)$/', $authHeader, $matches)) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Token no proporcionado o formato incorrecto']);
+            return;
         }
-    } catch (\Firebase\JWT\ExpiredException $e) {
-        echo json_encode(['error' => 'Token expirado']);
-        http_response_code(401);
-    } catch (\Firebase\JWT\SignatureInvalidException $e) {
-        echo json_encode(['error' => 'Token con firma inválida']);
-        http_response_code(401);
-    } catch (\Exception $e) {
-        echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
-        http_response_code(500);
+    
+        $token = $matches[1]; 
+        $response = [];
+    
+        try {
+            $secretKey = SECRET_KEY;
+            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
+            $num_doc = $decoded->data->num_doc;
+    
+            $this->administrador = new Administrador($this->db);
+            $resultados = $this->administrador->verificarRol($num_doc);
+            $response = $resultados;
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            http_response_code(401);
+            $response = ['error' => 'Token expirado'];
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            http_response_code(401);
+            $response = ['error' => 'Token con firma inválida'];
+        } catch (\Exception $e) {
+            http_response_code(500);
+            $response = ['error' => 'Error al procesar el token: ' . $e->getMessage()];
+        }
+    
+        echo json_encode($response);
     }
-}
+    
 
 
 
@@ -202,6 +206,7 @@ class AdministradorControlador {
             http_response_code(401);
             return;
         }   
+        
         $token = str_replace('Bearer ', '', $authHeader);
         try{
             $this->administrador = new Administrador($this->db);
