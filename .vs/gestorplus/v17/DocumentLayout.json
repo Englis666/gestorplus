@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "C:\\xampp\\htdocs\\gestorplus\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\xampp\\htdocs\\gestorplus\\backend\\controlador\\administradorControlador.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\controlador\\administradorControlador.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\xampp\\htdocs\\gestorplus\\frontend\\src\\componentsClosed\\AsignarEntrevistaModal.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\componentsClosed\\AsignarEntrevistaModal.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\xampp\\htdocs\\gestorplus\\frontend\\src\\componentsClosed\\TablaPostulaciones.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\componentsClosed\\TablaPostulaciones.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\xampp\\htdocs\\gestorplus\\backend\\modelo\\usuario.php||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\modelo\\usuario.php||{3B902123-F8A7-4915-9F01-361F908088D0}"
     }
@@ -14,11 +26,37 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
+              "Title": "AsignarEntrevistaModal.jsx",
+              "DocumentMoniker": "C:\\xampp\\htdocs\\gestorplus\\frontend\\src\\componentsClosed\\AsignarEntrevistaModal.jsx",
+              "RelativeDocumentMoniker": "frontend\\src\\componentsClosed\\AsignarEntrevistaModal.jsx",
+              "ToolTip": "C:\\xampp\\htdocs\\gestorplus\\frontend\\src\\componentsClosed\\AsignarEntrevistaModal.jsx",
+              "RelativeToolTip": "frontend\\src\\componentsClosed\\AsignarEntrevistaModal.jsx",
+              "ViewState": "AgIAADIAAAAAAAAAAAAAAFYAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2025-02-17T03:01:47.432Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TablaPostulaciones.jsx",
+              "DocumentMoniker": "C:\\xampp\\htdocs\\gestorplus\\frontend\\src\\componentsClosed\\TablaPostulaciones.jsx",
+              "RelativeDocumentMoniker": "frontend\\src\\componentsClosed\\TablaPostulaciones.jsx",
+              "ToolTip": "C:\\xampp\\htdocs\\gestorplus\\frontend\\src\\componentsClosed\\TablaPostulaciones.jsx",
+              "RelativeToolTip": "frontend\\src\\componentsClosed\\TablaPostulaciones.jsx",
+              "ViewState": "AgIAADIAAAAAAAAAAAAAAEAAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
+              "WhenOpened": "2025-02-17T02:58:42.589Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "usuario.php",
               "DocumentMoniker": "C:\\xampp\\htdocs\\gestorplus\\backend\\modelo\\usuario.php",
               "RelativeDocumentMoniker": "backend\\modelo\\usuario.php",
@@ -27,6 +65,40 @@
               "ViewState": "AgIAAEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002338|",
               "WhenOpened": "2025-02-17T02:40:30.403Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "a63a3c08-b2b8-4abb-b2c8-426dd659d618",
+        "Display": 0,
+        "X": 1008,
+        "Y": 161,
+        "Width": 856,
+        "Height": 782,
+        "WindowState": 0
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "administradorControlador.php",
+              "DocumentMoniker": "C:\\xampp\\htdocs\\gestorplus\\backend\\controlador\\administradorControlador.php",
+              "RelativeDocumentMoniker": "backend\\controlador\\administradorControlador.php",
+              "ToolTip": "C:\\xampp\\htdocs\\gestorplus\\backend\\controlador\\administradorControlador.php",
+              "RelativeToolTip": "backend\\controlador\\administradorControlador.php",
+              "ViewState": "AgIAAGUBAAAAAAAAAAAQwH0BAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002338|",
+              "WhenOpened": "2025-02-17T03:04:11.045Z",
               "EditorCaption": ""
             }
           ]

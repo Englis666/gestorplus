@@ -103,9 +103,12 @@ switch ($method) {
                     $administradorControlador->notificacionRechazada($data);
                     break;
                 
-                case 'consultarHorasExtra':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->agregarHorasExtra();
+                case 'asignarEntrevista':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->asignarEntrevista($data);
+                    break;
+                
+                
 
                 default:
                     http_response_code(400);
@@ -123,6 +126,11 @@ switch ($method) {
             $action = $_GET['action'];
             switch ($action) {
                 //USUARIOS
+                case 'consultarHorasExtra':
+                    $usuarioControlador = new UsuarioControlador();
+                    $usuarioControlador->agregarHorasExtra();
+                    break;
+
 
                 case 'obtenerIdChat':
                     $chatControlador = new ChatControlador();

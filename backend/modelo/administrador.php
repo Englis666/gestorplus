@@ -366,8 +366,22 @@ class Administrador {
              $data['salario'],
              $data['cantidadConvocatoria'],
          ]);
-            
     }
+    public function asignarEntrevista($data){
+        $estado = "En proceso"
+        $sql = "INSERT INTO entrevista (fecha,hora,lugarMedio,postulacion_idpostulaciones, estadoEntrevista)
+                                        VALUES(? , ? , ? , ? , ?)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            $data['fecha'],
+            $data['hora'],
+            $data['lugarMedio'],
+            $data['postulacion_idpostulaciones'],
+            $estado
+        ]);
+    }
+
+
     public function obtenerPazYSalvos(){
         $sql = "SELECT * FROM pazysalvo";
         $stmt = $this->db->prepare($sql);

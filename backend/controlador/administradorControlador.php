@@ -30,6 +30,26 @@ class AdministradorControlador {
             echo json_encode(['cargos' =>[]]);
         }
     }
+    public function obtenerPazYSalvos(){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerPazYSalvos();
+        if($resultados){
+            echo json_encode(['Salvos' => $resultados]);
+        } else{
+            echo json_encode(['Salvos' => []]);
+        }
+    }
+
+    public function obtenerPostulaciones(){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerPostulaciones();
+        if($resultados){
+            echo json_encode(['Postulaciones' => $resultados]);
+        } else{
+            echo json_encode(['Postulaciones' => []]);
+        }
+    }
+
 
     public function obtenerEmpleados(){
         $this->administrador = new Administrador($this->db);
@@ -351,25 +371,24 @@ class AdministradorControlador {
             echo json_encode(['Convocatoria' => []]);
         }
     }
-    public function obtenerPazYSalvos(){
-        $this->administrador = new Administrador($this->db);
-        $resultados = $this->administrador->obtenerPazYSalvos();
-        if($resultados){
-            echo json_encode(['Salvos' => $resultados]);
-        } else{
-            echo json_encode(['Salvos' => []]);
-        }
-    }
 
-    public function obtenerPostulaciones(){
-        $this->administrador = new Administrador($this->db);
-        $resultados = $this->administrador->obtenerPostulaciones();
-        if($resultados){
-            echo json_encode(['Postulaciones' => $resultados]);
-        } else{
-            echo json_encode(['Postulaciones' => []]);
+    public function asignarEntrevista($data){
+        if(!isset($data['fecha'], $data['hora'], $data['lugarMedio'])){
+            echo json_encode(['error'] => 'Faltan datos');
+            http_response_code(400);
+            return;
         }
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->asignarEntrevista($data);
+
+        if($resultados){
+            echo json_encode(['Entrevista' => $resultados]);
+        } else{
+            echo json_encode(['Entrevista' => []]);
+        }
+
     }
+    
 
 }
 
