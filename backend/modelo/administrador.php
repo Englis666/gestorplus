@@ -356,7 +356,8 @@ class Administrador {
     }
     
     public function agregarConvocatoria($data){
-        $sql = "INSERT INTO convocatoria (nombreConvocatoria,descripcion,requisitos, salario, cantidadConvocatoria)
+        $sql = "INSERT INTO convocatoria (nombreConvocatoria,descripcion,requisitos, salario,
+                        cantidadConvocatoria)
                                              VALUES ( ? , ? , ? , ? , ?)";
          $stmt = $this->db->prepare($sql);
          $stmt->execute([
@@ -366,19 +367,21 @@ class Administrador {
              $data['salario'],
              $data['cantidadConvocatoria'],
          ]);
+        return;
     }
-    public function asignarEntrevista($data){
-        $estado = "En proceso"
-        $sql = "INSERT INTO entrevista (fecha,hora,lugarMedio,postulacion_idpostulaciones, estadoEntrevista)
-                                        VALUES(? , ? , ? , ? , ?)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            $data['fecha'],
-            $data['hora'],
-            $data['lugarMedio'],
-            $data['postulacion_idpostulaciones'],
-            $estado
-        ]);
+     public function asignarEntrevista($data){
+         $estado = "Pendiente";
+         $sql = "INSERT INTO entrevista (fecha,hora,lugarMedio,postulacion_idpostulaciones, estadoEntrevista)
+                                         VALUES(? , ? , ? , ? , ?)";
+         $stmt = $this->db->prepare($sql);
+         $stmt->execute([
+             $data['fecha'],
+             $data['hora'],
+             $data['lugarMedio'],
+             $data['postulacion_idpostulaciones'],
+             $estado
+         ]);
+         return;
     }
 
 
@@ -417,8 +420,20 @@ class Administrador {
         return [];
     }
 
+    public function asitenciaConfirmada($data){
+        $sql = "UPDATE entrevista SET estadoEntrevista = 'Asistencia' WHERE identrevista = :identrevista";
+        $stmt = $this->db-prepare($sql);
+        $stmt->bindParam(':identrevista', $data['identrevista'] , PDO::PARAM_INT);
+        return;
+    }
 
-
+    public function asistenciaNoConfirmada($data){
+        $sql = "UPDATE entrevista SET estadoEntrevista = 'No asistio' WHERE identrevista = :identrevista";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(":identrevista" , $data['identrevista'], PDO::PARAM_INT);
+        return;
+    }
+    
 }
 
 

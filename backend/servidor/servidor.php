@@ -108,6 +108,14 @@ switch ($method) {
                     $administradorControlador->asignarEntrevista($data);
                     break;
                 
+                case 'asistenciaConfirmada':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->asistenciaConfirmada($data);
+                    break;
+                case 'asistenciaNoConfirmada':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->asistenciaNoConfirmada($data);
+                    break;
                 
 
                 default:
@@ -181,7 +189,7 @@ switch ($method) {
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerMisVacaciones();
                     break;
-                case 'obtenerMiPazYSalvo':
+                case 'obtenerMiPazySalvo':
                     $empleadoControlador = new EmpleadoControlador();
                     $empleadoControlador->obtenerMiPazYSalvo();
                     break;
@@ -254,6 +262,11 @@ switch ($method) {
                 case 'obtenerTodasLasVacaciones':
                     $administradorControlador = new AdministradorControlador();
                     $administradorControlador->obtenerTodasLasVacaciones();
+                    break;
+
+                case 'obtenerDatosDelEntrevistado':
+                    $administradorControlador = new AdministradorControlador();
+                    $administradorControlador->obtenerUsuarios();
                     break;
 
                 default:

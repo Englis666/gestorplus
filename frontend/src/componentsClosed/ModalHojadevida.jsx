@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida }) => {
+const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida , num_doc}) => {
   const [formData, setFormData] = useState({
     fechaNacimiento: "",
     direccion: "",

@@ -204,7 +204,7 @@ class AdministradorControlador {
 
         try{
             $this->administrador = new Administrador($this->db);
-            $resultados = $this->administrador->obtenerTodasLasPazYsalvos();
+            $resultados = $this->administrador->obtenerPazYsalvos();
 
             if($resultados){
                 echo json_encode(['PazYsalvos' => $resultados]);
@@ -224,6 +224,7 @@ class AdministradorControlador {
         if (!$authHeader) {
             echo json_encode(['error' => 'Token no proporcionado']);
             http_response_code(401);
+            
             return;
         }   
         
@@ -266,6 +267,18 @@ class AdministradorControlador {
         } else{
             echo json_encode(['Entrevista' => $resultados]);
         }
+    }
+
+    public function obtenerDatosDelEntrevistado(){
+        $this->administrador = new Administrador($this->db);
+        $resultados = $this->administrador->obtenerDatosDelEntrevistado();
+        if($resultados){
+            echo json_encode(['Entrevistado' => $resultados]);
+        }else{
+            echo json_encode(['Entrevistado'=>[]]);
+        }
+
+
     }
 
 
@@ -374,7 +387,7 @@ class AdministradorControlador {
 
     public function asignarEntrevista($data){
         if(!isset($data['fecha'], $data['hora'], $data['lugarMedio'])){
-            echo json_encode(['error'] => 'Faltan datos');
+            echo json_encode(['error' => 'Faltan datos']);
             http_response_code(400);
             return;
         }
@@ -385,6 +398,44 @@ class AdministradorControlador {
             echo json_encode(['Entrevista' => $resultados]);
         } else{
             echo json_encode(['Entrevista' => []]);
+        }
+    }
+     
+    public function asistenciaConfirmada($data){
+        $this->administrador = new Administrador($this->db);
+
+        if(!isset($data['data']['identrevista'])){
+            echo json_encode(['error' => 'Falta el identificador de la entrevista']);
+            http_response_code(400);
+            return;
+        }
+
+        $identrevista = $data['data']['identrevista'];
+
+        $resultados = $this->administrador->asistenciaConfirmada($identrevista);
+
+        if($resultados){
+            echo json_encode(['Asistencia' => $resultados]);
+        } else {
+            echo json_encode(['Asistencia'=> []]);
+        }
+    }
+
+    public function asistenciaNoConfirmadar($data){
+        $this->administrador = new Administrador($this->db);
+
+        if(!isset($data['data']['identrevista'])){
+            echo json_encode(['error' => 'Falta el identificador de la entrevista' ]);
+            http_response_code(400);
+            return;
+        }
+        $identrevista = $data['data']['identrevista'];
+        $resultados = $this->administrador->asistenciaNocConfirmada($identrevista);
+
+        if($resultados){
+            echo json_encode(['noAsistencia' => $resultados]);
+        } else {
+            echo json_encode(['noAsistencia' => []]);
         }
 
     }

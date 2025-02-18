@@ -26,11 +26,11 @@ class Empleado {
         }
     }
     
-    public function obtenerMiPazYSalvo($num_doc){
+    public function obtenerMiPazYSalvo($vinculacion_idvinculacion){
         try{
-            $sql = "SELECT * FROM pazysalvo WHERE num_doc = :num_doc";
+            $sql = "SELECT * FROM pazysalvo WHERE vinculacion_idvinculacion = :vinculacion_idvinculacion";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
+            $stmt->bindParam(':vinculacion_idvinculacion', $vinculacion_idvinculacion, PDO::PARAM_INT);
             $stmt->execute();
             $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
             

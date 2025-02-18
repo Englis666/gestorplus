@@ -19,7 +19,7 @@ const TablaPostulaciones = () => {
                 if (Array.isArray(data)) {
                     setPostulaciones(data);
                 } else {
-                    console.error("Las postulaciones no están en un arreglo o está vacía la consulta");
+                    console.error("Las postulaciones no estan en un arreglo o esta vacia la consulta");
                     setPostulaciones([]);
                 }
             } catch (err) {
@@ -87,7 +87,7 @@ const TablaPostulaciones = () => {
                                             <td className="py-3 px-4">
                                                 <button
                                                     className="btn btn-primary"
-                                                    onClick={() => handleShowModal(postulacion)}
+                                                    onClick={() => handleShowModal(postulacion , postulacion.idpostulacion)}
                                                 >
                                                     Asignar Entrevista
                                                 </button>

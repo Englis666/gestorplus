@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
+const AsignarEntrevistaModal = ({ show, handleClose, postulacion}) => {
     const [formData, setFormData] = useState({
         identrevista: "",
         fecha: "",
@@ -51,9 +51,8 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
                     </div>
                     <div className="modal-body">
                         <form onSubmit={handleSubmit}>
-                           
-                            <div className="form-group">
-                                <label>Fecha</label>
+                        <input type="hidden" 
+                                value={formData.postulacion_idpostulaciones}/>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -62,6 +61,9 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
                                     onChange={handleChange}
                                     required
                                 />
+                            <div className="form-group">
+                                <label>Fecha</label>
+                
                             </div>
                             <div className="form-group">
                                 <label>Hora</label>

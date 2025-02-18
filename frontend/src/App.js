@@ -26,6 +26,8 @@ import HorasExtra from './views/HorasExtra';
 import Vacaciones from './views/Vacaciones';
 import Postulaciones from './views/Postulaciones';
 import Cargos from './views/Cargos';
+import Contratos from './views/Contratos';
+import SistemaDeGestion from './views/SistemaDeGestion';
 
 //VISTAS ADMIN
 import InicioAdmin from './views/administrador/InicioAdmin';
@@ -57,9 +59,12 @@ function App() {
           <Route path='/Entrevistas' element={<Entrevistas/>}/>
           <Route path="/Convocatorias" element={<Convocatorias/>}/>
           <Route path='/Postulaciones' element={<Postulaciones/>}/>
+          <Route path='/Contratos' element={<Contratos/>}/>.
+          <Route path='/SistemaDeGestion' element={<SistemaDeGestion/>}/>
           <Route path='/Cargos' element={<Cargos/>}/>
           <Route path='/PazYsalvo' element={<PazySalvo/>}/>
           <Route path='/Certificados' element={<Certificados/>}/>
+
           <Route path='/administrador/InicioAdmin' element={<InicioAdmin/>}/>
           <Route path='/recursoshumanos/InicioRRHH' element={<InicioRRHH/>}/>
 

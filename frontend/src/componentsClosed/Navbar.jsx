@@ -154,7 +154,16 @@ const NavbarClosed = ({ activeLink }) => {
 
   if (rol === "1" || rol === "2") {
     menuItems.push({ label: "Empleados", icon: "people", path: "/Empleados" });
-    menuItems.push({ label: "Entrevistas", icon: "event_note", path: "/Entrevistas" });
+    menuItems.push({label: "Contratos" , icon: "work", path: "/Contratos"});
+    menuItems.push({ label: "Entrevistas", icon: "event_note", path: "/Entrevistas",
+                    subMenu: [
+                      {
+                        label: "Sistema de Gestion",
+                        icon: "work",
+                        path: "/SistemaDeGestion",
+                      }
+                    ]
+                    });
     menuItems.push({
       label: "Convocatorias",
       icon: "people",
