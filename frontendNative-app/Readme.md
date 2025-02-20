@@ -20,6 +20,7 @@ npm install axios react-navigation react-native-gesture-handler
 npm install @react-navigation/native @react-navigation/stack 
 npm install react-native-screens react-native-safe-area-context react-native-vector-icons react-native-reanimated react-native-gesture-handler react-native-mmkv
 npm install @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context
+npm install @react-native-async-storage/async-storage
 
 # Descripcion Dependencias
 @react-navigation/native: Core de navegación en React Native.

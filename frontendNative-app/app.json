@@ -12,6 +12,11 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "extra": {
+      "proxy": {
+        "url": "http://localhost:8081"
+      }
+    },
     "ios": {
       "supportsTablet": true
     },
