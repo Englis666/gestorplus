@@ -20,7 +20,7 @@ const Estadisticas = () => {
         const decodedToken = jwtDecode(token);
         if (decodedToken.exp * 1000 < Date.now()) throw new Error("El token ha expirado.");
 
-        const response = await axios.get("http://192.168.80.81/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.63.193/gestorplus/backend/", {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerTotalEstadisticas" },
         });

@@ -32,7 +32,7 @@ const TablaEmpleado = ({ action }) => {
           return;
         }
 
-        const response = await axios.get("http://192.168.80.81/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.63.193/gestorplus/backend/", {
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,

@@ -37,7 +37,7 @@ const Register = () => {
 
         setIsSubmitting(true);
         axios
-        .post("http://127.0.0.1/gestorplus/backend/", data)
+        .post("http://192.168.63.193/gestorplus/backend/", data)
         .then((response) => {
             const serverMessage = response.data;
             
