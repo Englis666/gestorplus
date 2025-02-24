@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import ConvocatoriaLayout from "../components/ConvocatoriaLayout";
 
+
 const Layout = () => {
     return (
         <View style={styles.container}>

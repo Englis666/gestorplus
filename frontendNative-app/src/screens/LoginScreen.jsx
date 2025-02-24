@@ -24,7 +24,7 @@ const Login = () => {
     
         setIsSubmitting(true);
         try {
-            const response = await axios.post("http://192.168.43.98/gestorplus/backend/", data);
+            const response = await axios.post("http://192.168.196.193/gestorplus/backend/", data);
             const serverMessage = response.data;
     
             if (serverMessage?.status === "success") {
