@@ -2,7 +2,8 @@
 // MODELOS
 require_once 'modelo/aspirante.php';
 require_once 'config/config.php';
-//JWT
+
+// JWT
 require_once 'config/clave.php';
 require_once 'vendor/autoload.php';  
 use \Firebase\JWT\JWT;
@@ -13,120 +14,98 @@ class AspiranteControlador {
     private $db;
     private $aspirante;
 
-    public function __construct(){
+    public function __construct() {
         $database = new DataBase();
         $this->db = $database->getConnection();
         $this->aspirante = new Aspirante($this->db);
     }
 
-    public function obtenerNotificaciones(){
+    /**
+     * Extrae y verifica el token JWT del encabezado de la solicitud.
+     */
+    private function obtenerNumDocDesdeToken() {
         $authHeader = apache_request_headers()['Authorization'] ?? null;
-        if (!$authHeader){
-            echo json_encode(['error' => 'Token no proporcionado']);
+
+        if (!$authHeader) {
             http_response_code(401);
-            return;
+            echo json_encode(['error' => 'Token no proporcionado']);
+            exit;
         }
 
         $token = str_replace('Bearer ', '', $authHeader);
 
         try {
-            $secretKey = SECRET_KEY;
-            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
-            $num_doc = $decoded->data->num_doc;
-
-            if(!$num_doc){
-                echo json_encode(['error' => 'No se encontro el numero de documento en el token']);
-                http_response_code(400);
-                return;
-            }
-
-            $this->aspirante = new Aspirante($this->db);
-            $resultados = $this->aspirante->obtenerNotificaciones($num_doc);
-
-            if($resultados){
-                echo json_encode(['Notificaciones' => $resultados]);
-            } else{
-                echo json_encode(['Notificaciones' =>[]]);
-            }
+            $decoded = JWT::decode($token, new Key(SECRET_KEY, JWT_ALGO));
+            return $decoded->data->num_doc ?? null;
         } catch (\Firebase\JWT\ExpiredException $e) {
+            http_response_code(401);
             echo json_encode(['error' => 'Token expirado']);
+            exit;
         } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            http_response_code(403);
             echo json_encode(['error' => 'Token con firma inválida']);
+            exit;
         } catch (Exception $e) {
+            http_response_code(400);
             echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
-        } 
-
+            exit;
+        }
     }
 
-    public function obtenerDetalleConvocatoria(){
+    public function obtenerNotificaciones() {
+        $num_doc = $this->obtenerNumDocDesdeToken();
 
-        if (isset($_GET['idconvocatoria'])){
-            $idconvocatoria = $_GET['idconvocatoria'];
-        } else{
-            echo json_encode(['error' => 'No se recibió el id de la convocatoria']);
+        if (!$num_doc) {
             http_response_code(400);
+            echo json_encode(['error' => 'No se encontró el número de documento en el token']);
             return;
         }
 
-        $this->aspirante = new Aspirante($this->db);
-        $resultados = $this->aspirante->obtenerDetalleConvocatoria($idconvocatoria);
+        $resultados = $this->aspirante->obtenerNotificaciones($num_doc);
 
-        if($resultados){
-            echo json_encode(['DetalleConvocatoria' => $resultados]);
-        } else{
-            echo json_encode(['DetalleConvocatoria' =>null]);
+        http_response_code(200);
+        echo json_encode(['notificaciones' => $resultados ?? []]);
+    }
+
+    public function obtenerDetalleConvocatoria() {
+        if (!isset($_GET['idconvocatoria'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'No se recibió el ID de la convocatoria']);
+            return;
         }
 
+        $idconvocatoria = $_GET['idconvocatoria'];
+        $resultados = $this->aspirante->obtenerDetalleConvocatoria($idconvocatoria);
+
+        http_response_code(200);
+        echo json_encode(['detalleConvocatoria' => $resultados ?? null]);
     }
 
     public function aplicacionDeAspirante($data) {
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
-        if (!$authHeader){
-            echo json_encode(['error' => 'Token no proporcionado']);
-            http_response_code(401);
+        $num_doc = $this->obtenerNumDocDesdeToken();
+
+        if (!$num_doc) {
+            http_response_code(400);
+            echo json_encode(['error' => 'No se encontró el número de documento en el token']);
             return;
         }
 
-        $token = str_replace('Bearer ', '', $authHeader);
+        if (!isset($data['idconvocatoria'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'No se recibió el ID de la convocatoria']);
+            return;
+        }
 
-        try {
-            $secretKey = SECRET_KEY;
-            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
-            $num_doc = $decoded->data->num_doc;
+        $idconvocatoria = $data['idconvocatoria'];
+        $resultado = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
 
-            if(!$num_doc){
-                echo json_encode(['error' => 'No se encontro el numero de documento en el token']);
-                http_response_code(400);
-                return;
-            }
-
-            if(!isset($data['idconvocatoria'])){
-                echo json_encode(['error' => 'No se recibió el id de la convocatoria']);
-                http_response_code(400);
-                return;
-            }
-            $idconvocatoria = $data['idconvocatoria'];
-            
-            $this->aspirante = new Aspirante($this->db);
-            $resultados = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
-
-            if($resultados){
-                echo json_encode(['success' => true]);
-            } else{
-                echo json_encode(['success' => false, 'error' => 'No se pudo completar la aplicación']);
-            }
-        } catch (\Firebase\JWT\ExpiredException $e) {
-            echo json_encode(['error' => 'Token expirado']);
-        } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            echo json_encode(['error' => 'Token con firma inválida']);
-        } catch (Exception $e) {
-            echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
+        if ($resultado) {
+            http_response_code(200);
+            echo json_encode(['success' => true]);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'No se pudo completar la aplicación']);
         }
     }
-
-
-
 }
-
-
 ?>
