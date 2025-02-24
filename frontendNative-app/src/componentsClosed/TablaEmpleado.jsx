@@ -32,7 +32,7 @@ const TablaEmpleado = ({ action }) => {
           return;
         }
 
-        const response = await axios.get("http://192.168.63.193/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.43.98/gestorplus/backend/", {
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
@@ -56,10 +56,12 @@ const TablaEmpleado = ({ action }) => {
   if (loading) return <ActivityIndicator size="large" color="#007bff" style={styles.loader} />;
   if (error) return <Text style={styles.error}>{error}</Text>;
 
+  // Filtrar notificaciones por tipo
   const jornadaNotificaciones = notificaciones.filter((n) => n.tipo === "Jornada");
   const actualizacionNotificaciones = notificaciones.filter((n) => n.tipo === (rol === "Empleado" ? "Aceptacion" : "Postulacion"));
   const generalNotificaciones = notificaciones.filter((n) => n.tipo === "General");
 
+  // Componente para renderizar cada notificación
   const renderNotificacion = ({ item }) => (
     <TouchableOpacity style={styles.notificacion} onPress={() => console.log("Ver detalles de:", item)}>
       <Text style={styles.text}>{item.descripcionNotificacion}</Text>
@@ -70,46 +72,84 @@ const TablaEmpleado = ({ action }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Notificaciones</Text>
 
+      {/* 🔹 Sección: Notificaciones Generales */}
       <View style={styles.card}>
         <Text style={styles.subtitle}>Notificaciones Generales</Text>
         {generalNotificaciones.length === 0 ? (
           <Text style={styles.empty}>No hay notificaciones disponibles.</Text>
         ) : (
-          <FlatList data={generalNotificaciones} renderItem={renderNotificacion} keyExtractor={(item) => item.idnotificacion.toString()} />
+          <FlatList
+            data={generalNotificaciones}
+            renderItem={renderNotificacion}
+            keyExtractor={(item) => item.idnotificacion.toString()}
+            scrollEnabled={true} // Habilita el scroll
+            style={styles.scrollContainer} // Aplica límite de altura
+          />
         )}
       </View>
 
+      {/* 🔹 Sección: Notificaciones de Actualización */}
       <View style={styles.card}>
         <Text style={styles.subtitle}>Notificaciones de Actualización</Text>
         {actualizacionNotificaciones.length === 0 ? (
           <Text style={styles.empty}>No hay notificaciones de actualización.</Text>
         ) : (
-          <FlatList data={actualizacionNotificaciones} renderItem={renderNotificacion} keyExtractor={(item) => item.idnotificacion.toString()} />
+          <FlatList
+            data={actualizacionNotificaciones}
+            renderItem={renderNotificacion}
+            keyExtractor={(item) => item.idnotificacion.toString()}
+            scrollEnabled={true}
+            style={styles.scrollContainer}
+          />
         )}
       </View>
 
+      {/* 🔹 Sección: Control de Entradas de Trabajo */}
       <View style={styles.card}>
         <Text style={styles.subtitle}>Control de entradas de trabajo</Text>
         {jornadaNotificaciones.length === 0 ? (
           <Text style={styles.empty}>No hay registros de jornada.</Text>
         ) : (
-          <FlatList data={jornadaNotificaciones} renderItem={renderNotificacion} keyExtractor={(item) => item.idnotificacion.toString()} />
+          <FlatList
+            data={jornadaNotificaciones}
+            renderItem={renderNotificacion}
+            keyExtractor={(item) => item.idnotificacion.toString()}
+            scrollEnabled={true}
+            style={styles.scrollContainer}
+          />
         )}
       </View>
     </View>
   );
 };
 
+// 🔹 **Estilos**
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f8f9fa", padding: 10 },
   loader: { marginTop: 20 },
   error: { textAlign: "center", color: "red", fontSize: 16, marginTop: 20 },
   title: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 15 },
   subtitle: { fontSize: 18, fontWeight: "600", marginBottom: 10 },
-  card: { backgroundColor: "white", padding: 15, marginBottom: 15, borderRadius: 10, elevation: 3 },
-  notificacion: { padding: 10, backgroundColor: "#007bff", marginBottom: 8, borderRadius: 8 },
+  card: { 
+    backgroundColor: "white", 
+    padding: 15, 
+    marginBottom: 15, 
+    borderRadius: 10, 
+    elevation: 3 
+  },
+  notificacion: { 
+    padding: 10, 
+    backgroundColor: "#007bff", 
+    marginBottom: 8, 
+    borderRadius: 8 
+  },
   text: { color: "white", fontSize: 16 },
   empty: { textAlign: "center", fontSize: 16, color: "gray", marginVertical: 10 },
+  
+  // 🔹 Contenedor con límite de altura para FlatList
+  scrollContainer: {
+    maxHeight: 200, // Ajusta la altura máxima (aprox. 3-4 notificaciones)
+  },
 });
 
 export default TablaEmpleado;

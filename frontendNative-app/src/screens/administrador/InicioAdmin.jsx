@@ -1,12 +1,12 @@
 import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import TablaEmpleado from "../../componentsClosed/TablaEmpleado";
-import NavbarClosed from "../../componentsClosed/NavbarClosed";
 
-const InicioAdmin = () => {
+
+const InicioAdministradorScreen = () => {
   return (
     <View style={styles.container}>
-      <NavbarClosed />
+      
       <ScrollView style={styles.content}>
         <TablaEmpleado action="obtenerTodasLasNotificaciones" />
       </ScrollView>
@@ -26,4 +26,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InicioAdmin;
+export default InicioAdministradorScreen;

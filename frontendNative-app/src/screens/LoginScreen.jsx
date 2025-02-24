@@ -15,45 +15,43 @@ const Login = () => {
             Alert.alert("Por favor complete todos los campos.");
             return;
         }
-
+    
         const data = {
             action: "login",
             num_doc: formData.num_doc,
             password: formData.password,
         };
-
+    
         setIsSubmitting(true);
         try {
-            const response = await axios.post("http://192.168.63.193/gestorplus/backend/", data);
+            const response = await axios.post("http://192.168.43.98/gestorplus/backend/", data);
             const serverMessage = response.data;
-
+    
             if (serverMessage?.status === "success") {
                 const token = serverMessage.token;
-
-                // ✅ Guardar el token en AsyncStorage en lugar de document.cookie
                 await AsyncStorage.setItem("auth_token", token);
-
+    
                 const decodedToken = decodeToken(token);
                 const userRole = decodedToken?.data?.rol;
-
+    
                 switch (userRole) {
                     case "1":
-                        navigation.replace("administrador/inicioAdmin");
+                        navigation.navigate("Administrador"); // 🔹 Cambiar replace() por navigate()
                         break;
                     case "2":
-                        navigation.replace("recursoshumanos/inicioRRHH");
+                        navigation.navigate("RecursosHumanos");
                         break;
                     case "3":
-                        navigation.replace("empleado/inicioEmpleado");
+                        navigation.navigate("Empleado");
                         break;
                     case "4":
-                        navigation.replace("aspirante/inicio");
+                        navigation.navigate("Navbar");
                         break;
                     default:
                         await AsyncStorage.removeItem("auth_token");
                         console.error("Rol desconocido:", userRole);
                         Alert.alert("Rol desconocido");
-                        navigation.replace("Login");
+                        navigation.navigate("Login");
                 }
             } else {
                 Alert.alert(serverMessage?.message || "Error en el inicio de sesión");
@@ -65,7 +63,7 @@ const Login = () => {
             setIsSubmitting(false);
         }
     };
-
+    
     const decodeToken = (token) => {
         try {
             const payload = token.split(".")[1];

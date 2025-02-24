@@ -62,32 +62,30 @@ class AdministradorControlador {
     }
 
     public function obtenerTodasLasNotificaciones(){
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
-        if (!$authHeader){
-            echo json_encode(['error' => 'Token no proporcionado']);
-            http_response_code(401);
-            return;
-        }
 
-        $token = str_replace('Bearer ', '', $authHeader);
-
-        try{
+        try {
             $this->administrador = new Administrador($this->db);
             $resultados = $this->administrador->obtenerTodasLasNotificaciones();
-
-            if($resultados){
+    
+            if ($resultados) {
                 echo json_encode(['Notificaciones' => $resultados]);
-            } else{
-                echo json_encode(['Notificaciones' =>[]]);
+            } else {
+                echo json_encode(['Notificaciones' => []]);
             }
         } catch (\Firebase\JWT\ExpiredException $e) {
             echo json_encode(['error' => 'Token expirado']);
+            http_response_code(401);
         } catch (\Firebase\JWT\SignatureInvalidException $e) {
             echo json_encode(['error' => 'Token con firma inválida']);
+            http_response_code(401);
         } catch (Exception $e) {
             echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
+            http_response_code(500);
         }
     }
+    
+    
+    
 
     public function obtenerTodasLasHorasExtra(){
         $headers = getallheaders();

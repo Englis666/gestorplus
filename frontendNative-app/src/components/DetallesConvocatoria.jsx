@@ -24,7 +24,7 @@ const DetallesTrabajo = () => {
     useEffect(() => {
         console.log("id de convocatoria", idconvocatoria);
         axios
-            .get("http://192.168.80.81/gestorplus/backend/", {
+            .get("http://192.168.196.193/gestorplus/backend/", {
                 params: {
                     action: "obtenerDetalleConvocatoria",
                     idconvocatoria: idconvocatoria,
@@ -61,7 +61,7 @@ const DetallesTrabajo = () => {
                 idconvocatoria: idconvocatoria,
             };
 
-            const response = await axios.post("http://192.168.63.193/gestorplus/backend/", data, {
+            const response = await axios.post("http://192.168.136.193/gestorplus/backend/", data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
