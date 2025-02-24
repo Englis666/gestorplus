@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-$method = $_SERVER['REQUEST_METHOD'];
+
 header("Content-Type: application/json");
 
 require_once 'controlador/chatControlador.php';
@@ -11,303 +11,84 @@ require_once 'controlador/usuarioControlador.php';
 require_once 'controlador/aspiranteControlador.php';
 require_once 'controlador/empleadoControlador.php';
 
-switch ($method) {
-    case 'POST':
-        $data = json_decode(file_get_contents('php://input'), true);
-        if (isset($data['action'])) {
-            $action = $data['action'];
-            switch ($action) {
-                // USUARIOS
-                case 'registrarse':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->registrar($data);
-                    break;
-                case 'login':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->iniciar($data);
-                    break;
-                case 'agregarEstudio':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->agregarEstudio($data);
-                    break;
-                case 'agregarExp':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->agregarExp($data);
-                    break;
-                case 'registroHorasExtra':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->agregarHorasExtra($data);
-                    break;
+$method = $_SERVER['REQUEST_METHOD'];
+$data = json_decode(file_get_contents('php://input'), true);
+$action = $_GET['action'] ?? ($data['action'] ?? null);
 
-                //EMPLEADOS
-                case 'solicitarQueja':
-                    $empleadoControlador = new EmpleadoControlador();
-                    $empleadoControlador->solicitarQueja($data);
-                    break;
-
-                case 'solicitarAusencia':
-                    $empleadoControlador = new EmpleadoControlador();
-                    $empleadoControlador->solicitarAusencia($data);
-                    break;
-                
-                    
-                case 'solicitarVacaciones':
-                    $empleadoControlador = new EmpleadoControlador();
-                    $empleadoControlador->solicitarVacaciones($data);
-                    break;
-
-                case 'aplicacionDeAspirante':
-                    $aspiranteControlador = new AspiranteControlador();
-                    $aspiranteControlador->aplicacionDeAspirante($data);
-                    break;
-
-                
-
-                //CHAT
-                
-                case 'enviarMensajes':
-                    $chatControlador = new ChatControlador();
-                    $chatControlador->enviarMensajes($data);
-                    break;
-                case 'iniciarChat':
-                    $chatControlador = new ChatControlador();
-                    $chatControlador->iniciarChat($data);
-                    break;
-                
-                //ADMINISTRADOR- RECURSOS HUMANOS
-
-                case 'agregarCargo':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->agregarCargo($data);
-                    break;
-
-                case 'agregarConvocatoria':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->agregarConvocatoria($data);
-                    break;
-
-                case 'corroborarJornada':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->corroborarJornada($data);
-                    break;
-                case 'noCorroborarJornada':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->noCorroborarJornada($data);
-                    break;
-                case 'notificacionAceptada':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->notificacionAceptada($data);
-                    break;
-                case 'notificacionRechazada':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->notificacionRechazada($data);
-                    break;
-                
-                case 'asignarEntrevista':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->asignarEntrevista($data);
-                    break;
-                
-                case 'asistenciaConfirmada':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->asistenciaConfirmada($data);
-                    break;
-                case 'asistenciaNoConfirmada':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->asistenciaNoConfirmada($data);
-                    break;
-                
-
-                default:
-                    http_response_code(400);
-                    echo json_encode(['message' => 'Acción no encontrada.']);
-                    break;
-            }
-        } else {
-            http_response_code(400);
-            echo json_encode(['message' => 'No se recibió la acción.']);
-        }
-        break;
-        
-    case 'GET':
-        if (isset($_GET['action'])) {
-            $action = $_GET['action'];
-            switch ($action) {
-                //USUARIOS
-                case 'consultarHorasExtra':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->agregarHorasExtra();
-                    break;
-
-
-                case 'obtenerIdChat':
-                    $chatControlador = new ChatControlador();
-                    $chatControlador->obtenerIdChat();
-                    break;
-
-                case 'obtenerMensajes':
-                    $chatControlador = new ChatControlador();
-                    $chatControlador->obtenerMensajes($data);
-                    break;
-
-                case 'obtenerConvocatorias':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->obtenerConvocatorias();
-                    break;
-                
-                case 'obtenerTotalEstadisticas':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->obtenerTotalEstadisticas();
-                    break;
-
-                case 'obtenerRRHH':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->obtenerRRHH();
-                    break;
-
-                case 'datosPerfil':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->datosPerfil();
-                    break;
-                
-
-                //EMPLEADO
-                case 'obtenerNotificaciones':
-                    $empleadoControlador = new EmpleadoControlador();
-                    $empleadoControlador->obtenerNotificaciones();
-                    break;
-                
-                case 'obtenerJornadas':
-                    $empleadoControlador = new EmpleadoControlador();
-                    $empleadoControlador->obtenerJornadas();
-                    break;
-                case 'obtenerAusencias':
-                    $empleadoControlador = new EmpleadoControlador();
-                    $empleadoControlador->obtenerAusencias();
-                    break;
-                case 'obtenerMisVacaciones':
-                    $empleadoControlador = new EmpleadoControlador();
-                    $empleadoControlador->obtenerMisVacaciones();
-                    break;
-                case 'obtenerMiPazySalvo':
-                    $empleadoControlador = new EmpleadoControlador();
-                    $empleadoControlador->obtenerMiPazYSalvo();
-                    break;
-
-                //ASPIRANTE 
-                case 'obtenerNotificaciones':
-                    $aspiranteControlador = new AspiranteControlador();
-                    $aspiranteControlador->obtenerNotificaciones();
-                    break;
-                
-                case 'obtenerDetalleConvocatoria':
-                    $aspiranteControlador = new AspiranteControlador();
-                    $aspiranteControlador->obtenerDetalleConvocatoria();
-                    break;
-
-                //ADMINISTRADOR RECURSOS HUMANOS
-                case 'obtenerCargos':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerCargos();
-                    break;
-                    
-                case 'obtenerPostulaciones':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerPostulaciones();
-                    break;
-
-                case 'obtenerEmpleados':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerEmpleados();
-                    break;
-                    
-                case 'obtenerPazYSalvos':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerPazYSalvos();
-                    break;
-
-                case 'obtenerConvocatorias':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerConvocatorias();
-                    break;
-                    
-                case 'obtenerTodasLasNotificaciones':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerTodasLasNotificaciones();
-                    break;
-                case 'obtenerTodasLasJornadas':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerTodasLasJornadas();
-                    break;
-                case 'obtenerTodasLasAusencias':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerTodasLasAusencias();
-                    break;
-
-                case 'obtenerUsuarios':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerUsuarios();
-                    break;
-
-                case 'obtenerEntrevistas':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerEntrevistas();    
-                    break;
-
-                case 'obtenerTodasLasHorasExtra':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerTodasLasHorasExtra();
-                    break;
-
-                case 'obtenerTodasLasVacaciones':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerTodasLasVacaciones();
-                    break;
-
-                case 'obtenerDatosDelEntrevistado':
-                    $administradorControlador = new AdministradorControlador();
-                    $administradorControlador->obtenerUsuarios();
-                    break;
-
-                default:
-                    http_response_code(400);
-                    echo json_encode(['message' => 'Acción no encontrada.']);
-                    break;
-            }
-        } else {
-            http_response_code(400);
-            echo json_encode(['message' => 'No se recibió la acción.']);
-        }
-        break;
-
-    case 'PATCH':
-        $data = json_decode(file_get_contents('php://input'), true);
-        if(isset($_GET['action'])){
-            $action = $_GET['action'];
-            switch($action){
-                case 'actualizarPerfil':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->actualizarPerfil($data);
-                    break;
-
-                case 'actualizacionHojaDevida':
-                    $usuarioControlador = new UsuarioControlador();
-                    $usuarioControlador->actualizacionHojaDevida($data);
-                    break;
-            default:
-                http_response_code(400);
-                echo json_encode(['message' => 'Acción no encontrada.']);
-                break;
-            }
-        } else{
-            http_response_code(400);
-            echo json_encode(['message' => 'No se recibio la accion']);
-        }
-        break;
-    
-    default:
-        http_response_code(405);
-        echo json_encode(['message' => 'Método de solicitud no soportado.']);
-        break;
+if (!$action) {
+    http_response_code(400);
+    echo json_encode(['message' => 'No se recibió la acción.']);
+    exit;
 }
-?>
+
+$controllers = [
+    'usuario' => new UsuarioControlador(),
+    'empleado' => new EmpleadoControlador(),
+    'aspirante' => new AspiranteControlador(),
+    'chat' => new ChatControlador(),
+    'admin' => new AdministradorControlador()
+];
+
+$routes = [
+    'POST' => [
+        'registrarse' => ['usuario', 'registrar'],
+        'login' => ['usuario', 'iniciar'],
+        'agregarEstudio' => ['usuario', 'agregarEstudio'],
+        'agregarExp' => ['usuario', 'agregarExp'],
+        'registroHorasExtra' => ['usuario', 'agregarHorasExtra'],
+        'solicitarQueja' => ['empleado', 'solicitarQueja'],
+        'solicitarAusencia' => ['empleado', 'solicitarAusencia'],
+        'solicitarVacaciones' => ['empleado', 'solicitarVacaciones'],
+        'aplicacionDeAspirante' => ['aspirante', 'aplicacionDeAspirante'],
+        'enviarMensajes' => ['chat', 'enviarMensajes'],
+        'iniciarChat' => ['chat', 'iniciarChat'],
+        'agregarCargo' => ['admin', 'agregarCargo'],
+        'agregarConvocatoria' => ['admin', 'agregarConvocatoria'],
+        'corroborarJornada' => ['admin', 'corroborarJornada'],
+        'noCorroborarJornada' => ['admin', 'noCorroborarJornada'],
+        'notificacionAceptada' => ['admin', 'notificacionAceptada'],
+        'notificacionRechazada' => ['admin', 'notificacionRechazada'],
+        'asignarEntrevista' => ['admin', 'asignarEntrevista'],
+        'asistenciaConfirmada' => ['admin', 'asistenciaConfirmada'],
+        'asistenciaNoConfirmada' => ['admin', 'asistenciaNoConfirmada']
+    ],
+    'GET' => [
+        'consultarHorasExtra' => ['usuario', 'agregarHorasExtra'],
+        'obtenerIdChat' => ['chat', 'obtenerIdChat'],
+        'obtenerMensajes' => ['chat', 'obtenerMensajes'],
+        'obtenerConvocatorias' => ['usuario', 'obtenerConvocatorias'],
+        'obtenerTotalEstadisticas' => ['usuario', 'obtenerTotalEstadisticas'],
+        'obtenerRRHH' => ['usuario', 'obtenerRRHH'],
+        'datosPerfil' => ['usuario', 'datosPerfil'],
+        'obtenerNotificaciones' => ['empleado', 'obtenerNotificaciones'],
+        'obtenerJornadas' => ['empleado', 'obtenerJornadas'],
+        'obtenerAusencias' => ['empleado', 'obtenerAusencias'],
+        'obtenerMisVacaciones' => ['empleado', 'obtenerMisVacaciones'],
+        'obtenerMiPazySalvo' => ['empleado', 'obtenerMiPazYSalvo'],
+        'obtenerDetalleConvocatoria' => ['aspirante', 'obtenerDetalleConvocatoria'],
+        'obtenerCargos' => ['admin', 'obtenerCargos'],
+        'obtenerPostulaciones' => ['admin', 'obtenerPostulaciones'],
+        'obtenerEmpleados' => ['admin', 'obtenerEmpleados'],
+        'obtenerPazYSalvos' => ['admin', 'obtenerPazYSalvos'],
+        'obtenerTodasLasNotificaciones' => ['admin', 'obtenerTodasLasNotificaciones'],
+        'obtenerTodasLasJornadas' => ['admin', 'obtenerTodasLasJornadas'],
+        'obtenerTodasLasAusencias' => ['admin', 'obtenerTodasLasAusencias'],
+        'obtenerUsuarios' => ['admin', 'obtenerUsuarios'],
+        'obtenerEntrevistas' => ['admin', 'obtenerEntrevistas'],
+        'obtenerTodasLasHorasExtra' => ['admin', 'obtenerTodasLasHorasExtra'],
+        'obtenerTodasLasVacaciones' => ['admin', 'obtenerTodasLasVacaciones'],
+        'obtenerDatosDelEntrevistado' => ['admin', 'obtenerUsuarios']
+    ],
+    'PATCH' => [
+        'actualizarPerfil' => ['usuario', 'actualizarPerfil'],
+        'actualizacionHojaDevida' => ['usuario', 'actualizacionHojaDevida']
+    ]
+];
+
+if (isset($routes[$method][$action])) {
+    [$controllerKey, $method] = $routes[$method][$action];
+    $controllers[$controllerKey]->$method($data);
+} else {
+    http_response_code(400);
+    echo json_encode(['message' => 'Acción no encontrada.']);
+}

@@ -7,6 +7,7 @@ const Layout = () => {
     return (
         <View style={styles.container}>
             <ConvocatoriaLayout/>
+            
         </View>
     );
 };

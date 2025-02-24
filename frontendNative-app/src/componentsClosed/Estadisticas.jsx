@@ -15,15 +15,19 @@ const Estadisticas = () => {
     const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem("auth_token");
+        console.log("Token obtenido:", token);
+
         if (!token) throw new Error("No se encontró un token de autenticación.");
 
         const decodedToken = jwtDecode(token);
         if (decodedToken.exp * 1000 < Date.now()) throw new Error("El token ha expirado.");
 
-        const response = await axios.get("http://192.168.63.193/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.196.193/gestorplus/backend/", {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerTotalEstadisticas" },
         });
+        console.log("Token enviado en la petición:", token);
+
 
         setTotalEntradas(response.data.totalEntradas || 0);
         setTotalAusencias(response.data.totalAusencias || 0);

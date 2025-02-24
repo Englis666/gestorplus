@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ActivityIndicator, FlatList, StyleSheet }
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
+import Estadisticas from "./Estadisticas";
 
 const TablaEmpleado = ({ action }) => {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -32,7 +33,7 @@ const TablaEmpleado = ({ action }) => {
           return;
         }
 
-        const response = await axios.get("http://192.168.43.98/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.196.193/gestorplus/backend/", {
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
@@ -70,6 +71,7 @@ const TablaEmpleado = ({ action }) => {
 
   return (
     <View style={styles.container}>
+      <Estadisticas/>
       <Text style={styles.title}>Notificaciones</Text>
 
       {/* 🔹 Sección: Notificaciones Generales */}

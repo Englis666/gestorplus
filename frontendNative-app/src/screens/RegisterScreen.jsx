@@ -1,199 +1,203 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Image } from 'react-native';
+import { 
+    View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image 
+} from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-import imagen from '../assets/1.png';
 
 const Register = () => {
     const [formData, setFormData] = useState({
         num_doc: '',
+        nombres: '',
+        apellidos: '',
+        email: '',
+        tipodDoc: '',
         password: '',
     });
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigation = useNavigation();
 
-
-    const handleChange = (e, field) => {
-        const value = e.target.value;
-        setFormData({
-            ...formData,
-            [field]: value,
-        });
+    const handleChange = (field, value) => {
+        setFormData({ ...formData, [field]: value });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        if (!formData.num_doc || !formData.password) {
-            Alert.alert("Por favor complete todos los campos.");
+    const handleSubmit = async () => {
+        if (!formData.num_doc || !formData.nombres || !formData.apellidos || 
+            !formData.email || !formData.tipodDoc || !formData.password) {
+            Alert.alert("Error", "Por favor complete todos los campos.");
             return;
         }
 
-        const data = {
-            action: 'login',
-            num_doc: formData.num_doc,
-            password: formData.password,
-        };
-
         setIsSubmitting(true);
-        axios
-        .post("http://192.168.63.193/gestorplus/backend/", data)
-        .then((response) => {
-            const serverMessage = response.data;
-            
-            if (serverMessage?.status === 'success') {
-                const token = serverMessage.token;
-                document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
 
-                login({ token });
-
-                const decodedToken = decodeToken(token);
-                const userRole = decodedToken?.data?.rol; 
-                
-                switch (userRole) {
-                    case "1":
-                        navigation.navigate("administrador/inicioAdmin");
-                        break;
-                    case "2":
-                        navigation.navigate("recursoshumanos/inicioRRHH");
-                        break;
-                    case "3":
-                        navigation.navigate("empleado/inicioEmpleado");
-                        break;
-                    case "4":
-                        navigation.navigate("aspirante/inicio");
-                        break;
-                    default:
-                        document.cookie = "auth_token=; path=/; domain=localhost; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                        console.error("Rol desconocido:", userRole);
-                        navigation.navigate("/");
-                        Alert.alert("Rol desconocido");
-                }
-            } else {
-                Alert.alert(serverMessage?.message || "Error en el inicio de sesión");
-                setIsSubmitting(false);
-            }
-        })
-        .catch((error) => {
-            console.error("Error al iniciar sesión:", error);
-            Alert.alert("Error en el inicio de sesión. Intenta de nuevo.");
-            setIsSubmitting(false);
-        });
-    };
-
-    const decodeToken = (token) => {
         try {
-            const payload = token.split('.')[1];
-            const decoded = JSON.parse(atob(payload)); 
-            return decoded;
-        } catch (e) {
-            console.error("Error decodificando el token:", e);
-            return null; 
+            const response = await axios.post("http://192.168.63.193/gestorplus/backend/", {
+                action: 'register',
+                ...formData
+            });
+
+            if (response.data?.status === 'success') {
+                Alert.alert("Registro exitoso", "Ahora puedes iniciar sesión.");
+                navigation.navigate("Login");
+            } else {
+                Alert.alert("Error", response.data?.message || "Hubo un problema en el registro.");
+            }
+        } catch (error) {
+            console.error("Error al registrarse:", error);
+            Alert.alert("Error", "Hubo un problema con la conexión.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
         <View style={styles.container}>
-            <View style={styles.formContainer}>
+            <View style={styles.card}>
+                {/* 🔹 Header Azul */}
+                <View style={styles.header}>
+                    <Image source={require("../assets/1.png")} style={styles.logo} />
+                    <Text style={styles.headerText}>Crea tu Cuenta</Text>
+                </View>
 
-
+                {/* 🔹 Formulario */}
                 <View style={styles.form}>
-                    <Text style={styles.subtitle}>Registrate</Text>
-                    <Text style={styles.subtitle}>Estamos felices de que te unas a nosotros</Text>
-                    
                     <TextInput
                         style={styles.input}
-                        placeholder="Num documento"
-                        value={formData.num_doc}
-                        onChangeText={(text) => setFormData({ ...formData, num_doc: text })}
+                        placeholder="Número de Documento"
                         keyboardType="numeric"
+                        value={formData.num_doc}
+                        onChangeText={(value) => handleChange("num_doc", value)}
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="Nombres"
                         value={formData.nombres}
-                        onChangeText={(text) => setFormData({...formData, nombres: text })}
+                        onChangeText={(value) => handleChange("nombres", value)}
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="Apellidos"
                         value={formData.apellidos}
-                        onChangeText={(text) => setFormData({...formData, apellidos: text })}
-                    />
-                    <TextInput
-                       style={styles.input}
-                       placeholder="Correo Electronico"
-                       value={formData.email}
-                       onChangeText={(text) => setFormData({...formData, email: text})}
-
+                        onChangeText={(value) => handleChange("apellidos", value)}
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Tipo de documento"
-                        value={formData.tipodDoc}
-                        onChangeText={(text) => setFormData({...formData, tipodDoc : text})}
+                        placeholder="Correo Electrónico"
+                        keyboardType="email-address"
+                        value={formData.email}
+                        onChangeText={(value) => handleChange("email", value)}
                     />
-
-
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Tipo de Documento"
+                        value={formData.tipodDoc}
+                        onChangeText={(value) => handleChange("tipodDoc", value)}
+                    />
                     <TextInput
                         style={styles.input}
                         placeholder="Contraseña"
-                        value={formData.password}
-                        onChangeText={(text) => setFormData({ ...formData, password: text })}
                         secureTextEntry
-                    />
-                    
-                    <Button 
-                        title={isSubmitting ? "Iniciando Sesión..." : "Iniciar sesión"} 
-                        onPress={handleSubmit} 
-                        disabled={isSubmitting}
+                        value={formData.password}
+                        onChangeText={(value) => handleChange("password", value)}
                     />
 
-                    <Button 
-                        title="Ya tengo cuenta"
-                        onPress={() => navigation.navigate('Login')}
-                    />
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={handleSubmit}
+                        disabled={isSubmitting}
+                    >
+                        <Text style={styles.buttonText}>
+                            {isSubmitting ? "Registrando..." : "Registrarse"}
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Login")}
+                        style={styles.registerButton}
+                    >
+                        <Text style={styles.registerText}>Ya tengo cuenta</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    formContainer: { 
-        flexDirection: 'row', 
-        width: '90%', 
-        borderRadius: 20, 
-        backgroundColor: 'white', 
-        elevation: 5, 
-        padding: 20
-    },
-    imageContainer: { 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        flex: 1, 
-        backgroundColor: '#103cbe', 
-        borderTopLeftRadius: 20, 
-        borderBottomLeftRadius: 20 
-    },
-    image: { 
-        width: 150, 
-        height: 150, 
-        resizeMode: 'contain'
-    },
-    title: { color: 'white', fontSize: 18, fontWeight: 'bold' },
-    form: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-    subtitle: { fontSize: 16, textAlign: 'center', marginBottom: 20 },
-    input: { 
-        width: '100%', 
-        height: 50, 
-        borderColor: 'gray', 
-        borderWidth: 1, 
-        borderRadius: 5, 
-        marginBottom: 15, 
-        paddingLeft: 10 
-    }
-});
-
 export default Register;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#f5f5f5",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    card: {
+        backgroundColor: "#fff",
+        borderRadius: 15,
+        width: "90%",
+        maxWidth: 400,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 5,
+    },
+    header: {
+        backgroundColor: "#103cbe",
+        width: "100%",
+        alignItems: "center",
+        paddingVertical: 20,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+    },
+    logo: {
+        width: 80,
+        height: 80,
+        resizeMode: "contain",
+        marginBottom: 5,
+    },
+    headerText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    form: {
+        width: "100%",
+        padding: 20,
+    },
+    input: {
+        backgroundColor: "#f8f9fa",
+        padding: 15,
+        borderRadius: 10,
+        fontSize: 16,
+        width: "100%",
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: "#ddd",
+    },
+    button: {
+        backgroundColor: "#103cbe",
+        padding: 15,
+        borderRadius: 10,
+        alignItems: "center",
+        width: "100%",
+        marginTop: 10,
+    },
+    buttonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    registerButton: {
+        marginTop: 15,
+        alignItems: "center",
+    },
+    registerText: {
+        color: "#103cbe",
+        fontSize: 14,
+        textDecorationLine: "underline",
+    },
+});
