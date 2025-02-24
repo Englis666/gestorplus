@@ -1,394 +1,142 @@
 <?php
 
-// MODELOS 
 require_once 'modelo/usuario.php';
 require_once 'config/config.php';
-
-// COMPOSER PARA TOKEN
 require_once 'config/clave.php';
 require_once 'vendor/autoload.php';  
-use \Firebase\JWT\JWT;
-use \Firebase\JWT\Key;
 
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class UsuarioControlador {
 
     private $db;
     private $usuario;
 
-    public function __construct(){
-        $database = new DataBase();
-        $this->db = $database->getConnection();
-    }
-
-    public function registrar($data){
+    public function __construct() {
+        $this->db = (new DataBase())->getConnection();
         $this->usuario = new Usuario($this->db);
-        $data = [
-            'num_doc' => $data['num_doc'], 
-            'nombres' => $data['nombres'],
-            'apellidos' => $data['apellidos'],
-            'email' => $data['email'],
-            'tipodDoc' => $data['tipodDoc'],
-            'password' => password_hash($data['password'], PASSWORD_BCRYPT),  
-            'estado' => 1,  
-            'rol_idrol' => 4  
-        ];
-        $respuesta = $this->usuario->registrar($data);
-        echo json_encode(['message' => $respuesta]);
     }
 
+    private function jsonResponse($status, $message, $data = []) {
+        echo json_encode(array_merge(['status' => $status, 'message' => $message], $data));
+    }
+
+    private function verificarToken() {
+        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        if (!$authHeader) {
+            http_response_code(401);
+            $this->jsonResponse('error', 'Token no proporcionado');
+            exit;
+        }
+        
+        try {
+            return JWT::decode(str_replace('Bearer ', '', $authHeader), new Key(SECRET_KEY, JWT_ALGO));
+        } catch (Exception $e) {
+            http_response_code(401);
+            $this->jsonResponse('error', 'Token inválido: ' . $e->getMessage());
+            exit;
+        }
+    }
+
+    public function registrar($data) {
+        $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+        $data['estado'] = 1;
+        $data['rol_idrol'] = 4;
+        
+        $this->jsonResponse('success', $this->usuario->registrar($data));
+    }
 
     public function iniciar($data) {
-        $this->usuario = new Usuario($this->db);
-    
-        $num_doc = isset($data['num_doc']) ? trim($data['num_doc']) : null;
-        $password = isset($data['password']) ? trim($data['password']) : null;
-    
-        if (!$num_doc || !$password) {
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Número de documento y contraseña son requeridos'
-            ]);
+        if (empty($data['num_doc']) || empty($data['password'])) {
+            $this->jsonResponse('error', 'Número de documento y contraseña son requeridos');
             return;
         }
-    
-        $respuesta = $this->usuario->inicioSesion(['num_doc' => $num_doc, 'password' => $password]);               
-
-        if ($respuesta) {
-            try {
-                $secretKey = SECRET_KEY;
-                $firma = JWT_ALGO;
-                $issuedAt = time();
-                $expirantionTime = $issuedAt + 3600;
-
-                $payload = [
-                    'iss' => '/',     
-                    'aud' => 'localhost',      
-                    'iat' => $issuedAt,           
-                    'exp' => $expirantionTime,    
-                    'data' => [
-                        'num_doc' => $respuesta['num_doc'],
-                        'nombres' => $respuesta['nombres'],
-                        'rol' => (string) $respuesta['rol'],  
-                        'hojadevida_idHojadevida' => $respuesta['hojadevida_idHojadevida']
-                    ]
-                ];
-
-                $jwt = JWT::encode($payload, $secretKey, $firma);
-    
-
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => 'Credenciales correctas',
-                    'token' => $jwt
-                ]);
-            } catch (Exception $e) {
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'Error al generar el token: ' . $e->getMessage()
-                ]);
-            }
-        } else {
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Credenciales incorrectas'
-            ]);
-        }
-    }
-    
-
-    public function datosPerfil(){
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
-        if(!$authHeader){
-            echo json_encode(['error' => 'Token no proporcionado']);
-            http_response_code(401);
+        
+        $usuario = $this->usuario->inicioSesion(['num_doc' => trim($data['num_doc']), 'password' => trim($data['password'])]);
+        if (!$usuario) {
+            $this->jsonResponse('error', 'Credenciales incorrectas');
             return;
         }
-        $token = str_replace('Bearer ', '', $authHeader);
-        try{
-            $secretKey = SECRET_KEY;
-            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
-            $num_doc = $decoded->data->num_doc;
-
-            if(!$num_doc){
-                echo json_encode(['error' => 'No se encontro el numero de documento']);
-                http_response_code(400);
-                return;
-            }
-            $this->usuario = new Usuario($this->db);
-            $resultado = $this->usuario->datosPerfil($num_doc);
-            if($resultado){
-                echo json_encode($resultado);
-                return;
-            } else {
-                echo json_encode(['error' => 'No se encontraron datos']);
-                http_response_code(404);
-                return;
-            }
-        } catch (\Firebase\JWT\ExpiredException $e) {
-            echo json_encode(['error' => 'Token expirado']);
-            http_response_code(401);
-        } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            echo json_encode(['error' => 'Token con firma inválida']);
-            http_response_code(401);
-        } catch (Exception $e) {
-            echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
-            http_response_code(500);
-        }
+        
+        $payload = [
+            'iss' => '/', 'aud' => 'localhost', 'iat' => time(), 'exp' => time() + 3600,
+            'data' => [
+                'num_doc' => $usuario['num_doc'],
+                'nombres' => $usuario['nombres'],
+                'rol' => (string) $usuario['rol'],
+                'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
+            ]
+        ];
+        
+        $this->jsonResponse('success', 'Credenciales correctas', ['token' => JWT::encode($payload, SECRET_KEY, JWT_ALGO)]);
     }
 
-    public function actualizarPerfil($data){
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
-        error_log("Authorization Header: " . json_encode($authHeader)); 
-        if(!$authHeader){
-            echo json_encode(['error' => 'Token no proporcionado']);
-            http_response_code(401);
+    public function datosPerfil() {
+        $decoded = $this->verificarToken();
+        $resultado = $this->usuario->datosPerfil($decoded->data->num_doc);
+        
+        $resultado ? $this->jsonResponse('success', '', $resultado) 
+                   : $this->jsonResponse('error', 'No se encontraron datos', [], 404);
+    }
+
+    public function actualizarPerfil($data) {
+        $decoded = $this->verificarToken();
+        
+        if (empty($data['nombres']) || empty($data['apellidos']) || empty($data['email']) || empty($data['tipoDoc'])) {
+            $this->jsonResponse('error', 'Faltan datos requeridos para actualizar el perfil', [], 400);
             return;
         }
-        $token = str_replace('Bearer ', '', $authHeader);
-    
-        try {
-            $secretKey = SECRET_KEY;
-            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
-            $num_doc = $decoded->data->num_doc;
-    
-    
-            if (empty($data['nombres']) || empty($data['apellidos']) || empty($data['email']) || empty($data['tipoDoc'])) {
-                http_response_code(400);
-                echo json_encode(['error' => 'Faltan datos requeridos para actualizar el perfil']);
-                return;
-            }
-    
-            $this->usuario = new Usuario($this->db);
-            $resultado = $this->usuario->actualizarPerfil($data, $num_doc);
-    
-            if ($resultado) {
-                echo json_encode(['success' => true, 'message' => 'Perfil actualizado correctamente']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'No se pudo actualizar el perfil']);
-            }
-        } catch (Exception $e) {
-            echo json_encode(['error' => 'Error al procesar la solicitud: ' . $e->getMessage()]);
-            http_response_code(500);
-        }
+
+        $resultado = $this->usuario->actualizarPerfil($data, $decoded->data->num_doc);
+        $this->jsonResponse($resultado ? 'success' : 'error', $resultado ? 'Perfil actualizado correctamente' : 'No se pudo actualizar el perfil');
     }
-    
 
     public function actualizacionHojaDevida($data) {
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
-        if (!$authHeader) {
-            echo json_encode(['error' => 'Token no proporcionado']);
-            http_response_code(401);
-            return;
-        }
-    
-        $token = str_replace('Bearer ', '', $authHeader);
-    
-        try {
-            $secretKey = SECRET_KEY;
-            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
-            $hojadevida_idHojadevida = $decoded->data->hojadevida_idHojadevida;
-    
-            $data = [
-                'fechaNacimiento' => $data['fechaNacimiento'] ?? null,
-                'direccion' => $data['direccion'] ?? null,
-                'ciudad' => $data['ciudad'] ?? null,
-                'ciudadNacimiento' => $data['ciudadNacimiento'] ?? null,
-                'telefono' => $data['telefono'] ?? null,
-                'telefonoFijo' => $data['telefonoFijo'] ?? null,
-                'estadohojadevida' => $data['estadohojadevida'] ?? 1, 
-            ];
-    
-            foreach ($data as $key => $value) {
-                if (is_null($value)) {
-                    echo json_encode(['error' => "El campo $key es obligatorio"]);
-                    http_response_code(400);
-                    return;
-                }
+        $decoded = $this->verificarToken();
+        
+        foreach (['fechaNacimiento', 'direccion', 'ciudad', 'ciudadNacimiento', 'telefono', 'telefonoFijo'] as $campo) {
+            if (!isset($data[$campo])) {
+                $this->jsonResponse('error', "El campo $campo es obligatorio", [], 400);
+                return;
             }
-    
-            $this->usuario = new Usuario($this->db);
-            $resultado = $this->usuario->actualizacionHojadevida($data, $hojadevida_idHojadevida);
-    
-            if ($resultado) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Hoja de vida actualizada',
-                    'data' => $resultado
-                ]);
-            } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'No se pudo actualizar la hoja de vida'
-                ]);
-            }
-        } catch (Exception $e) {
-            echo json_encode(['error' => 'Error al procesar la solicitud: ' . $e->getMessage()]);
-            http_response_code(500);
         }
+        
+        $resultado = $this->usuario->actualizacionHojadevida($data, $decoded->data->hojadevida_idHojadevida);
+        $this->jsonResponse($resultado ? 'success' : 'error', $resultado ? 'Hoja de vida actualizada' : 'No se pudo actualizar la hoja de vida');
     }
-    
-    
-    public function agregarEstudio($data){
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
-        if (!$authHeader) {
-            echo json_encode(['error' => 'Token no proporcionado']);
-            http_response_code(401);
-            return;
-        }
-    
-        $token = str_replace('Bearer ', '', $authHeader);
-    
-        try {
-            $secretKey = SECRET_KEY;
-            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
-            $hojadevida_idHojadevida = $decoded->data->hojadevida_idHojadevida;
 
-    
-            $this->usuario = new Usuario($this->db);
-            $resultado = $this->usuario->agregarEstudio($data,$hojadevida_idHojadevida);
-    
-            if ($resultado) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Estudio subido',
-                    'data' => $resultado
-                ]);
-            } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'No se pudo subir el estudio'
-                ]);
-            }
-
-
-        } catch (\Firebase\JWT\ExpiredException $e) {
-            echo json_encode(['error' => 'Token expirado']);
-            http_response_code(401);
-        } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            echo json_encode(['error' => 'Token con firma inválida']);
-            http_response_code(401);
-        } catch (Exception $e) {
-            echo json_encode(['error' => 'Error al procesar la solicitud: ' . $e->getMessage()]);
-            http_response_code(500);
-        }
+    public function agregarEstudio($data) {
+        $decoded = $this->verificarToken();
+        $resultado = $this->usuario->agregarEstudio($data, $decoded->data->hojadevida_idHojadevida);
+        $this->jsonResponse($resultado ? 'success' : 'error', $resultado ? 'Estudio agregado' : 'No se pudo agregar el estudio');
     }
-    
-    public function agregarExp($data){
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
-        if (!$authHeader) {
-            echo json_encode(['error' => 'Token no proporcionado']);
-            http_response_code(401);
-            return;
-        }
-    
-        $token = str_replace('Bearer ', '', $authHeader);
-    
-        try {
-            $secretKey = SECRET_KEY;
-            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
-            $hojadevida_idHojadevida = $decoded->data->hojadevida_idHojadevida;
 
-    
-            $this->usuario = new Usuario($this->db);
-            $resultado = $this->usuario->agregarExp($data,$hojadevida_idHojadevida);
-    
-            if ($resultado) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Experiencia subida',
-                    'data' => $resultado
-                ]);
-            } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'No se pudo subir correctamente la exp'
-                ]);
-            }
-
-
-        } catch (\Firebase\JWT\ExpiredException $e) {
-            echo json_encode(['error' => 'Token expirado']);
-            http_response_code(401);
-        } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            echo json_encode(['error' => 'Token con firma inválida']);
-            http_response_code(401);
-        } catch (Exception $e) {
-            echo json_encode(['error' => 'Error al procesar la solicitud: ' . $e->getMessage()]);
-            http_response_code(500);
-        }
+    public function agregarExp($data) {
+        $decoded = $this->verificarToken();
+        $resultado = $this->usuario->agregarExp($data, $decoded->data->hojadevida_idHojadevida);
+        $this->jsonResponse($resultado ? 'success' : 'error', $resultado ? 'Experiencia agregada' : 'No se pudo agregar la experiencia');
     }
-    
-    public function obtenerConvocatorias(){
-        $this->usuario  = new Usuario($this->db);
+
+    public function obtenerConvocatorias() {
         $resultado = $this->usuario->obtenerConvocatorias();
-        if($resultado){
-            echo json_encode(['convocatorias' => $resultado]); 
-        }else {
-            echo json_encode(['convocatorias' => []]);
-        }
+        $this->jsonResponse('success', '', ['convocatorias' => $resultado ?: []]);
     }
 
     public function obtenerTotalEstadisticas() {
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
-        if (!$authHeader) {
-            echo json_encode(['error' => 'Token no proporcionado']);
-            http_response_code(401);
-            return;
-        }
-    
-        $token = str_replace('Bearer ', '', $authHeader);
-    
-        try {
-            $secretKey = SECRET_KEY;
-            $decoded = JWT::decode($token, new Key($secretKey, JWT_ALGO));
-            $num_doc = $decoded->data->num_doc;
-
-            if (!$num_doc) {
-                echo json_encode(['error' => 'No se encontró el número de documento en el token']);
-                http_response_code(400);
-                return;
-            }    
-    
-            $this->usuario = new Usuario($this->db);
-            $resultados = $this->usuario->obtenerTotalEstadisticas($num_doc);
-    
-            if ($resultados) {
-                echo json_encode([
-                    'totalEntradas' => $resultados['totalEntradas'],
-                    'totalAusencias' => $resultados['totalAusencias']
-                ]);
-            } else {
-                echo json_encode([
-                    'totalEntradas' => 0,
-                    'totalAusencias' => 0,
-                ]);
-            }
-    
-        } catch (\Firebase\JWT\ExpiredException $e) {
-            echo json_encode(['error' => 'Token expirado']);
-            http_response_code(401);
-        } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            echo json_encode(['error' => 'Token con firma inválida']);
-            http_response_code(401);
-        } catch (Exception $e) {
-            echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
-            http_response_code(500);
-        }
+        $decoded = $this->verificarToken();
+        $resultados = $this->usuario->obtenerTotalEstadisticas($decoded->data->num_doc);
+        
+        $this->jsonResponse('success', '', [
+            'totalEntradas' => $resultados['totalEntradas'] ?? 0,
+            'totalAusencias' => $resultados['totalAusencias'] ?? 0
+        ]);
     }
-    
-    public function obtenerRRHH(){
-        $this->usuario = new Usuario($this->db);
+
+    public function obtenerRRHH() {
         $resultado = $this->usuario->obtenerRRHH();
-        if($resultado){
-            echo json_encode(['RRHH' => $resultado]);
-        }else{
-            echo json_encode(['RRHH' => []]);
-        }
+        $this->jsonResponse('success', '', ['RRHH' => $resultado ?: []]);
     }
-
-
 }
-
 
 ?>
