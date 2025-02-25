@@ -14,6 +14,7 @@ import Layout from './views/Layout';
 import Trabajo from './views/aspirante/Trabajo';
 import DetallesDeTrabajo from './views/aspirante/DetallesTrabajo';
 import InicioEmpleado from './views/empleado/InicioEmpleado';
+import MisPostulaciones from './views/aspirante/MisPostulaciones';
 
 import Jornadas from './views/Jornadas';
 import Ausencias from './views/Ausencias';
@@ -49,6 +50,7 @@ function App() {
           <Route path='/aspirante/inicio' element={<InicioAspirante/>}/>
           <Route path='/aspirante/Trabajo' element={<Trabajo/>}/>
           <Route path='/aspirante/DetallesDeTrabajo' element={<DetallesDeTrabajo/>}/>
+          <Route path='/aspirante/MisPostulaciones' element={<MisPostulaciones/>}/>
           <Route path='/empleado/InicioEmpleado' element={<InicioEmpleado/>}/>
           <Route path='/Jornadas' element={<Jornadas/>}/>
           <Route path='/HorasExtra' element={<HorasExtra/>}/>

@@ -52,6 +52,21 @@ class AspiranteControlador {
         }
     }
 
+    public function obtenerPostulacionesAspirante() {
+        $num_doc = $this->obtenerNumDocDesdeToken();
+
+        if (!$num_doc) {
+            http_response_code(400);
+            echo json_encode(['error' => 'No se encontró el número de documento en el token']);
+            return;
+        }
+
+        $resultados = $this->aspirante->obtenerPostulacionesAspirante($num_doc);
+
+        http_response_code(200);
+        echo json_encode(['MisPostulaciones' => $resultados ?? []]);
+    }
+
     public function obtenerNotificaciones() {
         $num_doc = $this->obtenerNumDocDesdeToken();
 
@@ -78,7 +93,7 @@ class AspiranteControlador {
         $resultados = $this->aspirante->obtenerDetalleConvocatoria($idconvocatoria);
 
         http_response_code(200);
-        echo json_encode(['detalleConvocatoria' => $resultados ?? null]);
+        echo json_encode(['DetalleConvocatoria' => $resultados ?? null]);
     }
 
     public function aplicacionDeAspirante($data) {

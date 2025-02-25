@@ -61,7 +61,7 @@ const Navbar = () => {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ms-auto">
                             <li className="nav-item">
-                                <a className="nav-link" onClick={() => navigate("/")}>Inicio</a>
+                                <a className="nav-link btn btn-primary" onClick={() => navigate("/")}>Inicio</a>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link btn btn-primary" onClick={() => navigate("/aspirante/trabajo")}>
@@ -71,6 +71,11 @@ const Navbar = () => {
 
                             {user ? ( 
                                 <>
+                                    <li className="nav-item">
+                                        <a className="nav-link btn btn-primary" onClick={() => navigate("/aspirante/MisPostulaciones")}>
+                                            Mis Postulaciones
+                                        </a>
+                                    </li>
                                     <li className="nav-item">
                                         <button className="nav-link btn btn-primary" onClick={handleLogout}>
                                             Cerrar sesión
@@ -116,7 +121,7 @@ const Navbar = () => {
                                 </>
                             ) : (
                                 <li className="nav-item">
-                                    <a className="nav-link" onClick={() => navigate('/login')}>Iniciar Sesión</a>
+                                    <a className="nav-link btn btn-primary" onClick={() => navigate('/login')}>Iniciar Sesión</a>
                                 </li>
                             )}
                             

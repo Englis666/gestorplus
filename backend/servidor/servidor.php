@@ -73,6 +73,7 @@ $routes = [
         'obtenerMisVacaciones' => ['empleado', 'obtenerMisVacaciones'],
         'obtenerMiPazySalvo' => ['empleado', 'obtenerMiPazYSalvo'],
         
+        'obtenerPostulacionesAspirante' => ['aspirante', 'obtenerPostulacionesAspirante'],
         'obtenerDetalleConvocatoria' => ['aspirante', 'obtenerDetalleConvocatoria'],
         
         'obtenerCargos' => ['admin', 'obtenerCargos'],
