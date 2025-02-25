@@ -4,30 +4,33 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
+const API_URL = "http://192.168.43.98/gestorplus/backend/";
+
 const Estadisticas = () => {
   const [totalEntradas, setTotalEntradas] = useState(0);
   const [totalAusencias, setTotalAusencias] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const scaleAnim = new Animated.Value(1);
+  const scaleAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem("auth_token");
-        console.log("Token obtenido:", token);
-
         if (!token) throw new Error("No se encontró un token de autenticación.");
-
+        
         const decodedToken = jwtDecode(token);
         if (decodedToken.exp * 1000 < Date.now()) throw new Error("El token ha expirado.");
-
-        const response = await axios.get("http://192.168.196.193/gestorplus/backend/", {
-          headers: { Authorization: `Bearer ${token}` },
+        
+        console.log("Token enviado en la petición:", token);
+        const response = await axios.get(API_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
           params: { action: "obtenerTotalEstadisticas" },
         });
-        console.log("Token enviado en la petición:", token);
-
 
         setTotalEntradas(response.data.totalEntradas || 0);
         setTotalAusencias(response.data.totalAusencias || 0);
@@ -37,42 +40,35 @@ const Estadisticas = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, { toValue: 1.1, useNativeDriver: true }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start();
+  };
 
   if (loading) return <ActivityIndicator size="large" color="#3498db" style={styles.loading} />;
   if (error) return <Text style={styles.error}>{error}</Text>;
 
   return (
     <View style={styles.container}>
-      {/* Tarjeta de estadísticas */}
-      <Animated.View
-        style={[styles.card, { transform: [{ scale: scaleAnim }] }]}
-        onTouchStart={() => Animated.spring(scaleAnim, { toValue: 1.1, useNativeDriver: true }).start()}
-        onTouchEnd={() => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start()}
-      >
-        <Text style={styles.title}>Total de Ausencias</Text>
-        <Text style={styles.value}>{totalAusencias}</Text>
-      </Animated.View>
-
-      <Animated.View
-        style={[styles.card, { transform: [{ scale: scaleAnim }] }]}
-        onTouchStart={() => Animated.spring(scaleAnim, { toValue: 1.1, useNativeDriver: true }).start()}
-        onTouchEnd={() => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start()}
-      >
-        <Text style={styles.title}>Entradas al Trabajo</Text>
-        <Text style={styles.value}>{totalEntradas}</Text>
-      </Animated.View>
-
-      <Animated.View
-        style={[styles.card, { transform: [{ scale: scaleAnim }] }]}
-        onTouchStart={() => Animated.spring(scaleAnim, { toValue: 1.1, useNativeDriver: true }).start()}
-        onTouchEnd={() => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start()}
-      >
-        <Text style={styles.title}>Total de Vacaciones</Text>
-        <Text style={styles.value}>0</Text>
-      </Animated.View>
+      {[{ title: "Total de Ausencias", value: totalAusencias },
+        { title: "Entradas al Trabajo", value: totalEntradas },
+        { title: "Total de Vacaciones", value: 0 }].map((item, index) => (
+        <Animated.View
+          key={index}
+          style={[styles.card, { transform: [{ scale: scaleAnim }] }]}
+          onTouchStart={handlePressIn}
+          onTouchEnd={handlePressOut}
+        >
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.value}>{item.value}</Text>
+        </Animated.View>
+      ))}
     </View>
   );
 };

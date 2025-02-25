@@ -24,7 +24,7 @@ const DetallesTrabajo = () => {
     useEffect(() => {
         console.log("id de convocatoria", idconvocatoria);
         axios
-            .get("http://192.168.196.193/gestorplus/backend/", {
+            .get("http://192.168.43.98/gestorplus/backend/", {
                 params: {
                     action: "obtenerDetalleConvocatoria",
                     idconvocatoria: idconvocatoria,

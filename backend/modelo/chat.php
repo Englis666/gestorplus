@@ -57,8 +57,8 @@ class Chat {
     }
 
     public function obtenerIdChat($data){
-            $stmt = $this->pdo->prepare("SELECT idChat FROM chat WHERE receptor = :num_doc");
-            $stmt->bindParam(':num_doc', $num_doc);
+            $stmt = $this->db->prepare("SELECT * FROM chat WHERE idChat");
+            $stmt->bindParam('idChat' , $data, PDO::PARAM_STR);
             $stmt->execute();
       
             $result = $stmt->fetch(PDO::FETCH_ASSOC);

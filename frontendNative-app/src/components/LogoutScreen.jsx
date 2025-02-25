@@ -10,7 +10,7 @@ const LogoutScreen = ({ setUserRole }) => {
     const logout = async () => {
       await AsyncStorage.removeItem("auth_token"); // 🔹 Borra el token
       setUserRole(null); // 🔹 Actualiza el estado global
-      navigation.reset({ index: 0, routes: [{ name: "Login" }] }); // 🔹 Redirige al login
+      navigation.reset({ index: 0, routes: [{ name: "Layout" }] }); // 🔹 Redirige al login
     };
 
     logout();

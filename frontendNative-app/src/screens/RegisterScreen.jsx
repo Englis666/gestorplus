@@ -32,7 +32,7 @@ const Register = () => {
         setIsSubmitting(true);
 
         try {
-            const response = await axios.post("http://192.168.63.193/gestorplus/backend/", {
+            const response = await axios.post("http://192.168.43.98/gestorplus/backend/", {
                 action: 'register',
                 ...formData
             });

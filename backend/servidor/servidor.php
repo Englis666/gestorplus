@@ -36,12 +36,16 @@ $routes = [
         'agregarEstudio' => ['usuario', 'agregarEstudio'],
         'agregarExp' => ['usuario', 'agregarExp'],
         'registroHorasExtra' => ['usuario', 'agregarHorasExtra'],
+
         'solicitarQueja' => ['empleado', 'solicitarQueja'],
         'solicitarAusencia' => ['empleado', 'solicitarAusencia'],
         'solicitarVacaciones' => ['empleado', 'solicitarVacaciones'],
+        
         'aplicacionDeAspirante' => ['aspirante', 'aplicacionDeAspirante'],
+        
         'enviarMensajes' => ['chat', 'enviarMensajes'],
         'iniciarChat' => ['chat', 'iniciarChat'],
+        
         'agregarCargo' => ['admin', 'agregarCargo'],
         'agregarConvocatoria' => ['admin', 'agregarConvocatoria'],
         'corroborarJornada' => ['admin', 'corroborarJornada'],
@@ -54,18 +58,23 @@ $routes = [
     ],
     'GET' => [
         'consultarHorasExtra' => ['usuario', 'agregarHorasExtra'],
+        
         'obtenerIdChat' => ['chat', 'obtenerIdChat'],
         'obtenerMensajes' => ['chat', 'obtenerMensajes'],
+        
         'obtenerConvocatorias' => ['usuario', 'obtenerConvocatorias'],
         'obtenerTotalEstadisticas' => ['usuario', 'obtenerTotalEstadisticas'],
         'obtenerRRHH' => ['usuario', 'obtenerRRHH'],
         'datosPerfil' => ['usuario', 'datosPerfil'],
+        
         'obtenerNotificaciones' => ['empleado', 'obtenerNotificaciones'],
         'obtenerJornadas' => ['empleado', 'obtenerJornadas'],
         'obtenerAusencias' => ['empleado', 'obtenerAusencias'],
         'obtenerMisVacaciones' => ['empleado', 'obtenerMisVacaciones'],
         'obtenerMiPazySalvo' => ['empleado', 'obtenerMiPazYSalvo'],
+        
         'obtenerDetalleConvocatoria' => ['aspirante', 'obtenerDetalleConvocatoria'],
+        
         'obtenerCargos' => ['admin', 'obtenerCargos'],
         'obtenerPostulaciones' => ['admin', 'obtenerPostulaciones'],
         'obtenerEmpleados' => ['admin', 'obtenerEmpleados'],
