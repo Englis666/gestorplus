@@ -4,6 +4,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import Estadisticas from "./Estadisticas";
+import Grafica from "./Grafica";
 
 const TablaEmpleado = ({ action }) => {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -37,7 +38,7 @@ const TablaEmpleado = ({ action }) => {
           Authorization: `Bearer ${token}`,
         };
 
-        const response = await axios.get("http://192.168.43.98/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.201.193/gestorplus/backend/", {
           headers,
           params: { action },
         });
@@ -123,6 +124,7 @@ const TablaEmpleado = ({ action }) => {
           )}
         </View>
       </View>
+      <Grafica/>
     </ScrollView>
   );
 };

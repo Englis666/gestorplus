@@ -29,7 +29,7 @@ const Grafica = () => {
           return;
         }
 
-        const response = await axios.get("http://192.168.43.98/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.201.193/gestorplus/backend/", {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerTotalEstadisticas" },
         });

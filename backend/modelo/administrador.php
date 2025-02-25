@@ -52,6 +52,32 @@ class Administrador {
             return [];
         }
     }
+    public function obtenerTotalEstadisticas() {
+        $sql = "
+           SELECT 
+            SUM(CASE WHEN tipo = 'Jornada' THEN 1 ELSE 0 END) AS totalEntradas,
+            SUM(CASE WHEN tipo = 'Ausencia' THEN 1 ELSE 0 END) AS totalAusencias
+           FROM notificacion
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+    
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($resultado) {
+            return [
+                'totalEntradas' => (int)$resultado['totalEntradas'],    
+                'totalAusencias' => (int)$resultado['totalAusencias']
+            ];
+        } else {
+            return [
+                'totalEntradas' => 0,
+                'totalAusencias' => 0
+            ];
+        }
+    }
+    
+
 
     public function obtenerTodasLasVacaciones(){
         try{

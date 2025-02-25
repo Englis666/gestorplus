@@ -86,7 +86,8 @@ $routes = [
         'obtenerEntrevistas' => ['admin', 'obtenerEntrevistas'],
         'obtenerTodasLasHorasExtra' => ['admin', 'obtenerTodasLasHorasExtra'],
         'obtenerTodasLasVacaciones' => ['admin', 'obtenerTodasLasVacaciones'],
-        'obtenerDatosDelEntrevistado' => ['admin', 'obtenerUsuarios']
+        'obtenerDatosDelEntrevistado' => ['admin', 'obtenerUsuarios'],
+        'obtenerTodasLasEstadisticas' => ['admin' , 'obtenerTodasLasEstadisticas']
     ],
     'PATCH' => [
         'actualizarPerfil' => ['usuario', 'actualizarPerfil'],

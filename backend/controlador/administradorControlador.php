@@ -57,6 +57,16 @@ class AdministradorControlador {
         $this->jsonResponse(['Notificaciones' => $this->administrador->obtenerTodasLasNotificaciones() ?: []]);
     }
 
+    public function obtenerTodasLasEstadisticas() {
+        $estadisticas = $this->administrador->obtenerTotalEstadisticas();
+        
+        $this->jsonResponse([
+            'totalEntradas' => $estadisticas['totalEntradas'],
+            'totalAusencias' => $estadisticas['totalAusencias']
+        ]);
+    }
+    
+
     public function obtenerTodasLasHorasExtra() {
         $decoded = $this->verificarToken();
         $num_doc = $decoded->data->num_doc;
