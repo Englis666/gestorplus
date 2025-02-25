@@ -7,6 +7,7 @@ const Estadisticas = () => {
   const [totalAusencias, setTotalAusencias] = useState(0); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rol, setRol] = useState(null);
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -29,12 +30,33 @@ const Estadisticas = () => {
           setLoading(false);
           return;
         }
+        const Rol = decodedToken?.data?.rol;
+        setRol(Rol);
+
+        const action = (() => {
+          switch (Rol){
+            case "1":
+              return "obtenerTodasLasEstadisticas";
+            case "2":
+              return "obtenerTodasLasEstadisticas";
+            case "3": 
+            return "obtenerTotalEstadisticas";
+            default:
+              console.error("El rol no es valido");
+              setError("Rol no reconocido");
+              setLoading(false);
+              return null;
+            }
+        })();
+
+        if (!action) return;
+
 
         axios.get('http://localhost/gestorplus/backend/', { 
           headers: {
             Authorization: `Bearer ${token}`
           },
-          params: { action: 'obtenerTotalEstadisticas' }, 
+          params: { action }, 
         })
         .then(response => {
           const { totalEntradas, totalAusencias } = response.data;  
