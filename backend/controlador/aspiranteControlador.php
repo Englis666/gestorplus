@@ -52,6 +52,22 @@ class AspiranteControlador {
         }
     }
 
+    public function verificarPostulacion () {
+        $num_doc = $this->obtenerNumDocDesdeToken();
+        $idconvocatoria = $_GET['idconvocatoria'] ?? null;
+
+        if(!$num_doc) {
+            http_response_code(400);
+            echo json_encode(['error' => 'No se encontró el número de documento en el token']);
+            return;
+        }
+
+        $resultados = $this->aspirante->verificarPostulacion($num_doc, $idconvocatoria);
+
+        http_response_code(200);
+        echo json_encode(['PostulacionVerificada' => $resultados ?? null]);
+    }
+
     public function obtenerPostulacionesAspirante() {
         $num_doc = $this->obtenerNumDocDesdeToken();
 

@@ -75,6 +75,7 @@ $routes = [
         
         'obtenerPostulacionesAspirante' => ['aspirante', 'obtenerPostulacionesAspirante'],
         'obtenerDetalleConvocatoria' => ['aspirante', 'obtenerDetalleConvocatoria'],
+        'verificarPostulacion' => ['aspirantes', 'verificarPostulacion'],
         
         'obtenerCargos' => ['admin', 'obtenerCargos'],
         'obtenerPostulaciones' => ['admin', 'obtenerPostulaciones'],

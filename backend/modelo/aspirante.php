@@ -27,7 +27,7 @@ class Aspirante {
         }
     }
 
-    public function obtenerPostulacionesAspirante($num_doc) {
+    public function obtenerPostulacionesAspirante($num_doc, $idconvocatoria) {
         try {
             $sql = "SELECT * FROM postulacion p INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria WHERE p.usuario_num_doc = :num_doc";
             $stmt = $this->db->prepare($sql);
@@ -44,6 +44,26 @@ class Aspirante {
             http_response_code(500);
             return null;
         } 
+    }
+
+    public function verificarPostulacion($num_doc, $idconvocatoria) {
+        try {
+            $sql = 'SELECT * FROM postulacion WHERE usuario_num_doc = :num_doc AND convocatoria_idconvocatoria = :idconvocatoria';
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
+            $stmt->bindParam(':idconvocatoria', $idconvocatoria, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($resultado) {
+                return $resultado;
+            }
+            return null;
+        } catch(PDOException $e) {
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return null;
+        }
     }
 
     public function aplicacionDeAspirante($num_doc, $idconvocatoria) {

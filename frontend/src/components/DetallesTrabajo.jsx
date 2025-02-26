@@ -6,6 +6,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+    const [aplicado, setAplicado] = useState(false);
 
     useEffect(() => {
         axios
@@ -32,6 +33,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
             });
     }, [idconvocatoria]);
 
+
     const handleApply = () => {
         const getCookie = (name) => {
             const value = `; ${document.cookie}`;
@@ -46,6 +48,31 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
             action: "aplicacionDeAspirante",
             idconvocatoria: idconvocatoria,
         };
+
+        const dataVerify ={
+            action: "verificarAplicacion",
+            idconvocatoria: idconvocatoria,
+        }
+
+        axios
+        .get ("http://localhost/gestorplus/backend/", dataVerify, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then ((response) => {
+            if (response.data.PostulacionVerificada) {
+                console.log("respuesta", response.data.PostulacionVerificada);
+                setSuccessMessage(response.data.message);
+            } else {
+                console.error("Error en la respuesta del servidor: ", response.data.error);
+                setError(response.data.error);
+            }
+        })
+        .catch((err) => {
+            console.error("Error al enviar la aplicación: ", err);
+            setError("Error al enviar la aplicación.");
+        })
 
         axios
             .post("http://localhost/gestorplus/backend/", data, {
