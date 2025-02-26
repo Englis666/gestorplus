@@ -8,7 +8,7 @@ const InicioAdministradorScreen = () => {
     <View style={styles.container}>
       
       <ScrollView style={styles.content}>
-        <TablaEmpleado action="obtenerTodasLasNotificaciones" />
+        <TablaEmpleado action="obtenerTodasLasNotificaciones" />  
       </ScrollView>
     </View>
   );
