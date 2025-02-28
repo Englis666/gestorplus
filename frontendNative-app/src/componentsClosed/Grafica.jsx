@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -29,10 +35,13 @@ const Grafica = () => {
           return;
         }
 
-        const response = await axios.get("http://192.168.201.193/gestorplus/backend/", {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { action: "obtenerTotalEstadisticas" },
-        });
+        const response = await axios.get(
+          "http://192.168.201.193/gestorplus/backend/",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { action: "obtenerTotalEstadisticas" },
+          },
+        );
 
         setTotalEntradas(response.data.totalEntradas || 0);
         setTotalAusencias(response.data.totalAusencias || 0);
@@ -46,7 +55,10 @@ const Grafica = () => {
     fetchData();
   }, []);
 
-  if (loading) return <ActivityIndicator size="large" color="#3498db" style={styles.loading} />;
+  if (loading)
+    return (
+      <ActivityIndicator size="large" color="#3498db" style={styles.loading} />
+    );
   if (error) return <Text style={styles.error}>{error}</Text>;
 
   return (
