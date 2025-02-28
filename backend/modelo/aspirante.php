@@ -27,7 +27,7 @@ class Aspirante {
         }
     }
 
-    public function obtenerPostulacionesAspirante($num_doc, $idconvocatoria) {
+    public function obtenerPostulacionesAspirante($num_doc) {
         try {
             $sql = "SELECT * FROM postulacion p INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria WHERE p.usuario_num_doc = :num_doc";
             $stmt = $this->db->prepare($sql);

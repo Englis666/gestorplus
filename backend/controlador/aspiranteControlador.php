@@ -62,6 +62,12 @@ class AspiranteControlador {
             return;
         }
 
+        if(!$idconvocatoria) {
+            http_response_code(400);
+            echo json_encode(['error' => 'No se encontró la idconvocatoria']);
+            return;
+        }
+
         $resultados = $this->aspirante->verificarPostulacion($num_doc, $idconvocatoria);
 
         http_response_code(200);
