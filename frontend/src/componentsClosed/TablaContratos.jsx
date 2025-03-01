@@ -1,6 +1,7 @@
 import React from "react";
 
 const TablaContratos = () => {
+    const [vinculaciones, setVinculaciones] = useState([])
 
 
     return(

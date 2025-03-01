@@ -136,4 +136,25 @@ class AdministradorControlador {
         }
         $this->jsonResponse(['Entrevista' => $this->administrador->asignarEntrevista($data) ?: []]);
     }
+
+    public function asistenciaConfirmada($data){
+        $required = $data['identrevista'];
+
+        foreach ($required as $key){
+            if (!isset($data[$key])){
+                $this->jsonResponse(['error' => 'Falta el numero de identificacion de la entrevista'], 400);
+            }
+            $this->jsonResponse(['Asistencia' => $this->administrador->asistenciaConfirmada($data) ?: []]);
+        }
+    }
+
+    public function asistenciaNoConfirmada($data){
+        $required = $data['identrevista'];
+
+        foreach ($required as $key){
+            $this->jsonResponse(['error' => 'Falta el numero de identificacion de la entrevista'] , 400);
+        }  
+        $this->jsonResponse(['noAsistencia' => $this->administrador->asistenciaNoConfirmada($data) ?: []]);
+    }
+
 }
