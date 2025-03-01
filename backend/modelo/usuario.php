@@ -99,7 +99,7 @@ class Usuario {
     
     public function datosPerfil($num_doc){
         $sql = "SELECT * FROM usuario as u
-                 INNER JOIN hojaDeVida as h ON u.hojadevida_idHojadevida = h.idHojadevida 
+                 INNER JOIN hojadevida as h ON u.hojadevida_idHojadevida = h.idHojadevida 
         WHERE num_doc = :num_doc";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
