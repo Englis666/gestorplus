@@ -16,7 +16,7 @@ const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
             const response = await axios.get("http://localhost/gestorplus/backend/", {
                 params: {action: "obtenerDatosDelEntrevistado"},
             });
-            console.log(response);
+
             setFormData(response.data);
         } catch (error) {
             console.error("Error al obtener la hoja de vida:", error);

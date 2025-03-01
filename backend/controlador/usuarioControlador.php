@@ -137,6 +137,14 @@ class UsuarioControlador {
         $resultado = $this->usuario->obtenerRRHH();
         $this->jsonResponse('success', '', ['RRHH' => $resultado ?: []]);
     }
+
+    public function obtenerDatosParaCertificado(){
+        $decoded = $this->verificarToken();
+        $resultado = $this->usuario->obtenerDatosParaCertificado($decoded->data->num_doc);
+        $this->jsonResponse('success', '' , ['Certificado' => $resultado ?: []]); 
+        
+    }
+
 }
 
 ?>
