@@ -4,7 +4,6 @@ require_once 'modelo/administrador.php';
 require_once 'config/config.php';
 require_once 'config/clave.php';
 require_once 'vendor/autoload.php';  
-require_once 'vendor'
 
 
 use Firebase\JWT\JWT;
@@ -75,9 +74,7 @@ class AdministradorControlador {
         $this->jsonResponse($this->administrador->verificarRol($num_doc));
     }
 
-    public function obtenerConvocatorias() {
-        $this->jsonResponse(['Convocatorias' => $this->administrador->obtenerConvocatorias() ?: []]);
-    }
+
 
     public function obtenerTodasLasJornadas() {
         $this->jsonResponse(['Jornadas' => $this->administrador->obtenerTodasLasJornadas() ?: []]);
