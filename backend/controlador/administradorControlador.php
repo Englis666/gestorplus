@@ -4,6 +4,8 @@ require_once 'modelo/administrador.php';
 require_once 'config/config.php';
 require_once 'config/clave.php';
 require_once 'vendor/autoload.php';  
+require_once 'vendor'
+
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
