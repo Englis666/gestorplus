@@ -31,17 +31,44 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                 setError("Error al cargar el detalle de la convocatoria");
                 setLoading(false);
             });
+
+        checkIfApplied();
     }, [idconvocatoria]);
 
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+    };
+
+    const checkIfApplied = () => {
+        const token = getCookie("auth_token");
+
+        axios
+            .get("http://localhost/gestorplus/backend/", {
+                params: {
+                    action: "verificarPostulacion",
+                    idconvocatoria: idconvocatoria,
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then((response) => {
+                console.log("Respuesta de la API:", response.data);
+                if (response.data.PostulacionVerificada == null) {
+                    setAplicado(false);
+                } else {
+                    setAplicado(true);
+                }
+            })
+            .catch((err) => {
+                console.error("Error al verificar la aplicación: ", err);
+            });
+    };
 
     const handleApply = () => {
-        const getCookie = (name) => {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(";").shift();
-            return null;
-        };
-
         const token = getCookie("auth_token");
 
         const data = {
@@ -49,30 +76,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
             idconvocatoria: idconvocatoria,
         };
 
-        const dataVerify ={
-            action: "verificarAplicacion",
-            idconvocatoria: idconvocatoria,
-        }
-
-        axios
-        .get ("http://localhost/gestorplus/backend/", dataVerify, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-        .then ((response) => {
-            if (response.data.PostulacionVerificada) {
-                console.log("respuesta", response.data.PostulacionVerificada);
-                setSuccessMessage(response.data.message);
-            } else {
-                console.error("Error en la respuesta del servidor: ", response.data.error);
-                setError(response.data.error);
-            }
-        })
-        .catch((err) => {
-            console.error("Error al enviar la aplicación: ", err);
-            setError("Error al enviar la aplicación.");
-        })
+        setAplicado(true);
 
         axios
             .post("http://localhost/gestorplus/backend/", data, {
@@ -82,7 +86,6 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
             })
             .then((response) => {
                 if (response.data.success) {
-                    console.log("respuesta", response.data.success);
                     setSuccessMessage(response.data.message);
                 } else {
                     console.error("Error en la respuesta del servidor: ", response.data.error);
@@ -186,6 +189,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                                                     "all 0.3s ease-in-out",
                                             }}
                                             onClick={handleApply}
+                                            disabled={aplicado}
                                             onMouseEnter={(e) =>
                                                 (e.currentTarget.style.backgroundColor =
                                                     "#007bff")
@@ -195,7 +199,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                                                     "#0d6efd")
                                             }
                                         >
-                                            Aplicar ahora
+                                            {aplicado ? "Ya aplicado" : "Aplicar ahora"}
                                         </button>
                                     </div>
                                 </div>
