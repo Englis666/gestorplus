@@ -41,6 +41,10 @@ class AdministradorControlador {
     public function obtenerCargos() {
         $this->jsonResponse(['cargos' => $this->administrador->obtenerCargos() ?: []]);
     }
+    public function obtenerVinculaciones(){
+        $this->jsonResponse(['Vinculaciones' => $this->administrador->obtenerVinculaciones() ? : []]);
+    }
+
 
     public function obtenerPazYSalvos() {
         $this->jsonResponse(['Salvos' => $this->administrador->obtenerPazYSalvos() ?: []]);
@@ -102,6 +106,9 @@ class AdministradorControlador {
         }
         $this->jsonResponse(['Jornada' => $this->administrador->corroborarJornada($data['data']['idJornada']) ?: []]);
     }
+    
+   
+
 
     public function notificacionAceptada($data) {
         if (!isset($data['data']['idausencia'])) {

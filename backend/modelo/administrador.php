@@ -98,6 +98,20 @@ class Administrador {
         }
     }
 
+    public function obtenerVinculaciones(){
+        $sql = "SELECT * FROM vinculacion";
+        $stmt = $this->db->prepare($sql);
+        
+        
+        if($stmt->execute()){
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $resultado ?: [];
+        }
+        
+        return [];
+    }
+
+
         public function verificarRol($num_doc) {
             $sql = "SELECT r.idrol 
                     FROM usuario AS u 
