@@ -15,7 +15,7 @@ const Convocatoria = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        axios.get("http://192.168.201.193/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
+        axios.get("http://192.168.43.98/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
             .then((response) => {
                 console.log("API Response:", response.data);
                 setConvocatorias(response.data.convocatorias || []);

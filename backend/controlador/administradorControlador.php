@@ -59,10 +59,12 @@ class AdministradorControlador {
     }
 
     public function obtenerTodasLasNotificaciones() {
+        
         $this->jsonResponse(['Notificaciones' => $this->administrador->obtenerTodasLasNotificaciones() ?: []]);
     }
 
     public function obtenerTodasLasEstadisticas() {
+        
         $estadisticas = $this->administrador->obtenerTotalEstadisticas();
         
         $this->jsonResponse([

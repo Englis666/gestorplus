@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const API_URL = "http://192.168.201.193/gestorplus/backend/";
+const API_URL = "http://192.168.43.98/gestorplus/backend/";
 
 const Estadisticas = () => {
   const [totalEntradas, setTotalEntradas] = useState(0);

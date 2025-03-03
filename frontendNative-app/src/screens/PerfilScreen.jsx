@@ -35,7 +35,7 @@ const Perfil = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost/gestorplus/backend/", {
+      const response = await axios.get("http://192.168.43.98/gestorplus/backend/", {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "datosPerfil" },
       });

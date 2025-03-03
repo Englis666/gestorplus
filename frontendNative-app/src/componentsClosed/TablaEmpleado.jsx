@@ -23,34 +23,48 @@ const TablaEmpleado = ({ action }) => {
           return;
         }
 
+        console.log("🔹 Token obtenido:", token);
+
         const decodedToken = jwtDecode(token);
+
+        if (!decodedToken) {
+          setError("Token inválido.");
+          setLoading(false);
+          return;
+        }
 
         if (decodedToken?.exp * 1000 < Date.now()) {
           setError("El token ha expirado.");
           setLoading(false);
-          await AsyncStorage.removeItem("auth_token"); // Limpiar token expirado
-          // Opcionalmente, puedes redirigir a la pantalla de inicio de sesión aquí
+          await AsyncStorage.removeItem("auth_token");
           return;
         }
 
+        // Guardar el rol del usuario
+        setRol(decodedToken?.data?.rol || "Desconocido");
+
         const headers = {
           Accept: "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token.trim()}`,
         };
 
-        const response = await axios.get("http://192.168.201.193/gestorplus/backend/", {
+        console.log("🔹 Headers enviados:", headers);
+
+        const response = await axios.get("http://192.168.43.98/gestorplus/backend/", {
           headers,
           params: { action },
         });
 
+        console.log("✅ Respuesta de la API:", response.data);
+
         setNotificaciones(response.data?.Notificaciones || []);
       } catch (err) {
-        console.error("❌ Error en la API:", err);
+        console.error("❌ Error en la API:", err.message);
         setError("Error al cargar las notificaciones.");
+
         if (axios.isAxiosError(err)) {
-          console.error("Datos de la respuesta:", err.response?.data);
-          console.error("Código de estado de la respuesta:", err.response?.status);
-          console.error("Encabezados de la solicitud:", err.config?.headers);
+          console.error("🔻 Código de estado:", err.response?.status);
+          console.error("🔻 Datos de la respuesta:", err.response?.data);
         }
       } finally {
         setLoading(false);
@@ -124,7 +138,7 @@ const TablaEmpleado = ({ action }) => {
           )}
         </View>
       </View>
-      <Grafica/>
+      <Grafica />
     </ScrollView>
   );
 };
@@ -141,8 +155,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     borderRadius: 10,
-    elevation: 3, // Sombra para Android
-    shadowColor: "#000", // Sombra para iOS
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -161,3 +175,4 @@ const styles = StyleSheet.create({
 });
 
 export default TablaEmpleado;
+2211
