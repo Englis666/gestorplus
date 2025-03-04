@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { 
-    View, Text, FlatList, TouchableOpacity, ActivityIndicator, 
-    TextInput, StyleSheet, KeyboardAvoidingView, Platform 
+import {
+    View, Text, FlatList, TouchableOpacity, ActivityIndicator,
+    TextInput, StyleSheet, KeyboardAvoidingView, Platform
 } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
@@ -14,7 +14,7 @@ const ConvocatoriaLayout = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        axios.get("http://192.168.43.98/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
+        axios.get("http://192.168.115.207/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
             .then((response) => {
                 console.log("API Response:", response.data);
                 setConvocatorias(response.data.convocatorias || []);
@@ -40,39 +40,39 @@ const ConvocatoriaLayout = () => {
     if (loading) return <ActivityIndicator size="large" color="#007bff" style={styles.loading} />;
     if (error) return <Text style={styles.error}>{error}</Text>;
 
-   return (
-           <KeyboardAvoidingView 
-               behavior={Platform.OS === "ios" ? "padding" : "height"} 
-               style={styles.container}
-           >
-               <TextInput
-                   style={styles.searchBar}
-                   placeholder="Buscar convocatoria..."
-                   placeholderTextColor="#666"
-                   value={searchTerm}
-                   onChangeText={setSearchTerm}
-               />
-               {filteredConvocatorias.length === 0 ? (
-                   <Text style={styles.noResults}>No se encontraron convocatorias</Text>
-               ) : (
-                   <FlatList
-                       data={filteredConvocatorias}
-                       keyExtractor={(item, index) => item.idconvocatoria?.toString() || `conv-${index}`}
-                       renderItem={({ item }) => (
-                           <View style={styles.card}>
-                               <Text style={styles.title}>{item.nombreCargo}</Text>
-                               <Text style={styles.description}>{item.descripcion}</Text>
-                               <Text style={styles.subText}>Salario: {item.salario}</Text>
-                               <Text style={styles.subText}>Cantidad disponible: {item.cantidadConvocatoria}</Text>
-                               <TouchableOpacity style={styles.button} onPress={() => handleDetailsClick(item)}>
-                                   <Text style={styles.buttonText}>Ver detalles</Text>
-                               </TouchableOpacity>
-                           </View>
-                       )}
-                   />
-               )}
-           </KeyboardAvoidingView>
-       );
+    return (
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.container}
+        >
+            <TextInput
+                style={styles.searchBar}
+                placeholder="Buscar convocatoria..."
+                placeholderTextColor="#666"
+                value={searchTerm}
+                onChangeText={setSearchTerm}
+            />
+            {filteredConvocatorias.length === 0 ? (
+                <Text style={styles.noResults}>No se encontraron convocatorias</Text>
+            ) : (
+                <FlatList
+                    data={filteredConvocatorias}
+                    keyExtractor={(item, index) => item.idconvocatoria?.toString() || `conv-${index}`}
+                    renderItem={({ item }) => (
+                        <View style={styles.card}>
+                            <Text style={styles.title}>{item.nombreCargo}</Text>
+                            <Text style={styles.description}>{item.descripcion}</Text>
+                            <Text style={styles.subText}>Salario: {item.salario}</Text>
+                            <Text style={styles.subText}>Cantidad disponible: {item.cantidadConvocatoria}</Text>
+                            <TouchableOpacity style={styles.button} onPress={() => handleDetailsClick(item)}>
+                                <Text style={styles.buttonText}>Ver detalles</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                />
+            )}
+        </KeyboardAvoidingView>
+    );
 };
 
 const styles = StyleSheet.create({

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { 
-    View, Text, FlatList, TouchableOpacity, ActivityIndicator, 
-    TextInput, StyleSheet, KeyboardAvoidingView, Platform 
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import {
+    View, Text, FlatList, TouchableOpacity, ActivityIndicator,
+    TextInput, StyleSheet, KeyboardAvoidingView, Platform
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,7 +15,7 @@ const Convocatoria = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        axios.get("http://192.168.43.98/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
+        axios.get("http://192.168.115.207/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
             .then((response) => {
                 console.log("API Response:", response.data);
                 setConvocatorias(response.data.convocatorias || []);
@@ -29,26 +29,38 @@ const Convocatoria = () => {
             });
     }, []);
 
-    const getAuthToken = async () => {
-        return await AsyncStorage.getItem("auth_token");
-    };
-
-    const filteredConvocatorias = convocatorias.filter(convocatoria =>
-        convocatoria.nombreConvocatoria?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        convocatoria.nombreCargo?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const handleDetailsClick = (idconvocatoria) => {
+    const handleDetailsClick = useCallback((idconvocatoria) => {
         navigation.navigate("DetallesConvocatoria", { idconvocatoria });
-    };
-    
+    }, [navigation]);
+
+    const filteredConvocatorias = useMemo(() => {
+        return convocatorias.filter(convocatoria =>
+            convocatoria.nombreConvocatoria?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            convocatoria.nombreCargo?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [convocatorias, searchTerm]);
+
+    const renderItem = useCallback(({ item }) => (
+        <View style={styles.card}>
+            <Text style={styles.title}>{item.nombreCargo}</Text>
+            <Text style={styles.description}>{item.descripcion}</Text>
+            <Text style={styles.subText}>Salario: {item.salario}</Text>
+            <Text style={styles.subText}>Cantidad disponible: {item.cantidadConvocatoria}</Text>
+            <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleDetailsClick(item.idconvocatoria)}
+            >
+                <Text style={styles.buttonText}>Ver detalles</Text>
+            </TouchableOpacity>
+        </View>
+    ), [handleDetailsClick]);
 
     if (loading) return <ActivityIndicator size="large" color="#007bff" style={styles.loading} />;
     if (error) return <Text style={styles.error}>{error}</Text>;
 
     return (
-        <KeyboardAvoidingView 
-            behavior={Platform.OS === "ios" ? "padding" : "height"} 
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.container}
         >
             <TextInput
@@ -63,22 +75,10 @@ const Convocatoria = () => {
             ) : (
                 <FlatList
                     data={filteredConvocatorias}
-                    keyExtractor={(item, index) => item.idconvocatoria?.toString() || `conv-${index}`}
-                    renderItem={({ item }) => (
-                        <View style={styles.card}>
-                            <Text style={styles.title}>{item.nombreCargo}</Text>
-                            <Text style={styles.description}>{item.descripcion}</Text>
-                            <Text style={styles.subText}>Salario: {item.salario}</Text>
-                            <Text style={styles.subText}>Cantidad disponible: {item.cantidadConvocatoria}</Text>
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => handleDetailsClick(item.idconvocatoria)}
-                            >
-                                <Text style={styles.buttonText}>Ver detalles</Text>
-                            </TouchableOpacity>
-
-                        </View>
-                    )}
+                    keyExtractor={(item) => item.idconvocatoria?.toString() || `conv-${Math.random().toString()}`}
+                    renderItem={renderItem}
+                    initialNumToRender={10}
+                    removeClippedSubviews={true}
                 />
             )}
         </KeyboardAvoidingView>

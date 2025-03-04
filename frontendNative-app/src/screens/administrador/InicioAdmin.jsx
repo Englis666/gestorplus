@@ -2,13 +2,11 @@ import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import TablaEmpleado from "../../componentsClosed/TablaEmpleado";
 
-
 const InicioAdministradorScreen = () => {
   return (
     <View style={styles.container}>
-      
       <ScrollView style={styles.content}>
-        <TablaEmpleado action="obtenerTodasLasNotificaciones" />  
+        <TablaEmpleado action="obtenerTodasLasNotificaciones" />
       </ScrollView>
     </View>
   );

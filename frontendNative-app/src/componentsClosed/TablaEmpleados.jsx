@@ -28,7 +28,7 @@ const TablaEmpleados = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.115.207/gestorplus/backend/", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -50,7 +50,7 @@ const TablaEmpleado = ({ action }) => {
 
         console.log("🔹 Headers enviados:", headers);
 
-        const response = await axios.get("http://192.168.43.98/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.115.207/gestorplus/backend/", {
           headers,
           params: { action },
         });

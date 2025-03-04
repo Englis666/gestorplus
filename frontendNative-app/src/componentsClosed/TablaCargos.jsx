@@ -10,7 +10,7 @@ const TablaCargos = () => {
 
     useEffect(() => {
         axios
-            .get("http://localhost/gestorplus/backend/", { params: { action: "obtenerCargos" } })
+            .get("http://192.168.115.207/gestorplus/backend/", { params: { action: "obtenerCargos" } })
             .then((response) => {
                 const data = response.data?.cargos;
                 setCargos(Array.isArray(data) ? data : []);

@@ -9,6 +9,7 @@ import RegisterScreen from "./src/screens/RegisterScreen";
 import InicioAdmin from "./src/screens/administrador/InicioAdmin";
 import InicioAspiranteScreen from "./src/screens/aspirante/InicioAspiranteScreen";
 import DetallesTrabajo from "./src/components/DetallesConvocatoria";
+import AdminNavigator from "./src/navigation/AdminNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,7 +20,7 @@ export default function App() {
         <Stack.Screen name="Layout" component={LayoutScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Administrador" component={InicioAdmin} />
+        <Stack.Screen name="Administrador" component={AdminNavigator} />
         <Stack.Screen name="Aspirante" component={InicioAspiranteScreen}/>
         <Stack.Screen name="DetallesConvocatoria" component={DetallesTrabajo} />
       </Stack.Navigator>

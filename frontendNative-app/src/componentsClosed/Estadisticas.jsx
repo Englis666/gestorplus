@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const API_URL = "http://192.168.43.98/gestorplus/backend/";
+const API_URL = "http://192.168.115.207/gestorplus/backend/";
 
 const Estadisticas = () => {
   const [totalEntradas, setTotalEntradas] = useState(0);
@@ -18,10 +18,10 @@ const Estadisticas = () => {
       try {
         const token = await AsyncStorage.getItem("auth_token");
         if (!token) throw new Error("No se encontró un token de autenticación.");
-        
+
         const decodedToken = jwtDecode(token);
         if (decodedToken.exp * 1000 < Date.now()) throw new Error("El token ha expirado.");
-        
+
         console.log("Token enviado en la petición:", token);
         const response = await axios.get(API_URL, {
           headers: {
@@ -57,8 +57,8 @@ const Estadisticas = () => {
   return (
     <View style={styles.container}>
       {[{ title: "Total de Ausencias", value: totalAusencias },
-        { title: "Entradas al Trabajo", value: totalEntradas },
-        { title: "Total de Vacaciones", value: 0 }].map((item, index) => (
+      { title: "Entradas al Trabajo", value: totalEntradas },
+      { title: "Total de Vacaciones", value: 0 }].map((item, index) => (
         <Animated.View
           key={index}
           style={[styles.card, { transform: [{ scale: scaleAnim }] }]}

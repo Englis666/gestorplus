@@ -1,55 +1,69 @@
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
-import { 
-    View, 
-    Text, 
-    StyleSheet, 
-    ScrollView, 
-    ActivityIndicator, 
-    Alert, 
-    TouchableOpacity 
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    ActivityIndicator,
+    Alert,
+    TouchableOpacity
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const BASE_URL = "http://192.168.115.207/gestorplus/backend/"; // Ajusta si es necesario
+
 const DetallesTrabajo = () => {
+    const route = useRoute();
+    const { idconvocatoria } = route.params;
+
     const [detalleConvocatoria, setDetalleConvocatoria] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
 
-    const route = useRoute();
-    const {idconvocatoria} = route.params;
-
     useEffect(() => {
-        console.log("id de convocatoria", idconvocatoria);
-        axios
-            .get("http://192.168.43.98/gestorplus/backend/", {
-                params: {
-                    action: "obtenerDetalleConvocatoria",
-                    idconvocatoria: idconvocatoria,
-                },
-            })
-            .then((response) => {
+        const fetchDetails = async () => {
+            setLoading(true);
+            try {
+                const token = await AsyncStorage.getItem("auth_token");
+                console.log("Token obtenido:", token);
+
+                if (!token) {
+                    throw new Error("No hay token de autenticación.");
+                }
+
+                const response = await axios.get(BASE_URL, {
+                    params: {
+                        action: "obtenerDetalleConvocatoria",
+                        idconvocatoria: idconvocatoria,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                console.log("Respuesta del servidor:", response.data);
+
                 if (response.data.DetalleConvocatoria) {
                     setDetalleConvocatoria(response.data.DetalleConvocatoria);
                 } else {
-                    console.error("Detalle de convocatoria no encontrado");
-                    setDetalleConvocatoria(null);
-                    setError("No se encontró la convocatoria seleccionada.");
+                    throw new Error("No se encontró la convocatoria seleccionada.");
                 }
+            } catch (err) {
+                console.error("Error en la solicitud:", err);
+                setError(err.message || "Error al cargar el detalle de la convocatoria.");
+            } finally {
                 setLoading(false);
-            })
-            .catch((err) => {
-                console.error("Error al cargar el detalle: ", err);
-                setError("Error al cargar el detalle de la convocatoria");
-                setLoading(false);
-            });
+            }
+        };
+
+        fetchDetails();
     }, [idconvocatoria]);
 
     const handleApply = async () => {
         try {
             const token = await AsyncStorage.getItem("auth_token");
+            console.log("Enviando solicitud con token:", token);
 
             if (!token) {
                 Alert.alert("Error", "No hay token de autenticación.");
@@ -61,20 +75,24 @@ const DetallesTrabajo = () => {
                 idconvocatoria: idconvocatoria,
             };
 
-            const response = await axios.post("http://192.168.136.193/gestorplus/backend/", data, {
+            const response = await axios.post(BASE_URL, data, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
             });
+
+            console.log("Respuesta de aplicación:", response.data);
 
             if (response.data.success) {
                 setSuccessMessage(response.data.message);
+                setError(null);
             } else {
-                setError(response.data.error || "Error en la aplicación.");
+                throw new Error(response.data.error || "Error en la aplicación.");
             }
         } catch (err) {
-            console.error("Error al enviar la aplicación: ", err);
-            setError("Error al enviar la aplicación.");
+            console.error("Error en la aplicación:", err);
+            setError(err.message || "Error al enviar la aplicación.");
         }
     };
 
@@ -100,9 +118,7 @@ const DetallesTrabajo = () => {
             <Text style={styles.heading}>Detalles del Trabajo</Text>
 
             <View style={styles.card}>
-                <Text style={styles.title}>
-                    {detalleConvocatoria?.nombreConvocatoria}
-                </Text>
+                <Text style={styles.title}>{detalleConvocatoria?.nombreConvocatoria}</Text>
                 <View style={styles.info}>
                     <Text style={styles.label}>Salario:</Text>
                     <Text style={styles.value}>{detalleConvocatoria?.salario}</Text>
