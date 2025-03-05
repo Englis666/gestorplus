@@ -28,12 +28,12 @@ const TablaEmpleados = () => {
           return;
         }
 
-        const response = await axios.get("http://192.168.115.207/gestorplus/backend/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await axios.get("http://192.168.68.195/gestorplus/backend/", {
+          headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerUsuarios" },
         });
+
+        console.log("Respuesta de la API:", response.data); // <-- Verifica la respuesta del backend
 
         const empleadosData = response.data?.RRHH;
         if (Array.isArray(empleadosData)) {
@@ -42,6 +42,7 @@ const TablaEmpleados = () => {
           setEmpleados([]);
         }
       } catch (err) {
+        console.error("Error al obtener empleados:", err);
         setError("Hubo un problema al cargar los empleados.");
       }
       setLoading(false);
@@ -59,28 +60,33 @@ const TablaEmpleados = () => {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>Empleados (Control de Información)</Text>
-      <FlatList
-        data={empleados}
-        keyExtractor={(item) => item.num_doc.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.text}><Text style={styles.bold}>Nombre:</Text> {item.nombres}</Text>
-            <Text style={styles.text}><Text style={styles.bold}>Email:</Text> {item.email}</Text>
-            <Text style={styles.text}><Text style={styles.bold}>Rol:</Text> {item.nombreRol}</Text>
-            <Text style={styles.text}><Text style={styles.bold}>Tipo Documento:</Text> {item.tipodDoc}</Text>
-            <Text style={styles.text}><Text style={styles.bold}>Número Documento:</Text> {item.num_doc}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => Alert.alert("Acción", "Realizar paz y salvo para " + item.nombres)}
-            >
-              <Text style={styles.buttonText}>Realizar paz y salvo</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-    </ScrollView>
+      {empleados.length === 0 ? (
+        <Text style={styles.noData}>No hay empleados disponibles.</Text>
+      ) : (
+        <FlatList
+          data={empleados}
+          keyExtractor={(item) => item.num_doc.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text style={styles.text}><Text style={styles.bold}>Nombre:</Text> {item.nombres}</Text>
+              <Text style={styles.text}><Text style={styles.bold}>Email:</Text> {item.email}</Text>
+              <Text style={styles.text}><Text style={styles.bold}>Rol:</Text> {item.nombreRol}</Text>
+              <Text style={styles.text}><Text style={styles.bold}>Tipo Documento:</Text> {item.tipoDoc}</Text>
+              <Text style={styles.text}><Text style={styles.bold}>Número Documento:</Text> {item.num_doc}</Text>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => Alert.alert("Acción", "Realizar paz y salvo para " + item.nombres)}
+              >
+                <Text style={styles.buttonText}>Realizar paz y salvo</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      )}
+    </View>
   );
 };
 
@@ -106,6 +112,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
   },
+  noData: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#555",
+  },
   card: {
     backgroundColor: "#fff",
     padding: 16,
@@ -125,7 +136,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   button: {
-    backgroundColor: "green",
+    backgroundColor: "blue",
     padding: 10,
     marginTop: 10,
     borderRadius: 5,
