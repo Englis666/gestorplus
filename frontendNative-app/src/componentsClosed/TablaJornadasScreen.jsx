@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Button, ScrollView, ActivityIndicator, Alert } from "react-native";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const API_URL = "http://192.168.68.195/gestorplus/backend";
 
 const TablaJornadas = () => {
   const [jornadas, setJornadas] = useState([]);
@@ -10,20 +13,13 @@ const TablaJornadas = () => {
   const [rol, setRol] = useState(null);
 
   useEffect(() => {
-    
-
-
-    const token = getCookie("auth_token");
-
-    if (token) {
+    const fetchData = async () => {
       try {
+        const token = await AsyncStorage.getItem("auth_token");
+        if (!token) throw new Error("No se encontró un token");
+
         const decodedToken = jwtDecode(token);
-        const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
-        if (isTokenExpired) {
-          setError("El token ha expirado.");
-          setLoading(false);
-          return;
-        }
+        if (decodedToken.exp * 1000 < Date.now()) throw new Error("El token está expirado");
 
         const Rol = decodedToken?.data?.rol;
         setRol(Rol);
@@ -41,59 +37,68 @@ const TablaJornadas = () => {
           return;
         }
 
-        axios
-          .get("http://localhost/gestorplus/backend/", {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { action 
-          })
-          .then((response) => {
-            const jornadas = response.data?.Jornadas || [];
-            setJornadas(jornadas);
-            setLoading(false);
-          })
-          .catch(() => {
-            setError("Hubo un problema al cargar las jornadas.");
-            setLoading(false);
-          });
-      } catch {
-        setError("Token inválido o malformado.");
+        const response = await axios.get(API_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          params: { action },
+        });
+
+        const Jornadas = response.data?.Jornadas;
+        if (Array.isArray(Jornadas)) {
+          setJornadas(Jornadas);
+        } else {
+          setJornadas([]);
+          setError("Las Jornadas no son un array");
+        }
+      } catch (error) {
+        setError(error.message || "Hubo un problema al cargar las Jornadas.");
+      } finally {
         setLoading(false);
       }
-    } else {
-      setError("Token no encontrado.");
-      setLoading(false);
-    }
+    };
+
+    fetchData();
   }, []);
 
-  const handleCorroborar = (idJornada) => {
-    axios.post("http://localhost/gestorplus/backend/", {
-      action: "corroborarJornada",
-      data: { idJornada },
-    }).then(() => {
+  const actualizarJornada = (idJornada, estado) => {
+    setJornadas((prevJornadas) =>
+      prevJornadas.map((jornada) =>
+        jornada.idJornada === idJornada ? { ...jornada, estado } : jornada
+      )
+    );
+  };
+
+  const handleCorroborar = async (idJornada) => {
+    try {
+      await axios.post(`${API_URL}/`, {
+        action: "corroborarJornada",
+        data: { idJornada },
+      });
+      actualizarJornada(idJornada, true);
       Alert.alert("Éxito", "La jornada ha sido corroborada correctamente.");
-    }).catch(() => {
+    } catch {
       Alert.alert("Error", "Hubo un problema al corroborar la jornada.");
-    });
+    }
   };
 
-  const handleNoCorroborar = (idJornada) => {
-    axios.post("http://localhost/gestorplus/backend/", {
-      action: "noCorroborarJornada",
-      data: { idJornada },
-    }).then(() => {
+  const handleNoCorroborar = async (idJornada) => {
+    try {
+      await axios.post(`${API_URL}/`, {
+        action: "noCorroborarJornada",
+        data: { idJornada },
+      });
+      actualizarJornada(idJornada, false);
       Alert.alert("Éxito", "La jornada ha sido marcada como no corroborada.");
-    }).catch(() => {
+    } catch {
       Alert.alert("Error", "Hubo un problema al procesar la solicitud.");
-    });
+    }
   };
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
-
-  if (error) {
-    return <Text>{error}</Text>;
-  }
+  if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
+  if (error) return <Text style={{ color: "red", textAlign: "center" }}>{error}</Text>;
 
   return (
     <ScrollView>
