@@ -36,7 +36,7 @@ const Grafica = () => {
         }
 
         const response = await axios.get(
-          "http://192.168.115.207/gestorplus/backend/",
+          "http://192.168.68.195/gestorplus/backend/",
           {
             headers: { Authorization: `Bearer ${token}` },
             params: { action: "obtenerTotalEstadisticas" },
