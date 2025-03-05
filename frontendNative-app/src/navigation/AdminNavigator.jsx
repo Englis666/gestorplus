@@ -6,6 +6,7 @@ import Empleados from "../screens/EmpleadosScreen";
 import Ausencias from "../screens/AusenciasScreen";
 import Jornadas from "../screens/JornadasScreen";
 import Icon from "react-native-vector-icons/Ionicons";
+import Cargos from "../screens/CargosScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,6 +33,9 @@ const AdminNavigator = () => {
             case "Empleados":
               iconName = focused ? "people" : "people-outline";
               break;
+            case "Cargos":
+              iconName = focused ? "" : "";
+              break;
             default:
               iconName = "help-circle-outline";
           }
@@ -48,6 +52,7 @@ const AdminNavigator = () => {
       <Tab.Screen name="Ausencias" component={Ausencias} />
       <Tab.Screen name="Convocatorias" component={Convocatorias} />
       <Tab.Screen name="Empleados" component={Empleados} />
+      <Tab.Screen name="Cargos" component={Cargos} />
     </Tab.Navigator>
   );
 };
