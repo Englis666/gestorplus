@@ -1,21 +1,21 @@
 import React from "react";
-import { View , StyleSheet } from "react-native";
-
+import { View, StyleSheet } from "react-native";
+import TablaAusencias from "../componentsClosed/TablaAusencia";
 const Ausencias = () => {
-    return(
+    return (
 
         <View style={styles.container}>
             <View style={styles.content}>
-                <TablaAusencias/>
+                <TablaAusencias />
             </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container : {
-        flex : 1, 
-        padding : 16,
+    container: {
+        flex: 1,
+        padding: 16,
     },
 });
 
