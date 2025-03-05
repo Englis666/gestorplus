@@ -58,9 +58,12 @@ class UsuarioControlador {
             $this->jsonResponse('error', 'Credenciales incorrectas');
             return;
         }
-        
-        $payload = [
-            'iss' => '/', 'aud' => 'localhost', 'iat' => time(), 'exp' => time() + 3600,
+
+       $payload = [
+            'iss' => '/', 
+            'aud' => 'localhost,192.168.80.28',
+            'iat' => time(), 
+            'exp' => time() + 3600,
             'data' => [
                 'num_doc' => $usuario['num_doc'],
                 'nombres' => $usuario['nombres'],
