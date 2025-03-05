@@ -23,8 +23,6 @@ const TablaEmpleado = ({ action }) => {
           return;
         }
 
-        console.log("🔹 Token obtenido:", token);
-
         const decodedToken = jwtDecode(token);
 
         if (!decodedToken) {
@@ -40,7 +38,6 @@ const TablaEmpleado = ({ action }) => {
           return;
         }
 
-        // Guardar el rol del usuario
         setRol(decodedToken?.data?.rol || "Desconocido");
 
         const headers = {
@@ -48,24 +45,14 @@ const TablaEmpleado = ({ action }) => {
           Authorization: `Bearer ${token.trim()}`,
         };
 
-        console.log("🔹 Headers enviados:", headers);
-
-        const response = await axios.get("http://192.168.115.207/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.68.195/gestorplus/backend/", {
           headers,
           params: { action },
         });
 
-        console.log("✅ Respuesta de la API:", response.data);
-
         setNotificaciones(response.data?.Notificaciones || []);
       } catch (err) {
-        console.error("❌ Error en la API:", err.message);
         setError("Error al cargar las notificaciones.");
-
-        if (axios.isAxiosError(err)) {
-          console.error("🔻 Código de estado:", err.response?.status);
-          console.error("🔻 Datos de la respuesta:", err.response?.data);
-        }
       } finally {
         setLoading(false);
       }
@@ -175,4 +162,3 @@ const styles = StyleSheet.create({
 });
 
 export default TablaEmpleado;
-2211
