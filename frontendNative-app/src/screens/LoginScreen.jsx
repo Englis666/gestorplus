@@ -25,26 +25,26 @@ const LoginScreen = ({ navigation }) => {
       Alert.alert("Error", "Por favor completa todos los campos.");
       return;
     }
-  
+
     setIsSubmitting(true);
-  
+
     try {
-      const response = await axios.post("http://192.168.43.98/gestorplus/backend/", {
+      const response = await axios.post("http://192.168.68.195/gestorplus/backend/", {
         action: "login",
         num_doc: formData.num_doc,
         password: formData.password,
       });
-  
+
       if (response.data?.status === "success") {
         const token = response.data.token;
         await AsyncStorage.setItem("auth_token", token);
-  
+
         const decodedToken = decodeToken(token);
         console.log("Token decodificado:", decodedToken); // Verificar contenido
-  
+
         const userRole = decodedToken?.data?.rol;
         console.log("Rol del usuario:", userRole);
-  
+
         switch (userRole) {
           case "1":
             navigation.replace("Administrador");
@@ -71,7 +71,7 @@ const LoginScreen = ({ navigation }) => {
       setIsSubmitting(false);
     }
   };
-  
+
 
   const decodeToken = (token) => {
     try {
