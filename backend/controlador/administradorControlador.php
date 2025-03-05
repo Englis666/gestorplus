@@ -26,17 +26,31 @@ class AdministradorControlador {
     }
 
     private function verificarToken() {
-        $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? null;
-        if (!$authHeader || !preg_match('/^Bearer\s+(\S+)$/', $authHeader, $matches)) {
-            $this->jsonResponse(['error' => 'Token no proporcionado o formato incorrecto'], 401);
-        }
-        try {
-            return JWT::decode($matches[1], new Key(SECRET_KEY, JWT_ALGO));
-        } catch (Exception $e) {
-            $this->jsonResponse(['error' => 'Error en el token: ' . $e->getMessage()], 401);
-        }
+    $headers = getallheaders(); 
+    
+    // Intenta obtener el Authorization desde varias fuentes
+    //SOLUCION DE TOKEN EN APP MOVIL
+    
+    $authHeader = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
+
+    if (!$authHeader || !preg_match('/^Bearer\s+(\S+)$/', $authHeader, $matches)) {
+        $this->jsonResponse(['error' => 'Token no proporcionado o formato incorrecto'], 401);
     }
+
+    $jwt = $matches[1];
+
+    try {
+        $decoded = JWT::decode($jwt, new Key(SECRET_KEY, JWT_ALGO));
+        return $decoded; 
+    } catch (\Firebase\JWT\ExpiredException $e) {
+        $this->jsonResponse(['error' => 'El token ha expirado'], 401);
+    } catch (\Firebase\JWT\SignatureInvalidException $e) {
+        $this->jsonResponse(['error' => 'Firma del token no válida'], 401);
+    } catch (\Exception $e) {
+        $this->jsonResponse(['error' => 'Error en el token: ' . $e->getMessage()], 401);
+    }
+}
+
 
     public function obtenerCargos() {
         $this->jsonResponse(['cargos' => $this->administrador->obtenerCargos() ?: []]);
@@ -59,12 +73,12 @@ class AdministradorControlador {
     }
 
     public function obtenerTodasLasNotificaciones() {
-        
+        $this->verificarToken();
         $this->jsonResponse(['Notificaciones' => $this->administrador->obtenerTodasLasNotificaciones() ?: []]);
     }
 
     public function obtenerTodasLasEstadisticas() {
-        
+        $this->verificarToken();
         $estadisticas = $this->administrador->obtenerTotalEstadisticas();
         
         $this->jsonResponse([
