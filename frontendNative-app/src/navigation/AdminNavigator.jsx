@@ -12,6 +12,10 @@ import HorasExtra from "../screens/HorasExtra";
 import Perfil from "../screens/PerfilScreen";
 import PazYSalvos from "../screens/PazYSalvos";
 import EntrevistaScreen from "../screens/EntrevistaScreen";
+import Postulaciones from "../screens/PostulacionesScreen";
+import Quejas from "../screens/QuejasScreen";
+import SistemaDeGestion from "../screens/SistemaDeGestion";
+import Vacaciones from "../screens/VacacionesScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -56,6 +60,10 @@ const AdminNavigator = () => {
       <Tab.Screen name="Paz y salvos" component={PazYSalvos} />
       <Tab.Screen name="HorasExtra" component={HorasExtra} />
       <Tab.Screen name="Perfil" component={Perfil} />
+      <Tab.Screen name="Postulaciones" component={Postulaciones} />
+      <Tab.Screen name="Quejas" component={Quejas} />
+      <Tab.Screen name="Sistema De Gestion" component={SistemaDeGestion} />
+      <Tab.Screen name="Vacaciones" component={Vacaciones} />
     </Tab.Navigator>
   );
 };

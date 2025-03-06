@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
+import TablaSistemaDeGestion from "../componentsClosed/TablaSistemaDeGestion";
 
 const SistemaDeGestion = () => {
 
@@ -13,3 +14,4 @@ const SistemaDeGestion = () => {
     )
 
 }
+export default SistemaDeGestion;

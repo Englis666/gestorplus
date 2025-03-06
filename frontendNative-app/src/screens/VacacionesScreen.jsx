@@ -1,12 +1,10 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import NavbarClosed from "../componentsClosed/Navbar";
 import TablaVacaciones from "../componentsClosed/TablaVacaciones";
 
 const Vacaciones = () => {
     return (
         <View style={styles.container}>
-            <NavbarClosed />
             <View style={styles.content}>
                 <TablaVacaciones />
             </View>
