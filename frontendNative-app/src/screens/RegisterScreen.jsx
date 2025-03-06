@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-    View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image 
+import {
+    View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image
 } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
@@ -23,7 +23,7 @@ const Register = () => {
     };
 
     const handleSubmit = async () => {
-        if (!formData.num_doc || !formData.nombres || !formData.apellidos || 
+        if (!formData.num_doc || !formData.nombres || !formData.apellidos ||
             !formData.email || !formData.tipodDoc || !formData.password) {
             Alert.alert("Error", "Por favor complete todos los campos.");
             return;
@@ -32,7 +32,7 @@ const Register = () => {
         setIsSubmitting(true);
 
         try {
-            const response = await axios.post("http://192.168.43.98/gestorplus/backend/", {
+            const response = await axios.post("http://192.168.68.219/gestorplus/backend/", {
                 action: 'register',
                 ...formData
             });

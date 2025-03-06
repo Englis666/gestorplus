@@ -45,7 +45,7 @@ const TablaEmpleado = ({ action }) => {
           Authorization: `Bearer ${token.trim()}`,
         };
 
-        const response = await axios.get("http://192.168.68.195/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.80.28/gestorplus/backend/", {
           headers,
           params: { action },
         });

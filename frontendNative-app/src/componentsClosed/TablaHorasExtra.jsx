@@ -11,9 +11,9 @@ const TablaHorasExtra = () => {
 
     useEffect(() => {
 
-    
+
         const token = getCookie("auth_token");
-    
+
         if (token) {
             try {
                 const decodedToken = jwtDecode(token);
@@ -23,19 +23,19 @@ const TablaHorasExtra = () => {
                     setLoading(false);
                     return;
                 }
-    
+
                 setRol(decodedToken?.data?.rol);
-    
-                axios.get("http://localhost/gestorplus/backend/", {
+
+                axios.get("http://192.168.80.28/gestorplus/backend/", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { action: "obtenerTodasLasHorasExtra" },
                 })
-                .then((response) => {
-                    const horas = response.data?.horasExtra;
-                    setHorasExtra(Array.isArray(horas) ? horas : []);
-                })
-                .catch(() => setError("Hubo un problema al cargar las Horas Extra."))
-                .finally(() => setLoading(false));
+                    .then((response) => {
+                        const horas = response.data?.horasExtra;
+                        setHorasExtra(Array.isArray(horas) ? horas : []);
+                    })
+                    .catch(() => setError("Hubo un problema al cargar las Horas Extra."))
+                    .finally(() => setLoading(false));
             } catch (error) {
                 setError("Token inválido o malformado.");
                 setLoading(false);
@@ -61,7 +61,7 @@ const TablaHorasExtra = () => {
                         <Text>Fecha: {item.fecha}</Text>
                         <Text>Horas Extra: {item.horasExtra}</Text>
                         <Text>Usuario: {item.usuario_num_doc}</Text>
-                        { ["1", "2"].includes(rol) && (
+                        {["1", "2"].includes(rol) && (
                             <View style={styles.buttonContainer}>
                                 <TouchableOpacity style={styles.approveButton}>
                                     <Text style={styles.buttonText}>Aprobar</Text>

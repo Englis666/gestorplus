@@ -18,7 +18,7 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post("http://localhost/gestorplus/backend/", {
+            const response = await axios.post("http://192.168.80.28/gestorplus/backend/", {
                 action: "asignarEntrevista",
                 ...formData
             });

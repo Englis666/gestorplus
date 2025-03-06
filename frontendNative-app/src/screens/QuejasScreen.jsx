@@ -40,7 +40,7 @@ const Quejas = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await axios.post('http://localhost/gestorplus/backend/', data, {
+            const response = await axios.post('http://192.168.80.28/gestorplus/backend/', data, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

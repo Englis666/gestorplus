@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, ScrollView, Alert, ActivityIndicator } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://192.168.68.195/gestorplus/backend/";
+const API_URL = "http://192.168.80.28/gestorplus/backend/";
 
 const TablaConvocatorias = () => {
     const [convocatorias, setConvocatorias] = useState([]);

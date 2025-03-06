@@ -4,8 +4,7 @@ import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } fr
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import ModalHojaDeVida from "../componentsClosed/ModalHojadevida";
-import Estudios from "../componentsClosed/ModalEstudios";
-import Experiencia from "../componentsClosed/ModalExperienciaLaboral";
+
 
 const Perfil = () => {
   const [formData, setFormData] = useState({
@@ -35,7 +34,7 @@ const Perfil = () => {
         return;
       }
 
-      const response = await axios.get("http://192.168.43.98/gestorplus/backend/", {
+      const response = await axios.get("http://192.168.80.28/gestorplus/backend/", {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "datosPerfil" },
       });
@@ -94,7 +93,7 @@ const Perfil = () => {
       <TextInput placeholder="Tipo de documento" style={styles.input} value={formData.tipodDoc} onChangeText={(value) => handleChange("tipodDoc", value)} />
       <TextInput placeholder="Contraseña" style={styles.input} secureTextEntry value={formData.password} onChangeText={(value) => handleChange("password", value)} />
       <Button title="Actualizar datos" onPress={handleSubmit} />
-      
+
       <TouchableOpacity style={styles.button} onPress={() => setModalHojaDeVida(true)}>
         <Text style={styles.buttonText}>Agregar o actualizar Hoja de vida</Text>
       </TouchableOpacity>
@@ -104,7 +103,7 @@ const Perfil = () => {
       <TouchableOpacity style={styles.button} onPress={() => setModalExperiencia(true)}>
         <Text style={styles.buttonText}>Agregar Experiencia</Text>
       </TouchableOpacity>
-      
+
       <ModalHojaDeVida visible={modalHojaDeVida} onClose={() => setModalHojaDeVida(false)} />
       <Estudios visible={modalEstudios} onClose={() => setModalEstudios(false)} />
       <Experiencia visible={modalExperiencia} onClose={() => setModalExperiencia(false)} />

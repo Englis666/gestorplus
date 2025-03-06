@@ -45,7 +45,7 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
                 return;
             }
 
-            const response = await axios.get("http://localhost/gestorplus/backend/", {
+            const response = await axios.get("http://192.168.68.219/gestorplus/backend/", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
