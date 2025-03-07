@@ -1,4 +1,4 @@
-8import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { jsPDF } from "jspdf"; 
 import NavbarClosed from "../componentsClosed/Navbar";
 import { jwtDecode } from "jwt-decode";
