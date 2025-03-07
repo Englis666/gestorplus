@@ -59,7 +59,7 @@ class Usuario {
                 $fecha = date('Y-m-d'); 
                 $horaEntrada = date('H:i'); 
                 $horaSalida = date('H:i', strtotime('+8 hours')); 
-                $estadoJornada = 1;
+                $estadoJornada = "Pendiente";
     
                 $insertarMiJornada = $this->db->prepare("INSERT INTO jornada (fecha, horaEntrada, horaSalida, usuario_num_doc, estadoJornada) 
                                                           VALUES (?, ?, ?, ?, ?)");

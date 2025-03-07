@@ -177,7 +177,7 @@ const TablaJornadas = () => {
                           <td className="py-3 px-4">{jornada.horaEntrada}</td>
                           <td className="py-3 px-4">{jornada.horaSalida}</td>
                           <td className="py-3 px-4">{jornada.nombres}</td>
-                          <td className="py-3 px-4">{jornada.estado ? "Jornada admitida" : "Jornada no admitida"}</td>
+                          <td className="py-3 px-4">{jornada.estadoJornada}</td>
                           <td className="py-3 px-4">
                             {rol === "1" || rol === "2" ? (
                               <>

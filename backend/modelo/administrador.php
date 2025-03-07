@@ -327,7 +327,7 @@ class Administrador {
 
 
     public function corroborarJornada($idJornada){
-        $sql = "UPDATE jornada SET estadoJornada = 1 WHERE idjornada = :idjornada";
+        $sql = "UPDATE jornada SET estadoJornada = 'Jornada Corroborada' WHERE idjornada = :idjornada";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idjornada', $idJornada, PDO::PARAM_INT);
         $stmt->execute();
@@ -337,7 +337,7 @@ class Administrador {
         return false;
     }
     public function noCorroborarJornada($idJornada){
-        $sql = "UPDATE jornada SET estadoJornada = 0 WHERE idjornada = :idjornada";
+        $sql = "UPDATE jornada SET estadoJornada = 'Jornada rechazada' WHERE idjornada = :idjornada";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idjornada', $idJornada, PDO::PARAM_INT);
         $stmt->execute();
