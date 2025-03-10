@@ -4,7 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_URL = "http://192.168.80.28/gestorplus/backend";
+const API_URL = "http://192.168.58.95/gestorplus/backend";
 
 const TablaJornadas = () => {
   const [jornadas, setJornadas] = useState([]);

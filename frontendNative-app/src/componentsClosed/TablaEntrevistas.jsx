@@ -14,7 +14,7 @@ const TablaEntrevistas = () => {
     useEffect(() => {
         const fetchEntrevistas = async () => {
             try {
-                const response = await axios.get("http://192.168.80.28/gestorplus/backend/", {
+                const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
                     params: { action: "obtenerEntrevistas" },
                 });
                 const data = response.data.Entrevista;
@@ -30,7 +30,7 @@ const TablaEntrevistas = () => {
 
     const enviarAsistencia = async (asistencia, identrevista) => {
         try {
-            await axios.post("http://192.168.80.28/gestorplus/backend/", {
+            await axios.post("http://192.168.58.95/gestorplus/backend/", {
                 action: asistencia ? "asistenciaConfirmada" : "asistenciaNoConfirmada",
                 data: { identrevista },
             });

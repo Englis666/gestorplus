@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://192.168.80.28/gestorplus/backend/"; // Ajusta si es necesario
+const BASE_URL = "http://192.168.58.95/gestorplus/backend/";
 
 const DetallesTrabajo = () => {
     const route = useRoute();

@@ -16,7 +16,7 @@ const TablaAusencias = () => {
     });
 
     useEffect(() => {
-        axios.get("http://192.168.80.28/gestorplus/backend/", { params: { action: "obtenerTodasLasAusencias" } })
+        axios.get("http://192.168.58.95/gestorplus/backend/", { params: { action: "obtenerTodasLasAusencias" } })
             .then(response => {
                 setAusencias(response.data?.Ausencias || []);
                 setLoading(false);
@@ -32,7 +32,7 @@ const TablaAusencias = () => {
             Alert.alert("Error", "La fecha de inicio no puede ser posterior a la fecha de fin.");
             return;
         }
-        axios.post("http://localhost/gestorplus/backend/", { action: "solicitarAusencia", ...solicitud })
+        axios.post("http://192.168.58.95/gestorplus/backend/", { action: "solicitarAusencia", ...solicitud })
             .then(() => {
                 Alert.alert("Éxito", "Solicitud enviada con éxito.");
                 setModalVisible(false);

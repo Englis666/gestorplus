@@ -22,12 +22,7 @@ const TablaVacaciones = () => {
     const [form, setForm] = useState({ fechaInicio: "", fechaFin: "" });
 
     useEffect(() => {
-        const token = "TOKEN_DE_EJEMPLO"; // Reemplaza con la lógica real de obtención de tokens
-        if (!token) {
-            setError("Token no encontrado.");
-            setLoading(false);
-            return;
-        }
+
 
         try {
             const decodedToken = jwtDecode(token);
@@ -42,7 +37,7 @@ const TablaVacaciones = () => {
 
             const action = Rol === "1" || Rol === "2" ? "obtenerTodasLasVacaciones" : "obtenerMisVacaciones";
 
-            axios.get("http://localhost/gestorplus/backend/", {
+            axios.get("http://192.168.58.95/gestorplus/backend/", {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { action },
             }).then((response) => {
