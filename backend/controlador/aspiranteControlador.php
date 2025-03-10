@@ -24,15 +24,14 @@ class AspiranteControlador {
      * Extrae y verifica el token JWT del encabezado de la solicitud.
      */
     private function obtenerNumDocDesdeToken() {
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
 
-        if (!$authHeader) {
-            http_response_code(401);
-            echo json_encode(['error' => 'Token no proporcionado']);
-            exit;
-        }
+    if (!$authHeader || !preg_match('/^Bearer\s+(\S+)$/', $authHeader, $matches)) {
+        $this->jsonResponse(['error' => 'Token no proporcionado o formato incorrecto'], 401);
+    }
 
-        $token = str_replace('Bearer ', '', $authHeader);
+        $token = $matches[1];
 
         try {
             $decoded = JWT::decode($token, new Key(SECRET_KEY, JWT_ALGO));

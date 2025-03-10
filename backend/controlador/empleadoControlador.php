@@ -17,17 +17,28 @@ class EmpleadoControlador {
         $this->empleado = new Empleado($this->db);
     }
 
-    private function obtenerToken() {
-        $authHeader = apache_request_headers()['Authorization'] ?? null;
-        if (!$authHeader) {
-            http_response_code(401);
-            echo json_encode(['error' => 'Token no proporcionado']);
-            exit;
-        }
-        return str_replace('Bearer ', '', $authHeader);
+    private function jsonResponse($data, $statusCode = 200) {
+        http_response_code($statusCode);
+        echo json_encode($data);
+        exit;
     }
 
-    private function validarToken($token) {
+    protected function obtenerToken() {
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
+
+        if (!$authHeader || !preg_match('/^Bearer\s+(\S+)$/', $authHeader, $matches)) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Token no proporcionado o formato incorrecto']);
+            exit;
+        }
+
+        return $matches[1];
+    }
+
+    protected function validarToken() {
+        $token = $this->obtenerToken();
+
         try {
             return JWT::decode($token, new Key(SECRET_KEY, JWT_ALGO))->data->num_doc;
         } catch (Firebase\JWT\ExpiredException $e) {
@@ -35,7 +46,7 @@ class EmpleadoControlador {
             echo json_encode(['error' => 'Token expirado']);
             exit;
         } catch (Firebase\JWT\SignatureInvalidException $e) {
-            http_response_code(401);
+            http_response_code(403);
             echo json_encode(['error' => 'Token con firma inválida']);
             exit;
         } catch (Exception $e) {
@@ -46,51 +57,51 @@ class EmpleadoControlador {
     }
 
     private function responder($clave, $resultado) {
-        echo json_encode([$clave => $resultado ?: []]);
+        $this->jsonResponse([$clave => $resultado ?: []]);
     }
 
     public function obtenerNotificaciones() {
-        $num_doc = $this->validarToken($this->obtenerToken());
+        $num_doc = $this->validarToken();
         $this->responder('Notificaciones', $this->empleado->obtenerNotificaciones($num_doc));
     }
 
     public function obtenerMisVacaciones() {
-        $num_doc = $this->validarToken($this->obtenerToken());
+        $num_doc = $this->validarToken();
         $this->responder('Vacaciones', $this->empleado->obtenerMisVacaciones($num_doc));
     }
 
     public function obtenerJornadas() {
-        $num_doc = $this->validarToken($this->obtenerToken());
+        $num_doc = $this->validarToken();
         $this->responder('Jornadas', $this->empleado->obtenerJornadas($num_doc));
     }
 
     public function obtenerAusencias() {
-        $num_doc = $this->validarToken($this->obtenerToken());
+        $num_doc = $this->validarToken();
         $this->responder('Ausencias', $this->empleado->obtenerAusencias($num_doc));
     }
 
     public function obtenerPazYsalvos() {
-        $num_doc = $this->validarToken($this->obtenerToken());
+        $num_doc = $this->validarToken();
         $this->responder('PazYSalvo', $this->empleado->obtenerPazYsalvos($num_doc));
     }
 
     public function solicitarQueja($data) {
-        $num_doc = $this->validarToken($this->obtenerToken());
-        echo json_encode(['message' => $this->empleado->solicitarQueja($num_doc, $data) ? 'Queja enviada' : 'Error al enviar la queja']);
+        $num_doc = $this->validarToken();
+        $this->jsonResponse(['message' => $this->empleado->solicitarQueja($num_doc, $data) ? 'Queja enviada' : 'Error al enviar la queja']);
     }
 
     public function solicitarAusencia($data) {
-        $num_doc = $this->validarToken($this->obtenerToken());
-        echo json_encode(['message' => $this->empleado->solicitarAusencia($num_doc, $data) ? 'Ausencia solicitada' : 'Error al solicitar la ausencia']);
+        $num_doc = $this->validarToken();
+        $this->jsonResponse(['message' => $this->empleado->solicitarAusencia($num_doc, $data) ? 'Ausencia solicitada' : 'Error al solicitar la ausencia']);
     }
 
     public function obtenerMiPazYSalvo() {
-        $num_doc = $this->validarToken($this->obtenerToken());
+        $num_doc = $this->validarToken();
         $this->responder('PazYSalvo', $this->empleado->obtenerMiPazYSalvo($num_doc));
     }
 
     public function solicitarVacaciones($data) {
-        $num_doc = $this->validarToken($this->obtenerToken());
-        echo json_encode(['message' => $this->empleado->solicitarVacaciones($num_doc, $data) ? 'Vacaciones solicitadas' : 'Error al solicitar las vacaciones']);
+        $num_doc = $this->validarToken();
+        $this->jsonResponse(['message' => $this->empleado->solicitarVacaciones($num_doc, $data) ? 'Vacaciones solicitadas' : 'Error al solicitar las vacaciones']);
     }
 }
