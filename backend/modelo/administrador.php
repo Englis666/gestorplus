@@ -263,7 +263,8 @@ class Administrador {
     public function obtenerTodasLasJornadas(){
         try{
             $sql = "SELECT * FROM jornada as j
-                    INNER JOIN usuario as u ON j.usuario_num_doc = u.num_doc;
+                    INNER JOIN usuario as u ON j.usuario_num_doc = u.num_doc
+                    WHERE NOT estadoJornada = 'Jornada Corroborada'
                     ";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();

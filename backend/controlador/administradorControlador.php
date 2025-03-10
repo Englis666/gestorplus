@@ -120,7 +120,7 @@ class AdministradorControlador {
         if (!isset($data['data']['idJornada'])) {
             $this->jsonResponse(['error' => 'Falta el id de la jornada'], 400);
         }
-        $this->jsonResponse(['Jornada' => $this->administrador->corroborarJornada($data['data']['idJornada']) ?: []]);
+        $this->jsonResponse(['JornadaCorroborada' => $this->administrador->corroborarJornada($data['data']['idJornada']) ?: []]);
     }
     
     public function noCorroborarJornada($data) {
