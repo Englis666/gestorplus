@@ -26,7 +26,7 @@ const TablaHorasExtra = () => {
 
                 setRol(decodedToken?.data?.rol);
 
-                axios.get("http://192.168.80.28/gestorplus/backend/", {
+                axios.get("http://192.168.58.95/gestorplus/backend/", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { action: "obtenerTodasLasHorasExtra" },
                 })

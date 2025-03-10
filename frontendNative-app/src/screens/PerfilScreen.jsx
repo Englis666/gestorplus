@@ -4,7 +4,8 @@ import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } fr
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import ModalHojaDeVida from "../componentsClosed/ModalHojadevida";
-
+import Estudios from "../componentsClosed/ModalEstudios";
+import Experiencia from "../componentsClosed/ModalExperiencia";
 
 const Perfil = () => {
   const [formData, setFormData] = useState({

@@ -14,7 +14,7 @@ const SidebarChat = ({ onUserSelect }) => {
 
     const handleUserClick = async (usuario) => {
         try {
-            const response = await axios.get("http://192.168.80.28/gestorplus/backend/", {
+            const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
                 params: {
                     action: "obtenerIdChat",
                     num_doc: usuario.num_doc,
@@ -34,7 +34,7 @@ const SidebarChat = ({ onUserSelect }) => {
 
     const fetchUsuariosRRHH = async (action) => {
         try {
-            const response = await axios.get("http://localhost/gestorplus/backend/", {
+            const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
                 params: { action },
             });
             const rrhhData = response.data.RRHH;

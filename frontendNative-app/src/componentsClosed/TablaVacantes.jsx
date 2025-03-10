@@ -15,7 +15,7 @@ const TablaVacantes = () => {
     });
 
     useEffect(() => {
-        axios.get("http://localhost/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
+        axios.get("http://192.168.58.95/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
             .then(response => {
                 const data = response.data?.convocatorias;
                 setConvocatorias(Array.isArray(data) ? data : []);
@@ -25,7 +25,7 @@ const TablaVacantes = () => {
     }, []);
 
     const handleAgregar = () => {
-        axios.post("http://localhost/gestorplus/backend/", { action: "agregarConvocatoria", ...agregar })
+        axios.post("http://192.168.58.95/gestorplus/backend/", { action: "agregarConvocatoria", ...agregar })
             .then(response => {
                 if (response.data.success) {
                     Alert.alert("Éxito", "Vacante agregada con éxito");

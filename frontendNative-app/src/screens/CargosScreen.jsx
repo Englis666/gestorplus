@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     content: {
-        flex: 1, // Asegura que el contenido ocupe todo el espacio
+        flex: 1,
     },
 });
 

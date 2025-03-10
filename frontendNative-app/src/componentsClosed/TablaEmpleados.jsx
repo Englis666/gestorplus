@@ -28,12 +28,12 @@ const TablaEmpleados = () => {
           return;
         }
 
-        const response = await axios.get("http://192.168.80.28/gestorplus/backend/", {
+        const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerUsuarios" },
         });
 
-        console.log("Respuesta de la API:", response.data); // <-- Verifica la respuesta del backend
+        console.log("Respuesta de la API:", response.data);
 
         const empleadosData = response.data?.RRHH;
         if (Array.isArray(empleadosData)) {

@@ -33,7 +33,7 @@ const TablaJornadas = () => {
                 const action = roleActions[Rol];
                 if (!action) throw new Error("Rol no reconocido");
 
-                const response = await axios.get("http://192.168.80.28/gestorplus/backend/", {
+                const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { action },
                 });
@@ -50,7 +50,7 @@ const TablaJornadas = () => {
 
     const handleCorroborar = async (idJornada) => {
         try {
-            const response = await axios.post("http://192.168.80.28/gestorplus/backend/", {
+            const response = await axios.post("http://192.168.58.95/gestorplus/backend/", {
                 action: "corroborarJornada",
                 data: { idJornada },
             });
@@ -62,7 +62,7 @@ const TablaJornadas = () => {
 
     const handleNoCorroborar = async (idJornada) => {
         try {
-            const response = await axios.post("http://192.168.80.28/gestorplus/backend/", {
+            const response = await axios.post("http://192.168.58.95/gestorplus/backend/", {
                 action: "noCorroborarJornada",
                 data: { idJornada },
             });

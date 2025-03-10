@@ -13,7 +13,7 @@ const TablaPostulaciones = () => {
     useEffect(() => {
         const fetchPostulaciones = async () => {
             try {
-                const response = await axios.get("http://localhost/gestorplus/backend/", {
+                const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
                     params: { action: "obtenerPostulaciones" },
                 });
                 const data = response.data.Postulaciones;
