@@ -12,7 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import API_URL from "../config";
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, setIsAuthenticated }) => {
   const [formData, setFormData] = useState({ num_doc: "", password: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,29 +39,7 @@ const LoginScreen = ({ navigation }) => {
       if (response.data?.status === "success") {
         const token = response.data.token;
         await AsyncStorage.setItem("auth_token", token);
-
-        const decodedToken = decodeToken(token);
-        console.log("Token decodificado:", decodedToken);
-
-        const userRole = decodedToken?.data?.rol;
-        console.log("Rol del usuario:", userRole);
-
-        switch (userRole) {
-          case "1":
-            navigation.replace("Administrador");
-            break;
-          case "2":
-            navigation.replace("RecursosHumanos");
-            break;
-          case "3":
-            navigation.replace("Empleado");
-            break;
-          case "4":
-            navigation.replace("Aspirante");
-            break;
-          default:
-            Alert.alert("Error", "Rol desconocido.");
-        }
+        setIsAuthenticated(true);
       } else {
         Alert.alert("Error", response.data?.message || "Inicio de sesión fallido.");
       }
@@ -73,14 +51,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-  const decodeToken = (token) => {
-    try {
-      const payload = token.split(".")[1];
-      return JSON.parse(atob(payload));
-    } catch {
-      return null;
-    }
-  };
+
 
   return (
     <View style={styles.container}>
