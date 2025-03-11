@@ -43,6 +43,9 @@ const ICONS = {
   "Sistema De Gestion": ["settings", "settings-outline"],
   Vacaciones: ["airplane", "airplane-outline"],
   Logout: ["log-out", "log-out-outline"],
+  Layout: ["home", "home-outline"],
+  Login: ["log-in", "log-in-outline"],
+  Register: ["person-add", "person-add-outline"],
 };
 
 const screenOptions = ({ route }) => ({
@@ -58,7 +61,7 @@ const screenOptions = ({ route }) => ({
     paddingBottom: 5,
     backgroundColor: "#fff",
   },
-  tabBarScrollEnabled: true, // Habilita el scroll horizontal si hay muchas pestañas
+  tabBarScrollEnabled: true,
 });
 
 const AdminNavigator = ({ navigation }) => {
@@ -117,10 +120,20 @@ const AdminNavigator = ({ navigation }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   backgroundColor: "#ff4d4d",
+                  borderRadius: 10,
+                  margin: 5,
+                  paddingVertical: 10,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 5,
+                  elevation: 5,
                 }}
                 onPress={handleLogout}
               >
-                <Text style={{ color: "#fff", fontWeight: "bold" }}>Cerrar Sesión</Text>
+                <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>
+                  Cerrar Sesión
+                </Text>
               </TouchableOpacity>
             )}
           </Tab.Screen>
