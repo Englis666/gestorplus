@@ -6,6 +6,7 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import API_URL from "../config";
 
 const Convocatoria = () => {
     const navigation = useNavigation();
@@ -15,7 +16,7 @@ const Convocatoria = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        axios.get("http://192.168.58.95/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
+        axios.get(`${API_URL}`, { params: { action: "obtenerConvocatorias" } })
             .then((response) => {
                 console.log("API Response:", response.data);
                 setConvocatorias(response.data.convocatorias || []);

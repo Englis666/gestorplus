@@ -10,13 +10,14 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import API_URL from "../config";
 
 const LoginScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({ num_doc: "", password: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (name, value) => {
-    if (name === "num_doc" && !/^\d*$/.test(value)) return; // Solo números
+    if (name === "num_doc" && !/^\d*$/.test(value)) return; // Solo permitir números
     setFormData({ ...formData, [name]: value });
   };
 
@@ -29,7 +30,7 @@ const LoginScreen = ({ navigation }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post("http://192.168.58.95/gestorplus/backend/", {
+      const response = await axios.post(API_URL, {
         action: "login",
         num_doc: formData.num_doc,
         password: formData.password,
@@ -40,7 +41,7 @@ const LoginScreen = ({ navigation }) => {
         await AsyncStorage.setItem("auth_token", token);
 
         const decodedToken = decodeToken(token);
-        console.log("Token decodificado:", decodedToken); // Verificar contenido
+        console.log("Token decodificado:", decodedToken);
 
         const userRole = decodedToken?.data?.rol;
         console.log("Rol del usuario:", userRole);
@@ -71,7 +72,6 @@ const LoginScreen = ({ navigation }) => {
       setIsSubmitting(false);
     }
   };
-
 
   const decodeToken = (token) => {
     try {

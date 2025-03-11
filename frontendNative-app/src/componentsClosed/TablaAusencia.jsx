@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, FlatList, Alert, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+    View, Text, TextInput, Button, FlatList, Alert, Modal, ActivityIndicator
+} from "react-native";
 import axios from "axios";
 import { Picker } from "@react-native-picker/picker";
+import API_URL from "../config";
 
 const TablaAusencias = () => {
     const [ausencias, setAusencias] = useState([]);
@@ -16,28 +19,51 @@ const TablaAusencias = () => {
     });
 
     useEffect(() => {
-        axios.get("http://192.168.58.95/gestorplus/backend/", { params: { action: "obtenerTodasLasAusencias" } })
-            .then(response => {
-                setAusencias(response.data?.Ausencias || []);
-                setLoading(false);
-            })
-            .catch(error => {
-                setError("Error al obtener las ausencias.");
-                setLoading(false);
-            });
+        fetchAusencias();
     }, []);
 
-    const handleSolicitarAusencia = () => {
-        if (new Date(solicitud.fechaInicio) > new Date(solicitud.fechaFin)) {
+    const fetchAusencias = async () => {
+        try {
+            const response = await axios.get(API_URL, { params: { action: "obtenerTodasLasAusencias" } });
+            setAusencias(response.data?.Ausencias || []);
+        } catch (error) {
+            console.error(error);
+            setError("Error al obtener las ausencias.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSolicitarAusencia = async () => {
+        const { fechaInicio, fechaFin, tipoAusencia, descripcion } = solicitud;
+
+        if (!fechaInicio || !fechaFin || !tipoAusencia || !descripcion) {
+            Alert.alert("Error", "Todos los campos son obligatorios.");
+            return;
+        }
+
+        if (new Date(fechaInicio) > new Date(fechaFin)) {
             Alert.alert("Error", "La fecha de inicio no puede ser posterior a la fecha de fin.");
             return;
         }
-        axios.post("http://192.168.58.95/gestorplus/backend/", { action: "solicitarAusencia", ...solicitud })
-            .then(() => {
-                Alert.alert("Éxito", "Solicitud enviada con éxito.");
-                setModalVisible(false);
-            })
-            .catch(() => Alert.alert("Error", "Hubo un problema al enviar la solicitud."));
+
+        try {
+            await axios.post(API_URL, {
+                action: "solicitarAusencia",
+                fechaInicio,
+                fechaFin,
+                tipoAusencia,
+                descripcion
+            });
+
+            Alert.alert("Éxito", "Solicitud enviada con éxito.");
+            setModalVisible(false);
+            setSolicitud({ fechaInicio: "", fechaFin: "", tipoAusencia: "", descripcion: "" });
+            fetchAusencias(); // Recargar la lista
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Error", "Hubo un problema al enviar la solicitud.");
+        }
     };
 
     if (loading) return <ActivityIndicator size="large" color="#0000ff" />;

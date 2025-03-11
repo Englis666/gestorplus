@@ -5,6 +5,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import API_URL from "../config";
 
 const ConvocatoriaLayout = () => {
     const navigation = useNavigation();
@@ -14,7 +15,7 @@ const ConvocatoriaLayout = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        axios.get("http://192.168.58.95/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
+        axios.get(`${API_URL}`, { params: { action: "obtenerConvocatorias" } })
             .then((response) => {
                 console.log("API Response:", response.data);
                 setConvocatorias(response.data.convocatorias || []);
@@ -32,6 +33,7 @@ const ConvocatoriaLayout = () => {
     const handleDetailsClick = () => {
         navigation.navigate("Login"); // Siempre redirige al login
     };
+
     const filteredConvocatorias = convocatorias.filter(convocatoria =>
         convocatoria.nombreConvocatoria?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         convocatoria.nombreCargo?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -144,4 +146,5 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
 });
+
 export default ConvocatoriaLayout;

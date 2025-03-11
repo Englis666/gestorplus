@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TextInput, Button, Alert, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import jwtDecode from "jwt-decode";
+import API_URL from "../config"; // Importamos la URL de la API
 
 const TablaPazYSalvo = () => {
     const [salvos, setSalvos] = useState([]);
@@ -29,13 +30,13 @@ const TablaPazYSalvo = () => {
                 setRol(decodedToken.data.rol);
                 const action = decodedToken.data.rol === "3" ? "obtenerMiPazySalvo" : "obtenerPazYSalvos";
 
-                const responseSalvos = await axios.get("http://192.168.80.28/gestorplus/backend/", {
+                const responseSalvos = await axios.get(API_URL, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { action },
                 });
                 setSalvos(responseSalvos.data?.Salvos || []);
 
-                const responseEmpleados = await axios.get("http://localhost/gestorplus/backend/", {
+                const responseEmpleados = await axios.get(API_URL, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { action: "obtenerEmpleados" },
                 });
@@ -58,7 +59,7 @@ const TablaPazYSalvo = () => {
             const token = await AsyncStorage.getItem("auth_token");
             if (!token) throw new Error("Token no encontrado");
 
-            const response = await axios.post("http://localhost/gestorplus/backend/", {
+            const response = await axios.post(API_URL, {
                 action: "generarPazYSalvo",
                 ...form
             }, {

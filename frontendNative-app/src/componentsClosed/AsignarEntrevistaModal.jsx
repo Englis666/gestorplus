@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
 import axios from "axios";
+import API_URL from "../config";
 
 const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
     const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post("http://192.168.58.95/gestorplus/backend/", {
+            const response = await axios.post(`${API_URL}`, {
                 action: "asignarEntrevista",
                 ...formData
             });

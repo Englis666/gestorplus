@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, Alert, Modal, StyleSheet } from "react-native";
 import axios from "axios";
+import API_URL from "../config";
 import CalendarioDeEntrevistas from "./CalendarioDeEntrevistas";
 import ModalHojadeVidaEntrevistado from "./ModalHojadeVidaEntrevistado";
 
@@ -14,7 +15,7 @@ const TablaEntrevistas = () => {
     useEffect(() => {
         const fetchEntrevistas = async () => {
             try {
-                const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
+                const response = await axios.get(API_URL, {
                     params: { action: "obtenerEntrevistas" },
                 });
                 const data = response.data.Entrevista;
@@ -30,7 +31,7 @@ const TablaEntrevistas = () => {
 
     const enviarAsistencia = async (asistencia, identrevista) => {
         try {
-            await axios.post("http://192.168.58.95/gestorplus/backend/", {
+            await axios.post(API_URL, {
                 action: asistencia ? "asistenciaConfirmada" : "asistenciaNoConfirmada",
                 data: { identrevista },
             });

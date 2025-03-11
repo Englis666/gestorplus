@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, FlatList, ActivityIndicator, Alert, TouchableOpacity, StyleSheet } from "react-native";
 import axios from "axios";
+import API_URL from "../config"; // Importamos la URL desde config.js
 
 const TablaVacantes = () => {
     const [convocatorias, setConvocatorias] = useState([]);
@@ -15,7 +16,7 @@ const TablaVacantes = () => {
     });
 
     useEffect(() => {
-        axios.get("http://192.168.58.95/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
+        axios.get(`${API_URL}`, { params: { action: "obtenerConvocatorias" } })
             .then(response => {
                 const data = response.data?.convocatorias;
                 setConvocatorias(Array.isArray(data) ? data : []);
@@ -25,7 +26,7 @@ const TablaVacantes = () => {
     }, []);
 
     const handleAgregar = () => {
-        axios.post("http://192.168.58.95/gestorplus/backend/", { action: "agregarConvocatoria", ...agregar })
+        axios.post(`${API_URL}`, { action: "agregarConvocatoria", ...agregar })
             .then(response => {
                 if (response.data.success) {
                     Alert.alert("Éxito", "Vacante agregada con éxito");

@@ -1,19 +1,32 @@
-import React from "react";
-import { View, Text, ScrollView, FlatList, TouchableOpacity, StyleSheet } from "react-native";
-
-const data = [
-    {
-        num_doc: "",
-        nombre: "",
-        salud: "",
-        riesgos: "",
-        recomendaciones: "",
-        aptitud: "",
-        comentarios: "",
-    },
-];
+import React, { useState, useEffect } from "react";
+import { View, Text, ScrollView, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import axios from "axios";
+import API_URL from "../config";
 
 const TablaSistemaDeGestion = () => {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`${API_URL}`, {
+                    params: { action: "obtenerSistemaGestion" },
+                });
+                setData(response.data || []);
+            } catch (err) {
+                setError("Error al obtener los datos del sistema de gestión");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
+    if (error) return <Text style={styles.error}>{error}</Text>;
+
     return (
         <ScrollView horizontal>
             <View style={styles.container}>
@@ -21,7 +34,7 @@ const TablaSistemaDeGestion = () => {
                 <Text style={styles.subtitle}>Sistema de Gestión por aspirante y empleado</Text>
                 <FlatList
                     data={data}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.row}>
                             <Text style={styles.cell}>{item.num_doc}</Text>
@@ -75,6 +88,12 @@ const styles = StyleSheet.create({
     buttonText: {
         color: "white",
         fontWeight: "bold",
+    },
+    error: {
+        color: "red",
+        textAlign: "center",
+        marginTop: 20,
+        fontSize: 16,
     },
 });
 

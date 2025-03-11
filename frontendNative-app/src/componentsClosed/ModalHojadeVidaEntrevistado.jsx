@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Modal, ActivityIndicator, ScrollView, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import axios from "axios";
+import API_URL from "../config";
 
 const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
     const [formData, setFormData] = useState({});
@@ -14,7 +15,7 @@ const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
 
     const fetchHojaDeVida = async () => {
         try {
-            const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
+            const response = await axios.get(`${API_URL}`, {
                 params: { action: "obtenerDatosDelEntrevistado" },
                 data: { num_doc },
             });
