@@ -1,8 +1,13 @@
+import React, { useEffect, useState } from "react";
+import { View, ActivityIndicator, TouchableOpacity, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
 
 // Importación de pantallas
+import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import LayoutScreen from "../screens/LayoutScreen";
 import InicioAdministradorScreen from "../screens/administrador/InicioAdmin";
 import Convocatorias from "../screens/ConvocatoriasScreen";
 import Empleados from "../screens/EmpleadosScreen";
@@ -37,9 +42,9 @@ const ICONS = {
   Quejas: ["alert-circle", "alert-circle-outline"],
   "Sistema De Gestion": ["settings", "settings-outline"],
   Vacaciones: ["airplane", "airplane-outline"],
+  Logout: ["log-out", "log-out-outline"],
 };
 
-// Configuración de iconos y estilos de la barra
 const screenOptions = ({ route }) => ({
   tabBarIcon: ({ focused, color, size }) => {
     const [iconFocused, iconOutline] = ICONS[route.name] || ["help-circle", "help-circle-outline"];
@@ -53,26 +58,82 @@ const screenOptions = ({ route }) => ({
     paddingBottom: 5,
     backgroundColor: "#fff",
   },
+  tabBarScrollEnabled: true, // Habilita el scroll horizontal si hay muchas pestañas
 });
 
-const AdminNavigator = () => {
+const AdminNavigator = ({ navigation }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem("auth_token");
+      setIsAuthenticated(!!token);
+      setLoading(false);
+    };
+
+    checkToken();
+  }, []);
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("auth_token");
+    setIsAuthenticated(false);
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#1f64ff" />
+      </View>
+    );
+  }
+
   return (
     <Tab.Navigator screenOptions={screenOptions}>
-      <Tab.Screen name="Administrador" component={InicioAdministradorScreen} />
-      <Tab.Screen name="Jornadas" component={Jornadas} />
-      <Tab.Screen name="Ausencias" component={Ausencias} />
-      <Tab.Screen name="Convocatorias" component={Convocatorias} />
-      <Tab.Screen name="Entrevistas" component={EntrevistaScreen} />
-      <Tab.Screen name="Empleados" component={Empleados} />
-      <Tab.Screen name="Cargos" component={Cargos} />
-      <Tab.Screen name="Certificados" component={Certificados} />
-      <Tab.Screen name="Paz y salvos" component={PazYSalvos} />
-      <Tab.Screen name="Horas Extra" component={HorasExtra} />
-      <Tab.Screen name="Perfil" component={Perfil} />
-      <Tab.Screen name="Postulaciones" component={Postulaciones} />
-      <Tab.Screen name="Quejas" component={Quejas} />
-      <Tab.Screen name="Sistema De Gestion" component={SistemaDeGestion} />
-      <Tab.Screen name="Vacaciones" component={Vacaciones} />
+      {isAuthenticated ? (
+        <>
+          <Tab.Screen name="Administrador" component={InicioAdministradorScreen} />
+          <Tab.Screen name="Jornadas" component={Jornadas} />
+          <Tab.Screen name="Ausencias" component={Ausencias} />
+          <Tab.Screen name="Convocatorias" component={Convocatorias} />
+          <Tab.Screen name="Entrevistas" component={EntrevistaScreen} />
+          <Tab.Screen name="Empleados" component={Empleados} />
+          <Tab.Screen name="Cargos" component={Cargos} />
+          <Tab.Screen name="Certificados" component={Certificados} />
+          <Tab.Screen name="Paz y salvos" component={PazYSalvos} />
+          <Tab.Screen name="Horas Extra" component={HorasExtra} />
+          <Tab.Screen name="Perfil" component={Perfil} />
+          <Tab.Screen name="Postulaciones" component={Postulaciones} />
+          <Tab.Screen name="Quejas" component={Quejas} />
+          <Tab.Screen name="Sistema De Gestion" component={SistemaDeGestion} />
+          <Tab.Screen name="Vacaciones" component={Vacaciones} />
+
+          {/* Botón de Cerrar Sesión */}
+          <Tab.Screen name="Logout">
+            {() => (
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#ff4d4d",
+                }}
+                onPress={handleLogout}
+              >
+                <Text style={{ color: "#fff", fontWeight: "bold" }}>Cerrar Sesión</Text>
+              </TouchableOpacity>
+            )}
+          </Tab.Screen>
+        </>
+      ) : (
+        <>
+          <Tab.Screen name="Layout" component={LayoutScreen} />
+          <Tab.Screen name="Login">
+            {() => <LoginScreen setIsAuthenticated={setIsAuthenticated} />}
+          </Tab.Screen>
+          <Tab.Screen name="Register" component={RegisterScreen} />
+        </>
+      )}
     </Tab.Navigator>
   );
 };
