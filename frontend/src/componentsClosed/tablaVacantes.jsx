@@ -120,7 +120,7 @@ const TablaVacantes = () => {
 
             <div className="row mt-4 container mt-5 card shadow-sm border- mb-5">
                 <form onSubmit={handleAgregar}>
-                    <h2 className="mt-2">Formulario para agregar Vacantes</h2>
+                    <h2 className="mt-2">Formulario para agregar vacantes</h2>
                     <div className="mb-3">
                         <label htmlFor="" className="form-label">Nombre de la convocatoria</label>
                         <input 
