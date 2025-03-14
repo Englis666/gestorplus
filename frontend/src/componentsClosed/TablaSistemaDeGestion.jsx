@@ -1,6 +1,13 @@
-// import React from "react";
+import React from "react";
+import Axios from "axios";
+import {useState} from "react";
+import modalSistemaSg from "./modalSistemaSg";
 
 const TablaSistemaDeGestion = () => {
+  const [Aspirante, setAspirante] = useState([]);
+  const 
+
+
   return (
     <div className="container-fluid">
       <h1 className="mb-4">Sistema de Gestion</h1>
