@@ -1,6 +1,6 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
-import TablaVacantes from "../componentsClosed/tablaVacantes";
+import TablaVacantes from "../componentsClosed/TablaVacantes";
 
 const Convocatorias = () => {
     return (
