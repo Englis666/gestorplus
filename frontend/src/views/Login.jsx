@@ -28,80 +28,81 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-    
+
         if (!formData.num_doc || !formData.password) {
             alert("Por favor complete todos los campos.");
             return;
         }
-    
+
         const data = {
             action: 'login',
             num_doc: formData.num_doc,
             password: formData.password,
         };
-    
+
         setIsSubmitting(true);
         axios
-        .post("http://localhost/gestorplus/backend/", data) 
-        .then((response) => {
-            const serverMessage = response.data;
-            
-            if (serverMessage?.status === 'success') {
-                const token = serverMessage.token;
-                document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
-    
-                login({ token });
-    
-                const decodedToken = decodeToken(token);
-                const userRole = decodedToken?.data?.rol; 
-                
-                switch (userRole) {
-                    case "1":
-                        navigate("/administrador/inicioAdmin");
-                        break;
-                    case "2":
-                        navigate("/recursoshumanos/inicioRRHH");
-                        break;
-                    case "3":
-                        navigate("/empleado/inicioEmpleado");
-                        break;
-                    case "4":
-                        navigate("/aspirante/inicio");
-                        break;
-                    default:
-                        document.cookie = "auth_token=; path=/; domain=localhost; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                        console.error("Rol desconocido:", userRole);
-                        navigate("/");
-                        alert("Rol desconocido");
-                        
+            .post("http://localhost/gestorplus/backend/", data)
+            .then((response) => {
+                const serverMessage = response.data;
+                console.log(response.data);
+
+                if (serverMessage?.status === 'success') {
+                    const token = serverMessage.token;
+                    document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
+
+                    login({ token });
+
+                    const decodedToken = decodeToken(token);
+                    const userRole = decodedToken?.data?.rol;
+
+                    switch (userRole) {
+                        case "1":
+                            navigate("/administrador/inicioAdmin");
+                            break;
+                        case "2":
+                            navigate("/recursoshumanos/inicioRRHH");
+                            break;
+                        case "3":
+                            navigate("/empleado/inicioEmpleado");
+                            break;
+                        case "4":
+                            navigate("/aspirante/inicio");
+                            break;
+                        default:
+                            document.cookie = "auth_token=; path=/; domain=localhost; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                            console.error("Rol desconocido:", userRole);
+                            navigate("/");
+                            alert("Rol desconocido");
+
+                    }
+                } else {
+                    alert(serverMessage?.message || "Error en el inicio de sesión");
+                    setIsSubmitting(false);
                 }
-            } else {
-                alert(serverMessage?.message || "Error en el inicio de sesión");
+            })
+            .catch((error) => {
+                console.error("Error al iniciar sesión:", error);
+                alert("Error en el inicio de sesión. Intenta de nuevo.");
                 setIsSubmitting(false);
-            }
-        })
-        .catch((error) => {
-            console.error("Error al iniciar sesión:", error);
-            alert("Error en el inicio de sesión. Intenta de nuevo.");
-            setIsSubmitting(false);
-        });
-    
+            });
+
     };
 
     const decodeToken = (token) => {
         try {
             const payload = token.split('.')[1];
-            const decoded = JSON.parse(atob(payload)); 
+            const decoded = JSON.parse(atob(payload));
             return decoded;
         } catch (e) {
             console.error("Error decodificando el token:", e);
-            return null; 
+            return null;
         }
     };
-    
+
     return (
         <div className="container d-flex justify-content-center align-items-center min-vh-100">
-            <div 
+            <div
                 className="row border rounded-4 p-3 bg-white shadow box-area"
                 style={{ width: '930px', boxShadow: '0 6px 25px 10px rgba(0, 0, 0, 0.7)' }}
             >
@@ -109,11 +110,11 @@ const Login = () => {
                     style={{ background: '#103cbe' }}
                 >
                     <div className="featured-image">
-                        <img 
-                            src={imagen} 
+                        <img
+                            src={imagen}
                             alt="Imagen contenedor"
                             className="img-fluid"
-                            style={{ width: '250px' }}            
+                            style={{ width: '250px' }}
                         />
                         <p className="text-white fs-4">
                             Bienvenidos al software GestorPlus para la frayette
@@ -129,8 +130,8 @@ const Login = () => {
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="input-group mb-3">
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     className="form-control form-control-lg bg-light fs-6"
                                     placeholder="Número de documento"
                                     name="num_doc"
@@ -139,8 +140,8 @@ const Login = () => {
                                 />
                             </div>
                             <div className="input-group mb-3">
-                                <input 
-                                    type="password" 
+                                <input
+                                    type="password"
                                     className="form-control form-control-lg bg-light fs-6"
                                     placeholder="Contraseña"
                                     name="password"
@@ -150,13 +151,13 @@ const Login = () => {
                             </div>
 
                             <div className="input-group mb-3">
-                                <button 
+                                <button
                                     className="btn btn-lg btn-primary w-100 fs-6"
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? "Iniciando Sesión..." : "Iniciar sesión"}                       
+                                    {isSubmitting ? "Iniciando Sesión..." : "Iniciar sesión"}
                                 </button>
-                                <button 
+                                <button
                                     className="btn btn-lg btn-primary w-100 fs-6 mt-4"
                                     type="button"
                                     onClick={() => navigate('/Registro')}

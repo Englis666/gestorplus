@@ -10,6 +10,7 @@ import { BarChart } from "react-native-chart-kit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import API_URL from "../config"; // Importa la URL de la API
 
 const Grafica = () => {
   const [totalEntradas, setTotalEntradas] = useState(0);
@@ -22,32 +23,21 @@ const Grafica = () => {
       try {
         const token = await AsyncStorage.getItem("auth_token");
 
-        if (!token) {
-          setError("No se encontró el token.");
-          setLoading(false);
-          return;
-        }
+        if (!token) throw new Error("No se encontró el token.");
 
         const decodedToken = jwtDecode(token);
-        if (decodedToken.exp * 1000 < Date.now()) {
-          setError("El token ha expirado.");
-          setLoading(false);
-          return;
-        }
+        if (decodedToken.exp * 1000 < Date.now()) throw new Error("El token ha expirado.");
 
-        const response = await axios.get(
-          "http://192.168.58.95/gestorplus/backend/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { action: "obtenerTotalEstadisticas" },
-          },
-        );
+        const response = await axios.get(`${API_URL}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { action: "obtenerTotalEstadisticas" },
+        });
 
         setTotalEntradas(response.data.totalEntradas || 0);
         setTotalAusencias(response.data.totalAusencias || 0);
-        setLoading(false);
       } catch (err) {
-        setError("Error al obtener las estadísticas.");
+        setError(err.message || "Error al obtener las estadísticas.");
+      } finally {
         setLoading(false);
       }
     };
@@ -55,10 +45,7 @@ const Grafica = () => {
     fetchData();
   }, []);
 
-  if (loading)
-    return (
-      <ActivityIndicator size="large" color="#3498db" style={styles.loading} />
-    );
+  if (loading) return <ActivityIndicator size="large" color="#3498db" style={styles.loading} />;
   if (error) return <Text style={styles.error}>{error}</Text>;
 
   return (

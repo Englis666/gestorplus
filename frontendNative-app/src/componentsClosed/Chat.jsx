@@ -3,6 +3,7 @@ import { View, Text, FlatList, ActivityIndicator, Alert, StyleSheet } from 'reac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import API_URL from '../config'; // Importa la URL de la API
 
 const Chat = ({ selectedChat }) => {
     const [chatMessages, setChatMessages] = useState([]);
@@ -34,7 +35,7 @@ const Chat = ({ selectedChat }) => {
             setRol(decodedToken?.data?.rol);
             setLoading(true);
 
-            const response = await axios.get('http://192.168.58.95/gestorplus/backend/', {
+            const response = await axios.get(`${API_URL}`, {
                 params: { action: 'obtenerMensajes', targetIdChat },
                 headers: { Authorization: `Bearer ${token}` },
             });

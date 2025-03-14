@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, TextInput, Button, StyleSheet } from "react-native";
+import {
+    View, Text, FlatList, Alert, ActivityIndicator, TextInput, Button, StyleSheet
+} from "react-native";
 import axios from "axios";
+import API_URL from "../config";
 
 const TablaCargos = () => {
     const [cargos, setCargos] = useState([]);
@@ -9,36 +12,45 @@ const TablaCargos = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios
-            .get("http://192.168.58.95/gestorplus/backend/", { params: { action: "obtenerCargos" } })
-            .then((response) => {
-                const data = response.data?.cargos;
-                setCargos(Array.isArray(data) ? data : []);
-            })
-            .catch(() => setError("Error al obtener los cargos."))
-            .finally(() => setLoading(false));
+        fetchCargos();
     }, []);
 
-    const handleSubmit = () => {
+    const fetchCargos = async () => {
+        try {
+            const response = await axios.get(API_URL, { params: { action: "obtenerCargos" } });
+            const data = response.data?.cargos;
+            setCargos(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error(error);
+            setError("Error al obtener los cargos.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async () => {
         if (!nombreCargo.trim()) {
             Alert.alert("Error", "El nombre del cargo no puede estar vacío.");
             return;
         }
-        axios
-            .post("http://192.168.58.95/gestorplus/backend/", {
+
+        try {
+            const response = await axios.post(API_URL, {
                 action: "agregarCargo",
-                nombreCargo: nombreCargo,
-            })
-            .then((response) => {
-                if (response.data.success) {
-                    Alert.alert("Éxito", "Cargo agregado con éxito");
-                    setCargos([...cargos, { nombreCargo, estadoCargo: "Activo" }]);
-                    setNombreCargo("");
-                } else {
-                    Alert.alert("Error", "No se pudo agregar el cargo");
-                }
-            })
-            .catch(() => Alert.alert("Error", "Error al agregar el cargo"));
+                nombreCargo,
+            });
+
+            if (response.data.success) {
+                Alert.alert("Éxito", "Cargo agregado con éxito");
+                setCargos([...cargos, { nombreCargo, estadoCargo: "Activo" }]);
+                setNombreCargo("");
+            } else {
+                Alert.alert("Error", "No se pudo agregar el cargo");
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Error", "Error al agregar el cargo");
+        }
     };
 
     if (loading) return <ActivityIndicator size="large" color="#0000ff" />;

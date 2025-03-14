@@ -4,6 +4,7 @@ import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { PaperProvider } from "react-native-paper";
+import API_URL from "../config";
 
 const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
     const [formData, setFormData] = useState({
@@ -45,7 +46,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
         setIsSubmitting(true);
 
         try {
-            const response = await axios.post("http://localhost/gestorplus/backend/", formData, {
+            const response = await axios.post(`${API_URL}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

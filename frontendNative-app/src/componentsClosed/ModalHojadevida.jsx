@@ -10,6 +10,7 @@ import {
     Alert,
 } from "react-native";
 import axios from "axios";
+import API_URL from "../config";
 
 const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
     const [formData, setFormData] = useState({
@@ -45,7 +46,7 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
                 return;
             }
 
-            const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
+            const response = await axios.get(`${API_URL}/backend/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -94,7 +95,7 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
 
         try {
             const response = await axios.patch(
-                "http://localhost/gestorplus/backend/",
+                `${API_URL}/backend/`,
                 formData,
                 {
                     headers: {
@@ -165,15 +166,6 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
                             value={formData.telefono}
                             onChangeText={(text) => handleChange("telefono", text)}
                         />
-
-                        <Text style={styles.label}>Teléfono Fijo</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Número de teléfono fijo"
-                            keyboardType="numeric"
-                            value={formData.telefonoFijo}
-                            onChangeText={(text) => handleChange("telefonoFijo", text)}
-                        />
                     </ScrollView>
 
                     <View style={styles.buttonContainer}>
@@ -191,66 +183,5 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
         </Modal>
     );
 };
-
-const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    modalContainer: {
-        width: "90%",
-        backgroundColor: "#fff",
-        borderRadius: 10,
-        padding: 20,
-    },
-    scrollContainer: {
-        maxHeight: 300,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 10,
-        textAlign: "center",
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: "bold",
-        marginTop: 10,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 5,
-        padding: 8,
-        marginTop: 5,
-    },
-    buttonContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 20,
-    },
-    cancelButton: {
-        backgroundColor: "#ccc",
-        padding: 10,
-        borderRadius: 5,
-        flex: 1,
-        marginRight: 5,
-        alignItems: "center",
-    },
-    submitButton: {
-        backgroundColor: "#007bff",
-        padding: 10,
-        borderRadius: 5,
-        flex: 1,
-        marginLeft: 5,
-        alignItems: "center",
-    },
-    buttonText: {
-        color: "#fff",
-        fontWeight: "bold",
-    },
-});
 
 export default ModalHojaDeVida;

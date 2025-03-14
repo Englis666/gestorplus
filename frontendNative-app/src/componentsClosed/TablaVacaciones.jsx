@@ -4,6 +4,7 @@ import axios from "axios";
 import { decode as jwtDecode } from "jwt-decode";
 import moment from "moment";
 import { Calendar, LocaleConfig } from "react-native-calendars";
+import API_URL from "../config"; // Importamos la URL desde config.js
 
 LocaleConfig.locales['es'] = {
     monthNames: [
@@ -22,8 +23,6 @@ const TablaVacaciones = () => {
     const [form, setForm] = useState({ fechaInicio: "", fechaFin: "" });
 
     useEffect(() => {
-
-
         try {
             const decodedToken = jwtDecode(token);
             if (decodedToken?.exp * 1000 < Date.now()) {
@@ -37,7 +36,7 @@ const TablaVacaciones = () => {
 
             const action = Rol === "1" || Rol === "2" ? "obtenerTodasLasVacaciones" : "obtenerMisVacaciones";
 
-            axios.get("http://192.168.58.95/gestorplus/backend/", {
+            axios.get(`${API_URL}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { action },
             }).then((response) => {
@@ -60,7 +59,7 @@ const TablaVacaciones = () => {
             return;
         }
 
-        axios.post("http://localhost/gestorplus/backend/", {
+        axios.post(`${API_URL}`, {
             action: "solicitarVacaciones",
             fechaInicio: form.fechaInicio,
             fechaFin: form.fechaFin,

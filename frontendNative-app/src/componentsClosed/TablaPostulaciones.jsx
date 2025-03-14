@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert, StyleSheet } from "react-native";
 import axios from "axios";
 import AsignarEntrevistaModal from "./AsignarEntrevistaModal";
+import API_URL from "../config";
 
 const TablaPostulaciones = () => {
     const [postulaciones, setPostulaciones] = useState([]);
@@ -13,7 +14,7 @@ const TablaPostulaciones = () => {
     useEffect(() => {
         const fetchPostulaciones = async () => {
             try {
-                const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
+                const response = await axios.get(`${API_URL}`, {
                     params: { action: "obtenerPostulaciones" },
                 });
                 const data = response.data.Postulaciones;

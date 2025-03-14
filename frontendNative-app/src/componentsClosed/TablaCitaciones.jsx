@@ -1,41 +1,56 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert, StyleSheet } from "react-native";
+import {
+    View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert, StyleSheet
+} from "react-native";
 import axios from "axios";
-
+import API_URL from "../config";
 const TablaCitaciones = () => {
     const [citaciones, setCitaciones] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchCitaciones = async () => {
-            try {
-                const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
-                    params: { action: "obtenerCitaciones" },
-                });
-
-                const data = response.data.Citaciones;
-                if (Array.isArray(data)) {
-                    setCitaciones(data);
-                } else {
-                    console.error("Las citaciones no están en un arreglo");
-                    setCitaciones([]);
-                }
-            } catch (err) {
-                console.error("Error al obtener las citaciones", err);
-                Alert.alert("Error", "Hubo un problema al cargar las citaciones.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchCitaciones();
     }, []);
+
+    const fetchCitaciones = async () => {
+        try {
+            const response = await axios.get(API_URL, {
+                params: { action: "obtenerCitaciones" },
+            });
+
+            const data = response.data?.Citaciones;
+            if (Array.isArray(data)) {
+                setCitaciones(data);
+            } else {
+                console.error("Las citaciones no están en un arreglo");
+                setCitaciones([]);
+            }
+        } catch (err) {
+            console.error("Error al obtener las citaciones:", err);
+            setError("Hubo un problema al cargar las citaciones.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const registrarAsistencia = (mensaje) => {
+        Alert.alert("Registro", mensaje);
+    };
 
     if (loading) {
         return (
             <View style={styles.loaderContainer}>
                 <ActivityIndicator size="large" color="#007bff" />
                 <Text>Cargando Citaciones...</Text>
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
             </View>
         );
     }
@@ -54,16 +69,23 @@ const TablaCitaciones = () => {
                         <Text style={styles.text}><Text style={styles.label}>Empleado:</Text> {item.nombres}</Text>
 
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.button} onPress={() => Alert.alert("Asistencia registrada")}>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={() => registrarAsistencia("Asistencia registrada")}
+                            >
                                 <Text style={styles.buttonText}>Asistencia cumplida</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={[styles.button, styles.noAsistencia]} onPress={() => Alert.alert("No asistencia registrada")}>
+                            <TouchableOpacity
+                                style={[styles.button, styles.noAsistencia]}
+                                onPress={() => registrarAsistencia("No asistencia registrada")}
+                            >
                                 <Text style={styles.buttonText}>No asistencia</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 )}
+                ListEmptyComponent={<Text style={styles.noData}>No hay citaciones registradas</Text>}
             />
         </View>
     );
@@ -119,6 +141,22 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    errorText: {
+        color: "red",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    noData: {
+        textAlign: "center",
+        marginTop: 20,
+        fontSize: 16,
+        fontStyle: "italic",
     },
 });
 

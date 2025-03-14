@@ -3,6 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import API_URL from "../config"; // Importamos la URL de la API
 
 const TablaJornadas = () => {
     const [Jornadas, setJornadas] = useState([]);
@@ -33,7 +34,7 @@ const TablaJornadas = () => {
                 const action = roleActions[Rol];
                 if (!action) throw new Error("Rol no reconocido");
 
-                const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
+                const response = await axios.get(API_URL, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { action },
                 });
@@ -50,7 +51,7 @@ const TablaJornadas = () => {
 
     const handleCorroborar = async (idJornada) => {
         try {
-            const response = await axios.post("http://192.168.58.95/gestorplus/backend/", {
+            await axios.post(API_URL, {
                 action: "corroborarJornada",
                 data: { idJornada },
             });
@@ -62,7 +63,7 @@ const TablaJornadas = () => {
 
     const handleNoCorroborar = async (idJornada) => {
         try {
-            const response = await axios.post("http://192.168.58.95/gestorplus/backend/", {
+            await axios.post(API_URL, {
                 action: "noCorroborarJornada",
                 data: { idJornada },
             });

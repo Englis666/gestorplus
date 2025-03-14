@@ -4,6 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import API_URL from "../config";
 
 const SidebarChat = ({ onUserSelect }) => {
     const [usuariosRRHH, setUsuariosRRHH] = useState([]);
@@ -14,7 +15,7 @@ const SidebarChat = ({ onUserSelect }) => {
 
     const handleUserClick = async (usuario) => {
         try {
-            const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
+            const response = await axios.get(`${API_URL}`, {
                 params: {
                     action: "obtenerIdChat",
                     num_doc: usuario.num_doc,
@@ -34,7 +35,7 @@ const SidebarChat = ({ onUserSelect }) => {
 
     const fetchUsuariosRRHH = async (action) => {
         try {
-            const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
+            const response = await axios.get(`${API_URL}`, {
                 params: { action },
             });
             const rrhhData = response.data.RRHH;

@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import Estadisticas from "./Estadisticas";
 import Grafica from "./Grafica";
+import API_URL from "../config"; // Importación de la configuración
 
 const TablaEmpleado = ({ action }) => {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -45,7 +46,7 @@ const TablaEmpleado = ({ action }) => {
           Authorization: `Bearer ${token.trim()}`,
         };
 
-        const response = await axios.get("http://192.168.58.95/gestorplus/backend/", {
+        const response = await axios.get(`${API_URL}`, { // Aquí se usa API_URL
           headers,
           params: { action },
         });

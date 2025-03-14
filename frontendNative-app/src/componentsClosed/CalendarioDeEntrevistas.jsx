@@ -1,11 +1,32 @@
-import React, { useState } from "react";
-import { View, Text, Modal, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Modal, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { Calendar } from "react-native-calendars";
 import moment from "moment";
+import axios from "axios";
+import API_URL from "../config"; // Importa la URL de la API
 
-const CalendarioDeEntrevistas = ({ entrevistas, onSelectInterview }) => {
+const CalendarioDeEntrevistas = ({ onSelectInterview }) => {
+    const [entrevistas, setEntrevistas] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [selectedInterview, setSelectedInterview] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+
+    useEffect(() => {
+        const fetchEntrevistas = async () => {
+            try {
+                const response = await axios.post(`${API_URL}`, {
+                    action: "obtenerEntrevistas", // Ajusta la acción según tu backend
+                });
+                setEntrevistas(response.data.entrevistas);
+            } catch (error) {
+                console.error("Error al obtener entrevistas", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEntrevistas();
+    }, []);
 
     // Formatear entrevistas para el calendario
     const eventos = entrevistas.reduce((acc, entrevista) => {
@@ -26,10 +47,11 @@ const CalendarioDeEntrevistas = ({ entrevistas, onSelectInterview }) => {
 
     return (
         <View style={styles.container}>
-            <Calendar
-                markedDates={eventos}
-                onDayPress={handleDayPress}
-            />
+            {loading ? (
+                <ActivityIndicator size="large" color="blue" />
+            ) : (
+                <Calendar markedDates={eventos} onDayPress={handleDayPress} />
+            )}
 
             <Modal visible={modalVisible} animationType="slide" transparent>
                 <View style={styles.modalContainer}>

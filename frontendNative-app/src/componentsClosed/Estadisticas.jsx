@@ -3,8 +3,7 @@ import { View, Text, ActivityIndicator, StyleSheet, Animated } from "react-nativ
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-
-const API_URL = "http://192.168.58.95/gestorplus/backend/";
+import API_URL from "../config"; // Importa la URL de la API
 
 const Estadisticas = () => {
   const [totalEntradas, setTotalEntradas] = useState(0);
@@ -23,7 +22,7 @@ const Estadisticas = () => {
         if (decodedToken.exp * 1000 < Date.now()) throw new Error("El token ha expirado.");
 
         console.log("Token enviado en la petición:", token);
-        const response = await axios.get(API_URL, {
+        const response = await axios.get(`${API_URL}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
