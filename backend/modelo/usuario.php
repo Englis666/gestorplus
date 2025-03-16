@@ -182,7 +182,7 @@ class Usuario {
     }
 
     public function agregarExp($data, $hojadevida_idHojadevida) {
-        $sql = "INSERT INTO experienciaLaboral 
+        $sql = "INSERT INTO experiencialaboral 
                 (profesion, descripcionPerfil, fechaInicioExp, fechaFinExp, hojadevida_idHojadevida) 
                 VALUES (?, ?, ?, ?, ?)";
         
