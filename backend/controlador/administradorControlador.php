@@ -72,6 +72,10 @@ class AdministradorControlador {
         $this->jsonResponse(['empleados' => $this->administrador->obtenerEmpleados() ?: []]);
     }
 
+    public function obtenerSistemaDeGestion(){
+        $this->jsonResponse(['sistemaDeGestion' => $this->administrador->obtenerSistemaDeGestion() ?: []]);
+    }
+
     public function obtenerTodasLasNotificaciones() {
         $this->verificarToken();
         $this->jsonResponse(['Notificaciones' => $this->administrador->obtenerTodasLasNotificaciones() ?: []]);
@@ -112,9 +116,12 @@ class AdministradorControlador {
         $this->jsonResponse(['Entrevista' => $this->administrador->obtenerEntrevistas() ?: []]);
     }
 
-    public function obtenerDatosDelEntrevistado() {
-        $this->jsonResponse(['Entrevistado' => $this->administrador->obtenerDatosDelEntrevistado() ?: []]);
+    public function obtenerDatosDelEntrevistado($num_doc) {
+    $num_doc = $_GET['num_doc'] ?? null;
+    $entrevistado = $this->administrador->obtenerDatosDelEntrevistado($num_doc);
+    $this->jsonResponse(["Entrevistado" => $entrevistado ?: ["error" => "hubo un error"]]);
     }
+
 
     public function corroborarJornada($data) {
         if (!isset($data['data']['idJornada'])) {
