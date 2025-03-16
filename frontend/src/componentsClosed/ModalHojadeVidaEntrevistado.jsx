@@ -23,10 +23,6 @@ const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
                     num_doc: num_doc
                 }
             });
-
-            console.log("Datos recibidos:", response.data);
-
-            // Acceder correctamente a "Entrevistado"
             const data = response.data?.Entrevistado || {};
             setFormData(data);
 
