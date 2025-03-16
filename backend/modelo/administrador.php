@@ -35,6 +35,20 @@ class Administrador {
         return [];
     }
 
+    public function obtenerSistemaDeGestion(){
+        $sql = "SELECT * FROM evaluacionessg as e 
+                INNER JOIN postulacion as p ON e.entrevista_postulacion_idpostulaciones = p.idpostulacion
+                INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resultado){
+            return $resultado;
+        }
+        return [];
+    }
+
     public function obtenerTodasLasNotificaciones(){
         try{
             $sql = "SELECT * FROM notificacion";
@@ -110,6 +124,29 @@ class Administrador {
         
         return [];
     }
+
+    public function obtenerDatosDelEntrevistado($num_doc){
+    $sql = "SELECT * FROM postulacion as p
+            INNER JOIN entrevista as e ON p.idpostulacion = e.postulacion_idpostulaciones
+            INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc
+            INNER JOIN hojadevida as h ON u.hojadevida_idHojadevida = h.idHojadevida
+            INNER JOIN estudio as est ON h.idHojadevida = est.hojadevida_idHojadevida
+            INNER JOIN experiencialaboral as exp ON h.idHojadevida = exp.hojadevida_idHojadevida
+            WHERE u.num_doc = :num_doc";
+    
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(":num_doc", $num_doc, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    $resultado = $stmt->fetch(PDO::FETCH_ASSOC); 
+
+    if (!$resultado) {
+        return ['error' => 'No se encontró el usuario'];
+    }
+
+    return $resultado; 
+}
+
 
 
         public function verificarRol($num_doc) {
