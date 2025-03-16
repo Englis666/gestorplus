@@ -1,26 +1,35 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
     const [formData, setFormData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        if(num_doc){
-          fetchHojaDeVida();
+        if (num_doc) {
+            fetchHojaDeVida();
         }
     }, [num_doc]);
 
 
     const fetchHojaDeVida = async () => {
         try {
-
             const response = await axios.get("http://localhost/gestorplus/backend/", {
-                params: {action: "obtenerDatosDelEntrevistado"},
-                data : {num_doc},
+                params: {
+                    action: "obtenerDatosDelEntrevistado",
+                    num_doc: num_doc
+                }
             });
 
-            setFormData(response.data);
+            console.log("Datos recibidos:", response.data);
+
+            // Acceder correctamente a "Entrevistado"
+            const data = response.data?.Entrevistado || {};
+            setFormData(data);
+
         } catch (error) {
             console.error("Error al obtener la hoja de vida:", error);
             alert("Ocurrió un error al cargar los datos.");
@@ -42,23 +51,29 @@ const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
                         <button type="button" className="btn-close" onClick={onClose}></button>
                     </div>
                     <div className="modal-body">
-                        <p><strong>Nombre y Apellido del aspirante</strong>{formData.nombres || "No disponible"}</p>
-                        <p><strong>Correo Electronico</strong>{formData.email || "No disponible"}</p>
-                        <p><strong>Fecha de Nacimiento:</strong> {formData.fechaNacimiento | "No disponible"}</p>
-                        <p><strong>Dirección:</strong> {formData.direccion || "No disponible"}</p>
-                        <p><strong>Ciudad:</strong> {formData.ciudad || "No disponible"}</p>
-                        <p><strong>Teléfono:</strong> {formData.telefono || "No disponible"}</p>
-                        <p><strong>Nivel del estudio</strong>{formData.nivelEstudio || "No disponible "}</p>
-                        <p><strong>Titulo del estudio</strong>{formData.tituloEstudio || "No disponible"}</p>
-                        <p><strong>institucion del estudio</strong>{formData.institucionEstudio || "No disponible "}</p>
-                        <p><strong>Profesion</strong>{formData.profesion || "No disponible"}</p>
-                        <p><strong>Descripcion del perfil</strong>{formData.descripcion || "No disponible"}</p>
-                        <p><strong>Fecha donde inicio su experiencia laboral</strong>{formData.inicioExp}</p>
-                        <p><strong>Fecha de finalizacion de su experiencia</strong>{formData.finExp || "No disponible"}</p>
+                        {Object.keys(formData).length > 0 ? (
+                            <>
+                                <p><strong>Nombre y Apellido del aspirante:</strong> {formData.nombres}</p>
+                                <p><strong>Correo Electrónico:</strong> {formData.email}</p>
+                                <p><strong>Fecha de Nacimiento:</strong> {formData.fechaNacimiento}</p>
+                                <p><strong>Dirección:</strong> {formData.direccion}</p>
+                                <p><strong>Ciudad:</strong> {formData.ciudad}</p>
+                                <p><strong>Teléfono:</strong> {formData.telefono}</p>
+                                <p><strong>Nivel del estudio:</strong> {formData.nivelEstudio}</p>
+                                <p><strong>Título del estudio:</strong> {formData.tituloEstudio}</p>
+                                <p><strong>Institución del estudio:</strong> {formData.institucionEstudio}</p>
+                                <p><strong>Profesión:</strong> {formData.profesion}</p>
+                                <p><strong>Descripción del perfil:</strong> {formData.descripcion}</p>
+                                <p><strong>Fecha de inicio de experiencia laboral:</strong> {formData.fechaInicioExp}</p>
+                                <p><strong>Fecha de finalización de experiencia laboral:</strong> {formData.fechaFinExp}</p>
+                            </>
+                        ) : (
+                            <p>No se encontraron datos para este usuario.</p>
+                        )}
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Rechazar</button>
-                        <button className="btn btn-primary">Aceptar y asignarle Sistema de Gestion</button>
+                        <button className="btn btn-primary" onClick={() => navigate("/Contratos")}>Aceptar y asignarle Sistema de Gestión</button>
                     </div>
                 </div>
             </div>
