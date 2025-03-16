@@ -49,7 +49,6 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia }) => {
       })
       .then((response) => {
         const serverMessage = response.data.message;
-        console.log(serverMessage); 
         if (serverMessage === "Experiencia agregada") {
           alert("Experiencia agregada correctamente");
         } else {
