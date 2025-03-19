@@ -105,7 +105,7 @@ const Perfil = () => {
         <Text style={styles.buttonText}>Agregar Experiencia</Text>
       </TouchableOpacity>
 
-      <ModalHojaDeVida visible={modalHojaDeVida} onClose={() => setModalHojaDeVida(false)} />
+      <ModalHojaDeVida modalVisible={modalHojaDeVida} toggleModal={() => setModalHojaDeVida(false)} />
       <Estudios visible={modalEstudios} onClose={() => setModalEstudios(false)} />
       <Experiencia visible={modalExperiencia} onClose={() => setModalExperiencia(false)} />
     </View>

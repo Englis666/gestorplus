@@ -7,3 +7,12 @@ Actualmente el estandar actual es utf8
 ALTER DATABASE gestorplus CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE nombre_de_tu_tabla CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE nombre_de_tu_tabla MODIFY columna VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+# Swagger-PHP
+composer require zircote/swagger-php
+
+1. Generar la documentación
+
+Ejecuta el siguiente comando para generar la documentación en formato JSON:
+
+php vendor/bin/openapi --output docs/swagger.json .

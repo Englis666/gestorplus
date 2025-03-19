@@ -5,11 +5,11 @@ error_reporting(E_ALL);
 
 header("Content-Type: application/json");
 
-require_once 'controlador/chatControlador.php';
-require_once 'controlador/administradorControlador.php';
-require_once 'controlador/usuarioControlador.php';
-require_once 'controlador/aspiranteControlador.php';
-require_once 'controlador/empleadoControlador.php';
+use Controlador\ChatControlador;
+use Controlador\AdministradorControlador;
+use Controlador\UsuarioControlador;
+use Controlador\AspiranteControlador;
+use Controlador\EmpleadoControlador;
 
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents('php://input'), true);
@@ -28,6 +28,7 @@ $controllers = [
     'chat' => new ChatControlador(),
     'admin' => new AdministradorControlador()
 ];
+
 
 $routes = [
     'POST' => [

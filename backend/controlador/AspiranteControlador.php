@@ -62,6 +62,17 @@ class AspiranteControlador {
         http_response_code(200);
         echo json_encode(['PostulacionVerificada' => $resultados ?? null]);
     }
+    public function obtenerPostulacionesAspirante(){
+        $num_doc = $this->obtenerNumDocDesdeToken();
+        if(!$num_doc){
+            http_response_code(400);
+            echo json_encode(['error' => 'No se encontró el número de documento en el token']);
+            return;
+        }
+        $resultados = $this->aspirante->obtenerPostulacionesAspirante($num_doc);
+        http_response_code(200);
+        echo json_encode(['MisPostulaciones' => $resultados ?? []]);
+    }
 
     public function obtenerNotificaciones() {
         $num_doc = $this->obtenerNumDocDesdeToken();
@@ -76,6 +87,19 @@ class AspiranteControlador {
         http_response_code(200);
         echo json_encode(['notificaciones' => $resultados ?? []]);
     }
+    public function obtenerDetalleConvocatoria(){
+        $idconvocatoria = $_GET['idconvocatoria'];
+        if (!$idconvocatoria){
+            http_response_code(400);
+            echo json_encode(["Error" => "No se encontro la convocatoria"]);
+            return;
+        }
+        $resultados = $this->aspirante->obtenerDetalleConvocatoria($idconvocatoria);
+        http_response_code(200);
+        echo json_encode(['DetalleConvocatoria' => $resultados]);
+
+    }
+
     public function aplicacionDeAspirante($data) {
         $num_doc = $this->obtenerNumDocDesdeToken();
 
@@ -96,5 +120,8 @@ class AspiranteControlador {
             echo json_encode(['error' => 'No se pudo completar la aplicación']);
         }
     }
+    
 }
+
+
 ?>

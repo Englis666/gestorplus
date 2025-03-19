@@ -2,62 +2,31 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const SidebarChat = ({ onUserSelect }) => {
-  const [usuariosRRHH, setUsuariosRRHH] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [rol, setRol] = useState(null);
+const SidebarChat = ({ onChatSelect }) => {
+  const [usuarios, setUsuarios] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleUserClick = async (usuario) => {
-    try {
-      const response = await axios.get('http://localhost/gestorplus/backend/', {
-        params: {
-          action: 'obtenerIdChat',
-          num_doc: usuario.num_doc  
-        }
-      });
-
-      const idChat = response.data.idChat;  
-
-      if (idChat) {
-        onUserSelect({ ...usuario, idChat });
-      } else {
-        console.error('No se encontró el idChat para este usuario');
-      }
-    } catch (error) {
-      console.error('Error al obtener el idChat del usuario:', error);
-    }
-  };
-
-  const handleGoBack = () => {
-    window.history.back();
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
+  // Función para obtener una cookie
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
+    return parts.length === 2 ? parts.pop().split(";").shift() : null;
   };
 
-  const fetchUsuariosRRHH = async (action) => {
+  // Función para obtener los usuarios
+  const fetchUsuarios = async (action) => {
     try {
       const response = await axios.get("http://localhost/gestorplus/backend/", {
         params: { action },
       });
-      const rrhhData = response.data.RRHH;
-      if (Array.isArray(rrhhData)) {
-        setUsuariosRRHH(rrhhData);
+
+      if (Array.isArray(response.data.RRHH)) {
+        setUsuarios(response.data.RRHH);
       } else {
-        console.error("La respuesta no contiene un arreglo válido:", response.data);
         setErrorMessage("Error al obtener los usuarios.");
       }
     } catch (error) {
-      console.error("Error al obtener los usuarios:", error);
       setErrorMessage("Error al obtener los usuarios.");
     }
   };
@@ -67,171 +36,81 @@ const SidebarChat = ({ onUserSelect }) => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        const Rol = decodedToken?.data?.rol;
-        setRol(Rol);
-
-        let action = "";
-        switch (Rol) {
-          case "1":
-          case "2":
-            action = "obtenerUsuarios";
-            break;
-          case "3":
-            action = "obtenerRRHH";
-            break;
-          default:
-            console.error("Rol no válido");
-            setErrorMessage("Rol no reconocido.");
-            return;
-        }
-
-        fetchUsuariosRRHH(action);
-      } catch (error) {
-        console.error("Error al decodificar el token:", error);
-        setErrorMessage("Token inválido o malformado.");
+        const rol = decodedToken?.data?.rol;
+        let action = rol === "3" ? "obtenerRRHH" : "obtenerUsuarios";
+        fetchUsuarios(action);
+      } catch {
+        setErrorMessage("Token inválido.");
       }
     } else {
-      console.error("No se encontró el token en las cookies.");
       setErrorMessage("Token no encontrado.");
     }
   }, []);
 
+  // Función para manejar la selección de un usuario y obtener/crear el chat
+  const handleChatSelection = async (num_doc_receptor) => {
+    try {
+      const token = getCookie("auth_token");
+      if (!token) {
+        setErrorMessage("Token no encontrado.");
+        return;
+      }
+
+      // Decodificar el token para obtener el ID del usuario actual
+      const decodedToken = jwtDecode(token);
+      const num_doc_emisor = decodedToken?.data?.num_doc;
+
+      if (!num_doc_emisor) {
+        setErrorMessage("No se pudo obtener el ID del usuario.");
+        return;
+      }
+
+      // Enviar la petición al backend
+      const response = await axios.post(
+        "http://localhost/gestorplus/backend/",
+        {
+          action: "obtenerOcrearChat",
+          num_doc_emisor,
+          num_doc_receptor,
+        }
+      );
+
+      if (response.data.status === "success") {
+        onChatSelect(response.data.idChat);
+      } else {
+        setErrorMessage("Error al obtener o crear el chat.");
+      }
+    } catch (error) {
+      setErrorMessage("Error al gestionar el chat.");
+    }
+  };
+
   return (
-    <div
-      style={{
-        background: "#fff",
-        width: "100%",
-        maxWidth: "400px",
-        height: "45rem",
-        marginTop: "3rem",
-        borderRadius: "16px",
-        boxShadow: "0 0 128px 0 rgba(0,0,0,0.1), 0 32px 64px -48px rgba(0,0,0,0.5)",
-        marginRight: "40px",
-        padding: "20px",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
-        <span
-          className="material-icons"
-          style={{
-            cursor: "pointer",
-            fontSize: "24px",
-            color: "#007bff",
-            marginRight: "10px",
-          }}
-          onClick={handleGoBack}
-        >
-          arrow_back
-        </span>
-        <h3
-          style={{
-            fontSize: "20px",
-            fontWeight: "bold",
-            color: "#333",
-            marginRight: "20px",
-          }}
-        >
-          Usuarios Activos
-        </h3>
-        <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
-          <span
-            className="material-icons"
-            style={{
-              position: "absolute",
-              left: "10px",
-              color: "#888",
-              fontSize: "18px",
-            }}
-          >
-            search
-          </span>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Buscar empleado"
-            aria-label="Buscar empleado"
-            style={{
-              paddingLeft: "30px",
-              paddingRight: "10px",
-              paddingTop: "5px",
-              paddingBottom: "5px",
-              width: "200px",
-              border: "1px solid #ddd",
-              borderRadius: "20px",
-              fontSize: "14px",
-            }}
-          />
-        </div>
-      </div>
+    <div style={{ background: "#fff", width: "100%", maxWidth: "400px", height: "45rem", marginTop: "3rem", borderRadius: "16px", boxShadow: "0 0 128px 0 rgba(0,0,0,0.1)", padding: "20px", display: "flex", flexDirection: "column" }}>
+      <h3 style={{ fontSize: "20px", fontWeight: "bold", color: "#333" }}>Usuarios Activos</h3>
 
-      {errorMessage && <div style={{ color: "red", marginBottom: "10px" }}>{errorMessage}</div>}
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Buscar empleado"
+        style={{ padding: "5px 10px", width: "100%", border: "1px solid #ddd", borderRadius: "20px" }}
+      />
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          overflowY: "auto",  // Agregado para permitir el desplazamiento cuando la lista es larga
-          maxHeight: "calc(100% - 100px)", // Ajusta el espacio restante después de los encabezados
-        }}
-      >
-        {usuariosRRHH
-          .filter((usuario) =>
-            usuario.nombres.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-          .map((usuario) => (
+      {errorMessage && <div style={{ color: "red", marginTop: "10px" }}>{errorMessage}</div>}
+
+      <div style={{ overflowY: "auto", maxHeight: "calc(100% - 50px)" }}>
+        {usuarios
+          .filter(usuario => usuario.nombres.toLowerCase().includes(searchQuery.toLowerCase()))
+          .map(usuario => (
             <div
               key={usuario.num_doc}
-              style={{
-                background: "#f9f9f9",
-                padding: "10px 15px",
-                borderRadius: "12px",
-                display: "flex",
-                alignItems: "center",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                cursor: "pointer",
-                transition: "background 0.3s ease",
-                ":hover": {
-                  background: "#e9e9e9",
-                },
-              }}
-              onClick={() => handleUserClick(usuario)}
+              onClick={() => handleChatSelection(usuario.num_doc)}
+              style={{ cursor: "pointer", padding: "10px", borderBottom: "1px solid #ddd" }}
             >
-              <div
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  backgroundColor: "#007bff",
-                  color: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: "bold",
-                  marginRight: "15px",
-                  fontSize: "18px",
-                }}
-              >
-                {usuario.nombres.charAt(0)}
-              </div>
-              <div>
-                <p style={{ margin: 0, fontSize: "16px", fontWeight: "bold", color: "#333" }}>
-                  {usuario.nombres}
-                </p>
-                <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>{usuario.nombreRol}</p>
-              </div>
+              <strong>{usuario.nombres}</strong> - {usuario.nombreRol}
             </div>
           ))}
-        {usuariosRRHH.filter((usuario) =>
-          usuario.nombres.toLowerCase().includes(searchQuery.toLowerCase())
-        ).length === 0 && (
-          <p style={{ color: "#888", textAlign: "center", marginTop: "20px" }}>
-            No se encontraron resultados.
-          </p>
-        )}
       </div>
     </div>
   );

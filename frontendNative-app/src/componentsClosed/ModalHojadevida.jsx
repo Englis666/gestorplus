@@ -26,10 +26,10 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        if (modalVisible) {
+        if (modalVisible && num_doc) {
             fetchHojaDeVida();
         }
-    }, [modalVisible]);
+    }, [modalVisible, num_doc]); // Solo se ejecuta cuando el modal se abre y num_doc está presente
 
     const getCookie = (name) => {
         const value = `; ${document.cookie}`;
@@ -95,7 +95,7 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
 
         try {
             const response = await axios.patch(
-                `${API_URL}/backend/`,
+                `${API_URL}`,
                 formData,
                 {
                     headers: {
@@ -116,7 +116,7 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
             Alert.alert("Error", "Ocurrió un error al actualizar.");
         } finally {
             setIsSubmitting(false);
-            toggleModal();
+            toggleModal(); // Cierra el modal después de guardar
         }
     };
 
@@ -169,7 +169,22 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
                     </ScrollView>
 
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.cancelButton} onPress={toggleModal} disabled={isSubmitting}>
+                        <TouchableOpacity
+                            style={styles.cancelButton}
+                            onPress={() => {
+                                setFormData({ // Reiniciar datos al cerrar
+                                    fechaNacimiento: "",
+                                    direccion: "",
+                                    ciudad: "",
+                                    ciudadNacimiento: "",
+                                    telefono: "",
+                                    telefonoFijo: "",
+                                    estadohojadevida: 1,
+                                });
+                                toggleModal();
+                            }}
+                            disabled={isSubmitting}
+                        >
                             <Text style={styles.buttonText}>Cerrar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} disabled={isSubmitting}>
@@ -183,5 +198,66 @@ const ModalHojaDeVida = ({ modalVisible, toggleModal, num_doc }) => {
         </Modal>
     );
 };
+
+const styles = StyleSheet.create({
+    overlay: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalContainer: {
+        width: "90%",
+        backgroundColor: "#fff",
+        padding: 20,
+        borderRadius: 10,
+        elevation: 5,
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 15,
+        textAlign: "center",
+    },
+    scrollContainer: {
+        maxHeight: 400,
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: "600",
+        marginBottom: 5,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 5,
+        padding: 10,
+        fontSize: 16,
+        marginBottom: 15,
+    },
+    buttonContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 15,
+    },
+    cancelButton: {
+        backgroundColor: "#d9534f",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    submitButton: {
+        backgroundColor: "#5cb85c",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+});
 
 export default ModalHojaDeVida;

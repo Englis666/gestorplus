@@ -18,7 +18,12 @@ const TablaEntrevistas = () => {
                 const response = await axios.get(API_URL, {
                     params: { action: "obtenerEntrevistas" },
                 });
+
+                console.log("Respuesta de la API:", response.data); // Verificar formato de datos
+
                 const data = response.data.Entrevista;
+                console.log(data);
+                
                 setEntrevistas(Array.isArray(data) ? data : []);
             } catch (err) {
                 setError("Hubo un problema al cargar las entrevistas");
@@ -35,13 +40,10 @@ const TablaEntrevistas = () => {
                 action: asistencia ? "asistenciaConfirmada" : "asistenciaNoConfirmada",
                 data: { identrevista },
             });
+            Alert.alert("Éxito", "Asistencia registrada correctamente");
         } catch (err) {
             Alert.alert("Error", "Hubo un problema al corroborar la asistencia");
         }
-    };
-
-    const abrirModalHojadevida = () => {
-        setModalOpen(true);
     };
 
     if (loading) return <Text>Cargando entrevistas...</Text>;
@@ -87,7 +89,7 @@ const TablaEntrevistas = () => {
                         <TouchableOpacity style={styles.buttonSecondary} onPress={() => setSelectedInterview(null)}>
                             <Text style={styles.buttonText}>Cerrar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonPrimary} onPress={abrirModalHojadevida}>
+                        <TouchableOpacity style={styles.buttonPrimary} onPress={() => setModalOpen(true)}>
                             <Text style={styles.buttonText}>Revisar hoja de vida</Text>
                         </TouchableOpacity>
                     </View>
