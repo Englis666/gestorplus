@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
@@ -6,82 +6,114 @@ const SidebarChat = ({ onChatSelect }) => {
   const [usuarios, setUsuarios] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [decodedToken, setDecodedToken] = useState(null);
+  const [socket, setSocket] = useState(null);
 
-  // Función para obtener una cookie
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     return parts.length === 2 ? parts.pop().split(";").shift() : null;
   };
 
-  // Función para obtener los usuarios
-  const fetchUsuarios = async (action) => {
+  const handleError = (message) => {
+    console.error(message);
+    setErrorMessage(message);
+  };
+
+  const fetchUsuarios = useCallback(async (action) => {
     try {
-      const response = await axios.get("http://localhost/gestorplus/backend/", {
+      const { data } = await axios.get("http://localhost/gestorplus/backend/", {
         params: { action },
       });
 
-      if (Array.isArray(response.data.RRHH)) {
-        setUsuarios(response.data.RRHH);
+      if (data?.RRHH && Array.isArray(data.RRHH)) {
+        setUsuarios(data.RRHH);
       } else {
-        setErrorMessage("Error al obtener los usuarios.");
+        handleError("Error al obtener los usuarios.");
       }
     } catch (error) {
-      setErrorMessage("Error al obtener los usuarios.");
+      handleError("Error al obtener los usuarios.");
     }
-  };
+  }, []);
 
   useEffect(() => {
     const token = getCookie("auth_token");
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
-        const rol = decodedToken?.data?.rol;
-        let action = rol === "3" ? "obtenerRRHH" : "obtenerUsuarios";
+        const decoded = jwtDecode(token);
+        setDecodedToken(decoded);
+        const rol = decoded?.data?.rol;
+        const action = rol === "3" ? "obtenerRRHH" : "obtenerUsuarios";
         fetchUsuarios(action);
       } catch {
-        setErrorMessage("Token inválido.");
+        handleError("Token inválido.");
       }
     } else {
-      setErrorMessage("Token no encontrado.");
+      handleError("Token no encontrado.");
     }
-  }, []);
+  }, [fetchUsuarios]);
 
-  // Función para manejar la selección de un usuario y obtener/crear el chat
+  // Configurar WebSocket
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8082");
+
+    ws.onopen = () => {
+      console.log("Conectado al WebSocket");
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data?.usuarios && Array.isArray(data.usuarios)) {
+          setUsuarios(data.usuarios);
+        }
+      } catch (error) {
+        console.error("Error al procesar datos de WebSocket:", error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error("Error en WebSocket:", error);
+      fetchUsuarios(decodedToken?.data?.rol === "3" ? "obtenerRRHH" : "obtenerUsuarios");
+    };
+
+    ws.onclose = () => {
+      console.log("Desconectado del WebSocket");
+    };
+
+    setSocket(ws);
+
+    return () => {
+      ws.close();
+    };
+  }, [fetchUsuarios, decodedToken]);
+
   const handleChatSelection = async (num_doc_receptor) => {
     try {
-      const token = getCookie("auth_token");
-      if (!token) {
-        setErrorMessage("Token no encontrado.");
+      if (!decodedToken) {
+        handleError("No se pudo obtener el ID del usuario.");
         return;
       }
 
-      // Decodificar el token para obtener el ID del usuario actual
-      const decodedToken = jwtDecode(token);
       const num_doc_emisor = decodedToken?.data?.num_doc;
-
       if (!num_doc_emisor) {
-        setErrorMessage("No se pudo obtener el ID del usuario.");
+        handleError("No se pudo obtener el ID del usuario.");
         return;
       }
 
-      // Enviar la petición al backend
-      const response = await axios.post(
-        "http://localhost/gestorplus/backend/",
-        {
-          action: "obtenerOcrearChat",
-          num_doc_emisor,
-          num_doc_receptor,
-        }
-      );
+      const { data } = await axios.post("http://localhost/gestorplus/backend/", {
+        action: "obtenerOcrearChat",
+        num_doc_emisor,
+        num_doc_receptor,
+      });
 
-      if (response.data.status === "success") {
-        onChatSelect(response.data.idChat);
+      if (data.status === "success") {
+        onChatSelect(data.idChat);
       } else {
-        setErrorMessage("Error al obtener o crear el chat.");
+        handleError("Error al obtener o crear el chat.");
       }
     } catch (error) {
-      setErrorMessage("Error al gestionar el chat.");
+      handleError("Error al gestionar el chat.");
     }
   };
 

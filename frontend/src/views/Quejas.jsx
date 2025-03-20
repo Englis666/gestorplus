@@ -1,113 +1,72 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Chat from '../componentsClosed/Chat';
-import SidebarChat from '../componentsClosed/sidebarChat';
+import Chat from "../componentsClosed/Chat";
+import SidebarChat from "../componentsClosed/sidebarChat";
 
 const Quejas = () => {
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState("");
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const [socket, setSocket] = useState(null);
   const navigate = useNavigate();
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    return parts.length === 2 ? parts.pop().split(";").shift() : null;
-  };
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8082");
+    ws.onopen = () => console.log("Conectado a WebSocket");
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("Mensaje recibido:", data);
+    };
+    ws.onerror = (error) => console.error("Error en WebSocket:", error);
+    ws.onclose = () => console.log("WebSocket desconectado");
 
-  const handleSendMessage = async (e) => {
+    setSocket(ws);
+
+    return () => ws.close();
+  }, []);
+
+  const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!message.trim() || !selectedChatId) {
-      console.error("No se puede enviar un mensaje vacío o sin chat seleccionado");
-      return;
-    }
+    if (!message.trim() || !selectedChatId || !socket) return;
 
-    const token = getCookie("auth_token");
-    if (!token) {
-      console.error("No se encontró el token. Redirigiendo al login...");
-      navigate("/login");
-      return;
-    }
+    const data = JSON.stringify({
+      idChat: selectedChatId,
+      message,
+    });
 
-    setLoading(true);
-    setError('');
-    try {
-      const response = await axios.post('http://localhost/gestorplus/backend/', {
-        action: 'enviarMensajes',
-        message,
-        idChat: selectedChatId,
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.data?.status === 'success') {
-        console.log('Mensaje enviado');
-        setMessage(''); // Solo limpiar si fue exitoso
-      } else {
-        setError(response.data.message || 'Error desconocido');
-      }
-    } catch (error) {
-      setError('Error enviando el mensaje');
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    socket.send(data);
+    setMessage("");
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh', background: '#f0f0f0', padding: '20px' }}>
-      <SidebarChat onChatSelect={setSelectedChatId} />
+    <div className="container-fluid vh-100 d-flex p-3 bg-light">
+      <div className="row flex-grow-1 w-100">
+        <div className="col-md-3 bg-white border-end p-3">
+          <SidebarChat onChatSelect={setSelectedChatId} />
+        </div>
 
-      <div style={{ background: '#fff', width: '100%', marginTop: '30px', borderRadius: '16px', boxShadow: '0 0 128px 0 rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-        <section style={{ padding: '20px' }}>
-          <header style={{ display: 'flex', alignItems: 'center', padding: '18px 30px' }}>
-            <span style={{ fontSize: '17px', fontWeight: '500' }}>
-              {selectedChatId ? `Chat ID: ${selectedChatId}` : 'Selecciona un usuario'}
-            </span>
+        <div className="col-md-9 d-flex flex-column bg-white shadow rounded p-3">
+          <header className="d-flex align-items-center border-bottom pb-2 mb-3">
+            <h5 className="m-0">{selectedChatId ? `Chat ID: ${selectedChatId}` : "Selecciona un usuario"}</h5>
           </header>
 
-          <Chat selectedUser={selectedChatId} error={error} loading={loading} />
+          <div className="flex-grow-1 overflow-auto">
+            <Chat selectedChat={selectedChatId} />
+          </div>
 
-          <form onSubmit={handleSendMessage} style={{ display: 'flex', justifyContent: 'space-between', padding: '18px 30px' }}>
+          <form className="d-flex mt-3" onSubmit={handleSendMessage}>
             <input
               type="text"
+              className="form-control me-2"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Escribe un mensaje"
-              disabled={loading || !selectedChatId}
-              style={{
-                height: '45px',
-                width: 'calc(100% - 58px)',
-                fontSize: '16px',
-                padding: '0 13px',
-                border: '1px solid #e6e6e6',
-                borderRadius: '5px 0 0 5px',
-                outline: 'none',
-                backgroundColor: selectedChatId ? '#fff' : '#f0f0f0',
-              }}
+              disabled={!selectedChatId}
             />
-            <button
-              type="submit"
-              disabled={loading || !selectedChatId || !message.trim()}
-              style={{
-                width: "55px",
-                border: "none",
-                background: selectedChatId ? "#007bff" : "#aaa",
-                color: "#fff",
-                fontSize: "19px",
-                cursor: selectedChatId ? "pointer" : "not-allowed",
-                borderRadius: "0 5px 5px 0",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <i className="material-icons" style={{ color: "#fff", fontSize: "24px" }}>send</i>
+            <button type="submit" className="btn btn-primary" disabled={!selectedChatId || !message.trim()}>
+              <i className="bi bi-send"></i>
             </button>
           </form>
-        </section>
+        </div>
       </div>
     </div>
   );

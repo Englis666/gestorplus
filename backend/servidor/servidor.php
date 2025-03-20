@@ -44,7 +44,8 @@ $routes = [
         
         'aplicacionDeAspirante' => ['aspirante', 'aplicacionDeAspirante'],
         
-        'enviarMensajes' => ['chat', 'enviarMensajes'],
+        'enviarMensaje' => ['chat', 'enviarMensaje'],
+        'obtenerOcrearChat' => ['chat' , 'obtenerOcrearChat'],
         'iniciarChat' => ['chat', 'iniciarChat'],
         
         'agregarCargo' => ['admin', 'agregarCargo'],
@@ -60,7 +61,6 @@ $routes = [
     'GET' => [
         'consultarHorasExtra' => ['usuario', 'agregarHorasExtra'],
         
-        'obtenerIdChat' => ['chat', 'obtenerIdChat'],
         'obtenerMensajes' => ['chat', 'obtenerMensajes'],
         
         'obtenerConvocatorias' => ['usuario', 'obtenerConvocatorias'],

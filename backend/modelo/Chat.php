@@ -13,54 +13,29 @@ class Chat {
         $this->db = $db;
     }
 
-    // Iniciar o buscar un chat
-    public function iniciarChat($targetNum_doc, $num_doc) {
-        $sql = "SELECT idChat FROM chats WHERE 
-                   (num_doc_emisor = :num_doc AND num_doc_receptor = :targetNum_doc)
-                OR (num_doc_emisor = :targetNum_doc AND num_doc_receptor = :num_doc) 
-                LIMIT 1";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-        $stmt->bindParam(':targetNum_doc', $targetNum_doc, PDO::PARAM_INT);
-        $stmt->execute();
-    
-        $chatExistente = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-        if ($chatExistente) {
-            return $chatExistente['idChat'];
-        }
-    
-        $sql = "INSERT INTO chats (num_doc_emisor, num_doc_receptor) 
-                VALUES (:num_doc, :targetNum_doc)";
-        $stmt = $this->db->prepare($sql);  
-        $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);  
-        $stmt->bindParam(':targetNum_doc', $targetNum_doc, PDO::PARAM_INT);
-        
+    // Enviar mensaje
+   public function enviarMensaje($idChat, $num_doc_emisor, $message) {
+    try {
+        $query = "INSERT INTO messages (idChat, num_doc_emisor, message, created_at) 
+                  VALUES (:idChat, :num_doc_emisor, :message, NOW())";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':idChat', $idChat, PDO::PARAM_INT);
+        $stmt->bindParam(':num_doc_emisor', $num_doc_emisor, PDO::PARAM_INT);
+        $stmt->bindParam(':message', $message, PDO::PARAM_STR);
+
         if ($stmt->execute()) {
-            return $this->db->lastInsertId();
+            return true;
         } else {
+            error_log("Error en la ejecución de la consulta: " . json_encode($stmt->errorInfo()));
             return false;
         }
+    } catch (PDOException $e) {
+        error_log("Excepción PDO: " . $e->getMessage());
+        return false;
     }
+}
 
-    // Enviar mensaje
-    public function enviarMensajes($message, $num_doc, $idChat) {
-        if (!$idChat) {
-            return [
-                'status' => 'error',
-                'message' => 'No se encontró un chat válido.'
-            ];
-        }
-
-        $sql = "INSERT INTO messages (message, num_doc_emisor, idChat) VALUES (?, ?, ?)";
-        $stmt = $this->db->prepare($sql);
-
-        if ($stmt->execute([$message, $num_doc, $idChat])) {
-            return ['status' => 'success'];
-        } else {
-            return ['status' => 'error', 'message' => 'No se pudo enviar el mensaje.'];
-        }
-    }
 
     // Obtener el último chat del usuario
     public function obtenerOcrearChat($num_doc_emisor, $num_doc_receptor) {

@@ -2,6 +2,7 @@
 namespace Controlador;
 
 use Config\DataBase;
+use Config\Clave;
 use Modelo\Chat;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -30,7 +31,7 @@ class ChatControlador {
         $token = str_replace('Bearer ', '', $authHeader);
 
         try {
-            $decoded = JWT::decode($token, new Key(SECRET_KEY, JWT_ALGO));
+            $decoded = JWT::decode($token, new Key(Clave::SECRET_KEY, Clave::JWT_ALGO));
             return $decoded->data->num_doc ?? null;
         } catch (\Firebase\JWT\ExpiredException $e) {
             http_response_code(401);
@@ -47,65 +48,30 @@ class ChatControlador {
         }
     }
 
-    public function iniciarChat($data){
-        $num_doc = $this->obtenerNumDocDesdeToken();
-        
-        if (!$num_doc) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'No se encontró el número de documento']);
-            return;
-        }
 
-        $targetNum_doc = $data['targetNum_doc'] ?? null;
-
-        if (!$targetNum_doc) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Número de documento del receptor no proporcionado']);
-            return;
-        }
-
-        $resultado = $this->chat->iniciarChat($targetNum_doc, $num_doc);
-        
-        if ($resultado) {
-            echo json_encode([
-                'status' => 'success',
-                'message' => 'Chat iniciado correctamente',
-                'idChat' => $resultado
-            ]);
-        } else {
-            http_response_code(500);
-            echo json_encode(['status' => 'error', 'message' => 'Error al iniciar el chat']);
-        }
+    public function enviarMensaje($data) {
+    if (!isset($data['idChat'], $data['message']) || empty(trim($data['message']))) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'message' => 'Datos incompletos o mensaje vacío']);
+        exit;
     }
 
-    public function enviarMensajes($data) {
-        $num_doc = $this->obtenerNumDocDesdeToken();
+    $idChat = $data['idChat'];
+    $num_doc_emisor = $this->obtenerNumDocDesdeToken();
 
-        if (!$num_doc) {
-            return;
-        }
 
-        if (empty($data['message']) || empty($data['idChat'])) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Datos inválidos']);
-            return;
-        }
+    $message = $data['message'];
 
-        $message = trim($data['message']);
-        $idChat = $data['idChat'];
-
-        $resultado = $this->chat->enviarMensajes($message, $idChat);
-
-        if ($resultado) {
-            echo json_encode([
-                'status' => 'success',
-                'message' => 'Mensaje enviado correctamente'
-            ]);
-        } else {
-            http_response_code(500);
-            echo json_encode(['status' => 'error', 'message' => 'Error al enviar el mensaje']);
-        }
+    if ($this->chat->enviarMensaje($idChat, $num_doc_emisor, $message)) {
+        http_response_code(200);
+        echo json_encode(['status' => 'success', 'message' => 'Mensaje enviado correctamente']);
+    } else {
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Error al enviar el mensaje']);
     }
+    exit;
+}
+
 
     public function obtenerIdChat() {
         $num_doc = $this->obtenerNumDocDesdeToken();
@@ -123,14 +89,30 @@ class ChatControlador {
         }
     }
 
-    public function obtenerMensajes($data) {
-        $num_doc = $this->obtenerNumDocDesdeToken();
+    public function obtenerOcrearChat($data){
+        $num_doc_emisor = $data['num_doc_emisor'] ?? null;
+        $num_doc_receptor = $data['num_doc_receptor'] ?? null;
 
-        if (!$num_doc) {
+        if (!$num_doc_receptor || !$num_doc_emisor){
+            http_response_code(400);
+            echo json_encode(['status' => 'Error' , 'message' => 'num docs no proporcionado']);
             return;
         }
+        
+        $idChat = $this->chat->obtenerOcrearChat($num_doc_emisor, $num_doc_receptor);
 
-        $idChat = $data['idChat'] ?? null;
+        if ($idChat === null) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Error al obtener o crear el chat']);
+            return;
+        }
+        
+        echo json_encode(['status' => 'success', 'idChat' => $idChat]);
+    }
+
+    public function obtenerMensajes() {
+
+        $idChat = $_GET['idChat'] ?? null;
 
         if (!$idChat) {
             http_response_code(400);
