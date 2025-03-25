@@ -32,7 +32,7 @@ const TablaEntrevistas = () => {
         try {
             await axios.post("http://localhost/gestorplus/backend/", {
                 action: asistencia ? "asistenciaConfirmada" : "asistenciaNoConfirmada",
-                data : { identrevista }
+                data: { identrevista }
             });
         } catch (err) {
             console.error("Error al actualizar la asistencia", err);
@@ -111,11 +111,13 @@ const TablaEntrevistas = () => {
                                 <p><strong>Hora:</strong> {selectedInterview.hora}</p>
                                 <p><strong>Lugar:</strong> {selectedInterview.lugarMedio}</p>
                                 <p><strong>Descripción:</strong> {selectedInterview.descripcion}</p>
+                                <p>id entrevista : {selectedInterview.identrevista}</p>
+                                <p>id postulacion {selectedInterview.idpostulacion}</p>
                                 <button className="btn btn-secondary me-2" onClick={() => setSelectedInterview(null)}>
                                     Cerrar
                                 </button>
                                 <button className="btn btn-primary" onClick={abrirModalHojadevida}>
-                                    Revisar hoja de vida 
+                                    Revisar hoja de vida
                                 </button>
                             </div>
                         </div>
