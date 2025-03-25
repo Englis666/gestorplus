@@ -52,6 +52,8 @@ const Perfil = () => {
       });
 
       if (response.status === 200) {
+        console.log("Datos recibidos del backend:", response.data);
+
         const mappedData = mapData(response.data);
         setFormData((prevFormData) => ({
           ...prevFormData,
