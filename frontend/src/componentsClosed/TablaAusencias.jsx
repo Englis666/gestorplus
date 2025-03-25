@@ -75,7 +75,7 @@ const TablaAusencias = () => {
           })
           .catch((err) => {
             console.error("Error al obtener las Ausencias:", err);
-            setError("Hubo un problema al cargar las Ausencias.");
+            setError("Hubo un problema al cargar las Ausencias.", err);
             setLoading(false);
           });
       } catch (error) {
@@ -100,7 +100,7 @@ const TablaAusencias = () => {
       .then((response) => {
         console.log("Respuesta del servidor:", response.data);
         alert("Notificación aceptada con éxito.");
-        
+
         // Actualizar la lista de ausencias
         setAusencias((prevAusencias) =>
           prevAusencias.map((ausencia) =>
@@ -115,7 +115,7 @@ const TablaAusencias = () => {
         alert("Hubo un problema al corroborar la jornada.");
       });
   };
-  
+
   const handleRechazar = (idausencia) => {
     console.log("Rechazando ausencia con id:", idausencia);
     axios
@@ -127,7 +127,7 @@ const TablaAusencias = () => {
         console.log("Respuesta del servidor al rechazar:", response.data);
         if (response.data.success) {
           alert("Notificación rechazada con éxito.");
-          
+
           // Actualizar la lista de ausencias
           setAusencias((prevAusencias) =>
             prevAusencias.map((ausencia) =>
@@ -137,12 +137,12 @@ const TablaAusencias = () => {
             )
           );
         } else {
-          alert("Hubo un problema al rechazar la notificación.");
+          alert("Hubo un problema al rechazar la notificación.",);
         }
       })
       .catch((err) => {
         console.error("Error al rechazar la notificación:", err);
-        alert("Hubo un problema al rechazar la notificación.");
+        alert("Hubo un problema al rechazar la notificación.", err);
       });
   };
 
@@ -162,12 +162,12 @@ const TablaAusencias = () => {
       alert("Token no encontrado. Inicia sesión nuevamente.");
       return;
     }
-  
+
     if (new Date(solicitud.fechaInicio) > new Date(solicitud.fechaFin)) {
       alert("La fecha de inicio no puede ser posterior a la fecha de fin.");
       return;
     }
-  
+
     // Realizar la solicitud al backend
     axios
       .post(
@@ -197,7 +197,7 @@ const TablaAusencias = () => {
         alert("Hubo un problema al enviar la solicitud de ausencia.");
       });
   };
-  
+
 
   if (loading) {
     return <div>Cargando Ausencias...</div>;
@@ -276,7 +276,7 @@ const TablaAusencias = () => {
       </div>
 
       <div className="row mt-4 container mt-5 card shadow-sm border-0 mb-5"
-            style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
+        style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
         <div className="col-12">
           <h4 className="p-2">Solicitar Ausencia</h4>
           <form onSubmit={handleSolicitarAusencia}>
