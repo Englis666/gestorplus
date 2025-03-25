@@ -69,7 +69,7 @@ const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Rechazar</button>
-                        <button className="btn btn-primary" onClick={() => navigate("/Contratos")}>Aceptar y asignarle Sistema de Gestión</button>
+                        <button className="btn btn-primary" onClick={() => navigate("/SistemaDeGestion", { state: { num_doc, nombres: formData.nombres } })}>Aceptar y asignarle Sistema de Gestión</button>
                     </div>
                 </div>
             </div>
