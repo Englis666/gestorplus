@@ -111,6 +111,10 @@ class AdministradorControlador {
         $this->jsonResponse(['RRHH' => $this->administrador->obtenerUsuarios() ?: []]);
     }
 
+    public function obtenerCargosParaConvocatorias(){
+        $this->jsonResponse(['Cargos' => $this->administrador->obtenerCargosParaConvocatorias() ?: []]);
+    }
+
     public function obtenerEntrevistas() {
         $this->jsonResponse(['Entrevista' => $this->administrador->obtenerEntrevistas() ?: []]);
     }
@@ -160,6 +164,17 @@ class AdministradorControlador {
         }
         $this->jsonResponse(['Convocatoria' => $this->administrador->agregarConvocatoria($data) ?: []]);
     }
+    public function guardarResultadosSistemaDeGestion($data){
+        $required = ['estado_salud' , 'evaluacionRiesgos' , 'recomendaciones' , 'aptitudLaboral' , 'comentarios' , 'estadoEvaluacion'];
+        foreach ($required as $key){
+            if(!isset($data[$key])){
+                $this->jsonResponse(['error' => 'Faltan datos'] , 400);
+            }
+        }
+        $this->jsonResponse(['SistemaDeGestion' => $this->administrador->guardarResultadosSistemaDeGestion($data) ?: []]);
+
+    }
+
 
     public function asignarEntrevista($data) {
         $required = ['fecha', 'hora', 'lugarMedio'];
