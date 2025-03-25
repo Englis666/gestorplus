@@ -70,7 +70,7 @@ $routes = [
         'datosPerfil' => ['usuario', 'datosPerfil'],
         'obtenerDatosParaCertificado' => ['usuario', 'obtenerDatosParaCertificado'],
         'obtenerNotificaciones' => ['usuario', 'obtenerNotificaciones'],
-
+        'obtenerDatosParaCertificado' => ['usuario' , 'obtenerDatosParaCertificado'],
         'obtenerJornadas' => ['empleado', 'obtenerJornadas'],
         'obtenerAusencias' => ['empleado', 'obtenerAusencias'],
         'obtenerMisVacaciones' => ['empleado', 'obtenerMisVacaciones'],
