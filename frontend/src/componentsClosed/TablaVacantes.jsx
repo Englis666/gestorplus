@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const TablaVacantes = () => {
-    const [Convocatorias, setConvocatorias] = useState([]);
-    const [Cargos, setCargos] = useState([]);
+    const [convocatorias, setConvocatorias] = useState([]);
+    const [cargos, setCargos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [agregar, setAgregar] = useState({
@@ -12,75 +12,66 @@ const TablaVacantes = () => {
         requisitos: "",
         salario: "",
         cantidadConvocatoria: "",
+        nombreCargo: "",
     });
 
-    loadingCargos(() => {
+    // Cargar Cargos
+    useEffect(() => {
         axios.get("http://localhost/gestorplus/backend/", {
-            params: { action: "obtenerCargosParaConvocatorias" },
+            params: { action: "obtenerCargos" },
         })
             .then((response) => {
-                console.log("respuesta", response.data);
-                const Cargos = response.data?.Cargos;
-                if (Array.isArray(Cargos)) {
-                    setCargos(Cargos);
+                console.log("Cargos obtenidos:", response.data);
+                const cargosData = response.data?.cargos; // Asegurar que se obtiene correctamente
+                if (Array.isArray(cargosData)) {
+                    setCargos(cargosData);
                 } else {
                     setCargos([]);
                 }
-                setLoading(false);
             })
             .catch((err) => {
-                console.error("Error al obtener el cargo", err);
-                setError('Hubo un problema al cargar los cargos para la convocatoria');
-                setLoading(false);
-            });
+                console.error("Error al obtener los cargos:", err);
+                setError("Hubo un problema al cargar los cargos para la convocatoria");
+            })
+            .finally(() => setLoading(false));
     }, []);
 
+    // Cargar Convocatorias
     useEffect(() => {
-        axios
-            .get("http://localhost/gestorplus/backend/", {
-                params: { action: "obtenerConvocatorias" },
-            })
+        axios.get("http://localhost/gestorplus/backend/", {
+            params: { action: "obtenerConvocatorias" },
+        })
             .then((response) => {
-                console.log("respuesta", response.data);
-                const convocatorias = response.data?.convocatorias;
-                if (Array.isArray(convocatorias)) {
-                    setConvocatorias(convocatorias);
-                } else {
-                    setConvocatorias([]);
-                }
-                setLoading(false);
+                console.log("Convocatorias obtenidas:", response.data);
+                const convocatoriasData = response.data?.convocatorias;
+                setConvocatorias(Array.isArray(convocatoriasData) ? convocatoriasData : []);
             })
             .catch((err) => {
-                console.error("Error al obtener las convocatorias", err);
+                console.error("Error al obtener convocatorias:", err);
                 setError("Hubo un problema al cargar las Convocatorias");
-                setLoading(false);
-            });
+            })
+            .finally(() => setLoading(false));
     }, []);
 
+    // Agregar nueva convocatoria
     const handleAgregar = (e) => {
         e.preventDefault();
-        console.log("Datos enviados al backend", agregar);
-        axios
-            .post("http://localhost/gestorplus/backend/", {
-                action: "agregarConvocatoria",
-                ...agregar,
-            })
+        console.log("Datos enviados al backend:", agregar);
+
+        axios.post("http://localhost/gestorplus/backend/", {
+            action: "agregarConvocatoria",
+            ...agregar,
+        })
             .then((response) => {
                 console.log(response.data);
-                const convocatorias = response.data?.convocatorias;
-                if (Array.isArray(convocatorias)) {
-                    setConvocatorias(convocatorias);
-                } else {
-                    setConvocatorias([]);
-                }
-                setLoading(false);
+                const convocatoriasData = response.data?.convocatorias;
+                setConvocatorias(Array.isArray(convocatoriasData) ? convocatoriasData : []);
             })
             .catch((err) => {
-                console.error("Error al agregar las convocatorias", err);
-                setError("Hubo un problema al cargar las Convocatorias");
-                setLoading(false);
-            });
-
+                console.error("Error al agregar convocatoria:", err);
+                setError("Hubo un problema al agregar la convocatoria");
+            })
+            .finally(() => setLoading(false));
     };
 
     return (
@@ -88,6 +79,10 @@ const TablaVacantes = () => {
             <h2 className="mb-4 text-center text-dark font-weight-bold mt-4">
                 Gestión y Control de Convocatorias
             </h2>
+            {error && <p className="alert alert-danger">{error}</p>}
+            {loading && <p className="text-center">Cargando datos...</p>}
+
+            {/* Tabla de Convocatorias */}
             <div className="row g-4">
                 <div className="col-12 col-md-12">
                     <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
@@ -97,39 +92,41 @@ const TablaVacantes = () => {
                                 <table className="table table-hover" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}>
                                     <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                                         <tr>
-                                            <th>Título de la convocatoria</th>
-                                            <th>Descripción de la convocatoria</th>
-                                            <th>Requisitos de la convocatoria</th>
-                                            <th>Salario de la convocatoria</th>
-                                            <th>Cupos de la convocatoria</th>
+                                            <th>Convocatoria</th>
+                                            <th>Descripción</th>
+                                            <th>Requisitos</th>
+                                            <th>Salario</th>
+                                            <th>Cupos</th>
+                                            <th>Cargo</th>
                                             <th>Acción</th>
                                             <th>Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody className="text-center">
-                                        {Convocatorias.length > 0 ? (
-                                            Convocatorias.map((convocatoria) => (
+                                        {convocatorias.length > 0 ? (
+                                            convocatorias.map((convocatoria) => (
                                                 <tr key={convocatoria.idconvocatoria}>
-                                                    <td className="py-3 px-4">{convocatoria.nombreConvocatoria}</td>
-                                                    <td className="py-3 px-4">{convocatoria.descripcion}</td>
-                                                    <td className="py-3 px-4">{convocatoria.requisitos}</td>
-                                                    <td className="py-3 px-4">{convocatoria.salario}</td>
-                                                    <td className="py-3 px-4">{convocatoria.cantidadConvocatoria}</td>
+                                                    <td>{convocatoria.nombreConvocatoria}</td>
+                                                    <td>{convocatoria.descripcion}</td>
+                                                    <td>{convocatoria.requisitos}</td>
+                                                    <td>{convocatoria.salario}</td>
+                                                    <td>{convocatoria.cantidadConvocatoria}</td>
+                                                    <td>{convocatoria.nombreCargo}</td>
                                                     <td>
                                                         <button className="btn btn-success btn-sm me-2">
-                                                            Activar Convocatoria
+                                                            Activar
                                                         </button>
                                                     </td>
                                                     <td>
                                                         <button className="btn btn-danger btn-sm">
-                                                            Desactivar Convocatoria
+                                                            Desactivar
                                                         </button>
                                                     </td>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="7">No hay Convocatorias disponibles.</td>
+                                                <td colSpan="8">No hay Convocatorias disponibles.</td>
                                             </tr>
                                         )}
                                     </tbody>
@@ -140,11 +137,13 @@ const TablaVacantes = () => {
                 </div>
             </div>
 
-            <div className="row mt-4 container mt-5 card shadow-sm border- mb-5">
+            {/* Formulario para agregar convocatoria */}
+            <div className="row mt-4 container mt-5 card shadow-sm border-0 mb-5">
                 <form onSubmit={handleAgregar}>
-                    <h2 className="mt-2">Formulario para agregar convocatorias</h2>
+                    <h2 className="mt-2">Agregar Convocatoria</h2>
+
                     <div className="mb-3">
-                        <label htmlFor="" className="form-label">Nombre de la convocatoria</label>
+                        <label className="form-label">Nombre de la convocatoria</label>
                         <input
                             type="text"
                             value={agregar.nombreConvocatoria}
@@ -152,30 +151,39 @@ const TablaVacantes = () => {
                             className="form-control"
                         />
                     </div>
+
                     <div className="mb-3">
-                        <label htmlFor="">Descripción</label>
+                        <label>Descripción</label>
                         <input
                             type="text"
                             value={agregar.descripcion}
                             onChange={(e) => setAgregar({ ...agregar, descripcion: e.target.value })}
-                            name="descripcion" className="form-control"
+                            className="form-control"
                         />
                     </div>
+
                     <div className="mb-3">
-                        <label htmlFor="">Cargo de la convocatoria</label>
+                        <label>Cargo de la convocatoria</label>
                         <select
                             value={agregar.nombreCargo}
-                            id=""
                             onChange={(e) => setAgregar({ ...agregar, nombreCargo: e.target.value })}
-                            name="nombreCargo"
                             className="form-control"
                         >
-
+                            <option value="">Seleccione un cargo</option>
+                            {cargos.length > 0 ? (
+                                cargos.map((cargo) => (
+                                    <option key={cargo.idcargo} value={cargo.nombreCargo}>
+                                        {cargo.nombreCargo}
+                                    </option>
+                                ))
+                            ) : (
+                                <option disabled>Cargando cargos...</option>
+                            )}
                         </select>
                     </div>
 
                     <div className="mb-3">
-                        <label htmlFor="">Requisitos</label>
+                        <label>Requisitos</label>
                         <input
                             type="text"
                             value={agregar.requisitos}
@@ -183,18 +191,19 @@ const TablaVacantes = () => {
                             className="form-control"
                         />
                     </div>
+
                     <div className="mb-3">
-                        <label htmlFor="">Salario</label>
+                        <label>Salario</label>
                         <input
                             type="number"
                             value={agregar.salario}
                             onChange={(e) => setAgregar({ ...agregar, salario: e.target.value })}
-                            name="salario"
                             className="form-control"
                         />
                     </div>
+
                     <div className="mb-3">
-                        <label htmlFor="">Total de cupos para la convocatoria</label>
+                        <label>Total de cupos</label>
                         <input
                             type="number"
                             value={agregar.cantidadConvocatoria}
@@ -202,6 +211,7 @@ const TablaVacantes = () => {
                             className="form-control"
                         />
                     </div>
+
                     <button type="submit" className="btn btn-primary mb-2">Agregar Vacante</button>
                 </form>
             </div>

@@ -37,7 +37,7 @@ class EmpleadoControlador {
         $token = $this->obtenerToken();
 
         try {
-            return JWT::decode($token, new Key(SECRET_KEY, JWT_ALGO))->data->num_doc;
+            return JWT::decode($token, new Key(Clave::SECRET_KEY, Clave::JWT_ALGO))->data->num_doc;
         } catch (\Firebase\JWT\ExpiredException $e) {
             $this->jsonResponse(['error' => 'Token expirado'], 401);
         } catch (\Firebase\JWT\SignatureInvalidException $e) {
