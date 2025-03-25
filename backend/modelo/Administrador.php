@@ -401,47 +401,71 @@ class Administrador {
         return false;
     }
 
-    public function notificacionAceptada($idausencia){
-        $sql = "UPDATE ausencia SET justificada = 'Justificada' WHERE idausencia = :idausencia";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+    public function notificacionAceptada($idausencia) {
+    // Actualizar ausencia
+    $sql = "UPDATE ausencia SET justificada = 'Justificada' WHERE idausencia = :idausencia";
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Obtener el num_doc del usuario
+    $sqlObtenerNumDoc = "SELECT usuario_num_doc FROM ausencia WHERE idausencia = :idausencia";
+    $stmtNumDoc = $this->db->prepare($sqlObtenerNumDoc);
+    $stmtNumDoc->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+    $stmtNumDoc->execute();
+    $numDoc = $stmtNumDoc->fetchColumn(); // Extraer el valor
+
+    if ($stmt->execute()) {
+        $descripcionNotificacion = "Ausencia aceptada";
+        $tipo = "Aceptacion";
+
+        // Insertar la notificación con num_doc
+        $insertarNotificacion = "INSERT INTO notificacion (descripcionNotificacion, tipo, num_doc) VALUES (?, ?, ?)";
+        $stmt = $this->db->prepare($insertarNotificacion);
+        $stmt->bindParam(1, $descripcionNotificacion, PDO::PARAM_STR);
+        $stmt->bindParam(2, $tipo, PDO::PARAM_STR);
+        $stmt->bindParam(3, $numDoc, PDO::PARAM_STR); // Agregar num_doc
         $stmt->execute();
-        
-        if ($stmt->execute()) {
-            $descripcionNotificacion = "Ausencia aceptada";
-            $tipo = "Aceptacion";
-            $insertarNotificacion = "INSERT INTO notificacion (descripcionNotificacion, tipo) VALUES (?, ?)";
-            $stmt = $this->db->prepare($insertarNotificacion);
-            $stmt->bindParam(1, $descripcionNotificacion, PDO::PARAM_STR);
-            $stmt->bindParam(2, $tipo, PDO::PARAM_STR);
-            $stmt->execute();
-            
-            return true; 
-        } else {
-            return false;
-        }
+
+        return true;
+    } else {
+        return false;
     }
-    
-    public function notificacionRechazada($idausencia){
-        $sql = "UPDATE ausencia SET justificada = 'Rechazada' WHERE idausencia = :idausencia";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+}
+
+  public function notificacionRechazada($idausencia) {
+    // Actualizar ausencia
+    $sql = "UPDATE ausencia SET justificada = 'Rechazada' WHERE idausencia = :idausencia";
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Obtener el num_doc del usuario
+    $sqlObtenerNumDoc = "SELECT usuario_num_doc FROM ausencia WHERE idausencia = :idausencia";
+    $stmtNumDoc = $this->db->prepare($sqlObtenerNumDoc);
+    $stmtNumDoc->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+    $stmtNumDoc->execute();
+    $numDoc = $stmtNumDoc->fetchColumn(); // Extraer el valor
+
+    if ($stmt->execute()) {
+        $descripcionNotificacion = "Ausencia rechazada";
+        $tipo = "Rechazo";
+
+        // Insertar la notificación con num_doc
+        $insertarNotificacion = "INSERT INTO notificacion (descripcionNotificacion, tipo, num_doc) VALUES (?, ?, ?)";
+        $stmt = $this->db->prepare($insertarNotificacion);
+        $stmt->bindParam(1, $descripcionNotificacion, PDO::PARAM_STR);
+        $stmt->bindParam(2, $tipo, PDO::PARAM_STR);
+        $stmt->bindParam(3, $numDoc, PDO::PARAM_STR); // Agregar num_doc
         $stmt->execute();
-        
-        if ($stmt->execute()) {
-            $descripcionNotificacion = "Ausencia rechazada";
-            $tipo = "Rechazo";
-            $insertarNotificacion = "INSERT INTO notificacion (descripcionNotificacion, tipo) VALUES (?, ?)";
-            $stmt = $this->db->prepare($insertarNotificacion);
-            $stmt->bindParam(1, $descripcionNotificacion, PDO::PARAM_STR);
-            $stmt->bindParam(2, $tipo, PDO::PARAM_STR);
-            $stmt->execute();
-            
-            return true; 
-        } else {
-            return false; 
-        }
+
+        return true;
+    } else {
+        return false;
     }
+}
+
+
     public function agregarCargo($nombreCargo){
         $sql = "INSERT INTO cargo (nombreCargo, estadoCargo) VALUES (?, ?)";
         $stmt = $this->db->prepare($sql);
