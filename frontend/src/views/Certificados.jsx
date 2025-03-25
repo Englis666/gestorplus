@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { jsPDF } from "jspdf"; 
+import { jsPDF } from "jspdf";
 import NavbarClosed from "../componentsClosed/Navbar";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
@@ -42,19 +42,16 @@ const Certificados = () => {
         const response = await axios.get("http://localhost/gestorplus/backend/", {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerDatosParaCertificado" },
-        })
-        .then((response) => {
-          const certificado = response.data?.Certificado;
-          console.log(response.data);
+        });
 
-          if (Array.isArray(certificado)){
-            setTipoCertificado(certificado);
-          } else {
-            console.error("Los datos de los certificados no son un array");
-            setTipoCertificado(false);
-          }
+        console.log(response.data); // Verifica qué devuelve la API
 
-        })
+        if (response.data?.Certificado) {
+          setUserData(response.data.Certificado);
+        } else {
+          console.error("Los datos del usuario no están en la respuesta");
+          setUserData({});
+        }
       } catch (err) {
         console.error("Error al obtener los datos para el certificado", err);
         setUserData({});

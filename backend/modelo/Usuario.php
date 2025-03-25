@@ -251,6 +251,7 @@ class Usuario {
     public function obtenerDatosParaCertificado($num_doc){
          $sql = "SELECT * FROM vinculacion as v
                  INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc
+                 INNER JOIN rol as r ON u.rol_idrol = r.idrol
                  INNER JOIN evaluacionessg as e ON v.evaluacionesSg_idevaluacion = e.idevaluacion
                  INNER JOIN entrevista as ent ON e.entrevista_identrevista = ent.identrevista
                  INNER JOIN postulacion as p ON ent.postulacion_idpostulaciones = p.idpostulacion
