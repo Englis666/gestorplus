@@ -51,10 +51,7 @@ class EmpleadoControlador {
         $this->jsonResponse([$clave => $resultado ?: []]);
     }
 
-    public function obtenerNotificaciones(): void {
-        $num_doc = $this->validarToken();
-        $this->responder('Notificaciones', $this->empleado->obtenerNotificaciones($num_doc));
-    }
+    
 
     public function obtenerMisVacaciones(): void {
         $num_doc = $this->validarToken();

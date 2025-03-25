@@ -73,6 +73,11 @@ class UsuarioControlador {
         
         $this->jsonResponse('success', 'Credenciales correctas', ['token' => JWT::encode($payload, Clave::SECRET_KEY, Clave::JWT_ALGO)]); 
     }
+    public function obtenerNotificaciones(): void {
+        $decoded = $this->verificarToken();
+        $this->jsonResponse('Notificaciones', $this->usuario->obtenerNotificaciones($decoded->data->num_doc));
+    }
+
 
     public function datosPerfil() {
         $decoded = $this->verificarToken();

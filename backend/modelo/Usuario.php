@@ -95,6 +95,25 @@ class Usuario {
             return false; 
         }
     }
+
+    public function obtenerNotificaciones($num_doc){
+        try{
+            $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            if($resultado){
+                return $resultado;
+            }
+            return [];
+        }catch (PDOException $e) {
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return [];
+        }
+    }
     
     public function datosPerfil($num_doc){
         $sql = "SELECT * FROM usuario as u

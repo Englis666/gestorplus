@@ -69,8 +69,8 @@ $routes = [
         'obtenerRRHH' => ['usuario', 'obtenerRRHH'],
         'datosPerfil' => ['usuario', 'datosPerfil'],
         'obtenerDatosParaCertificado' => ['usuario', 'obtenerDatosParaCertificado'],
+        'obtenerNotificaciones' => ['usuario', 'obtenerNotificaciones'],
 
-        'obtenerNotificaciones' => ['empleado', 'obtenerNotificaciones'],
         'obtenerJornadas' => ['empleado', 'obtenerJornadas'],
         'obtenerAusencias' => ['empleado', 'obtenerAusencias'],
         'obtenerMisVacaciones' => ['empleado', 'obtenerMisVacaciones'],
