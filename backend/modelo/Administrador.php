@@ -402,9 +402,10 @@ class Administrador {
     }
 
     public function notificacionAceptada($idausencia){
-        $sql = "UPDATE ausencia SET justificada = 1 WHERE idausencia = :idausencia";
+        $sql = "UPDATE ausencia SET justificada = 'Justificada' WHERE idausencia = :idausencia";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+        $stmt->execute();
         
         if ($stmt->execute()) {
             $descripcionNotificacion = "Ausencia aceptada";
@@ -425,6 +426,7 @@ class Administrador {
         $sql = "UPDATE ausencia SET justificada = 'Rechazada' WHERE idausencia = :idausencia";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+        $stmt->execute();
         
         if ($stmt->execute()) {
             $descripcionNotificacion = "Ausencia rechazada";
