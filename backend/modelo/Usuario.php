@@ -113,6 +113,7 @@ class Usuario {
     }
 
 
+    //PORQUE VERGAS ESTO ESTA COMENTADO JAJAJAJAJJA
     // public function actualizarPerfil($data,$num_doc){
     
     //     $sql = "UPDATE usuario SET num_doc = :num_doc, nombres =:nombres , apellidos = :apellidos, email = :email , tipodDoc = :tipodDoc,

@@ -350,6 +350,18 @@ class Administrador {
         }
         return [];
     }
+    public function obtenerCargosParaConvocatorias(){
+        $sql = "SELECT idCargo , nombreCargo FROM cargo";
+        $stmt =  $this->db->prepare($sql);
+        $stmt->execute();
+
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($resultado) {
+            return $resultado;
+        }
+        return [];
+    }
+
 
     public function obtenerEntrevistas(){
         $sql = "SELECT * FROM entrevista as e 
@@ -451,6 +463,24 @@ class Administrador {
          ]);
         return;
     }
+    public function guardarResultadosSistemaDeGestion($data){
+        $sql = "INSERT INTO evaluacionessg (estado_salud,evaluacionRiesgos,recomendaciones , aptitudLaboral,comentarios,entrevista_identrevista,entrevista_postulacion_idpostulaciones, estadoEvaluacion) VALUES 
+                                            (? , ? , ? , ? , ? , ? , ? , ?)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            $data['estado_salud'],
+            $data['evaluacionRiesgos'],
+            $data['recomendaciones'],
+            $data['aptitudLaboral'],
+            $data['comentarios'], 
+            $data['entrevista_identrevista'],
+            $data['entrevista_postulacion_idpostulaciones'],
+            $data['estadoEvaluacion'],
+        ]);
+        return;
+    }
+
+
      public function asignarEntrevista($data){
          $estado = "Pendiente";
          $sql = "INSERT INTO entrevista (fecha,hora,lugarMedio,postulacion_idpostulaciones, estadoEntrevista)
