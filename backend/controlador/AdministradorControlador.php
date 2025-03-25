@@ -175,6 +175,7 @@ class AdministradorControlador {
         $required = ['estado_salud' , 'evaluacionRiesgos' , 'recomendaciones' , 'aptitudLaboral' , 'comentarios' , 'estadoEvaluacion'];
         foreach ($required as $key){
             if(!isset($data[$key])){
+            
                 $this->jsonResponse(['error' => 'Faltan datos'] , 400);
             }
         }
