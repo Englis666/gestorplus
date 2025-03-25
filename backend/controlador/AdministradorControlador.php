@@ -148,6 +148,13 @@ class AdministradorControlador {
         $this->jsonResponse(['Ausencia' => $this->administrador->notificacionAceptada($data['data']['idausencia']) ?: []]);
     }
 
+    public function notificacionRechazada($data) {
+        if (!isset($data['data']['idausencia'])) {
+            $this->jsonResponse(['error' => 'Falta el id de la ausencia'], 400);
+        }
+        $this->jsonResponse(['AusenciaRechaza' => $this->administrador->notificacionAceptada($data['data']['idausencia']) ?: []]);
+    }
+
     public function agregarCargo($data) {
         if (!isset($data['nombreCargo'])) {
             $this->jsonResponse(['error' => 'Faltan datos'], 400);
