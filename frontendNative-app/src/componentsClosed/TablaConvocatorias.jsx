@@ -24,6 +24,7 @@ const TablaConvocatorias = () => {
     const fetchConvocatorias = async () => {
         try {
             const response = await axios.get(API_URL, { params: { action: "obtenerConvocatorias" } });
+            console.log(response);
             const data = response.data?.convocatorias;
             setConvocatorias(Array.isArray(data) ? data : []);
         } catch (err) {
@@ -100,6 +101,11 @@ const TablaConvocatorias = () => {
                     value={agregar.descripcion}
                     onChangeText={(text) => setAgregar({ ...agregar, descripcion: text })}
                     style={styles.input}
+                />
+                <TextInput
+                    placeholder="Cargo de la convocatoria"
+                    value={agregar.cargo}
+                    onChangeText={(text) => setAgregar({ ...agregar, cargo: text })}
                 />
                 <TextInput
                     placeholder="Requisitos"
