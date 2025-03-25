@@ -49,6 +49,7 @@ $routes = [
         'iniciarChat' => ['chat', 'iniciarChat'],
         
         'agregarCargo' => ['admin', 'agregarCargo'],
+        'guardarResultadosSistemaDeGestion' => ['admin' , 'guardarResultadosSistemaDeGestion'],
         'agregarConvocatoria' => ['admin', 'agregarConvocatoria'],
         'corroborarJornada' => ['admin', 'corroborarJornada'],
         'noCorroborarJornada' => ['admin', 'noCorroborarJornada'],
@@ -88,6 +89,7 @@ $routes = [
         'obtenerTodasLasJornadas' => ['admin', 'obtenerTodasLasJornadas'],
         'obtenerTodasLasAusencias' => ['admin', 'obtenerTodasLasAusencias'],
         'obtenerUsuarios' => ['admin', 'obtenerUsuarios'],
+        'obtenerCargosParaConvocatorias' => ['admin' , 'obtenerCargosParaConvocatorias'],
         'obtenerEntrevistas' => ['admin', 'obtenerEntrevistas'],
         'obtenerTodasLasHorasExtra' => ['admin', 'obtenerTodasLasHorasExtra'],
         'obtenerTodasLasVacaciones' => ['admin', 'obtenerTodasLasVacaciones'],
