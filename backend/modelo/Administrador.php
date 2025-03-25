@@ -323,7 +323,7 @@ class Administrador {
 
     public function obtenerTodasLasAusencias(){
         try{
-            $sql = "SELECT * FROM ausencia";
+            $sql = "SELECT * FROM ausencia WHERE NOT justificada = 'Justificada'";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -422,7 +422,7 @@ class Administrador {
     }
     
     public function notificacionRechazada($idausencia){
-        $sql = "UPDATE ausencia SET justificada = 0 WHERE idausencia = :idausencia";
+        $sql = "UPDATE ausencia SET justificada = 'Rechazada' WHERE idausencia = :idausencia";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
         

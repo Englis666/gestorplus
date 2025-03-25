@@ -241,7 +241,7 @@ const TablaAusencias = () => {
                           <td>{ausencia.fechaFin}</td>
                           <td>{ausencia.tipoAusencia}</td>
                           <td>{ausencia.descripcion}</td>
-                          <td>{ausencia.justificada ? "Justificada correctamente" : "No justificada"}</td>
+                          <td>{ausencia.justificada}</td>
                           <td>
                             {rol === "1" || rol === "2" ? (
                               <>
