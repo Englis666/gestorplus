@@ -3,6 +3,7 @@ import axios from "axios";
 
 const TablaVacantes = () => {
     const [Convocatorias, setConvocatorias] = useState([]);
+    const [Cargos, setCargos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [agregar, setAgregar] = useState({
@@ -12,6 +13,27 @@ const TablaVacantes = () => {
         salario: "",
         cantidadConvocatoria: "",
     });
+
+    loadingCargos(() => {
+        axios.get("http://localhost/gestorplus/backend/", {
+            params: { action: "obtenerCargosParaConvocatorias" },
+        })
+            .then((response) => {
+                console.log("respuesta", response.data);
+                const Cargos = response.data?.Cargos;
+                if (Array.isArray(Cargos)) {
+                    setCargos(Cargos);
+                } else {
+                    setCargos([]);
+                }
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Error al obtener el cargo", err);
+                setError('Hubo un problema al cargar los cargos para la convocatoria');
+                setLoading(false);
+            });
+    }, []);
 
     useEffect(() => {
         axios
@@ -33,31 +55,31 @@ const TablaVacantes = () => {
                 setError("Hubo un problema al cargar las Convocatorias");
                 setLoading(false);
             });
-    }, []); 
+    }, []);
 
     const handleAgregar = (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         console.log("Datos enviados al backend", agregar);
         axios
-    .post("http://localhost/gestorplus/backend/", {
-        action: "agregarConvocatoria",
-        ...agregar,
-    })
-    .then((response) => {
-        console.log(response.data);
-        const convocatorias = response.data?.convocatorias;
-        if (Array.isArray(convocatorias)) {
-            setConvocatorias(convocatorias);
-        } else {
-            setConvocatorias([]);
-        }
-        setLoading(false);
-    })
-    .catch((err) => {
-        console.error("Error al agregar las convocatorias", err);
-        setError("Hubo un problema al cargar las Convocatorias");
-        setLoading(false);
-    });
+            .post("http://localhost/gestorplus/backend/", {
+                action: "agregarConvocatoria",
+                ...agregar,
+            })
+            .then((response) => {
+                console.log(response.data);
+                const convocatorias = response.data?.convocatorias;
+                if (Array.isArray(convocatorias)) {
+                    setConvocatorias(convocatorias);
+                } else {
+                    setConvocatorias([]);
+                }
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Error al agregar las convocatorias", err);
+                setError("Hubo un problema al cargar las Convocatorias");
+                setLoading(false);
+            });
 
     };
 
@@ -120,51 +142,64 @@ const TablaVacantes = () => {
 
             <div className="row mt-4 container mt-5 card shadow-sm border- mb-5">
                 <form onSubmit={handleAgregar}>
-                    <h2 className="mt-2">Formulario para agregar vacantes</h2>
+                    <h2 className="mt-2">Formulario para agregar convocatorias</h2>
                     <div className="mb-3">
                         <label htmlFor="" className="form-label">Nombre de la convocatoria</label>
-                        <input 
-                            type="text" 
-                            value={agregar.nombreConvocatoria} 
+                        <input
+                            type="text"
+                            value={agregar.nombreConvocatoria}
                             onChange={(e) => setAgregar({ ...agregar, nombreConvocatoria: e.target.value })}
-                            className="form-control" 
+                            className="form-control"
                         />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="">Descripción</label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             value={agregar.descripcion}
                             onChange={(e) => setAgregar({ ...agregar, descripcion: e.target.value })}
-                            name="descripcion" className="form-control" 
+                            name="descripcion" className="form-control"
                         />
                     </div>
                     <div className="mb-3">
+                        <label htmlFor="">Cargo de la convocatoria</label>
+                        <select
+                            value={agregar.nombreCargo}
+                            id=""
+                            onChange={(e) => setAgregar({ ...agregar, nombreCargo: e.target.value })}
+                            name="nombreCargo"
+                            className="form-control"
+                        >
+
+                        </select>
+                    </div>
+
+                    <div className="mb-3">
                         <label htmlFor="">Requisitos</label>
-                        <input 
-                            type="text" 
-                            value={agregar.requisitos} 
+                        <input
+                            type="text"
+                            value={agregar.requisitos}
                             onChange={(e) => setAgregar({ ...agregar, requisitos: e.target.value })}
-                            className="form-control" 
+                            className="form-control"
                         />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="">Salario</label>
-                        <input 
+                        <input
                             type="number"
                             value={agregar.salario}
                             onChange={(e) => setAgregar({ ...agregar, salario: e.target.value })}
-                            name="salario" 
-                            className="form-control" 
+                            name="salario"
+                            className="form-control"
                         />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="">Total de cupos para la vacante</label>
-                        <input 
+                        <label htmlFor="">Total de cupos para la convocatoria</label>
+                        <input
                             type="number"
                             value={agregar.cantidadConvocatoria}
-                            onChange={(e) => setAgregar({ ...agregar, cantidadConvocatoria: e.target.value })} 
-                            className="form-control" 
+                            onChange={(e) => setAgregar({ ...agregar, cantidadConvocatoria: e.target.value })}
+                            className="form-control"
                         />
                     </div>
                     <button type="submit" className="btn btn-primary mb-2">Agregar Vacante</button>
