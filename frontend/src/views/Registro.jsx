@@ -20,8 +20,8 @@ const Registro = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        if (name === "num_doc" && !/^\d*$/.test(value)) return; 
-        
+        if (name === "num_doc" && !/^\d*$/.test(value)) return;
+
         if (["nombres", "apellidos", "tipodDoc"].includes(name) && /[^a-zA-Z\s]/.test(value)) return;
 
         setFormData({
@@ -68,7 +68,7 @@ const Registro = () => {
                 } catch (error) {
                     console.log("No es un JSON válido:", error);
                 }
-
+                
                 if (serverMessage?.message === 'Usuario registrado Correctamente') {
                     setIsSubmitting(false);
                     alert("Usuario Registrado Correctamente");
