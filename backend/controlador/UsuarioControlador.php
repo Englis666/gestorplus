@@ -30,7 +30,7 @@ class UsuarioControlador {
         }
         
         try {
-            return JWT::decode(str_replace('Bearer ', '', $authHeader), new Key(SECRET_KEY, JWT_ALGO));
+            return JWT::decode(str_replace('Bearer ', '', $authHeader), new Key(Clave::SECRET_KEY, Clave::JWT_ALGO));
         } catch (Exception $e) {
             http_response_code(401);
             $this->jsonResponse('error', 'Token inválido: ' . $e->getMessage());
