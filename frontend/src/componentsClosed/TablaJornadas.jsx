@@ -166,7 +166,9 @@ const TablaJornadas = () => {
                       <th>Hora de Salida</th>
                       <th>Nombre del Empleado</th>
                       <th>Estado de Jornada</th>
-                      <th>Acción</th>
+                      {rol === "1" || rol === "2" ? (
+                        <th>Acciones</th>
+                      ) : null}
                     </tr>
                   </thead>
                   <tbody className="text-center">
@@ -178,9 +180,8 @@ const TablaJornadas = () => {
                           <td className="py-3 px-4">{jornada.horaSalida}</td>
                           <td className="py-3 px-4">{jornada.nombres}</td>
                           <td className="py-3 px-4">{jornada.estadoJornada}</td>
-                          <td className="py-3 px-4 d-flex flex-column">
                             {rol === "1" || rol === "2" ? (
-                              <>
+                              <td className="py-3 px-4 d-flex flex-column">
                                 <button
                                   className="btn btn-success btn-sm me-2 mb-2"
                                   onClick={() => handleCorroborar(jornada.idJornada)}
@@ -194,9 +195,8 @@ const TablaJornadas = () => {
                                 >
                                   No corroborar
                                 </button>
-                              </>
+                              </td>
                             ) : null}
-                          </td>
                         </tr>
                       ))
                     ) : (

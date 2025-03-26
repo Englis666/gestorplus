@@ -118,7 +118,7 @@ class Empleado {
 
     public function solicitarAusencia($num_doc, $data) {
         try {
-            $sql = "INSERT INTO ausencia (fechaInicio, fechaFin, tipoAusencia, descripcion, fechaRegistro, usuario_num_doc) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO ausencia (fechaInicio, fechaFin, tipoAusencia, descripcion, fechaRegistro, justificada, usuario_num_doc) VALUES (?, ?, ?, ?, ?, 'En proceso', ?)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 $data['fechaInicio'],

@@ -230,7 +230,9 @@ const TablaAusencias = () => {
                       <th>Tipo de Ausencia</th>
                       <th>Descripción</th>
                       <th>Justificación</th>
-                      <th>Acción</th>
+                      {rol === "1" || rol === "2" ? (
+                        <th>Acciones</th>
+                      ) : null}
                     </tr>
                   </thead>
                   <tbody className="text-center">
