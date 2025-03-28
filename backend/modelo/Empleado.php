@@ -137,7 +137,7 @@ class Empleado {
                 $notificationStmt = $this->db->prepare($notificationSql);
                 $notificationStmt->execute([
                     $descripcionNotificacion,
-                    '1', 
+                    'No leida', 
                     'Ausencia', 
                     $num_doc
                 ]);

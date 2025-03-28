@@ -4,16 +4,7 @@ const Chat = ({ selectedChat }) => {
   const [chatMessages, setChatMessages] = useState([]);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8082");
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.idChat === selectedChat) {
-        setChatMessages((prevMessages) => [...prevMessages, data]);
-      }
-    };
-
-    return () => ws.close();
   }, [selectedChat]);
 
   return (

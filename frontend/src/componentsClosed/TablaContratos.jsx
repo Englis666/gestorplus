@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const TablaContratos = () => {
+const TablaContratos = ({ num_doc = "", nombres = "" }) => {
   const [vinculaciones, setVinculaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Estado para el formulario
   const [formData, setFormData] = useState({
+    num_doc,
+    nombres,
     fechaInicio: "",
     fechaFin: "",
     tipoContrato: "",
@@ -30,15 +31,43 @@ const TablaContratos = () => {
         }
       })
       .catch((err) => {
-        setError("Error al obtener las vinculaciones");
+        setError(`Error al obtener vinculaciones: ${err.message}`);
         console.error("Error:", err);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  // Manejador de cambios en el formulario
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost/gestorplus/backend/", {
+        action: "asignarVinculacion",
+        ...formData,
+      });
+
+      if (response.data.success) {
+        alert("Vinculación asignada con éxito");
+        setFormData({
+          num_doc: "",
+          nombres: "",
+          fechaInicio: "",
+          fechaFin: "",
+          tipoContrato: "",
+          salario: "",
+          estadoContrato: "",
+          fechaFirma: "",
+        });
+      } else {
+        alert("Error al asignar la vinculación");
+      }
+    } catch (err) {
+      console.error("Error al enviar los datos:", err);
+      alert("Hubo un problema al asignar la vinculación.");
+    }
   };
 
   return (
@@ -75,24 +104,12 @@ const TablaContratos = () => {
                         <tr key={vinculacion.usuario_num_doc}>
                           <td>{vinculacion.usuario_num_doc}</td>
                           <td>{vinculacion.nombres}</td>
-                          <td>
-                            {new Intl.DateTimeFormat("es-ES").format(
-                              new Date(vinculacion.fechaInicio)
-                            )}
-                          </td>
-                          <td>
-                            {new Intl.DateTimeFormat("es-ES").format(
-                              new Date(vinculacion.fechaFin)
-                            )}
-                          </td>
+                          <td>{new Date(vinculacion.fechaInicio).toLocaleDateString("es-ES")}</td>
+                          <td>{new Date(vinculacion.fechaFin).toLocaleDateString("es-ES")}</td>
                           <td>{vinculacion.tipoContrato}</td>
                           <td>${vinculacion.salario.toLocaleString()}</td>
                           <td>{vinculacion.estadoContrato}</td>
-                          <td>
-                            {new Intl.DateTimeFormat("es-ES").format(
-                              new Date(vinculacion.fechaFirma)
-                            )}
-                          </td>
+                          <td>{new Date(vinculacion.fechaFirma).toLocaleDateString("es-ES")}</td>
                           <td>
                             <button className="btn btn-danger">
                               Desactivar contrato y generar paz y salvo
@@ -117,8 +134,10 @@ const TablaContratos = () => {
       <div className="row mt-4 container-fluid mt-5 card shadow-sm border-0 mb-5">
         <div className="col-12">
           <h4 className="p-2">Asignación de vinculaciones</h4>
-          <form>
+          <form onSubmit={handleSubmit}>
             {[
+              { label: "Número de Documento del Aspirante", name: "num_doc", type: "number" },
+              { label: "Nombre del Aspirante a contratación", name: "nombres", type: "text" },
               { label: "Fecha de inicio", name: "fechaInicio", type: "date" },
               { label: "Fecha de fin", name: "fechaFin", type: "date" },
               { label: "Tipo de contrato", name: "tipoContrato", type: "text" },
@@ -141,7 +160,9 @@ const TablaContratos = () => {
                 />
               </div>
             ))}
-            <button className="btn btn-primary mb-2">Asignar vinculacion al postulante</button>
+            <button type="submit" className="btn btn-primary mb-2">
+              Asignar vinculación al postulante
+            </button>
           </form>
         </div>
       </div>

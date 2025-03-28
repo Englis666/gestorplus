@@ -38,6 +38,7 @@ const TablaCargos = () => {
                 nombreCargo: nombreCargo,
             })
             .then((response) => {
+                console.log(response);
                 if (response.data.success) {
                     alert("Cargo agregado con éxito");
                     setCargos([...cargos, { nombre: nombreCargo, estado: "Activo" }]);
