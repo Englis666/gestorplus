@@ -248,6 +248,15 @@ const Perfil = () => {
             Volver a la página anterior
           </button>
         </div>
+
+        <div className="col-md-8 col-12 p-4 bg-white shadow-lg rounded-lg">
+          <div className="nav nav-tabs">
+            <select style={{border: 'none', background: 'transparent'}}className="nav-link">
+              <option value="estudios">Estudios</option>
+              <option value="Experiencias">Experiencia Laboral</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       {/* Modales */}

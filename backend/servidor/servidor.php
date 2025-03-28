@@ -37,6 +37,8 @@ $routes = [
         'agregarEstudio' => ['usuario', 'agregarEstudio'],
         'agregarExp' => ['usuario', 'agregarExp'],
         'registroHorasExtra' => ['usuario', 'agregarHorasExtra'],
+        'consultarEstudio' => ['usuario', 'consultarEstudio'],
+        'consultarExp' => ['usuario', 'consultarExp'],
 
         'solicitarQueja' => ['empleado', 'solicitarQueja'],
         'solicitarAusencia' => ['empleado', 'solicitarAusencia'],
