@@ -10,6 +10,7 @@ const Convocatoria = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
     useEffect(() => {
         axios.get("http://localhost/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
@@ -38,9 +39,14 @@ const Convocatoria = () => {
     };
 
     const filteredConvocatorias = convocatorias.filter(convocatoria =>
-        convocatoria.nombreConvocatoria.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        convocatoria.nombreCargo.toLowerCase().includes(searchTerm.toLowerCase())
+        (selectedCategory ? convocatoria.nombreCargo === selectedCategory : true) &&
+        (convocatoria.nombreConvocatoria.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            convocatoria.nombreCargo.toLowerCase().includes(searchTerm.toLowerCase()))
     );
+
+    const handleCategoryClick = (cargo) => {
+        setSelectedCategory(cargo);
+    };
 
     const handleDetailsClick = (convocatoria) => {
         const token = getCookie("auth_token");
@@ -52,16 +58,16 @@ const Convocatoria = () => {
     };
 
     return (
-        <div style={{background: "linear-gradient(to bottom, #E3F2FD, #ECF0F1)" }}>
+        <div style={{ background: "linear-gradient(to bottom, #E3F2FD, #ECF0F1)" }}>
             <Banner setSearchTerm={setSearchTerm} />
             <section className="container py-5 text-center">
                 <h1 className="text-primary fw-bold mb-4">Categorías de Trabajo</h1>
                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    {filteredConvocatorias.map((convocatoria, index) => (
-                        <div key={convocatoria.idconvocatoria || `${convocatoria.idcargo}-${index}`} className="col">
-                            <div className="card shadow-lg rounded-4 p-4 border-0">
-                                <h3 className="fs-5 text-dark text-capitalize mb-3">{convocatoria.nombreCargo}</h3>
-                                <p className="text-muted">Convocatorias disponibles: {convocatoria.cantidadConvocatoria}</p>
+                    {Array.from(new Set(convocatorias.map(c => c.nombreCargo))).map((cargo, index) => (
+                        <div key={index} className="col">
+                            <div className="card shadow-lg rounded-4 p-4 border-0" onClick={() => handleCategoryClick(cargo)} style={{ cursor: "pointer" }}>
+                                <h3 className="fs-5 text-dark text-capitalize mb-3">{cargo}</h3>
+                                <p className="text-muted">Convocatorias disponibles: {convocatorias.filter(c => c.nombreCargo === cargo).length}</p>
                             </div>
                         </div>
                     ))}
@@ -71,7 +77,7 @@ const Convocatoria = () => {
             <section className="container py-5 text-center">
                 <h1 className="text-primary fw-bold mb-4">Convocatorias Recientes</h1>
                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    {filteredConvocatorias.map((convocatoria, index) => (
+                    {filteredConvocatorias.slice(0, 3).map((convocatoria, index) => (
                         <div key={convocatoria.idconvocatoria || `${convocatoria.idcargo}-${index}`} className="col">
                             <div className="card shadow-lg rounded-4 p-4 border-0">
                                 <h3 className="fs-4 text-dark text-capitalize text-truncate mb-3">{convocatoria.nombreConvocatoria}</h3>

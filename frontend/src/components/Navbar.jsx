@@ -21,18 +21,13 @@ const Navbar = () => {
     const fetchNotifications = async () => {
         try {
             const response = await axios.get("http://localhost/gestorplus/backend/", {
-                params: { action: "obtenerNotificaciones" },
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
+                params: { action: "obtenerNotificacionesAspirante" },
+                headers: { Authorization: `Bearer ${token}` },
             });
-            console.log("Respuesta de notificaciones:", response.data); // 👀 Verifica qué devuelve
-            if (Array.isArray(response.data)) {
-                setNotifications(response.data);
-            } else {
-                setNotifications([]);
-            }
-            setNotifications(response.data || []);
+
+            console.log("Estructura de respuesta:", response.data);
+
+            setNotifications(response.data.Notificaciones || []);
         } catch (error) {
             console.error("Error al obtener las notificaciones:", error);
         }
@@ -73,9 +68,7 @@ const Navbar = () => {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ms-auto">
                             <li className="nav-item">
-                                <button className="nav-link btn btn-primary" onClick={() => navigate("/")}>
-                                    Inicio
-                                </button>
+                                <button className="nav-link btn btn-primary" onClick={() => navigate("/")}>Inicio</button>
                             </li>
                             <li className="nav-item">
                                 <button className="nav-link btn btn-primary" onClick={() => navigate("/aspirante/trabajo")}>
@@ -98,13 +91,8 @@ const Navbar = () => {
                                     <li className="nav-item">
                                         <button className="nav-link btn btn-primary">{user.num_doc}</button>
                                     </li>
-
-                                    {/* Botón de Notificaciones */}
                                     <li className="nav-item position-relative">
-                                        <button
-                                            className="nav-link btn btn-light position-relative"
-                                            onClick={toggleNotifications}
-                                        >
+                                        <button className="nav-link btn btn-light position-relative" onClick={toggleNotifications}>
                                             <i className="material-icons">notifications</i>
                                             {notifications.length > 0 && (
                                                 <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -112,21 +100,13 @@ const Navbar = () => {
                                                 </span>
                                             )}
                                         </button>
-
-                                        {/* Contenedor de Notificaciones */}
                                         {showNotifications && (
                                             <div className="dropdown-content position-absolute bg-white shadow-lg rounded p-3 mt-2"
-                                                style={{
-                                                    width: "250px",
-                                                    right: "0",
-                                                    zIndex: "1000",
-                                                    border: "1px solid #ddd",
-                                                }}
-                                            >
+                                                style={{ width: "250px", right: "0", zIndex: "1000", border: "1px solid #ddd" }}>
                                                 {notifications.length > 0 ? (
                                                     notifications.map((notification, index) => (
                                                         <div key={index} className="notification-item mb-2">
-                                                            <p><strong>{notification.description}</strong></p>
+                                                            <p><strong>{notification.descripcionNotificacion}</strong></p>
                                                         </div>
                                                     ))
                                                 ) : (

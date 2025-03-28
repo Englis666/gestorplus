@@ -16,8 +16,8 @@ class Chat {
     // Enviar mensaje
    public function enviarMensaje($idChat, $num_doc_emisor, $message) {
     try {
-        $query = "INSERT INTO messages (idChat, num_doc_emisor, message, created_at) 
-                  VALUES (:idChat, :num_doc_emisor, :message, NOW())";
+        $query = "INSERT INTO messages ( usuario_num_doc,fecha_envio, mensaje,idChat) 
+                  VALUES (:num_doc_emisor, NOW(), :message,:idChat)";
 
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':idChat', $idChat, PDO::PARAM_INT);
@@ -42,8 +42,8 @@ class Chat {
     // Verificar si ya existe un chat entre estos usuarios
     $stmt = $this->db->prepare("
         SELECT idChat FROM chats 
-        WHERE (num_doc_emisor = :num_doc_emisor AND num_doc_receptor = :num_doc_receptor) 
-        OR (num_doc_emisor = :num_doc_receptor AND num_doc_receptor = :num_doc_emisor)
+        WHERE (usuario1 = :num_doc_emisor AND usuario2 = :num_doc_receptor) 
+        OR (usuario1 = :num_doc_receptor AND usuario2 = :num_doc_emisor)
         ORDER BY created_at DESC 
         LIMIT 1
     ");
@@ -60,7 +60,7 @@ class Chat {
 
     // Si no existe, crear un nuevo chat
     $stmt = $this->db->prepare("
-        INSERT INTO chats (num_doc_emisor, num_doc_receptor, created_at) 
+        INSERT INTO chats (usuario1, usuario2, created_at) 
         VALUES (:num_doc_emisor, :num_doc_receptor, NOW())
     ");
     $stmt->bindParam(':num_doc_emisor', $num_doc_emisor, PDO::PARAM_INT);
@@ -76,8 +76,8 @@ class Chat {
 
     // Obtener los mensajes de un chat
     public function obtenerMensajes($idChat) {
-        $consulta = "SELECT m.*, u.num_doc AS emisor FROM messages AS m
-                     INNER JOIN usuario AS u ON m.num_doc_emisor = u.num_doc
+        $consulta = "SELECT mensaje , usuario_num_doc FROM messages AS m
+                     INNER JOIN usuario AS u ON m.usuario_num_doc = u.num_doc
                      WHERE m.idChat = :idChat ORDER BY m.created_at ASC";
         $stmt = $this->db->prepare($consulta);
         $stmt->bindParam(':idChat', $idChat, PDO::PARAM_INT);

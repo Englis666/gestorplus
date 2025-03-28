@@ -85,6 +85,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                 },
             })
             .then((response) => {
+                console.log(response);
                 if (response.data.success) {
                     setSuccessMessage(response.data.message);
                 } else {
@@ -127,12 +128,12 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                                     background: "white",
                                 }}
                                 onMouseEnter={(e) =>
-                                    (e.currentTarget.style.transform =
-                                        "scale(1.02)")
+                                (e.currentTarget.style.transform =
+                                    "scale(1.02)")
                                 }
                                 onMouseLeave={(e) =>
-                                    (e.currentTarget.style.transform =
-                                        "scale(1)")
+                                (e.currentTarget.style.transform =
+                                    "scale(1)")
                                 }
                             >
                                 <div className="card-body p-5">
@@ -191,12 +192,12 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                                             onClick={handleApply}
                                             disabled={aplicado}
                                             onMouseEnter={(e) =>
-                                                (e.currentTarget.style.backgroundColor =
-                                                    "#007bff")
+                                            (e.currentTarget.style.backgroundColor =
+                                                "#007bff")
                                             }
                                             onMouseLeave={(e) =>
-                                                (e.currentTarget.style.backgroundColor =
-                                                    "#0d6efd")
+                                            (e.currentTarget.style.backgroundColor =
+                                                "#0d6efd")
                                             }
                                         >
                                             {aplicado ? "Ya aplicado" : "Aplicar ahora"}

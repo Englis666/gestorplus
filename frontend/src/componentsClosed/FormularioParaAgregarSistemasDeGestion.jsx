@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         num_doc: "",
         nombres: "",
@@ -38,6 +40,9 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
 
             if (response.data.success) {
                 alert("Resultados guardados con éxito.");
+                if (formData.estadoEvaluacion === "Apto") {
+                    navigate("/contratos", { state: { num_doc: formData.num_doc, nombres: formData.nombres } });
+                }
             } else {
                 alert("Error al guardar los resultados.");
             }
@@ -52,7 +57,6 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
             <div className="col-12">
                 <h4>Asignación de sistema de gestión</h4>
                 <form onSubmit={handleSubmit}>
-                    {/* Número de documento */}
                     <div className="mb-3">
                         <label className="form-label">Número de documento del aspirante</label>
                         <input
@@ -63,8 +67,6 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
                             readOnly
                         />
                     </div>
-
-                    {/* Nombre del aspirante */}
                     <div className="mb-3">
                         <label className="form-label">Nombre del aspirante</label>
                         <input
@@ -75,15 +77,12 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
                             readOnly
                         />
                     </div>
-
-                    {/* Campos del formulario */}
                     {[
                         { label: "Estado de salud del entrevistado", name: "estado_salud" },
                         { label: "Evaluación de riesgos del entrevistado", name: "evaluacionRiesgos" },
                         { label: "Recomendaciones", name: "recomendaciones" },
                         { label: "Aptitud Laboral", name: "aptitudLaboral" },
                         { label: "Comentarios", name: "comentarios" },
-                        { label: "Estado de evaluación (Apto o No Apto)", name: "estadoEvaluacion" },
                     ].map(({ label, name }) => (
                         <div key={name} className="mb-3">
                             <label className="form-label">{label}</label>
@@ -97,8 +96,20 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
                             />
                         </div>
                     ))}
-
-                    {/* Botón de enviar */}
+                    <div className="mb-3">
+                        <label className="form-label">Estado de evaluación (Apto o No Apto)</label>
+                        <select
+                            name="estadoEvaluacion"
+                            className="form-control"
+                            value={formData.estadoEvaluacion}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">Seleccione una opción</option>
+                            <option value="Apto">Apto</option>
+                            <option value="No Apto">No Apto</option>
+                        </select>
+                    </div>
                     <button type="submit" className="btn btn-primary mb-2">
                         Subir resultados del sistema de gestión
                     </button>

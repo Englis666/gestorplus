@@ -1,11 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/Database.php'; 
-use Config\Database; 
 
-$db = new DataBase(); // Crear instancia correctamente
-$conexion = $db->getConnection(); // Obtener conexión
-
-// WebSocket server
 $server = new Swoole\WebSocket\Server("0.0.0.0", 8082);
 
 $server->on("start", function ($server) {
@@ -13,32 +7,32 @@ $server->on("start", function ($server) {
 });
 
 $server->on("open", function ($server, $request) {
-    echo "Conexión abierta: {$request->fd}\n";
+    echo "Nueva conexión: {$request->fd}\n";
 });
 
-$server->on("message", function ($server, $frame) use ($conexion) {
+$server->on("message", function ($server, $frame) {
     echo "Mensaje recibido: {$frame->data}\n";
+
     $data = json_decode($frame->data, true);
 
-    if (!isset($data['idChat'], $data['message'])) {
-        echo "Datos inválidos.\n";
+    if (!isset($data["action"])) {
         return;
     }
 
-    $idChat = $data['idChat'];
-    $message = $data['message'];
+    $ch = curl_init("http://localhost/gestorplus/backend/");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
 
-    // Guardar el mensaje en la base de datos
-    $stmt = $conexion->prepare("INSERT INTO mensajes (idChat, mensaje) VALUES (?, ?)");
-    if ($stmt) {
-        $stmt->bind_param("is", $idChat, $message);
-        $stmt->execute();
-        $stmt->close();
-    }
+    $response = curl_exec($ch);
+    curl_close($ch);
 
-    // Enviar el mensaje a todos los clientes conectados
+    // Enviar la respuesta a todos los clientes conectados
     foreach ($server->connections as $fd) {
-        $server->push($fd, json_encode($data));
+        if ($server->isEstablished($fd)) {
+            $server->push($fd, $response);
+        }
     }
 });
 

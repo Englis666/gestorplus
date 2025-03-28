@@ -68,7 +68,7 @@ class Usuario {
                     
                     $insertarNotificacion = $this->db->prepare("INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
                                                                VALUES (?, ?, ?, ?)");
-                    if ($insertarNotificacion->execute([$descripcionNotificacion, 1, 'Jornada', $num_doc])) {
+                    if ($insertarNotificacion->execute([$descripcionNotificacion, 'Jornada Registrada', 'Jornada', $num_doc])) {
                         return [
                             'num_doc' => $usuario['num_doc'],
                             'nombres' => $usuario['nombres'],
@@ -114,6 +114,8 @@ class Usuario {
             return [];
         }
     }
+
+
     
     public function datosPerfil($num_doc){
         $sql = "SELECT * FROM usuario as u

@@ -31,6 +31,25 @@ class Aspirante {
         }
     }
 
+    public function obtenerNotificacionesAspirante($num_doc){
+          try{
+            $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc AND tipo = 'PostulacionAspirantes'";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            if($resultado){
+                return $resultado;
+            }
+            return [];
+        }catch (PDOException $e) {
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return [];
+        }
+    }
+
     public function obtenerPostulacionesAspirante($num_doc) {
         try {
             $sql = "SELECT * FROM postulacion p INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria WHERE p.usuario_num_doc = :num_doc";
@@ -91,12 +110,12 @@ class Aspirante {
                     throw new PDOException("Error al insertar la notificación para el aspirante: " . implode(", ", $stmt->errorInfo()));
                 }
 
-                // Notificación para RRHH
                 $descripcionNotificacion2 = "El aspirante con número de documento $num_doc ha aplicado a una convocatoria";
+                $tipo2 = 'Postulacion';
                 $insert2 = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc)
                             VALUES (? , ? , ? , ?)";
                 $stmt = $this->db->prepare($insert2);
-                if (!$stmt->execute([$descripcionNotificacion2, $estadoNotificacion, $tipo, $num_doc])) {
+                if (!$stmt->execute([$descripcionNotificacion2, $estadoNotificacion, $tipo2, $num_doc])) {
                     throw new PDOException("Error al insertar la notificación para RRHH: " . implode(", ", $stmt->errorInfo()));
                 }
 

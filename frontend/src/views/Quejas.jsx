@@ -6,35 +6,11 @@ import SidebarChat from "../componentsClosed/sidebarChat";
 const Quejas = () => {
   const [message, setMessage] = useState("");
   const [selectedChatId, setSelectedChatId] = useState(null);
-  const [socket, setSocket] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8082");
-    ws.onopen = () => console.log("Conectado a WebSocket");
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("Mensaje recibido:", data);
-    };
-    ws.onerror = (error) => console.error("Error en WebSocket:", error);
-    ws.onclose = () => console.log("WebSocket desconectado");
-
-    setSocket(ws);
-
-    return () => ws.close();
-  }, []);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!message.trim() || !selectedChatId || !socket) return;
 
-    const data = JSON.stringify({
-      idChat: selectedChatId,
-      message,
-    });
-
-    socket.send(data);
-    setMessage("");
   };
 
   return (

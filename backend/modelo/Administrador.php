@@ -494,8 +494,8 @@ class Administrador {
     
     public function agregarConvocatoria($data){
         $sql = "INSERT INTO convocatoria (nombreConvocatoria,descripcion,requisitos, salario,
-                        cantidadConvocatoria)
-                                             VALUES ( ? , ? , ? , ? , ?)";
+                        cantidadConvocatoria, cargo_idcargo)
+                                             VALUES ( ? , ? , ? , ? , ? , ?)";
          $stmt = $this->db->prepare($sql);
          $stmt->execute([
              $data['nombreConvocatoria'],
@@ -503,6 +503,7 @@ class Administrador {
              $data['requisitos'],
              $data['salario'],
              $data['cantidadConvocatoria'],
+             $data['idcargo'],
          ]);
         return;
     }

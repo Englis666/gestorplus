@@ -12,7 +12,7 @@ const TablaVacantes = () => {
         requisitos: "",
         salario: "",
         cantidadConvocatoria: "",
-        nombreCargo: "",
+        idcargo: "",
     });
 
     // Cargar Cargos
@@ -22,7 +22,7 @@ const TablaVacantes = () => {
         })
             .then((response) => {
                 console.log("Cargos obtenidos:", response.data);
-                const cargosData = response.data?.cargos; // Asegurar que se obtiene correctamente
+                const cargosData = response.data?.cargos;
                 if (Array.isArray(cargosData)) {
                     setCargos(cargosData);
                 } else {
@@ -165,14 +165,14 @@ const TablaVacantes = () => {
                     <div className="mb-3">
                         <label>Cargo de la convocatoria</label>
                         <select
-                            value={agregar.nombreCargo}
-                            onChange={(e) => setAgregar({ ...agregar, nombreCargo: e.target.value })}
+                            value={agregar.idcargo}
+                            onChange={(e) => setAgregar({ ...agregar, idcargo: e.target.value })}
                             className="form-control"
                         >
                             <option value="">Seleccione un cargo</option>
                             {cargos.length > 0 ? (
                                 cargos.map((cargo) => (
-                                    <option key={cargo.idcargo} value={cargo.nombreCargo}>
+                                    <option key={cargo.idcargo} value={cargo.idcargo}>
                                         {cargo.nombreCargo}
                                     </option>
                                 ))
