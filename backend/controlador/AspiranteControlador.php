@@ -23,9 +23,7 @@ class AspiranteControlador {
         $authHeader = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
 
         if (!$authHeader || !preg_match('/^Bearer\s+(\S+)$/', $authHeader, $matches)) {
-            http_response_code(401);
-            echo json_encode(['error' => 'Token no proporcionado o formato incorrecto']);
-            exit;
+            throw new Exception('Token no proporcionado o formato incorrecto', 401);
         }
 
         $token = $matches[1];
@@ -34,94 +32,94 @@ class AspiranteControlador {
             $decoded = JWT::decode($token, new Key(Clave::SECRET_KEY, Clave::JWT_ALGO));
             return $decoded->data->num_doc ?? null;
         } catch (\Firebase\JWT\ExpiredException $e) {
-            http_response_code(401);
-            echo json_encode(['error' => 'Token expirado']);
-            exit;
+            throw new Exception('Token expirado', 401);
         } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            http_response_code(403);
-            echo json_encode(['error' => 'Token con firma inválida']);
-            exit;
+            throw new Exception('Token con firma inválida', 403);
         } catch (Exception $e) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Error al procesar el token: ' . $e->getMessage()]);
-            exit;
+            throw new Exception('Error al procesar el token: ' . $e->getMessage(), 400);
+        }
+    }
+
+    private function jsonResponse($clave, $datos, $codigo = 200) {
+        http_response_code($codigo);
+        echo json_encode([$clave => $datos ?? []]);
+    }
+
+    public function obtenerNotificacionesAspirante() {
+        try {
+            $num_doc = $this->obtenerNumDocDesdeToken();
+            $this->jsonResponse('Notificaciones', $this->aspirante->obtenerNotificacionesAspirante($num_doc));
+        } catch (Exception $e) {
+            $this->jsonResponse('error', $e->getMessage(), $e->getCode());
         }
     }
 
     public function verificarPostulacion() {
-        $num_doc = $this->obtenerNumDocDesdeToken();
-        $idconvocatoria = $_GET['idconvocatoria'] ?? null;
+        try {
+            $num_doc = $this->obtenerNumDocDesdeToken();
+            $idconvocatoria = $_GET['idconvocatoria'] ?? null;
 
-        if (!$num_doc || !$idconvocatoria) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Datos insuficientes']);
-            return;
+            if (!$idconvocatoria) {
+                throw new Exception('Datos insuficientes', 400);
+            }
+
+            $resultados = $this->aspirante->verificarPostulacion($num_doc, $idconvocatoria);
+            $this->jsonResponse('PostulacionVerificada', $resultados);
+        } catch (Exception $e) {
+            $this->jsonResponse('error', $e->getMessage(), $e->getCode());
         }
-
-        $resultados = $this->aspirante->verificarPostulacion($num_doc, $idconvocatoria);
-        http_response_code(200);
-        echo json_encode(['PostulacionVerificada' => $resultados ?? null]);
     }
-    public function obtenerPostulacionesAspirante(){
-        $num_doc = $this->obtenerNumDocDesdeToken();
-        if(!$num_doc){
-            http_response_code(400);
-            echo json_encode(['error' => 'No se encontró el número de documento en el token']);
-            return;
+
+    public function obtenerPostulacionesAspirante() {
+        try {
+            $num_doc = $this->obtenerNumDocDesdeToken();
+            $this->jsonResponse('MisPostulaciones', $this->aspirante->obtenerPostulacionesAspirante($num_doc));
+        } catch (Exception $e) {
+            $this->jsonResponse('error', $e->getMessage(), $e->getCode());
         }
-        $resultados = $this->aspirante->obtenerPostulacionesAspirante($num_doc);
-        http_response_code(200);
-        echo json_encode(['MisPostulaciones' => $resultados ?? []]);
     }
 
     public function obtenerNotificaciones() {
-        $num_doc = $this->obtenerNumDocDesdeToken();
-
-        if (!$num_doc) {
-            http_response_code(400);
-            echo json_encode(['error' => 'No se encontró el número de documento en el token']);
-            return;
+        try {
+            $num_doc = $this->obtenerNumDocDesdeToken();
+            $this->jsonResponse('notificaciones', $this->aspirante->obtenerNotificaciones($num_doc));
+        } catch (Exception $e) {
+            $this->jsonResponse('error', $e->getMessage(), $e->getCode());
         }
-
-        $resultados = $this->aspirante->obtenerNotificaciones($num_doc);
-        http_response_code(200);
-        echo json_encode(['notificaciones' => $resultados ?? []]);
     }
-    public function obtenerDetalleConvocatoria(){
-        $idconvocatoria = $_GET['idconvocatoria'];
-        if (!$idconvocatoria){
-            http_response_code(400);
-            echo json_encode(["Error" => "No se encontro la convocatoria"]);
-            return;
-        }
-        $resultados = $this->aspirante->obtenerDetalleConvocatoria($idconvocatoria);
-        http_response_code(200);
-        echo json_encode(['DetalleConvocatoria' => $resultados]);
 
+    public function obtenerDetalleConvocatoria() {
+        try {
+            $idconvocatoria = $_GET['idconvocatoria'] ?? null;
+
+            if (!$idconvocatoria) {
+                throw new Exception("No se encontró la convocatoria", 400);
+            }
+
+            $this->jsonResponse('DetalleConvocatoria', $this->aspirante->obtenerDetalleConvocatoria($idconvocatoria));
+        } catch (Exception $e) {
+            $this->jsonResponse('error', $e->getMessage(), $e->getCode());
+        }
     }
 
     public function aplicacionDeAspirante($data) {
-        $num_doc = $this->obtenerNumDocDesdeToken();
+        try {
+            $num_doc = $this->obtenerNumDocDesdeToken();
+            $idconvocatoria = $data['idconvocatoria'] ?? null;
 
-        if (!$num_doc || !isset($data['idconvocatoria'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Datos insuficientes']);
-            return;
-        }
+            if (!$idconvocatoria) {
+                throw new Exception('Datos insuficientes', 400);
+            }
 
-        $idconvocatoria = $data['idconvocatoria'];
-        $resultado = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
+            $resultado = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
+            if (!$resultado) {
+                throw new Exception('No se pudo completar la aplicación', 500);
+            }
 
-        if ($resultado) {
-            http_response_code(200);
-            echo json_encode(['success' => true]);
-        } else {
-            http_response_code(500);
-            echo json_encode(['error' => 'No se pudo completar la aplicación']);
+            $this->jsonResponse('success', true);
+        } catch (Exception $e) {
+            $this->jsonResponse('error', $e->getMessage(), $e->getCode());
         }
     }
-    
 }
-
-
 ?>
