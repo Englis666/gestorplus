@@ -163,7 +163,7 @@ class AdministradorControlador {
     }
 
     public function agregarConvocatoria($data) {
-        $required = ['nombreConvocatoria', 'descripcion', 'requisitos', 'salario', 'cantidadConvocatoria'];
+        $required = ['nombreConvocatoria', 'descripcion', 'requisitos', 'salario', 'cantidadConvocatoria', 'idcargo'];
         foreach ($required as $key) {
             if (!isset($data[$key])) {
                 $this->jsonResponse(['error' => 'Faltan datos'], 400);
