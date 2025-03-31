@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida , num_doc}) => {
+const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) => {
   const [formData, setFormData] = useState({
     fechaNacimiento: "",
     direccion: "",
@@ -9,7 +9,7 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida , num_doc}) =>
     ciudadNacimiento: "",
     telefono: "",
     telefonoFijo: "",
-    estadohojadevida: 1,
+    estadohojadevida: "Activa",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,14 +36,21 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida , num_doc}) =>
       }
 
       const response = await axios.get("http://localhost/gestorplus/backend/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: { action: "datosPerfil" },
+        headers: { Authorization: `Bearer ${token}` },
+        params: { action: "datosPerfil", num_doc },
       });
 
       console.log("Datos recibidos:", response.data);
-      setFormData(response.data);
+
+      setFormData({
+        fechaNacimiento: response.data.fechaNacimiento ?? "",
+        direccion: response.data.direccion ?? "",
+        ciudad: response.data.ciudad ?? "",
+        ciudadNacimiento: response.data.ciudadNacimiento ?? "",
+        telefono: response.data.telefono ?? "",
+        telefonoFijo: response.data.telefonoFijo ?? "",
+
+      });
     } catch (error) {
       console.error("Error al obtener la hoja de vida:", error);
       alert("Ocurrió un error al cargar los datos.");
@@ -52,22 +59,13 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida , num_doc}) =>
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
   const validateForm = () => {
-    const requiredFields = [
-      "fechaNacimiento",
-      "direccion",
-      "ciudad",
-      "ciudadNacimiento",
-      "telefono",
-    ];
+    const requiredFields = ["fechaNacimiento", "direccion", "ciudad", "ciudadNacimiento", "telefono"];
     for (let field of requiredFields) {
-      if (!formData[field]) {
+      if (!formData[field] || formData[field].trim() === "") {
         alert(`El campo ${field} es obligatorio.`);
         return false;
       }
@@ -75,160 +73,78 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida , num_doc}) =>
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     setIsSubmitting(true);
 
-    const token = getCookie("auth_token");
-    if (!token) {
-      alert("No se encontró el token de autenticación.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    axios
-      .patch("http://localhost/gestorplus/backend/", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        params: { action: "actualizacionHojaDevida" },
-      })
-      .then((response) => {
-        const serverMessage = response.data.message;
-        if (serverMessage === "Hoja de vida actualizada") {
-          alert("Hoja de vida actualizada correctamente");
-        } else {
-          alert("Hubo un error al actualizar la hoja de vida.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error al registrar la hoja de vida:", error);
-        alert("Ocurrió un error al actualizar. Por favor, inténtalo nuevamente.");
-      })
-      .finally(() => {
+    try {
+      const token = getCookie("auth_token");
+      if (!token) {
+        alert("No se encontró el token de autenticación.");
         setIsSubmitting(false);
-        toggleModalHojaDeVida();
-      });
+        return;
+      }
+
+      console.log("Datos enviados:", formData);
+
+      const response = await axios.patch(
+        "http://localhost/gestorplus/backend/",
+        { ...formData, action: "actualizacionHojaDevida", num_doc },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log(response);
+      if (response.data.message === "Hoja de vida actualizada") {
+        alert("Hoja de vida actualizada correctamente");
+      } else {
+        alert("Hubo un error al actualizar la hoja de vida.");
+      }
+    } catch (error) {
+      console.error("Error al actualizar:", error.response?.data || error.message);
+      alert("Error del servidor: " + (error.response?.data?.message || "Inténtalo nuevamente."));
+    } finally {
+      setIsSubmitting(false);
+      toggleModalHojaDeVida();
+    }
   };
 
   return (
-    <div
-      className={`modal fade ${modalHojaDeVida ? "show" : ""}`}
-      style={{ display: modalHojaDeVida ? "block" : "none" }}
-      tabIndex="-1"
-      aria-labelledby="modalHojaDeVidaLabel"
-      aria-hidden="true"
-    >
+    <div className={`modal fade ${modalHojaDeVida ? "show" : ""}`} style={{ display: modalHojaDeVida ? "block" : "none" }}>
       <div className="modal-dialog">
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div className="modal-header">
-              <h5 className="modal-title" id="modalHojaDeVidaLabel">
-                Actualizar Hoja de Vida
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={toggleModalHojaDeVida}
-                aria-label="Close"
-              ></button>
+              <h5 className="modal-title">Actualizar Hoja de Vida</h5>
+              <button type="button" className="btn-close" onClick={toggleModalHojaDeVida}></button>
             </div>
             <div className="modal-body">
-              <div className="mb-3">
-                <label htmlFor="fechaNacimiento" className="form-label">
-                  Fecha de nacimiento
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  name="fechaNacimiento"
-                  value={formData.fechaNacimiento}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="direccion" className="form-label">
-                  Dirección
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="direccion"
-                  value={formData.direccion}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="ciudad" className="form-label">
-                  Ciudad
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="ciudad"
-                  value={formData.ciudad}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="ciudadNacimiento" className="form-label">
-                  Ciudad de Nacimiento
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="ciudadNacimiento"
-                  value={formData.ciudadNacimiento}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="telefono" className="form-label">
-                  Celular
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="telefono"
-                  value={formData.telefono}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="telefonoFijo" className="form-label">
-                  Teléfono Fijo
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="telefonoFijo"
-                  value={formData.telefonoFijo}
-                  onChange={handleChange}
-                />
-              </div>
+              {Object.keys(formData).map((field, index) => (
+                <div key={index} className="mb-3">
+                  <label htmlFor={field} className="form-label">
+                    {field.replace(/([A-Z])/g, " $1").toUpperCase()}
+                  </label>
+                  <input
+                    type={field === "fechaNacimiento" ? "date" : "text"}
+                    className="form-control"
+                    name={field}
+                    value={formData[field]}
+                    onChange={handleChange}
+                    required={field !== "telefonoFijo"}
+                  />
+                </div>
+              ))}
             </div>
             <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={toggleModalHojaDeVida}
-                disabled={isSubmitting}
-              >
+              <button type="button" className="btn btn-secondary" onClick={toggleModalHojaDeVida} disabled={isSubmitting}>
                 Cerrar
               </button>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={isSubmitting}
-              >
+              <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
                 {isSubmitting ? "Guardando..." : "Guardar cambios"}
               </button>
             </div>

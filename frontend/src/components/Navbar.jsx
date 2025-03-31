@@ -83,6 +83,11 @@ const Navbar = () => {
                                             Mis Postulaciones
                                         </button>
                                     </li>
+                                    <li>
+                                        <button className="nav-link btn btn-primary" onClick={() => navigate("/Perfil")}>
+                                            Perfil
+                                        </button>
+                                    </li>
                                     <li className="nav-item">
                                         <button className="nav-link btn btn-primary" onClick={handleLogout}>
                                             Cerrar sesión

@@ -35,7 +35,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (isSubmitting) return; 
+    if (isSubmitting) return;
 
     setIsSubmitting(true);
 
@@ -51,8 +51,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
       })
       .then((response) => {
         const serverMessage = response.data.message;
-        console.log(response.data.message);
-        if (serverMessage === "Estudio subido") {
+        if (serverMessage === "Estudio agregado") {
           alert("Estudio Subido Correctamente");
         } else {
           alert("Hubo un error al subir el estudio.");
@@ -60,11 +59,11 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
       })
       .catch((error) => {
         console.error("Error al registrar el estudio:", error);
-        alert("Ocurrió un error al agregar. Por favor, inténtalo nuevamente." , error);
+        alert("Ocurrió un error al agregar. Por favor, inténtalo nuevamente.", error);
       })
       .finally(() => {
         setIsSubmitting(false);
-        toggleModalEstudios(); 
+        toggleModalEstudios();
       });
   };
 

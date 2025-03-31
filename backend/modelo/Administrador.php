@@ -133,8 +133,6 @@ class Administrador {
             INNER JOIN entrevista as e ON p.idpostulacion = e.postulacion_idpostulaciones
             INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc
             INNER JOIN hojadevida as h ON u.hojadevida_idHojadevida = h.idHojadevida
-            INNER JOIN estudio as est ON h.idHojadevida = est.hojadevida_idHojadevida
-            INNER JOIN experiencialaboral as exp ON h.idHojadevida = exp.hojadevida_idHojadevida
             WHERE u.num_doc = :num_doc";
     
     $stmt = $this->db->prepare($sql);
@@ -508,8 +506,12 @@ class Administrador {
         return;
     }
     public function guardarResultadosSistemaDeGestion($data){
-        $sql = "INSERT INTO evaluacionessg (estado_salud,evaluacionRiesgos,recomendaciones , aptitudLaboral,comentarios,entrevista_identrevista,entrevista_postulacion_idpostulaciones, estadoEvaluacion) VALUES 
-                                            (? , ? , ? , ? , ? , ? , ? , ?)";
+    $sql = "INSERT INTO evaluacionessg 
+            (estado_salud, evaluacionRiesgos, recomendaciones, aptitudLaboral, comentarios, 
+             entrevista_identrevista, entrevista_postulacion_idpostulaciones, estadoEvaluacion) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    try {
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
             $data['estado_salud'],
@@ -517,12 +519,17 @@ class Administrador {
             $data['recomendaciones'],
             $data['aptitudLaboral'],
             $data['comentarios'], 
-            $data['entrevista_identrevista'],
-            $data['entrevista_postulacion_idpostulaciones'],
+            $data['identrevista'],
+            $data['idpostulacion'],
             $data['estadoEvaluacion'],
         ]);
-        return;
+        return true;
+    } catch (PDOException $e) {
+        error_log('Error en guardarResultadosSistemaDeGestion: ' . $e->getMessage());
+        return false;
     }
+}
+
 
 
      public function asignarEntrevista($data){

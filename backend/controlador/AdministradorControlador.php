@@ -171,17 +171,24 @@ class AdministradorControlador {
         }
         $this->jsonResponse(['Convocatoria' => $this->administrador->agregarConvocatoria($data) ?: []]);
     }
-    public function guardarResultadosSistemaDeGestion($data){
-        $required = ['estado_salud' , 'evaluacionRiesgos' , 'recomendaciones' , 'aptitudLaboral' , 'comentarios' , 'estadoEvaluacion'];
-        foreach ($required as $key){
-            if(!isset($data[$key])){
-            
-                $this->jsonResponse(['error' => 'Faltan datos'] , 400);
+    public function guardarResultadosSistemaDeGestion($data) {
+        $required = ['identrevista', 'idpostulacion','estado_salud', 'evaluacionRiesgos', 'recomendaciones', 'aptitudLaboral', 'comentarios', 'estadoEvaluacion'];
+
+        foreach ($required as $key) {
+            if (!isset($data[$key]) || empty($data[$key])) {
+                $this->jsonResponse(['error' => "Faltan datos: $key"], 400);
+                return;
             }
         }
-        $this->jsonResponse(['SistemaDeGestion' => $this->administrador->guardarResultadosSistemaDeGestion($data) ?: []]);
+        $resultado = $this->administrador->guardarResultadosSistemaDeGestion($data);
 
+        if ($resultado) {
+            $this->jsonResponse(['success' => true, 'message' => 'Resultados guardados con éxito.']);
+        } else {
+            $this->jsonResponse(['error' => 'No se pudo guardar en la base de datos.'], 500);
+        }
     }
+
 
 
     public function asignarEntrevista($data) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
+const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres, identrevista, idpostulacion }) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         num_doc: "",
@@ -13,6 +13,8 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
         aptitudLaboral: "",
         comentarios: "",
         estadoEvaluacion: "",
+        identrevista: "",
+        idpostulacion: "",
     });
 
     useEffect(() => {
@@ -20,8 +22,10 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
             ...prevData,
             num_doc: num_doc || "",
             nombres: nombres || "",
+            identrevista: identrevista || "",
+            idpostulacion: idpostulacion || "",
         }));
-    }, [num_doc, nombres]);
+    }, [num_doc, nombres, identrevista, idpostulacion]);
 
     const handleChange = (e) => {
         setFormData({
@@ -34,10 +38,11 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
         e.preventDefault();
         try {
             const response = await axios.post("http://localhost/gestorplus/backend/", {
-                action: "guardarResultadosSistemaGestion",
+                action: "guardarResultadosSistemaDeGestion",
                 ...formData,
             });
 
+            console.log(response.data);
             if (response.data.success) {
                 alert("Resultados guardados con éxito.");
                 if (formData.estadoEvaluacion === "Apto") {
@@ -77,6 +82,7 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
                             readOnly
                         />
                     </div>
+                    <input type="hidden" name="identrevista" value={formData.identrevista} readOnly />
                     {[
                         { label: "Estado de salud del entrevistado", name: "estado_salud" },
                         { label: "Evaluación de riesgos del entrevistado", name: "evaluacionRiesgos" },
@@ -110,7 +116,7 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres }) => {
                             <option value="No Apto">No Apto</option>
                         </select>
                     </div>
-                    <button type="submit" className="btn btn-primary mb-2">
+                    <button type="submit" className="btn btn-primary mb-2" onClick={() => navigate("/Contratos")}>
                         Subir resultados del sistema de gestión
                     </button>
                     <button className="btn btn-danger mb-2">
