@@ -152,6 +152,18 @@ class UsuarioControlador {
         
     }
 
+    public function obtenerEstudio () {
+        $decoded = $this->verificarToken();
+        $resultado = $this->usuario->obtenerEstudio($decoded->data->hojadevida_idHojadevida);
+        $this->jsonResponse('success', '' , ['obtenerEstudio' => $resultado ?: []]); 
+    }
+
+    public function obtenerExperiencia(){
+        $decoded = $this->verificarToken();
+        $resultado = $this->usuario->obtenerExperiencia($decoded->data->hojadevida_idHojadevida);
+        $this->jsonResponse('success', '' , ['obtenerExperiencia' => $resultado ?: []]);
+    }
+
 }
 
 ?>

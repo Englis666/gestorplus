@@ -22,6 +22,11 @@ const Perfil = () => {
   const [modalHojaDeVida, setModalHojaDeVida] = useState(false);
   const [modalEstudios, setModalEstudios] = useState(false);
   const [modalExperiencia, setModalExperiencia] = useState(false);
+  const [loading, setLoading] = useState(null);
+  const [error, setError] = useState(null);
+  const [estudios, setEstudios] = useState([]);
+  const [experiencia, setExperiencia] = useState([]);
+  const [seleccionado, setSeleccionado] = useState("Estudios");
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -61,6 +66,7 @@ const Perfil = () => {
           originalData: { ...mappedData } 
         }));
       } else {
+        console.error("Error al obtener los datos del usuario", error);
         alert("Error al obtener los datos del usuario");
       }
     } catch (error) {
@@ -82,6 +88,53 @@ const Perfil = () => {
 
   useEffect(() => {
     getUserData();
+  }, []);
+
+  useEffect(() => {
+    const token = getCookie("auth_token");
+    if (!token) {
+      alert("No se encontró el token de autenticación.");
+      return;
+    }
+
+    const decodedToken = jwtDecode(token);
+    if (isTokenExpired(decodedToken)) {
+      alert("El token ha expirado.");
+      return;
+    }
+
+    const fetchEstudios = async () => {
+      try {
+        const responseEstudios = await axios.get("http://localhost/gestorplus/backend/", {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { action: "obtenerEstudio" },
+        });
+        console.log("Datos de estudios recibidos:", responseEstudios.data);
+        const data = responseEstudios.data?.obtenerEstudio || [];
+        setEstudios(Array.isArray(data) ? data : [data]); // Asegúrate de que sea un arreglo
+      } catch (error) {
+        console.error("Error al obtener los estudios", error);
+        setEstudios([]);
+      }
+    };
+
+    const fetchExperienciaLaboral = async () => {
+      try {
+        const responseExperiencia = await axios.get("http://localhost/gestorplus/backend/", {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { action: "obtenerExperiencia" },
+        });
+        console.log("Datos de experiencia laboral recibidos:", responseExperiencia.data);
+        const data = responseExperiencia.data?.obtenerExperiencia || [];
+        setExperiencia(Array.isArray(data) ? data : [data]); // Asegúrate de que sea un arreglo
+      } catch (error) {
+        console.error("Error al obtener la experiencia laboral", error);
+        setExperiencia([]);
+      }
+    };
+
+    fetchEstudios();
+    fetchExperienciaLaboral();
   }, []);
 
   const handleChange = (e) => {
@@ -251,10 +304,49 @@ const Perfil = () => {
 
         <div className="col-md-8 col-12 p-4 bg-white shadow-lg rounded-lg">
           <div className="nav nav-tabs">
-            <select style={{border: 'none', background: 'transparent'}}className="nav-link">
-              <option value="estudios">Estudios</option>
+            <select
+              style={{ border: "none", background: "transparent" }}
+              value={seleccionado}
+              onChange={(e) => setSeleccionado(e.target.value)}
+            >
+              <option value="Estudios">Estudios</option>
               <option value="Experiencias">Experiencia Laboral</option>
             </select>
+          </div>
+          <div className="mt-4">
+            {seleccionado === "Estudios" ? (
+              estudios.length > 0 ? (
+                <ul className="list-group">
+                  {estudios.map((estudio, index) => (
+                    <li key={index} className="list-group-item">
+                      <strong>Institución:</strong> {estudio.institucionEstudio} <br />
+                      <strong>Título:</strong> {estudio.tituloEstudio} <br />
+                      <strong>Nivel:</strong> {estudio.nivelEstudio} <br />
+                      <strong>Área:</strong> {estudio.areaEstudio} <br />
+                      <strong>Estado:</strong> {estudio.estadoEstudio} <br />
+                      <strong>Fecha de inicio:</strong> {estudio.fechaInicioEstudio} <br />
+                      <strong>Fecha de fin:</strong> {estudio.fechaFinEstudio} <br />
+                      <strong>Ubicación:</strong> {estudio.ubicacionEstudio}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-center">No hay estudios disponibles.</p>
+              )
+            ) : experiencia.length > 0 ? (
+              <ul className="list-group">
+                {experiencia.map((exp, index) => (
+                  <li key={index} className="list-group-item">
+                    <strong>Profesión:</strong> {exp.profesion} <br />
+                    <strong>Descripción del perfil:</strong> {exp.descripcionPerfil} <br />
+                    <strong>Fecha de inicio:</strong> {exp.fechaInicioExp} <br />
+                    <strong>Fecha de fin:</strong> {exp.fechaFinExp}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-center">No hay experiencia laboral disponible.</p>
+            )}
           </div>
         </div>
       </div>

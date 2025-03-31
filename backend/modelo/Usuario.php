@@ -273,9 +273,6 @@ class Usuario {
         return[];
     }
     
-    
-    
-
     public function obtenerTotalEstadisticas($num_doc) {
         $sql = "
            SELECT 
@@ -302,9 +299,37 @@ class Usuario {
             ];
         }
     }
- 
+
+    public function obtenerEstudio($idhojadevida) {
+        $sql = "
+        SELECT * FROM estudio WHERE hojadevida_idhojadevida = :idhojadevida";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':idhojadevida', $idhojadevida, PDO::PARAM_INT);
+        $stmt->execute();
     
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($resultado) {
+            return $resultado;
+        } else {
+            return false;
+        }
+    }
 
+    public function obtenerExperiencia($idhojadevida){
+        $sql = "
+        SELECT * FROM estudio WHERE hojadevida_idhojadevida = :idhojadevida";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':idhojadevida', $idhojadevida, PDO::PARAM_INT);
+        $stmt->execute();
+    
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($resultado) {
+            return $resultado;
+        } else {
+            return false;
+        }
+    }
 }
-
 ?>
