@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 
-const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
+const ModalHojaDeVida = ({ num_doc = null, identrevista, onClose }) => {
     const [formData, setFormData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -62,6 +62,7 @@ const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
                                 <p><strong>Descripción del perfil:</strong> {formData.descripcion}</p>
                                 <p><strong>Fecha de inicio de experiencia laboral:</strong> {formData.fechaInicioExp}</p>
                                 <p><strong>Fecha de finalización de experiencia laboral:</strong> {formData.fechaFinExp}</p>
+                                {/* <p>{formData.idpostulacion}</p> */}
                             </>
                         ) : (
                             <p>No se encontraron datos para este usuario.</p>
@@ -69,7 +70,7 @@ const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Rechazar</button>
-                        <button className="btn btn-primary" onClick={() => navigate("/SistemaDeGestion", { state: { num_doc, nombres: formData.nombres } })}>Aceptar y asignarle Sistema de Gestión</button>
+                        <button className="btn btn-primary" onClick={() => navigate("/SistemaDeGestion", { state: { num_doc, nombres: formData.nombres, identrevista, idpostulacion: formData.idpostulacion } })}>Aceptar y asignarle Sistema de Gestión</button>
                     </div>
                 </div>
             </div>

@@ -164,6 +164,7 @@ class Usuario {
                     estadohojadevida = ?
                   WHERE idHojadevida = ?";  
     
+        $telefonoFijo = !empty($data['telefonoFijo']) ? $data['telefonoFijo'] : null;
         $stmt = $this->db->prepare($query);
     
         $stmt->execute([
@@ -172,8 +173,8 @@ class Usuario {
             $data['ciudad'],
             $data['ciudadNacimiento'],
             $data['telefono'],
-            $data['telefonoFijo'],
-            $data['estadohojadevida'],
+            $telefonoFijo,
+            "Activa",
             $hojadevida_idHojadevida
         ]);
     

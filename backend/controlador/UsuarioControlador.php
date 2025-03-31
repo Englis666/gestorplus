@@ -100,15 +100,7 @@ class UsuarioControlador {
     }
 
     public function actualizacionHojaDevida($data) {
-        $decoded = $this->verificarToken();
-        
-        foreach (['fechaNacimiento', 'direccion', 'ciudad', 'ciudadNacimiento', 'telefono', 'telefonoFijo'] as $campo) {
-            if (!isset($data[$campo])) {
-                $this->jsonResponse('error', "El campo $campo es obligatorio", [], 400);
-                return;
-            }
-        }
-        
+        $decoded = $this->verificarToken();  
         $resultado = $this->usuario->actualizacionHojadevida($data, $decoded->data->hojadevida_idHojadevida);
         $this->jsonResponse($resultado ? 'success' : 'error', $resultado ? 'Hoja de vida actualizada' : 'No se pudo actualizar la hoja de vida');
     }
