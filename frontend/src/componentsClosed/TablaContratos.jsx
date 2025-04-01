@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ModalSubirContratoPdf from "../componentsClosed/ModalSubirContratoPdf";
 
-const TablaContratos = ({ num_doc = "", nombres = "" }) => {
+const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [vinculaciones, setVinculaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     num_doc,
     nombres,
+    idevaluacion: "",
     fechaInicio: "",
     fechaFin: "",
     tipoContrato: "",
@@ -32,10 +35,35 @@ const TablaContratos = ({ num_doc = "", nombres = "" }) => {
       })
       .catch((err) => {
         setError(`Error al obtener vinculaciones: ${err.message}`);
-        console.error("Error:", err);
       })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!identrevista && !idpostulacion) return;
+
+    axios
+      .get("http://localhost/gestorplus/backend/", {
+        params: {
+          action: "buscarIdEvaluacion",
+          identrevista: identrevista || null,
+          idpostulacion: idpostulacion || null,
+        },
+      })
+      .then((response) => {
+        if (response.data.idevaluacion) {
+          setFormData((prevData) => ({
+            ...prevData,
+            idevaluacion: response.data.idevaluacion,
+          }));
+        } else {
+          console.warn("No se encontró el ID de evaluación.");
+        }
+      })
+      .catch((err) => {
+        console.error("Error al buscar ID de evaluación:", err);
+      });
+  }, [identrevista, idpostulacion]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,24 +71,16 @@ const TablaContratos = ({ num_doc = "", nombres = "" }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const response = await axios.post("http://localhost/gestorplus/backend/", {
         action: "asignarVinculacion",
         ...formData,
       });
 
-      if (response.data.success) {
+      console.log(response.data);
+      if (response.data.Vinculacion) {
         alert("Vinculación asignada con éxito");
-        setFormData({
-          num_doc: "",
-          nombres: "",
-          fechaInicio: "",
-          fechaFin: "",
-          tipoContrato: "",
-          salario: "",
-          estadoContrato: "",
-          fechaFirma: "",
-        });
       } else {
         alert("Error al asignar la vinculación");
       }
@@ -75,7 +95,7 @@ const TablaContratos = ({ num_doc = "", nombres = "" }) => {
       <h1 className="mb-4">Vinculaciones</h1>
 
       <div className="row">
-        <div className="card shadow-sm border- mb-4">
+        <div className="card shadow-sm border-0 mb-4">
           <div className="card-body">
             <p>Vinculaciones de la empresa</p>
             {loading ? (
@@ -96,6 +116,7 @@ const TablaContratos = ({ num_doc = "", nombres = "" }) => {
                       <th>Estado</th>
                       <th>Fecha de firma</th>
                       <th>Acción</th>
+                      <th>Accion</th>
                     </tr>
                   </thead>
                   <tbody className="text-center">
@@ -111,10 +132,16 @@ const TablaContratos = ({ num_doc = "", nombres = "" }) => {
                           <td>{vinculacion.estadoContrato}</td>
                           <td>{new Date(vinculacion.fechaFirma).toLocaleDateString("es-ES")}</td>
                           <td>
+                            <button className="btn btn-primary">
+                              Subir contrato fisico
+                            </button>
+                          </td>
+                          <td>
                             <button className="btn btn-danger">
                               Desactivar contrato y generar paz y salvo
                             </button>
                           </td>
+
                         </tr>
                       ))
                     ) : (
@@ -134,10 +161,13 @@ const TablaContratos = ({ num_doc = "", nombres = "" }) => {
       <div className="row mt-4 container-fluid mt-5 card shadow-sm border-0 mb-5">
         <div className="col-12">
           <h4 className="p-2">Asignación de vinculaciones</h4>
+
           <form onSubmit={handleSubmit}>
+            <input type="hidden" className="form-control" value={formData.idevaluacion} readOnly />
+
             {[
-              { label: "Número de Documento del Aspirante", name: "num_doc", type: "number" },
-              { label: "Nombre del Aspirante a contratación", name: "nombres", type: "text" },
+              { label: "Número de Documento", name: "num_doc", type: "number" },
+              { label: "Nombre", name: "nombres", type: "text" },
               { label: "Fecha de inicio", name: "fechaInicio", type: "date" },
               { label: "Fecha de fin", name: "fechaFin", type: "date" },
               { label: "Tipo de contrato", name: "tipoContrato", type: "text" },
@@ -146,24 +176,16 @@ const TablaContratos = ({ num_doc = "", nombres = "" }) => {
               { label: "Fecha de firma", name: "fechaFirma", type: "date" },
             ].map(({ label, name, type }) => (
               <div key={name} className="mb-3">
-                <label htmlFor={name} className="form-label">
-                  {label}
-                </label>
-                <input
-                  type={type}
-                  id={name}
-                  name={name}
-                  className="form-control"
-                  value={formData[name]}
-                  onChange={handleChange}
-                  required
-                />
+                <label className="form-label">{label}</label>
+                <input type={type} name={name} className="form-control" value={formData[name]} onChange={handleChange} required />
               </div>
             ))}
             <button type="submit" className="btn btn-primary mb-2">
               Asignar vinculación al postulante
             </button>
           </form>
+          {isModalOpen && <ModalSubirContratoPdf onClose={() => setIsModalOpen(false)} />}
+
         </div>
       </div>
     </div>

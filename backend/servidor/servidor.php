@@ -10,6 +10,7 @@ use Controlador\AdministradorControlador;
 use Controlador\UsuarioControlador;
 use Controlador\AspiranteControlador;
 use Controlador\EmpleadoControlador;
+use Controlador\ArchivosControlador;
 
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents('php://input'), true);
@@ -26,7 +27,8 @@ $controllers = [
     'empleado' => new EmpleadoControlador(),
     'aspirante' => new AspiranteControlador(),
     'chat' => new ChatControlador(),
-    'admin' => new AdministradorControlador()
+    'admin' => new AdministradorControlador(),
+    'archivos' => new archivosControlador()
 ];
 
 
@@ -49,7 +51,10 @@ $routes = [
         'enviarMensaje' => ['chat', 'enviarMensaje'],
         'obtenerOcrearChat' => ['chat' , 'obtenerOcrearChat'],
         'iniciarChat' => ['chat', 'iniciarChat'],
-        
+
+        'subirContrato' => ['archivos', 'subirContrato'],
+
+    
         'agregarCargo' => ['admin', 'agregarCargo'],
         'guardarResultadosSistemaDeGestion' => ['admin' , 'guardarResultadosSistemaDeGestion'],
         'agregarConvocatoria' => ['admin', 'agregarConvocatoria'],
@@ -59,6 +64,7 @@ $routes = [
         'notificacionRechazada' => ['admin', 'notificacionRechazada'],
         'asignarEntrevista' => ['admin', 'asignarEntrevista'],
         'asistenciaConfirmada' => ['admin', 'asistenciaConfirmada'],
+        'asignarVinculacion' => ['admin' , 'asignarVinculacion'],
         'asistenciaNoConfirmada' => ['admin', 'asistenciaNoConfirmada']
     ],
     'GET' => [
@@ -100,7 +106,8 @@ $routes = [
         'obtenerTodasLasVacaciones' => ['admin', 'obtenerTodasLasVacaciones'],
         'obtenerDatosDelEntrevistado' => ['admin', 'obtenerDatosDelEntrevistado'],
         'obtenerTodasLasEstadisticas' => ['admin' , 'obtenerTodasLasEstadisticas'],
-        'obtenerSistemaDeGestion' => ['admin' , 'obtenerSistemaDeGestion']
+        'obtenerSistemaDeGestion' => ['admin' , 'obtenerSistemaDeGestion'],
+        'buscarIdEvaluacion' => ['admin' , 'buscarIdEvaluacion']
     ],
     'PATCH' => [
         'actualizarPerfil' => ['usuario', 'actualizarPerfil'],

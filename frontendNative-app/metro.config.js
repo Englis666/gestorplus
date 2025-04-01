@@ -1,10 +1,11 @@
-/**
- * Metro configuration for React Native
- * https://github.com/facebook/react-native
- *
- * @format
- */
 const { getDefaultConfig } = require("expo/metro-config");
 
-module.exports = getDefaultConfig(__dirname);
+const defaultConfig = getDefaultConfig(__dirname);
 
+module.exports = {
+    ...defaultConfig,
+    server: {
+        ...defaultConfig.server,
+        host: '0.0.0.0', // Asegura que se acepten conexiones desde la red local
+    },
+};
