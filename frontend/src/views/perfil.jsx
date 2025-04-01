@@ -22,7 +22,6 @@ const Perfil = () => {
   const [modalHojaDeVida, setModalHojaDeVida] = useState(false);
   const [modalEstudios, setModalEstudios] = useState(false);
   const [modalExperiencia, setModalExperiencia] = useState(false);
-  const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
   const [estudios, setEstudios] = useState([]);
   const [experiencia, setExperiencia] = useState([]);
@@ -288,8 +287,8 @@ const Perfil = () => {
           </form>
 
           <div className="d-flex flex-column justify-content-center bg-white shadow rounded">
-            <button onClick={toggleModalHojaDeVida} className="btn btn-outline-primary mb-3 shadow-sm">Agregar o actualizar Hoja de vida</button>
-            <button onClick={toggleModalEstudios} className="btn btn-outline-primary mb-3 shadow-sm">Agregar estudios</button>
+            <button onClick={toggleModalHojaDeVida} className="btn btn-outline-primary mb-3 shadow-sm">Agregar o Actualizar Hoja de vida</button>
+            <button onClick={toggleModalEstudios} className="btn btn-outline-primary mb-3 shadow-sm">Agregar Estudios</button>
             <button onClick={toggleModalExperiencia} className="btn btn-outline-primary shadow-sm">Agregar Experiencia</button>
           </div>
 
@@ -316,34 +315,62 @@ const Perfil = () => {
           <div className="mt-4">
             {seleccionado === "Estudios" ? (
               estudios.length > 0 ? (
-                <ul className="list-group">
+                <div className="row g-4">
                   {estudios.map((estudio, index) => (
-                    <li key={index} className="list-group-item">
-                      <strong>Institución:</strong> {estudio.institucionEstudio} <br />
-                      <strong>Título:</strong> {estudio.tituloEstudio} <br />
-                      <strong>Nivel:</strong> {estudio.nivelEstudio} <br />
-                      <strong>Área:</strong> {estudio.areaEstudio} <br />
-                      <strong>Estado:</strong> {estudio.estadoEstudio} <br />
-                      <strong>Fecha de inicio:</strong> {estudio.fechaInicioEstudio} <br />
-                      <strong>Fecha de fin:</strong> {estudio.fechaFinEstudio} <br />
-                      <strong>Ubicación:</strong> {estudio.ubicacionEstudio}
-                    </li>
+                    <div key={index} className="col-12 col-md-6 col-lg-4">
+                      <div className="card shadow-sm border-0 mb-4" style={{ borderRadius: "10px" }}>
+                        <div className="card-body">
+                          <h5 className="card-title text-primary">{estudio.tituloEstudio}</h5>
+                          <p className="card-text">
+                            <strong>Institución:</strong> {estudio.institucionEstudio} <br />
+                            <strong>Nivel:</strong> {estudio.nivelEstudio} <br />
+                            <strong>Área:</strong> {estudio.areaEstudio} <br />
+                            <strong>Estado:</strong> {estudio.estadoEstudio} <br />
+                            <strong>Fecha de inicio:</strong> {estudio.fechaInicioEstudio} <br />
+                            <strong>Fecha de fin:</strong> {estudio.fechaFinEstudio} <br />
+                            <strong>Ubicación:</strong> {estudio.ubicacionEstudio}
+                            <strong>
+                              <button type="button" className="btn btn-primary me-2">
+                                Editar
+                              </button>
+                              <button type="button" className="btn btn-danger">
+                                Eliminar
+                              </button>
+                            </strong>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <p className="text-center">No hay estudios disponibles.</p>
               )
             ) : experiencia.length > 0 ? (
-              <ul className="list-group">
+              <div className="row g-4">
                 {experiencia.map((exp, index) => (
-                  <li key={index} className="list-group-item">
-                    <strong>Profesión:</strong> {exp.profesion} <br />
-                    <strong>Descripción del perfil:</strong> {exp.descripcionPerfil} <br />
-                    <strong>Fecha de inicio:</strong> {exp.fechaInicioExp} <br />
-                    <strong>Fecha de fin:</strong> {exp.fechaFinExp}
-                  </li>
+                  <div key={index} className="col-12 col-md-6 col-lg-4">
+                    <div className="card shadow-sm border-0 mb-4" style={{ borderRadius: "10px" }}>
+                      <div className="card-body">
+                        <h5 className="card-title text-primary">{exp.profesion}</h5>
+                        <p className="card-text">
+                          <strong>Descripción del perfil:</strong> {exp.descripcionPerfil} <br />
+                          <strong>Fecha de inicio:</strong> {exp.fechaInicioExp} <br />
+                          <strong>Fecha de fin:</strong> {exp.fechaFinExp}
+                          <strong>
+                            <button type="button" className="btn btn-primary mt-1 mb-1">
+                              Editar
+                            </button>
+                            <button type="button" className="btn btn-danger mt-1 mb-1">
+                              Eliminar
+                            </button>
+                          </strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             ) : (
               <p className="text-center">No hay experiencia laboral disponible.</p>
             )}

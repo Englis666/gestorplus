@@ -147,13 +147,46 @@ class UsuarioControlador {
     public function obtenerEstudio () {
         $decoded = $this->verificarToken();
         $resultado = $this->usuario->obtenerEstudio($decoded->data->hojadevida_idHojadevida);
-        $this->jsonResponse('success', '' , ['obtenerEstudio' => $resultado ?: []]); 
+        $this->jsonResponse('success', 'Se obtuvieron los estudios' , ['obtenerEstudio' => $resultado ?: []]); 
     }
 
     public function obtenerExperiencia(){
         $decoded = $this->verificarToken();
         $resultado = $this->usuario->obtenerExperiencia($decoded->data->hojadevida_idHojadevida);
-        $this->jsonResponse('success', '' , ['obtenerExperiencia' => $resultado ?: []]);
+        $this->jsonResponse('success', 'Se obtuvo su experiencia laboral' , ['obtenerExperiencia' => $resultado ?: []]);
+    }
+
+    public function eliminarEstudio() {
+        $idestudio = $_SERVER['HTTP_X_IDESTUDIO'] ?? null; // Leer el header 'X-IdEstudio'
+
+        if (!$idestudio) {
+            http_response_code(400);
+            echo json_encode(['message' => 'El id del estudio no fue proporcionado.']);
+            return;
+        }
+
+        try {
+            $resultado = $this->usuario->eliminarEstudio($idestudio);
+            if ($resultado) {
+                echo json_encode(['message' => 'Estudio eliminado correctamente.']);
+            } else {
+                http_response_code(500);
+                echo json_encode(['message' => 'No se pudo eliminar el estudio.']);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['message' => 'Error al eliminar el estudio.', 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function eliminarExperiencia($data){
+        if (empty($data['idexperiencialaboral'])) {
+            $this->jsonResponse('error', 'La experiencia laboral a eliminar es requerida');
+            return;
+        }
+
+        $resultado = $this->usuario->eliminarExperiencia(['idexperiencialaboral' => trim($data['idexperiencialaboral'])]);
+        $this->jsonResponse('success', 'Se eliminó correctamente la experiencia laboral', ['ExperienciaEliminada' => $resultado ?: []]);
     }
 
 }
