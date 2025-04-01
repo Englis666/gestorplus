@@ -58,6 +58,20 @@ class AdministradorControlador {
         $this->jsonResponse(['Vinculaciones' => $this->administrador->obtenerVinculaciones() ? : []]);
     }
 
+     public function buscarIdEvaluacion() {
+        $identrevista = $_GET['identrevista'] ?? null;
+        if (!$identrevista) {
+            echo json_encode(["error" => "Identificador de entrevista no encontrado"]);
+            return;
+        }
+
+        $evaluacion = $this->administrador->buscarIdEvaluacion($identrevista);
+        if ($evaluacion) {
+            echo json_encode(["encontrada" => true, "idevaluacion" => $evaluacion['idevaluacion']]);
+        } else {
+            echo json_encode(["encontrada" => false]);
+        }
+    }
 
     public function obtenerPazYSalvos() {
         $this->jsonResponse(['Salvos' => $this->administrador->obtenerPazYSalvos() ?: []]);
@@ -199,6 +213,15 @@ class AdministradorControlador {
             }
         }
         $this->jsonResponse(['Entrevista' => $this->administrador->asignarEntrevista($data) ?: []]);
+    }
+    public function asignarVinculacion($data){
+        $required = ['num_doc', 'fechaInicio', 'fechaFin', 'tipoContrato', 'salario', 'estadoContrato', 'fechaFirma'];
+        foreach ($required as $key){
+            if(!isset($data[$key])){
+                $this->jsonResponse(['error' => 'Faltan datos'], 400);
+            }
+        }
+        $this->jsonResponse(['Vinculacion' => $this->administrador->asignarVinculacion($data) ?: []]);
     }
 
     public function asistenciaConfirmada($data){
