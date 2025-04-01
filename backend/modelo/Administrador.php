@@ -116,7 +116,7 @@ class Administrador {
     }
 
     public function obtenerVinculaciones(){
-        $sql = "SELECT * FROM vinculacion";
+        $sql = "SELECT * FROM vinculacion as v INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc;";
         $stmt = $this->db->prepare($sql);
         
         
@@ -377,6 +377,11 @@ class Administrador {
         return [];
     }
 
+      public function buscarIdEvaluacion($identrevista) {
+        $stmt = $this->db->prepare("SELECT idevaluacion FROM evaluacionessg WHERE entrevista_identrevista = ?");
+        $stmt->execute([$identrevista]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     public function corroborarJornada($idJornada){
         $sql = "UPDATE jornada SET estadoJornada = 'Jornada Corroborada' WHERE idjornada = :idjornada";
@@ -546,6 +551,25 @@ class Administrador {
          ]);
          return;
     }
+
+    public function asignarVinculacion($data){
+    $sql = "INSERT INTO vinculacion (fechaInicio, fechaFin, tipoContrato, salario, estadoContrato, fechaFirma, evaluacionesSg_idevaluacion, usuario_num_doc)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([
+        $data['fechaInicio'],
+        $data['fechaFin'],
+        $data['tipoContrato'],
+        $data['salario'],
+        $data['estadoContrato'], 
+        $data['fechaFirma'], 
+        $data['idevaluacion'] ?? null, 
+        $data['num_doc']
+    ]);
+
+    return $stmt->rowCount() > 0; 
+}
+
 
 
     public function obtenerPazYSalvos(){
