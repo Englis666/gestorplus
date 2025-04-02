@@ -25,9 +25,12 @@ class Administrador {
     }
 
     public function obtenerEmpleados(){
-        $sql = "SELECT * FROM usuario as u
-                 INNER JOIN rol as r ON u.rol_idrol = idrol
-                 WHERE r.nombreRol = 'Empleados'";
+        $sql = "SELECT * FROM vinculacion as v
+         INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc
+         INNER JOIN postulacion as p ON u.num_doc = p.usuario_num_doc
+         INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+         INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo
+        ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         
@@ -338,7 +341,7 @@ class Administrador {
     public function obtenerUsuarios(){
         $sql = "SELECT * FROM usuario as u
                  INNER JOIN rol as r ON u.rol_idrol = r.idrol
-                 WHERE r.nombreRol = 'Empleados'";
+                 WHERE r.nombreRol = 'Empleado'";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         
