@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 
 const TablaEmpleados = () => {
-  const [empleados, setEmpleados] = useState([]); 
+  const [empleados, setEmpleados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -33,11 +33,11 @@ const TablaEmpleados = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-            params: { action: "obtenerUsuarios" },
+            params: { action: "obtenerEmpleados" },
           })
           .then((response) => {
             console.log("Respuesta completa:", response.data);
-            const empleados = response.data?.RRHH;
+            const empleados = response.data?.empleados;
             if (Array.isArray(empleados)) {
               setEmpleados(empleados);
             } else {
@@ -107,14 +107,14 @@ const TablaEmpleados = () => {
                         <tr key={empleado.num_doc}>
                           <td className="py-3 px-4">{empleado.nombres}</td>
                           <td className="py-3 px-4">{empleado.email}</td>
-                          <td className="py-3 px-4">{empleado.nombreRol}</td>
+                          <td className="py-3 px-4">{empleado.nombreCargo}</td>
                           <td className="py-3 px-4">{empleado.tipodDoc}</td>
-                          <td className="py-3 px-4">{empleado.num_doc}</td>
-                          <td>12 </td>
-                          <td>55</td>
+                          <td className="py px-4">{empleado.num_doc}</td>
+                          <td className="py-3 px-4">{empleado.fechaInicio}</td>
+                          <td className="py-3 px-4">{empleado.fechaFin}</td>
                           <td className="py-3 px-4">
-                            <button 
-                            className="btn btn-success btn-sm me-2" >
+                            <button
+                              className="btn btn-success btn-sm me-2" >
                               Realizar paz y salvo
                             </button>
 

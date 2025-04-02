@@ -4,18 +4,19 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './context/userContext';
 
-
-//Importaciones de vistas
+// Importaciones de vistas
 import Login from './views/Login';
 import Registro from './views/Registro';
 import Perfil from './views/perfil';
 import Layout from './views/Layout';
-//Aspirante
+
+// Aspirante
 import Trabajo from './views/aspirante/Trabajo';
 import DetallesDeTrabajo from './views/aspirante/DetallesTrabajo';
 import InicioEmpleado from './views/empleado/InicioEmpleado';
 import MisPostulaciones from './views/aspirante/MisPostulaciones';
 
+// Otras vistas
 import Jornadas from './views/Jornadas';
 import Ausencias from './views/Ausencias';
 import Quejas from './views/Quejas';
@@ -30,48 +31,62 @@ import Cargos from './views/Cargos';
 import Contratos from './views/Contratos';
 import SistemaDeGestion from './views/SistemaDeGestion';
 
-//VISTAS ADMIN
+// Vistas Administrador
 import InicioAdmin from './views/administrador/InicioAdmin';
-//VISTAS RRH
+
+// Vistas Recursos Humanos
 import InicioRRHH from './views/recursoshumanos/InicioRRHH';
 import InicioAspirante from './views/aspirante/InicioAspirante';
 import PazySalvo from './views/PazYSalvos';
+
+// Hooks y Componentes de Seguridad
+import useAuthRedirect from './hook/useAuthRedirect';
+import PrivateRoute from './components/PrivateRoute';
+
+
+
 function App() {
   return (
     <UserProvider>
       <BrowserRouter>
-    <div className="App">
-        <Routes>
-          
-          <Route path='/' element={<Layout/>}/>
-          <Route path='/Login' element={<Login/>}/>
-          <Route path='/Registro' element={<Registro/>}/>
-          <Route path='/Perfil' element={<Perfil/>}/>
-          <Route path='/aspirante/inicio' element={<InicioAspirante/>}/>
-          <Route path='/aspirante/Trabajo' element={<Trabajo/>}/>
-          <Route path='/aspirante/DetallesDeTrabajo' element={<DetallesDeTrabajo/>}/>
-          <Route path='/aspirante/MisPostulaciones' element={<MisPostulaciones/>}/>
-          <Route path='/empleado/InicioEmpleado' element={<InicioEmpleado/>}/>
-          <Route path='/Jornadas' element={<Jornadas/>}/>
-          <Route path='/HorasExtra' element={<HorasExtra/>}/>
-          <Route path='/Ausencias' element={<Ausencias/>}/>
-          <Route path='/Vacaciones' element={<Vacaciones/>}/>
-          <Route path='/Quejas' element={<Quejas/>}/>
-          <Route path='/Empleados' element={<Empleados/>}/>
-          <Route path='/Entrevistas' element={<Entrevistas/>}/>
-          <Route path="/Convocatorias" element={<Convocatorias/>}/>
-          <Route path='/Postulaciones' element={<Postulaciones/>}/>
-          <Route path='/Contratos' element={<Contratos/>}/>.
-          <Route path='/SistemaDeGestion' element={<SistemaDeGestion/>}/>
-          <Route path='/Cargos' element={<Cargos/>}/>
-          <Route path='/PazYsalvo' element={<PazySalvo/>}/>
-          <Route path='/Certificados' element={<Certificados/>}/>
+        {/* El componente AuthCheck solo se ejecuta dentro del contexto del enrutador */}
 
-          <Route path='/administrador/InicioAdmin' element={<InicioAdmin/>}/>
-          <Route path='/recursoshumanos/InicioRRHH' element={<InicioRRHH/>}/>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Layout />} />
+            <Route path="/Login" element={<Login />} />
+            <Route path="/Registro" element={<Registro />} />
 
-        </Routes>
-    </div>
+            {/* Rutas protegidas */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/Perfil" element={<Perfil />} />
+              <Route path="/aspirante/inicio" element={<InicioAspirante />} />
+              <Route path="/aspirante/Trabajo" element={<Trabajo />} />
+              <Route path="/aspirante/DetallesDeTrabajo" element={<DetallesDeTrabajo />} />
+              <Route path="/aspirante/MisPostulaciones" element={<MisPostulaciones />} />
+              <Route path="/empleado/InicioEmpleado" element={<InicioEmpleado />} />
+              <Route path="/Jornadas" element={<Jornadas />} />
+              <Route path="/HorasExtra" element={<HorasExtra />} />
+              <Route path="/Ausencias" element={<Ausencias />} />
+              <Route path="/Vacaciones" element={<Vacaciones />} />
+              <Route path="/Quejas" element={<Quejas />} />
+              <Route path="/Empleados" element={<Empleados />} />
+              <Route path="/Entrevistas" element={<Entrevistas />} />
+              <Route path="/Convocatorias" element={<Convocatorias />} />
+              <Route path="/Postulaciones" element={<Postulaciones />} />
+              <Route path="/Contratos" element={<Contratos />} />
+              <Route path="/SistemaDeGestion" element={<SistemaDeGestion />} />
+              <Route path="/Cargos" element={<Cargos />} />
+              <Route path="/PazYsalvo" element={<PazySalvo />} />
+              <Route path="/Certificados" element={<Certificados />} />
+              <Route path="/" element={<PrivateRoute />} />
+
+              {/* Administrador y RRHH */}
+              <Route path="/administrador/InicioAdmin" element={<InicioAdmin />} />
+              <Route path="/recursoshumanos/InicioRRHH" element={<InicioRRHH />} />
+            </Route>
+          </Routes>
+        </div>
       </BrowserRouter>
     </UserProvider>
   );

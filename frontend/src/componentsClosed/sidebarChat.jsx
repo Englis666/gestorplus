@@ -106,7 +106,7 @@ const SidebarChat = ({ onChatSelect }) => {
         num_doc_emisor,
         num_doc_receptor,
       });
-
+      console.log(data);
       if (data.status === "success") {
         onChatSelect(data.idChat);
       } else {

@@ -41,7 +41,7 @@ class Chat {
     public function obtenerOcrearChat($num_doc_emisor, $num_doc_receptor) {
     // Verificar si ya existe un chat entre estos usuarios
     $stmt = $this->db->prepare("
-        SELECT idChat FROM chats 
+        SELECT idChat FROM chat 
         WHERE (usuario1 = :num_doc_emisor AND usuario2 = :num_doc_receptor) 
         OR (usuario1 = :num_doc_receptor AND usuario2 = :num_doc_emisor)
         ORDER BY created_at DESC 
@@ -60,7 +60,7 @@ class Chat {
 
     // Si no existe, crear un nuevo chat
     $stmt = $this->db->prepare("
-        INSERT INTO chats (usuario1, usuario2, created_at) 
+        INSERT INTO chat (usuario1, usuario2, created_at) 
         VALUES (:num_doc_emisor, :num_doc_receptor, NOW())
     ");
     $stmt->bindParam(':num_doc_emisor', $num_doc_emisor, PDO::PARAM_INT);

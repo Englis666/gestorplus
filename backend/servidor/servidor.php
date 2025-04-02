@@ -4,17 +4,16 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 header("Content-Type: application/json");
-
+use Controlador\UsuarioControlador;
 use Controlador\ChatControlador;
 use Controlador\AdministradorControlador;
-use Controlador\UsuarioControlador;
 use Controlador\AspiranteControlador;
 use Controlador\EmpleadoControlador;
-use Controlador\ArchivosControlador;
 
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents('php://input'), true);
 $action = $_GET['action'] ?? ($data['action'] ?? null);
+
 
 if (!$action) {
     http_response_code(400);
@@ -22,13 +21,13 @@ if (!$action) {
     exit;
 }
 
+
 $controllers = [
     'usuario' => new UsuarioControlador(),
     'empleado' => new EmpleadoControlador(),
     'aspirante' => new AspiranteControlador(),
     'chat' => new ChatControlador(),
     'admin' => new AdministradorControlador(),
-    'archivos' => new archivosControlador()
 ];
 
 
@@ -52,7 +51,6 @@ $routes = [
         'obtenerOcrearChat' => ['chat' , 'obtenerOcrearChat'],
         'iniciarChat' => ['chat', 'iniciarChat'],
 
-        'subirContrato' => ['archivos', 'subirContrato'],
 
     
         'agregarCargo' => ['admin', 'agregarCargo'],
@@ -71,6 +69,7 @@ $routes = [
         'consultarHorasExtra' => ['usuario', 'agregarHorasExtra'],
         
         'obtenerMensajes' => ['chat', 'obtenerMensajes'],
+
         
         'obtenerConvocatorias' => ['usuario', 'obtenerConvocatorias'],
         'obtenerTotalEstadisticas' => ['usuario', 'obtenerTotalEstadisticas'],

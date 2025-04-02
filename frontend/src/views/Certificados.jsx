@@ -7,7 +7,7 @@ import axios from "axios";
 const Certificados = () => {
   const fechaEmision = new Date().toLocaleDateString("es-ES");
   const [tipoCertificado, setTipoCertificado] = useState("laboral");
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Obtener cookie
@@ -46,15 +46,15 @@ const Certificados = () => {
 
         console.log(response.data); // Verifica qué devuelve la API
 
-        if (response.data?.Certificado) {
+        if (response.data?.Certificado && response.data.Certificado.length > 0) {
           setUserData(response.data.Certificado);
         } else {
           console.error("Los datos del usuario no están en la respuesta");
-          setUserData({});
+          setUserData([]);
         }
       } catch (err) {
         console.error("Error al obtener los datos para el certificado", err);
-        setUserData({});
+        setUserData([]);
       } finally {
         setLoading(false);
       }
@@ -64,63 +64,117 @@ const Certificados = () => {
   }, []);
 
   const handleDownload = () => {
-    const doc = new jsPDF();
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+    const marginLeft = 25; // Márgenes APA (2.54 cm)
+    const marginRight = 185; // Ancho máximo (210mm - 25mm * 2)
+    const lineHeight = 7; // Espaciado entre líneas para simular interlineado doble
+    const startY = 30; // Punto de inicio del contenido
+    let currentY = startY;
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxWidth = pageWidth - marginLeft * 2; // Máximo ancho del texto
+
     const titulo = tipoCertificado === "laboral" ? "Certificado Laboral" : "Certificado ARL";
-    const fecha = `Fecha de emisión: ${fechaEmision}`;
-    const firma = "Firma autorizada: La Frayette";
 
-    // Configuración de fuente y título
-    doc.setFont("helvetica", "bold").setFontSize(20);
-    doc.text(titulo, 105, 20, null, null, "center");
+    // **Título centrado**
+    doc.setFont("Times", "bold").setFontSize(14);
+    doc.text(titulo.toUpperCase(), pageWidth / 2, currentY, { align: "center" });
+    currentY += 10; // Espacio después del título
 
-    doc.setFont("helvetica", "normal").setFontSize(14);
-    doc.text("Documento de certificación La Frayette", 20, 40);
+    // **Datos de la empresa**
+    doc.setFont("Times", "normal").setFontSize(12);
+    const empresaInfo = [
+      "La Fayette S.A.S.",
+      "NIT: 900.123.456-7",
+      "Dirección: Calle 123 # 45-67, Bogotá, Colombia",
+      "Teléfono: (1) 123 4567",
+      "Email: contacto@lafayette.com.co",
+      `Bogotá, ${fechaEmision}`
+    ];
 
-    const contenido = `
-      Rol ejercido: ${userData?.rol || "No disponible"}
-      Departamento: ${userData?.departamento || "No especificado"}
-      Fecha de ingreso: ${userData?.fechaIngreso || "No disponible"}
-      Tipo de contrato: ${userData?.contrato || "No especificado"}
-      Certificación: Esta hoja certifica que ${userData?.nombre || "Nombre del empleado"} 
-      pertenece a la empresa La Frayette como ${userData?.rol || "rol no especificado"}.
-    `;
+    empresaInfo.forEach(line => {
+      doc.text(line, marginLeft, currentY);
+      currentY += lineHeight;
+    });
 
-    doc.text(contenido, 20, 50, { maxWidth: 170 });
+    currentY += 5; // Espacio antes del contenido principal
 
-    if (tipoCertificado === "arl") {
-      doc.text("\nInformación ARL: El empleado cuenta con afiliación activa a una ARL bajo las normativas vigentes.", 20, 90);
+    // **Encabezado de destinatario**
+    doc.text("A quien corresponda:", marginLeft, currentY);
+    currentY += lineHeight + 3;
+
+    // **Contenido del certificado**
+    let contenido = "";
+
+    if (tipoCertificado === "laboral") {
+      contenido = `Por la presente, La Fayette S.A.S. certifica que ${userData[0]?.nombres || "[Nombre del empleado]"},
+identificado(a) con cédula de ciudadanía número ${userData[0]?.num_doc || "[Número de documento]"},
+ha trabajado en nuestra empresa en calidad de ${userData[0]?.nombreCargo || "[Cargo]"} desde el ${userData[0]?.fechaInicio || "[Fecha de inicio]"} hasta la fecha, con las siguientes condiciones:
+
+Cargo desempeñado: ${userData[0]?.nombreCargo || "[Nombre del cargo]"}
+Departamento o área: ${userData[0]?.nombreConvocatoria || "[Nombre del departamento o área]"}
+Tipo de contrato: ${userData[0]?.tipoContrato || "[Tipo de contrato]"}
+Jornada laboral: Tiempo completo
+Salario mensual: ${userData[0]?.salario}
+Fecha de inicio: ${userData[0]?.fechaInicio || "[Fecha de inicio]"}
+Fecha de término: ${userData[0]?.fechaFin}
+
+Durante su tiempo en la empresa, el(a) Sr(a). ${userData[0]?.nombres || "[Nombre del empleado]"} ha demostrado un desempeño profesional acorde con las expectativas del cargo.`;
+    } else if (tipoCertificado === "arl") {
+      contenido = `Por la presente, certificamos que el empleado ${userData[0]?.nombres || "[Nombre del empleado]"},
+identificado(a) con cédula de ciudadanía número ${userData[0]?.documento || "[Número de documento]"},
+se encuentra afiliado(a) a una Administradora de Riesgos Laborales (ARL) bajo las normativas vigentes.
+
+Información de afiliación ARL:
+- ARL: [Nombre de la ARL]
+- Fecha de afiliación: [Fecha de afiliación]
+- Nivel de riesgo: [Nivel de riesgo]
+
+Este certificado se emite para los fines que el interesado estime convenientes.`;
     }
 
-    doc.setFont("helvetica", "italic").setFontSize(10);
-    doc.text(
-      "Normativas aplicables en Colombia, Bogotá 2025...",
-      20,
-      120,
-      { maxWidth: 170 }
-    );
+    // **Dividir texto en líneas manejables y evitar espacios**
+    let splitText = doc.splitTextToSize(contenido, maxWidth);
 
-    doc.setFont("helvetica", "normal").setFontSize(12);
-    doc.text(
-      "Para más información, contacte a La Frayette.",
-      20,
-      150,
-      { maxWidth: 170 }
-    );
+    // **Escribir cada línea correctamente**
+    splitText.forEach(line => {
+      doc.text(line, marginLeft, currentY);
+      currentY += lineHeight; // Simulación de interlineado doble
+      if (currentY > 260) { // Salto de página si se sale del límite
+        doc.addPage();
+        currentY = 30; // Reiniciar posición
+      }
+    });
 
-    doc.text(
-      "Teléfono: (1) 123 4567 | Email: contacto@lafayette.com.co",
-      20,
-      160,
-      { maxWidth: 170 }
-    );
+    currentY += 10; // Espacio antes del cierre
 
-    doc.text(fecha, 20, 180);
+    // **Cierre del documento**
+    let cierre = "Este certificado es expedido a solicitud del interesado para los fines que estime convenientes.";
+    let splitCierre = doc.splitTextToSize(cierre, maxWidth);
+
+    splitCierre.forEach(line => {
+      doc.text(line, marginLeft, currentY);
+      currentY += lineHeight;
+    });
+
+    currentY += 15; // Espacio antes de la firma
+
+    // **Firma y contacto**
+    doc.text("Atentamente,", marginLeft, currentY);
+    currentY += lineHeight + 5;
+    doc.text("_______________________", marginLeft, currentY);
+    currentY += lineHeight;
+    doc.text("[Nombre del firmante]", marginLeft, currentY);
+    currentY += lineHeight;
+    doc.text("Cargo: [Cargo del firmante]", marginLeft, currentY);
+    currentY += lineHeight;
+    doc.text("Teléfono: (1) [Número de teléfono]", marginLeft, currentY);
+
+    // **Línea separadora y marco**
     doc.setLineWidth(0.5);
-    doc.line(20, 190, 190, 190);
-    doc.text(firma, 20, 200);
-    doc.text("_______________________", 20, 205);
-    doc.text("Representante autorizado", 20, 210);
-    doc.rect(10, 10, 190, 280);
+    doc.line(25, currentY + 10, 185, currentY + 10);
+    doc.rect(20, 20, 180, 250); // Marco del documento
 
     doc.save(`certificado_${tipoCertificado}.pdf`);
   };
@@ -140,17 +194,23 @@ const Certificados = () => {
               <p className="text-center">Cargando datos...</p>
             ) : (
               <>
-                <p className="card-text mb-2"><strong>Rol:</strong> {userData?.rol || "No disponible"}</p>
-                <p className="card-text mb-2"><strong>Departamento:</strong> {userData?.departamento || "No especificado"}</p>
-                <p className="card-text mb-4"><strong>Fecha de ingreso:</strong> {userData?.fechaIngreso || "No disponible"}</p>
-                <p className="card-text mb-4"><strong>Tipo de contrato:</strong> {userData?.contrato || "No especificado"}</p>
-                <p className="card-text mb-4">
-                  <strong>Certificación:</strong> {userData?.nombre || "Nombre del empleado"} pertenece a La Frayette como <strong>{userData?.rol || "rol no especificado"}</strong>.
-                </p>
-                {tipoCertificado === "arl" && (
-                  <p className="card-text mb-4"><strong>Información ARL:</strong> El empleado cuenta con afiliación activa.</p>
+                {userData && userData.length > 0 ? (
+                  <div>
+                    <p className="card-text mb-2"><strong>Rol:</strong> {userData[0]?.nombreRol || "No disponible"}</p>
+                    <p className="card-text mb-2"><strong>Departamento:</strong> {userData[0]?.nombreConvocatoria || "No especificado"}</p>
+                    <p className="card-text mb-4"><strong>Fecha de ingreso:</strong> {userData[0]?.fechaInicio || "No disponible"}</p>
+                    <p className="card-text mb-4"><strong>Tipo de contrato:</strong> {userData[0]?.tipoContrato || "No especificado"}</p>
+                    <p className="card-text mb-4">
+                      <strong>Certificación:</strong> {userData[0]?.nombres || "Nombre del empleado"} pertenece a La Frayette como <strong>{userData[0]?.nombreCargo || "rol no especificado"}</strong>.
+                    </p>
+                    {tipoCertificado === "arl" && (
+                      <p className="card-text mb-4"><strong>Información ARL:</strong> El empleado cuenta con afiliación activa.</p>
+                    )}
+                    <p className="card-text mb-2"><strong>Fecha de emisión:</strong> {fechaEmision}</p>
+                  </div>
+                ) : (
+                  <p>No se encontraron datos.</p>
                 )}
-                <p className="card-text mb-2"><strong>Fecha de emisión:</strong> {fechaEmision}</p>
               </>
             )}
           </div>

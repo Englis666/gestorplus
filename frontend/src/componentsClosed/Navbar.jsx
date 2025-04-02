@@ -10,6 +10,14 @@ const NavbarClosed = ({ activeLink }) => {
   const [rol, setRol] = useState(null);
   const [error, setError] = useState(null);
   const [openSubMenu, setOpenSubMenu] = useState(null);
+  const [isMounted, setIsMounted] = useState(false); // Bandera de montaje
+
+  useEffect(() => {
+    setIsMounted(true); // Marcar como montado
+    return () => {
+      setIsMounted(false); // Limpiar cuando se desmonte el componente
+    };
+  }, []);
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -45,7 +53,9 @@ const NavbarClosed = ({ activeLink }) => {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    if (isMounted) {
+      navigate("/");
+    }
   };
 
   const toggleCollapse = () => {
@@ -140,11 +150,13 @@ const NavbarClosed = ({ activeLink }) => {
   };
 
   const menuItems = [
-    { label: "Jornadas", icon: "event", path: "/Jornadas",
+    {
+      label: "Jornadas", icon: "event", path: "/Jornadas",
       subMenu: [{ label: "Horas Extra", icon: "timeline", path: "/HorasExtra" }],
-     },
-    { label: "Ausencias", icon: "hourglass_empty", path: "/Ausencias",
-      subMenu: [{label: "Vacaciones", icon: "flight", path:"/Vacaciones"}],
+    },
+    {
+      label: "Ausencias", icon: "hourglass_empty", path: "/Ausencias",
+      subMenu: [{ label: "Vacaciones", icon: "flight", path: "/Vacaciones" }],
     },
     { label: "Paz y salvos", icon: "check_circle", path: "/PazYsalvo" },
     { label: "Quejas", icon: "report_problem", path: "/Quejas" },
@@ -154,16 +166,17 @@ const NavbarClosed = ({ activeLink }) => {
 
   if (rol === "1" || rol === "2") {
     menuItems.push({ label: "Empleados", icon: "people", path: "/Empleados" });
-    menuItems.push({label: "Contratos" , icon: "work", path: "/Contratos"});
-    menuItems.push({ label: "Entrevistas", icon: "event_note", path: "/Entrevistas",
-                    subMenu: [
-                      {
-                        label: "Sistema de Gestion",
-                        icon: "work",
-                        path: "/SistemaDeGestion",
-                      }
-                    ]
-                    });
+    menuItems.push({ label: "Contratos", icon: "work", path: "/Contratos" });
+    menuItems.push({
+      label: "Entrevistas", icon: "event_note", path: "/Entrevistas",
+      subMenu: [
+        {
+          label: "Sistema de Gestion",
+          icon: "work",
+          path: "/SistemaDeGestion",
+        }
+      ]
+    });
     menuItems.push({
       label: "Convocatorias",
       icon: "people",
@@ -181,7 +194,6 @@ const NavbarClosed = ({ activeLink }) => {
         },
       ],
     });
-    
   }
 
   return (

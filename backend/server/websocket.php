@@ -19,6 +19,7 @@ $server->on("message", function ($server, $frame) {
         return;
     }
 
+    // Empieza la peticion por medio de Curl en el backend
     $ch = curl_init("http://localhost/gestorplus/backend/");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -26,6 +27,7 @@ $server->on("message", function ($server, $frame) {
     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
 
     $response = curl_exec($ch);
+    //Se cierra la peticion
     curl_close($ch);
 
     // Enviar la respuesta a todos los clientes conectados
