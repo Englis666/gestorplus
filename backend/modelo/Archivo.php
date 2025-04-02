@@ -1,57 +1,51 @@
 <?php
 namespace Modelo;
 
-use Config\Database;
 use PDO;
 use PDOException;
 
-class Archivo{
+class Archivo {
     private $db;
 
-
-    public function __construct($db){
+    public function __construct($db) {
         $this->db = $db;
     }
 
-    public function subirContrato(){
-        if(isset($_FILES['archivo'])){
-            $archivo = $_FILES['archivo'];
+    public function subirContrato($idVinculacion, $rutaArchivo, $num_doc) {
+        try {
+            $this->db->beginTransaction();
 
-            if($archivo['error'] !== UPLOAD_ERR_OK){
-                echo json_encode(["error" => 'Error al subir el archivo']);
-                return;
-            }
-            $directorio = __DIR__ . '/uploads';
-            if(!$file_Exist($directorio)){
-                mkdir($directorio, 077, true);
-            }
+            $query = "UPDATE vinculacion SET documentoContrato = :ruta WHERE idvinculacion = :idVinculacion";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(":ruta", $rutaArchivo, PDO::PARAM_STR);
+            $stmt->bindParam(":idVinculacion", $idVinculacion, PDO::PARAM_INT);
+            $stmt->execute();
 
-            $rutaDestino = $directorio . basename($archivo['name']);
-            if(move_uploaded_file($archivo['tmp_name'], $rutaDestino)){
-                echo json_encode(["mensaje" => 'Archivo subido con exito']);
-            } else {
-                echo json_encode(['error' => 'No se pudo mover el archivo']);
-            }
-        } else {
-            echo json_encode(['error' => 'No se recibio ningun archivo']);
+            $updateRolQuery = "UPDATE usuario SET rol_idrol = :nuevoRol WHERE num_doc = :num_doc";
+            $stmt = $this->db->prepare($updateRolQuery);
+            $nuevoRol = 3;
+            $stmt->bindParam(":nuevoRol", $nuevoRol, PDO::PARAM_INT);
+            $stmt->bindParam(":num_doc", $num_doc, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $this->db->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            return false;
         }
-
-
     }
 
-    public function obtenerContrato(){
+    public function obtenerContrato($num_doc) {
+        try {
+            $stmt = $this->db->prepare("SELECT documentoContrato FROM vinculacion WHERE usuario_num_doc = :num_doc");
+            $stmt->bindParam(":num_doc", $num_doc, PDO::PARAM_INT);
+            $stmt->execute();
 
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        } catch (PDOException $e) {
+            return null;
+        }
     }
-
-    public function subirFotoHojaDeVida(){
-
-    }
-
-    
-
-
 }
-
-
-
 ?>
