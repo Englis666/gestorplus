@@ -164,7 +164,6 @@ class Usuario {
                     estadohojadevida = ?
                   WHERE idHojadevida = ?";  
     
-        $telefonoFijo = !empty($data['telefonoFijo']) ? $data['telefonoFijo'] : null;
         $stmt = $this->db->prepare($query);
     
         $stmt->execute([
@@ -173,8 +172,8 @@ class Usuario {
             $data['ciudad'],
             $data['ciudadNacimiento'],
             $data['telefono'],
-            $telefonoFijo,
-            "Activa",
+            $data['telefonoFijo'],
+            $data['estadohojadevida'],
             $hojadevida_idHojadevida
         ]);
     
@@ -286,7 +285,7 @@ class Usuario {
         $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
         $stmt->execute();
     
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         if ($resultado) {
             return [
@@ -308,7 +307,7 @@ class Usuario {
         $stmt->bindParam(':idhojadevida', $idhojadevida, PDO::PARAM_INT);
         $stmt->execute();
     
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         if ($resultado) {
             return $resultado;
@@ -318,19 +317,32 @@ class Usuario {
     }
 
     public function obtenerExperiencia($idhojadevida){
-        $sql = "
-        SELECT * FROM estudio WHERE hojadevida_idhojadevida = :idhojadevida";
+        $sql = "SELECT * FROM experienciaLaboral WHERE hojadevida_idhojadevida = :idhojadevida";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idhojadevida', $idhojadevida, PDO::PARAM_INT);
         $stmt->execute();
     
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         if ($resultado) {
             return $resultado;
         } else {
             return false;
         }
+    }
+
+    public function eliminarEstudio($idestudio) {
+        $sql = "DELETE FROM estudio WHERE idestudio = :idestudio";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':idestudio', $idestudio, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    public function eliminarExperiencia($data) {
+        $sql = "DELETE FROM experienciaLaboral WHERE idexperienciaLaboral = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$data['idexperiencialaboral']]);
     }
 }
 ?>

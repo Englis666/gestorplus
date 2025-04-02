@@ -111,7 +111,11 @@ $routes = [
     'PATCH' => [
         'actualizarPerfil' => ['usuario', 'actualizarPerfil'],
         'actualizacionHojaDevida' => ['usuario', 'actualizacionHojaDevida']
-    ]
+    ], 
+    'DELETE' => [
+        'eliminarEstudio' => ['usuario', 'eliminarEstudio'],
+        'eliminarExperiencia' => ['usuario', 'eliminarExperiencia'],
+    ],
 ];
 
 if (isset($routes[$method][$action])) {
