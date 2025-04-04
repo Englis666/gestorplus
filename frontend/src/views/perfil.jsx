@@ -136,6 +136,70 @@ const Perfil = () => {
     fetchExperienciaLaboral();
   }, []);
 
+  const eliminarEstudioHandler = async (idestudio) => {
+    const token = getCookie("auth_token");
+    if (!token) {
+      alert("No se encontró el token de autenticación.");
+      return;
+    }
+
+    try {
+      const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este estudio?");
+      if (!confirmDelete) return;
+
+      const response = await axios.delete("http://localhost/gestorplus/backend/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "x-estudio-id": idestudio,
+        },
+        params: { action: "eliminarEstudio" },
+      });
+
+      if (response.status === 200) {
+        alert("Estudio eliminado correctamente.");
+        setEstudios((prevEstudios) => prevEstudios.filter((estudio) => estudio.idestudio !== idestudio));
+      } else {
+        alert("Hubo un error al eliminar el estudio.");
+      }
+    } catch (error) {
+      console.error("Error al eliminar el estudio", error);
+      alert("Ocurrió un error al eliminar el estudio.");
+    }
+  }
+
+  const eliminarExperienciaHandler = async (idexperiencialaboral) => {
+    const token = getCookie("auth_token");
+    if (!token) {
+      alert("No se encontró el token de autenticación.");
+      return;
+    }
+
+    try {
+      const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta experiencia laboral?");
+      if (!confirmDelete) return;
+
+      const response = await axios.delete("http://localhost/gestorplus/backend/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "x-experiencia-id": idexperiencialaboral, // Asegúrate de que este header se envíe correctamente
+        },
+        params: { action: "eliminarExperiencia" },
+      });
+
+      if (response.status === 200) {
+        alert("Experiencia eliminada correctamente.");
+        setExperiencia((prevExperiencia) =>
+          prevExperiencia.filter((exp) => exp.idexperiencialaboral !== idexperiencialaboral)
+        );
+      } else {
+        alert("Hubo un error al eliminar la experiencia.");
+      }
+    } catch (error) {
+      console.error("Error al eliminar la experiencia", error);
+      alert("Ocurrió un error al eliminar la experiencia.");
+    }
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -206,8 +270,16 @@ const Perfil = () => {
   const toggleModalEstudios = () => setModalEstudios(!modalEstudios);
   const toggleModalExperiencia = () => setModalExperiencia(!modalExperiencia);
 
+  const agregarEstudio = (nuevoEstudio) => {
+    setEstudios((prevEstudios) => [...prevEstudios, nuevoEstudio]);
+  };
+
+  const agregarExperiencia = (nuevaExperiencia) => {
+    setExperiencia((prevExperiencia) => [...prevExperiencia, nuevaExperiencia]);
+  };
+
   return (
-    <div className="container d-flex flex-column align-items-center justify-content-center min-vh-100 ">
+    <div className="container d-flex flex-column align-items-center justify-content-center min-vh-100">
       <div className="row w-100 justify-content-center">
         <div className="col-md-8 col-12 p-4 bg-white shadow-lg rounded-lg">
           <h2 className="text-primary text-center mb-4">Configuración de perfil</h2>
@@ -333,7 +405,7 @@ const Perfil = () => {
                               <button type="button" className="btn btn-primary me-2">
                                 Editar
                               </button>
-                              <button type="button" className="btn btn-danger">
+                              <button type="button" className="btn btn-danger" onClick={() => eliminarEstudioHandler(estudio.idestudio)}>
                                 Eliminar
                               </button>
                             </strong>
@@ -361,7 +433,7 @@ const Perfil = () => {
                             <button type="button" className="btn btn-primary mt-1 mb-1">
                               Editar
                             </button>
-                            <button type="button" className="btn btn-danger mt-1 mb-1">
+                            <button type="button" className="btn btn-danger mt-1 mb-1" onClick={() => eliminarExperienciaHandler(exp.idexperiencialaboral)}>
                               Eliminar
                             </button>
                           </strong>
@@ -382,15 +454,16 @@ const Perfil = () => {
       <ModalHojaDeVida
         modalHojaDeVida={modalHojaDeVida}
         toggleModalHojaDeVida={toggleModalHojaDeVida}
-
       />
       <Estudios
         modalEstudios={modalEstudios}
         toggleModalEstudios={toggleModalEstudios}
+        onAgregarEstudio={agregarEstudio} // Pasar la función para actualizar estudios
       />
       <Experiencia
         modalExperiencia={modalExperiencia}
         toggleModalExperiencia={toggleModalExperiencia}
+        onAgregarExperiencia={agregarExperiencia} // Pasar la función para actualizar experiencia
       />
     </div>
   );

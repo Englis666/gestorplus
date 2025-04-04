@@ -32,6 +32,32 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                 setLoading(false);
             });
 
+        const checkIfApplied = () => {
+            const token = getCookie("auth_token");
+
+            axios
+                .get("http://localhost/gestorplus/backend/", {
+                    params: {
+                        action: "verificarPostulacion",
+                        idconvocatoria: idconvocatoria,
+                    },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                .then((response) => {
+                    console.log("Respuesta de la API:", response.data);
+                    if (!response.data.PostulacionVerificada || response.data.PostulacionVerificada.length === 0) {
+                        setAplicado(false);
+                    } else {
+                        setAplicado(true);
+                    }
+                })
+                .catch((err) => {
+                    console.error("Error al verificar la aplicación: ", err);
+                });
+        };
+
         checkIfApplied();
     }, [idconvocatoria]);
 
@@ -40,32 +66,6 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(";").shift();
         return null;
-    };
-
-    const checkIfApplied = () => {
-        const token = getCookie("auth_token");
-
-        axios
-            .get("http://localhost/gestorplus/backend/", {
-                params: {
-                    action: "verificarPostulacion",
-                    idconvocatoria: idconvocatoria,
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .then((response) => {
-                console.log("Respuesta de la API:", response.data);
-                if (response.data.PostulacionVerificada == null) {
-                    setAplicado(false);
-                } else {
-                    setAplicado(true);
-                }
-            })
-            .catch((err) => {
-                console.error("Error al verificar la aplicación: ", err);
-            });
     };
 
     const handleApply = () => {

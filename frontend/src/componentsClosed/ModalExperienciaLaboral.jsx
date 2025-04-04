@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const Experiencia = ({ modalExperiencia, toggleModalExperiencia }) => {
+const Experiencia = ({ modalExperiencia, toggleModalExperiencia, onAgregarExperiencia }) => {
   const [formData, setFormData] = useState({
     action: 'agregarExp',
     profesion: "",
@@ -51,6 +51,7 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia }) => {
         const serverMessage = response.data.message;
         if (serverMessage === "Experiencia agregada") {
           alert("Experiencia agregada correctamente");
+          onAgregarExperiencia(response.data.nuevaExperiencia); // Llamar a la función para actualizar el estado
         } else {
           alert("Hubo un error al agregar la experiencia.");
         }

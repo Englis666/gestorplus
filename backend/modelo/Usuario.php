@@ -339,10 +339,12 @@ class Usuario {
         return $stmt->execute();
     }
 
-    public function eliminarExperiencia($data) {
-        $sql = "DELETE FROM experienciaLaboral WHERE idexperienciaLaboral = ?";
+    public function eliminarExperiencia($idexperiencia) {
+        $sql = "DELETE FROM experienciaLaboral WHERE idexperienciaLaboral = :idexperienciaLaboral";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$data['idexperiencialaboral']]);
+        $stmt->bindParam(':idexperienciaLaboral', $idexperiencia, PDO::PARAM_INT);
+
+        return $stmt->execute();
     }
 }
 ?>

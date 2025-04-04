@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from 'axios';
 
-const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
+const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
   const [formData, setFormData] = useState({
     action: 'agregarEstudio',
     nivelEstudio: "",
@@ -39,27 +39,28 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
 
     setIsSubmitting(true);
 
-    const data = {
-      ...formData,
-    };
+    const data = { ...formData };
 
     axios
       .post("http://localhost/gestorplus/backend/", data, {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       })
       .then((response) => {
         const serverMessage = response.data.message;
-        if (serverMessage === "Estudio agregado") {
-          alert("Estudio Subido Correctamente");
+        const nuevoEstudio = response.data.nuevoEstudio;
+
+        if (serverMessage === "Estudio agregado" && nuevoEstudio) {
+          onAgregarEstudio(nuevoEstudio); // Llamar a la función para actualizar el estado
+          alert("Estudio agregado correctamente.");
         } else {
-          alert("Hubo un error al subir el estudio.");
+          alert("Hubo un error al agregar el estudio.");
         }
       })
       .catch((error) => {
         console.error("Error al registrar el estudio:", error);
-        alert("Ocurrió un error al agregar. Por favor, inténtalo nuevamente.", error);
+        alert("Ocurrió un error al agregar el estudio. Por favor, inténtalo nuevamente.");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -102,6 +103,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
                   id="nivelEstudio"
                   value={formData.nivelEstudio}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -115,6 +117,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
                   id="areaEstudio"
                   value={formData.areaEstudio}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -128,6 +131,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
                   id="estadoEstudio"
                   value={formData.estadoEstudio}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -141,6 +145,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
                   id="fechaInicioEstudio"
                   value={formData.fechaInicioEstudio}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -154,6 +159,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
                   id="fechaFinEstudio"
                   value={formData.fechaFinEstudio}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -167,6 +173,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
                   id="tituloEstudio"
                   value={formData.tituloEstudio}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -180,6 +187,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
                   id="institucionEstudio"
                   value={formData.institucionEstudio}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -193,6 +201,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios }) => {
                   id="ubicacionEstudio"
                   value={formData.ubicacionEstudio}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div className="modal-footer">

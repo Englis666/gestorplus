@@ -157,36 +157,49 @@ class UsuarioControlador {
     }
 
     public function eliminarEstudio() {
-        $idestudio = $_SERVER['HTTP_X_IDESTUDIO'] ?? null; // Leer el header 'X-IdEstudio'
+        $idestudio = $_SERVER['HTTP_X_ESTUDIO_ID'] ?? null; // Leer el header x-estudio-id
 
         if (!$idestudio) {
             http_response_code(400);
-            echo json_encode(['message' => 'El id del estudio no fue proporcionado.']);
+            $this->jsonResponse('error', 'El id del estudio no fue proporcionado.');
             return;
         }
 
         try {
             $resultado = $this->usuario->eliminarEstudio($idestudio);
             if ($resultado) {
-                echo json_encode(['message' => 'Estudio eliminado correctamente.']);
+                $this->jsonResponse('success', 'El estudio fue eliminado correctamente.');
             } else {
                 http_response_code(500);
-                echo json_encode(['message' => 'No se pudo eliminar el estudio.']);
+                $this->jsonResponse('error', 'No se pudo eliminar el estudio.');
             }
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['message' => 'Error al eliminar el estudio.', 'error' => $e->getMessage()]);
+            $this->jsonResponse('error', 'Error al eliminar el estudio.', ['error' => $e->getMessage()]);
         }
     }
 
-    public function eliminarExperiencia($data){
-        if (empty($data['idexperiencialaboral'])) {
-            $this->jsonResponse('error', 'La experiencia laboral a eliminar es requerida');
+    public function eliminarExperiencia() {
+        $idexperiencialaboral = $_SERVER['HTTP_X_EXPERIENCIA_ID'] ?? null; // Leer el header x-experiencia-id
+
+        if (!$idexperiencialaboral) {
+            http_response_code(400);
+            $this->jsonResponse('error', 'El id de la experiencia laboral no fue proporcionado.');
             return;
         }
 
-        $resultado = $this->usuario->eliminarExperiencia(['idexperiencialaboral' => trim($data['idexperiencialaboral'])]);
-        $this->jsonResponse('success', 'Se eliminó correctamente la experiencia laboral', ['ExperienciaEliminada' => $resultado ?: []]);
+        try {
+            $resultado = $this->usuario->eliminarExperiencia($idexperiencialaboral);
+            if ($resultado) {
+                $this->jsonResponse('success', 'La experiencia laboral fue eliminada correctamente.');
+            } else {
+                http_response_code(500);
+                $this->jsonResponse('error', 'No se pudo eliminar la experiencia laboral.');
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            $this->jsonResponse('error', 'Error al eliminar la experiencia laboral.', ['error' => $e->getMessage()]);
+        }
     }
 
 }
