@@ -181,7 +181,7 @@ const Perfil = () => {
       const response = await axios.delete("http://localhost/gestorplus/backend/", {
         headers: {
           Authorization: `Bearer ${token}`,
-          "x-experiencia-id": idexperiencialaboral, // Asegúrate de que este header se envíe correctamente
+          "x-experiencia-id": idexperiencialaboral,
         },
         params: { action: "eliminarExperiencia" },
       });
