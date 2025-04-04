@@ -66,11 +66,8 @@ $routes = [
         'asistenciaNoConfirmada' => ['admin', 'asistenciaNoConfirmada']
     ],
     'GET' => [
-        'consultarHorasExtra' => ['usuario', 'agregarHorasExtra'],
-        
         'obtenerMensajes' => ['chat', 'obtenerMensajes'],
-
-        
+        'consultarHorasExtra' => ['usuario', 'agregarHorasExtra'],
         'obtenerConvocatorias' => ['usuario', 'obtenerConvocatorias'],
         'obtenerTotalEstadisticas' => ['usuario', 'obtenerTotalEstadisticas'],
         'obtenerRRHH' => ['usuario', 'obtenerRRHH'],
