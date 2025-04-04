@@ -317,7 +317,7 @@ class Usuario {
     }
 
     public function obtenerExperiencia($idhojadevida){
-        $sql = "SELECT * FROM experienciaLaboral WHERE hojadevida_idhojadevida = :idhojadevida";
+        $sql = "SELECT * FROM experiencialaboral WHERE hojadevida_idhojadevida = :idhojadevida";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idhojadevida', $idhojadevida, PDO::PARAM_INT);
         $stmt->execute();

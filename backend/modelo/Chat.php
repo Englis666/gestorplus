@@ -14,15 +14,15 @@ class Chat {
     }
 
     // Enviar mensaje
-   public function enviarMensaje($idChat, $num_doc_emisor, $message) {
+    public function enviarMensaje($idChat, $num_doc_emisor, $mensaje) {
     try {
-        $query = "INSERT INTO messages ( usuario_num_doc,fecha_envio, mensaje,idChat) 
-                  VALUES (:num_doc_emisor, NOW(), :message,:idChat)";
+        $query = "INSERT INTO mensajes (usuario_num_doc, fecha_envio, mensaje, idChat) 
+                  VALUES (:num_doc_emisor, NOW(), :mensaje, :idChat)";
 
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':idChat', $idChat, PDO::PARAM_INT);
         $stmt->bindParam(':num_doc_emisor', $num_doc_emisor, PDO::PARAM_INT);
-        $stmt->bindParam(':message', $message, PDO::PARAM_STR);
+        $stmt->bindParam(':mensaje', $mensaje, PDO::PARAM_STR);
 
         if ($stmt->execute()) {
             return true;
@@ -35,6 +35,7 @@ class Chat {
         return false;
     }
 }
+
 
 
     // Obtener el último chat del usuario
@@ -75,15 +76,27 @@ class Chat {
 
 
     // Obtener los mensajes de un chat
-    public function obtenerMensajes($idChat) {
-        $consulta = "SELECT mensaje , usuario_num_doc FROM messages AS m
-                     INNER JOIN usuario AS u ON m.usuario_num_doc = u.num_doc
-                     WHERE m.idChat = :idChat ORDER BY m.created_at ASC";
-        $stmt = $this->db->prepare($consulta);
+   public function obtenerMensajes($idChat)
+{
+    error_log("ID del chat recibido: " . $idChat); // Verifica que el idChat esté llegando correctamente
+
+    try {
+        $query = "SELECT m.idmensaje, m.usuario_num_doc, m.fecha_envio, m.mensaje, u.nombres 
+                  FROM mensajes m
+                  JOIN usuarios u ON m.usuario_num_doc = u.num_doc
+                  WHERE m.idChat = :idChat
+                  ORDER BY m.fecha_envio ASC";
+
+        $stmt = $this->db->prepare($query);
         $stmt->bindParam(':idChat', $idChat, PDO::PARAM_INT);
         $stmt->execute();
-    
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error al obtener mensajes: " . $e->getMessage());
+        return false;
     }
+}
+
 }
 ?>

@@ -53,13 +53,10 @@ const SidebarChat = ({ onChatSelect }) => {
     }
   }, [fetchUsuarios]);
 
-  // Configurar WebSocket
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:8082");
 
-    ws.onopen = () => {
-      console.log("Conectado al WebSocket");
-    };
+    ws.onopen = () => console.log("Conectado al WebSocket");
 
     ws.onmessage = (event) => {
       try {
@@ -77,72 +74,67 @@ const SidebarChat = ({ onChatSelect }) => {
       fetchUsuarios(decodedToken?.data?.rol === "3" ? "obtenerRRHH" : "obtenerUsuarios");
     };
 
-    ws.onclose = () => {
-      console.log("Desconectado del WebSocket");
-    };
+    ws.onclose = () => console.log("Desconectado del WebSocket");
 
     setSocket(ws);
-
-    return () => {
-      ws.close();
-    };
+    return () => ws.close();
   }, [fetchUsuarios, decodedToken]);
 
   const handleChatSelection = async (num_doc_receptor) => {
     try {
-      if (!decodedToken) {
-        handleError("No se pudo obtener el ID del usuario.");
-        return;
-      }
-
+      if (!decodedToken) return handleError("No se pudo obtener el ID del usuario.");
       const num_doc_emisor = decodedToken?.data?.num_doc;
-      if (!num_doc_emisor) {
-        handleError("No se pudo obtener el ID del usuario.");
-        return;
-      }
+      if (!num_doc_emisor) return handleError("No se pudo obtener el ID del usuario.");
 
       const { data } = await axios.post("http://localhost/gestorplus/backend/", {
         action: "obtenerOcrearChat",
         num_doc_emisor,
         num_doc_receptor,
       });
-      console.log(data);
+
       if (data.status === "success") {
         onChatSelect(data.idChat);
       } else {
         handleError("Error al obtener o crear el chat.");
       }
-    } catch (error) {
+    } catch {
       handleError("Error al gestionar el chat.");
     }
   };
 
   return (
-    <div style={{ background: "#fff", width: "100%", maxWidth: "400px", height: "45rem", marginTop: "3rem", borderRadius: "16px", boxShadow: "0 0 128px 0 rgba(0,0,0,0.1)", padding: "20px", display: "flex", flexDirection: "column" }}>
-      <h3 style={{ fontSize: "20px", fontWeight: "bold", color: "#333" }}>Usuarios Activos</h3>
+    <div className="d-flex flex-column h-100">
+      <div className="mb-3">
+        <h5 className="fw-bold text-primary">Usuarios Activos</h5>
+        <input
+          type="text"
+          className="form-control rounded-pill shadow-sm"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Buscar empleado..."
+        />
+        {errorMessage && (
+          <div className="alert alert-danger mt-2 py-2 px-3">{errorMessage}</div>
+        )}
+      </div>
 
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Buscar empleado"
-        style={{ padding: "5px 10px", width: "100%", border: "1px solid #ddd", borderRadius: "20px" }}
-      />
-
-      {errorMessage && <div style={{ color: "red", marginTop: "10px" }}>{errorMessage}</div>}
-
-      <div style={{ overflowY: "auto", maxHeight: "calc(100% - 50px)" }}>
-        {usuarios
-          .filter(usuario => usuario.nombres.toLowerCase().includes(searchQuery.toLowerCase()))
-          .map(usuario => (
-            <div
-              key={usuario.num_doc}
-              onClick={() => handleChatSelection(usuario.num_doc)}
-              style={{ cursor: "pointer", padding: "10px", borderBottom: "1px solid #ddd" }}
-            >
-              <strong>{usuario.nombres}</strong> - {usuario.nombreRol}
-            </div>
-          ))}
+      <div className="flex-grow-1 overflow-auto">
+        <div className="list-group rounded-4">
+          {usuarios
+            .filter((u) =>
+              u.nombres.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+            .map((usuario) => (
+              <button
+                key={usuario.num_doc}
+                className="list-group-item list-group-item-action d-flex flex-column align-items-start rounded-3 mb-2 shadow-sm"
+                onClick={() => handleChatSelection(usuario.num_doc)}
+              >
+                <strong>{usuario.nombres}</strong>
+                <small className="text-muted">{usuario.nombreRol}</small>
+              </button>
+            ))}
+        </div>
       </div>
     </div>
   );

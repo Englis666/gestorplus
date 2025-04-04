@@ -49,20 +49,42 @@ class ChatControlador {
     }
 
 
-    public function enviarMensaje($data) {
-    if (!isset($data['idChat'], $data['message']) || empty(trim($data['message']))) {
-        http_response_code(400);
-        echo json_encode(['status' => 'error', 'message' => 'Datos incompletos o mensaje vacío']);
+   public function enviarMensaje($data) {
+    if (!isset($data['token'])) {
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'Token no proporcionado']);
         exit;
     }
 
-    $idChat = $data['idChat'];
-    $num_doc_emisor = $this->obtenerNumDocDesdeToken();
+    $token = $data['token'];
 
+    try {
+        $decoded = JWT::decode($token, new Key(Clave::SECRET_KEY, Clave::JWT_ALGO));
+        $num_doc_emisor = $decoded->data->num_doc ?? null;
+    } catch (\Firebase\JWT\ExpiredException $e) {
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'Token expirado']);
+        exit;
+    } catch (\Firebase\JWT\SignatureInvalidException $e) {
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'Token con firma inválida']);
+        exit;
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Error del servidor: ' . $e->getMessage()]);
+        exit;
+    }
 
-    $message = $data['message'];
+    $idChat = $data['idChat'] ?? null;
+    $mensaje = $data['mensaje'] ?? null;
 
-    if ($this->chat->enviarMensaje($idChat, $num_doc_emisor, $message)) {
+    if (!$idChat || !$mensaje) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'message' => 'Datos incompletos']);
+        exit;
+    }
+
+    if ($this->chat->enviarMensaje($idChat, $num_doc_emisor, $mensaje)) {
         http_response_code(200);
         echo json_encode(['status' => 'success', 'message' => 'Mensaje enviado correctamente']);
     } else {
@@ -71,6 +93,7 @@ class ChatControlador {
     }
     exit;
 }
+
 
 
     public function obtenerIdChat() {
@@ -110,18 +133,40 @@ class ChatControlador {
         echo json_encode(['status' => 'success', 'idChat' => $idChat]);
     }
 
-    public function obtenerMensajes() {
+    public function obtenerMensajes($data){
 
-        $idChat = $_GET['idChat'] ?? null;
+    $token = $data['token'];
 
-        if (!$idChat) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'ID de chat no proporcionado']);
-            return;
-        }
+    $token = $data['token'] ?? null;
+if (!$token || !validateJWT($token)) {
+    $server->push($frame->fd, json_encode([
+        'status' => 'error',
+        'message' => 'Token inválido o expirado.'
+    ]));
+    return;
+}
 
-        $resultado = $this->chat->obtenerMensajes($idChat);
-
-        echo json_encode(['status' => 'success', 'mensajes' => $resultado ?: []]);
+    try {
+        $decoded = JWT::decode($token, new Key(Clave::SECRET_KEY, Clave::JWT_ALGO));
+    } catch (\Exception $e) {
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'Token inválido: ' . $e->getMessage()]);
+        exit;
     }
+
+    $idChat = $data['idChat'] ?? null;
+
+
+    $mensajes = $this->chat->obtenerMensajes($idChat);
+
+    if ($mensajes !== false) {
+        http_response_code(200);
+        echo json_encode(['status' => 'success', 'mensajes' => $mensajes]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Error al obtener los mensajes']);
+    }
+    exit;
+}
+
 }
