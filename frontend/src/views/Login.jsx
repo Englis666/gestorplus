@@ -5,30 +5,19 @@ import axios from 'axios';
 import { useUser } from "../context/userContext";
 
 const Login = () => {
-    const [formData, setFormData] = useState({
-        num_doc: '',
-        password: '',
-    });
+    const [formData, setFormData] = useState({ num_doc: '', password: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const { login } = useUser();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        if (name === 'num_doc' && !/^\d*$/.test(value)) {
-            return;
-        }
-
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        if (name === 'num_doc' && !/^\d{0,10}$/.test(value)) return;
+        setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         if (!formData.num_doc || !formData.password) {
             alert("Por favor complete todos los campos.");
             return;
@@ -41,59 +30,46 @@ const Login = () => {
         };
 
         setIsSubmitting(true);
-        axios
-            .post("http://localhost/gestorplus/backend/", data)
+        axios.post("http://localhost/gestorplus/backend/", data)
             .then((response) => {
-                const serverMessage = response.data;
-                console.log(response.data);
-
-                if (serverMessage?.status === 'success') {
-                    const token = serverMessage.token;
+                const res = response.data;
+                if (res?.status === 'success') {
+                    const token = res.token;
                     document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
-
                     login({ token });
 
-                    const decodedToken = decodeToken(token);
-                    const userRole = decodedToken?.data?.rol;
+                    const decoded = decodeToken(token);
+                    const role = decoded?.data?.rol;
 
-                    switch (userRole) {
-                        case "1":
-                            navigate("/administrador/inicioAdmin");
-                            break;
-                        case "2":
-                            navigate("/recursoshumanos/inicioRRHH");
-                            break;
-                        case "3":
-                            navigate("/empleado/inicioEmpleado");
-                            break;
-                        case "4":
-                            navigate("/aspirante/inicio");
-                            break;
-                        default:
-                            document.cookie = "auth_token=; path=/; domain=localhost; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                            console.error("Rol desconocido:", userRole);
-                            navigate("/");
-                            alert("Rol desconocido");
+                    const routes = {
+                        "1": "/administrador/inicioAdmin",
+                        "2": "/recursoshumanos/inicioRRHH",
+                        "3": "/empleado/inicioEmpleado",
+                        "4": "/aspirante/inicio"
+                    };
 
+                    if (routes[role]) navigate(routes[role]);
+                    else {
+                        document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                        alert("Rol desconocido");
+                        navigate("/");
                     }
                 } else {
-                    alert(serverMessage?.message || "Error en el inicio de sesión");
+                    alert(res?.message || "Error en el inicio de sesión");
                     setIsSubmitting(false);
                 }
             })
             .catch((error) => {
                 console.error("Error al iniciar sesión:", error);
-                alert("Error en el inicio de sesión. Intenta de nuevo.");
+                alert("Error al iniciar sesión. Intenta de nuevo.");
                 setIsSubmitting(false);
             });
-
     };
 
     const decodeToken = (token) => {
         try {
             const payload = token.split('.')[1];
-            const decoded = JSON.parse(atob(payload));
-            return decoded;
+            return JSON.parse(atob(payload));
         } catch (e) {
             console.error("Error decodificando el token:", e);
             return null;
@@ -101,76 +77,87 @@ const Login = () => {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center min-vh-100">
-            <div
-                className="row border rounded-4 p-3 bg-white shadow box-area"
-                style={{ width: '930px', boxShadow: '0 6px 25px 10px rgba(0, 0, 0, 0.7)' }}
-            >
-                <div className="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column"
-                    style={{ background: '#103cbe' }}
-                >
-                    <div className="featured-image">
-                        <img
-                            src={imagen}
-                            alt="Imagen contenedor"
-                            className="img-fluid"
-                            style={{ width: '250px' }}
-                        />
-                        <p className="text-white fs-4">
-                            Bienvenidos al software GestorPlus para la frayette
-                        </p>
-                    </div>
-                </div>
+        <div className="min-vh-100 d-flex align-items-center justify-content-center bg-body-secondary position-relative" style={{
+            background: 'linear-gradient(135deg, #dee2e6, #ffffff)',
+            fontFamily: 'Poppins, sans-serif'
+        }}>
+            <div className="position-absolute w-100 h-100" style={{
+                background: "url('https://www.transparenttextures.com/patterns/stardust.png')",
+                opacity: 0.05
+            }} />
 
-                <div className="col-md-6">
-                    <div className="row align-items-center">
-                        <div className="header-text mb-4">
-                            <p>Bienvenido otra vez</p>
-                            <p>Estamos felices de volver a ver</p>
+            <div className="container animate__animated animate__fadeInDown">
+                <div className="row justify-content-center">
+                    <div className="col-md-10 col-lg-8">
+                        <div className="card border-0 shadow rounded-4 overflow-hidden">
+                            <div className="row g-0">
+                                <div className="col-md-6 d-flex flex-column justify-content-center align-items-center text-white p-4" style={{
+                                    background: "linear-gradient(to right, #2196f3, #0d6efd)"
+                                }}>
+                                    <img src={imagen} alt="logo" className="img-fluid mb-3 animate__animated animate__zoomIn" style={{ width: "180px" }} />
+                                    <h3 className="fw-bold text-center">Bienvenido a GestorPlus</h3>
+                                    <p className="text-center small">Plataforma de recursos humanos para La Fayette</p>
+                                </div>
+
+                                <div className="col-md-6 bg-white p-5">
+                                    <h4 className="mb-4 text-primary">Inicia Sesión</h4>
+                                    <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+                                        <div className="mb-3">
+                                            <label htmlFor="num_doc" className="form-label">Número de Documento</label>
+                                            <div className="input-group mb-3">
+                                                <span className="input-group-text bg-white border-end-0">
+                                                    <span className="material-icons text-primary">person</span>
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    className="form-control border-start-0"
+                                                    name="num_doc"
+                                                    placeholder="Ej: 1234567890"
+                                                    value={formData.num_doc}
+                                                    onChange={handleChange}
+                                                    maxLength="10"
+                                                />
+                                            </div>
+
+                                        </div>
+
+                                        <div className="input-group mb-4">
+                                            <span className="input-group-text bg-white border-end-0">
+                                                <span className="material-icons text-primary">lock</span>
+                                            </span>
+                                            <input
+                                                type="password"
+                                                className="form-control border-start-0"
+                                                name="password"
+                                                placeholder="Contraseña"
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+
+
+                                        <div className="d-grid gap-2">
+                                            <button className="btn btn-primary btn-lg shadow-sm" type="submit" disabled={isSubmitting}>
+                                                {isSubmitting ? "Iniciando..." : "Ingresar"}
+                                            </button>
+                                            <button
+                                                className="btn btn-outline-primary"
+                                                type="button"
+                                                onClick={() => navigate('/Registro')}
+                                            >
+                                                Crear una cuenta
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <form onSubmit={handleSubmit}>
-                            <div className="input-group mb-3">
-                                <input
-                                    type="text"
-                                    className="form-control form-control-lg bg-light fs-6"
-                                    placeholder="Número de documento"
-                                    name="num_doc"
-                                    value={formData.num_doc}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="input-group mb-3">
-                                <input
-                                    type="password"
-                                    className="form-control form-control-lg bg-light fs-6"
-                                    placeholder="Contraseña"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            <div className="input-group mb-3">
-                                <button
-                                    className="btn btn-lg btn-primary w-100 fs-6"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? "Iniciando Sesión..." : "Iniciar sesión"}
-                                </button>
-                                <button
-                                    className="btn btn-lg btn-primary w-100 fs-6 mt-4"
-                                    type="button"
-                                    onClick={() => navigate('/Registro')}
-                                >
-                                    No tengo cuenta
-                                </button>
-                            </div>
-                        </form>
+                        <p className="text-center mt-4 text-muted small">© {new Date().getFullYear()} GestorPlus - La Fayette</p>
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default Login;
