@@ -133,18 +133,19 @@ class ChatControlador {
         echo json_encode(['status' => 'success', 'idChat' => $idChat]);
     }
 
-    public function obtenerMensajes($data){
+   public function obtenerMensajes($data = []) {
+    // ✅ Leer headers HTTP
+    $headers = getallheaders();
+    $authHeader = $headers["Authorization"] ?? null;
 
-    $token = $data['token'];
+    if (!$authHeader || !str_starts_with($authHeader, "Bearer ")) {
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'Token no proporcionado. xd']);
+        exit;
+    }
 
-    $token = $data['token'] ?? null;
-if (!$token || !validateJWT($token)) {
-    $server->push($frame->fd, json_encode([
-        'status' => 'error',
-        'message' => 'Token inválido o expirado.'
-    ]));
-    return;
-}
+    // ✅ Extraer el token
+    $token = trim(str_replace("Bearer", "", $authHeader));
 
     try {
         $decoded = JWT::decode($token, new Key(Clave::SECRET_KEY, Clave::JWT_ALGO));
@@ -154,19 +155,20 @@ if (!$token || !validateJWT($token)) {
         exit;
     }
 
-    $idChat = $data['idChat'] ?? null;
-
+    $idChat = $_GET['idChat'] ?? ($data['idChat'] ?? null);
 
     $mensajes = $this->chat->obtenerMensajes($idChat);
 
-    if ($mensajes !== false) {
-        http_response_code(200);
-        echo json_encode(['status' => 'success', 'mensajes' => $mensajes]);
-    } else {
-        http_response_code(500);
-        echo json_encode(['status' => 'error', 'message' => 'Error al obtener los mensajes']);
-    }
-    exit;
+if (is_array($mensajes)) {
+    http_response_code(200);
+    echo json_encode(['status' => 'success', 'mensajes' => $mensajes]);
+} else {
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Error al obtener los mensajes']);
 }
+
+}
+
+
 
 }
