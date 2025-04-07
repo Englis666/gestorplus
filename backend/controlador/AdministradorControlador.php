@@ -103,7 +103,10 @@ class AdministradorControlador {
             'totalAusencias' => $estadisticas['totalAusencias']
         ]);
     }
-    
+    public function obtenerTodasLasVacaciones(){
+        $this->jsonResponse($this->administrador->obtenerTodasLasVacaciones());
+    }
+
 
     public function obtenerTodasLasHorasExtra() {
         $decoded = $this->verificarToken();
