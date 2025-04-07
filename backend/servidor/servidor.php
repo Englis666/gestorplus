@@ -103,7 +103,8 @@ $routes = [
         'obtenerDatosDelEntrevistado' => ['admin', 'obtenerDatosDelEntrevistado'],
         'obtenerTodasLasEstadisticas' => ['admin' , 'obtenerTodasLasEstadisticas'],
         'obtenerSistemaDeGestion' => ['admin' , 'obtenerSistemaDeGestion'],
-        'buscarIdEvaluacion' => ['admin' , 'buscarIdEvaluacion']
+        'buscarIdEvaluacion' => ['admin' , 'buscarIdEvaluacion'],
+        'obtenerConvocatoriasPostulaciones' => ['admin', 'obtenerConvocatoriasPostulaciones']
     ],
     'PATCH' => [
         'actualizarPerfil' => ['usuario', 'actualizarPerfil'],

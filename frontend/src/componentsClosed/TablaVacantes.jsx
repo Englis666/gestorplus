@@ -40,7 +40,7 @@ const TablaVacantes = () => {
     // Cargar Convocatorias
     useEffect(() => {
         axios.get("http://localhost/gestorplus/backend/", {
-            params: { action: "obtenerConvocatorias" },
+            params: { action: "obtenerConvocatoriasPostulaciones" },
         })
             .then((response) => {
                 console.log("Convocatorias obtenidas:", response.data);
@@ -89,50 +89,7 @@ const TablaVacantes = () => {
                     <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
                         <div className="card-body">
                             <b>Lista de Convocatorias</b>
-                            <div className="table-responsive">
-                                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}>
-                                    <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
-                                        <tr>
-                                            <th>Convocatoria</th>
-                                            <th>Descripción</th>
-                                            <th>Requisitos</th>
-                                            <th>Salario</th>
-                                            <th>Cupos</th>
-                                            <th>Cargo</th>
-                                            <th>Acción</th>
-                                            <th>Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="text-center">
-                                        {convocatorias.length > 0 ? (
-                                            convocatorias.map((convocatoria) => (
-                                                <tr key={convocatoria.idconvocatoria}>
-                                                    <td>{convocatoria.nombreConvocatoria}</td>
-                                                    <td>{convocatoria.descripcion}</td>
-                                                    <td>{convocatoria.requisitos}</td>
-                                                    <td>{convocatoria.salario}</td>
-                                                    <td>{convocatoria.cantidadConvocatoria}</td>
-                                                    <td>{convocatoria.nombreCargo}</td>
-                                                    <td>
-                                                        <button className="btn btn-success btn-sm me-2">
-                                                            Activar
-                                                        </button>
-                                                    </td>
-                                                    <td>
-                                                        <button className="btn btn-danger btn-sm">
-                                                            Desactivar
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td colSpan="8">No hay Convocatorias disponibles.</td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
