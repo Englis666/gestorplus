@@ -151,6 +151,19 @@ class Administrador {
     return $resultado; 
 }
 
+    public function obtenerConvocatoriasPostulaciones(){
+        $sql = "SELECT * FROM convocatoria
+        LEFT JOIN postulacion ON convocatoria.idconvocatoria = postulacion.convocatoria_idconvocatoria";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $resultado = fetchAll(PDO::FETCH_ASSOCC);
+        if($resultado){
+            return $resultado;
+        }
+        return [];
+    }
+
 
 
         public function verificarRol($num_doc) {

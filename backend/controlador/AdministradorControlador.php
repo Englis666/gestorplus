@@ -139,6 +139,9 @@ class AdministradorControlador {
     $this->jsonResponse(["Entrevistado" => $entrevistado ?: ["error" => "hubo un error"]]);
     }
 
+    public function obtenerConvocatoriasPostulaciones() {
+        $this->jsonResponse(['ConvocatoriaPostulaciones' => $this->administrador->obtenerConvocatoriasPostulaciones() ?: []]);
+    }
 
     public function corroborarJornada($data) {
         if (!isset($data['data']['idJornada'])) {
