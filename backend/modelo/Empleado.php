@@ -100,7 +100,7 @@ class Empleado {
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':descripcionNotificacion', $descripcionNotificacion, PDO::PARAM_STR);
             $stmt->bindParam(':estadoNotificacion', 'Pendiente', PDO::PARAM_STR);
-            $stmt->bindParam(':tipo', 'Queja', PDO::PARAM_STR);
+            $stmt->bindParam(':tipo', 'General', PDO::PARAM_STR);
             $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_STR);
             $stmt->execute();
             $id = $this->db->lastInsertId();
@@ -138,7 +138,7 @@ class Empleado {
                 $notificationStmt->execute([
                     $descripcionNotificacion,
                     'No leida', 
-                    'Ausencia', 
+                    'General', 
                     $num_doc
                 ]);
     
@@ -171,7 +171,7 @@ class Empleado {
                 $stmt->execute([
                     $descripcionNotificacion,
                     'Pendiente',
-                    'Vacacion',
+                    'General ',
                     $num_doc
                 ]);
                 
