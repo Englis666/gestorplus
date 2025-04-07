@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const AsignarEntrevistaModal = ({ show, handleClose, postulacion}) => {
+const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
     const [formData, setFormData] = useState({
         identrevista: "",
         fecha: "",
@@ -23,36 +23,34 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion}) => {
                 action: "asignarEntrevista",
                 ...formData
             });
-            if (response.data.success) {
-                alert("Entrevista asignada exitosamente");
+            if (response.data.Entrevista) {
+                alert("✅ Entrevista asignada exitosamente");
                 handleClose();
             } else {
-                alert("Error al asignar la entrevista");
+                alert("❌ Error al asignar la entrevista");
             }
         } catch (error) {
             console.error("Error al asignar la entrevista", error);
-            alert("Error al asignar la entrevista");
+            alert("⚠️ Error al conectar con el servidor");
         }
     };
 
-    if (!show) {
-        return null;
-    }
+    if (!show) return null;
 
     return (
-        <div className="modal show" style={{ display: "block" }}>
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">Asignar Entrevista</h5>
-                        <button type="button" className="close" onClick={handleClose}>
-                            <span>&times;</span>
-                        </button>
+        <div className="modal fade show" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+            <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content shadow-lg border-0 rounded-4 animate__animated animate__fadeInDown">
+                    <div className="modal-header bg-primary text-white rounded-top-4">
+                        <h5 className="modal-title">📅 Asignar Entrevista</h5>
+                        <button type="button" className="btn-close btn-close-white" onClick={handleClose}></button>
                     </div>
                     <div className="modal-body">
                         <form onSubmit={handleSubmit}>
-                        <input type="hidden" 
-                                value={formData.postulacion_idpostulaciones}/>
+                            <input type="hidden" value={formData.postulacion_idpostulaciones} />
+
+                            <div className="mb-3">
+                                <label className="form-label">Fecha de la entrevista</label>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -61,12 +59,10 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion}) => {
                                     onChange={handleChange}
                                     required
                                 />
-                            <div className="form-group">
-                                <label>Fecha</label>
-                
                             </div>
-                            <div className="form-group">
-                                <label>Hora</label>
+
+                            <div className="mb-3">
+                                <label className="form-label">Hora</label>
                                 <input
                                     type="time"
                                     className="form-control"
@@ -76,20 +72,28 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion}) => {
                                     required
                                 />
                             </div>
-                            <div className="form-group">
-                                <label>Lugar/Medio</label>
+
+                            <div className="mb-3">
+                                <label className="form-label">Lugar o medio de la entrevista</label>
                                 <input
                                     type="text"
                                     className="form-control"
                                     name="lugarMedio"
+                                    placeholder="Ej. Sala 2 o vía Google Meet"
                                     value={formData.lugarMedio}
                                     onChange={handleChange}
                                     required
                                 />
                             </div>
-                            <button type="submit" className="btn btn-primary">
-                                Asignar
-                            </button>
+
+                            <div className="d-grid">
+                                <button type="submit" className="btn btn-success btn-lg">
+                                    ✅ Asignar Entrevista
+                                </button>
+                                <button type="button" className="btn btn-outline-secondary mt-2" onClick={handleClose}>
+                                    Cancelar
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
