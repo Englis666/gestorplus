@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import GenerarPazYSalvo from "./form/GenerarPazYSalvo";
 
 const TablaPazYSalvo = () => {
     const [Salvos, setSalvos] = useState([]);
@@ -206,76 +207,12 @@ const TablaPazYSalvo = () => {
                 </div>
             </div>
             {(rol === '1' || rol === '2') && (
-                <div className="row mt-4 container mt-5 card shadow-sm border-0 mb-5">
-                    <div className="col-12">
-                        <h4 className="p-2">Generar paz y salvo</h4>
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-3">
-                                <label htmlFor="motivo" className="form-label">Motivo de el paz y salvo</label>
-                                <input
-                                    type="text"
-                                    id="motivo"
-                                    name="motivo"
-                                    className="form-control"
-                                    value={form.motivo}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="fechaEmision" className="form-label">Fecha de emisión de paz y salvo</label>
-                                <input
-                                    type="date"
-                                    id="fechaEmision"
-                                    name="fechaEmision"
-                                    className="form-control"
-                                    value={form.fechaEmision}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="estado" className="form-label">Estado de el paz y salvo</label>
-                                <input
-                                    type="text"
-                                    id="estado"
-                                    name="estado"
-                                    className="form-control"
-                                    value={form.estado}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="empleado" className="form-label">Asignar al empleado</label>
-                                <select
-                                    id="empleado"
-                                    name="empleado"
-                                    className="form-control"
-                                    value={form.empleado}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    <option value="">Seleccione un empleado</option>
-                                    {empleados.map((empleado) => (
-                                        <option key={empleado.num_doc} value={empleado.num_doc}>
-                                            {empleado.nombres}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="mb-3">
-                                <button className="btn btn-primary" type="submit">
-                                    Generar Paz y salvo
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                <GenerarPazYSalvo
+                    form={form}
+                    empleados={empleados}
+                    onChange={handleInputChange}
+                    onSubmit={handleSubmit}
+                />
             )}
         </div>
     );
