@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import FormularioAgregarConvocatoria from "./form/agregarConvocatoria";
 
 const TablaVacantes = () => {
     const [convocatorias, setConvocatorias] = useState([]);
@@ -138,83 +139,13 @@ const TablaVacantes = () => {
             </div>
 
             {/* Formulario para agregar convocatoria */}
-            <div className="row mt-4 container mt-5 card shadow-sm border-0 mb-5">
-                <form onSubmit={handleAgregar}>
-                    <h2 className="mt-2">Agregar Convocatoria</h2>
+            <FormularioAgregarConvocatoria
+                agregar={agregar}
+                setAgregar={setAgregar}
+                handleAgregar={handleAgregar}
+                cargos={cargos}
+            />
 
-                    <div className="mb-3">
-                        <label className="form-label">Nombre de la convocatoria</label>
-                        <input
-                            type="text"
-                            value={agregar.nombreConvocatoria}
-                            onChange={(e) => setAgregar({ ...agregar, nombreConvocatoria: e.target.value })}
-                            className="form-control"
-                        />
-                    </div>
-
-                    <div className="mb-3">
-                        <label>Descripción</label>
-                        <input
-                            type="text"
-                            value={agregar.descripcion}
-                            onChange={(e) => setAgregar({ ...agregar, descripcion: e.target.value })}
-                            className="form-control"
-                        />
-                    </div>
-
-                    <div className="mb-3">
-                        <label>Cargo de la convocatoria</label>
-                        <select
-                            value={agregar.idcargo}
-                            onChange={(e) => setAgregar({ ...agregar, idcargo: e.target.value })}
-                            className="form-control"
-                        >
-                            <option value="">Seleccione un cargo</option>
-                            {cargos.length > 0 ? (
-                                cargos.map((cargo) => (
-                                    <option key={cargo.idcargo} value={cargo.idcargo}>
-                                        {cargo.nombreCargo}
-                                    </option>
-                                ))
-                            ) : (
-                                <option disabled>Cargando cargos...</option>
-                            )}
-                        </select>
-                    </div>
-
-                    <div className="mb-3">
-                        <label>Requisitos</label>
-                        <input
-                            type="text"
-                            value={agregar.requisitos}
-                            onChange={(e) => setAgregar({ ...agregar, requisitos: e.target.value })}
-                            className="form-control"
-                        />
-                    </div>
-
-                    <div className="mb-3">
-                        <label>Salario</label>
-                        <input
-                            type="number"
-                            value={agregar.salario}
-                            onChange={(e) => setAgregar({ ...agregar, salario: e.target.value })}
-                            className="form-control"
-                        />
-                    </div>
-
-                    <div className="mb-3">
-                        <label>Total de cupos</label>
-                        <input
-                            type="number"
-                            value={agregar.cantidadConvocatoria}
-                            onChange={(e) => setAgregar({ ...agregar, cantidadConvocatoria: e.target.value })}
-                            className="form-control"
-                        />
-                    </div>
-
-                    <button type="submit" className="btn btn-primary mb-2">Agregar Vacante</button>
-                </form>
-            </div>
         </div>
     );
 };
