@@ -2,17 +2,14 @@
 
 $server = new Swoole\WebSocket\Server("0.0.0.0", 8082);
 
-// Evento cuando el servidor se inicia
 $server->on("start", function ($server) {
     echo "✅ Servidor WebSocket iniciado en ws://localhost:8082\n";
 });
 
-// Evento cuando un cliente se conecta
 $server->on("open", function ($server, $request) {
     echo "🔌 Nueva conexión: {$request->fd}\n";
 });
 
-// Evento cuando se recibe un mensaje
 $server->on("message", function ($server, $frame) {
     echo "📨 Mensaje recibido de {$frame->fd}: {$frame->data}\n";
 
@@ -26,11 +23,31 @@ $server->on("message", function ($server, $frame) {
         return;
     }
 
-    $ch = curl_init("http://localhost/gestorplus/backend/");
+    $method = isset($data["method"]) ? strtoupper($data["method"]) : "POST";
+
+    $url = "http://localhost/gestorplus/backend/";
+
+    if ($method === "GET") {
+        $queryParams = http_build_query(array_filter($data, fn($k) => $k !== 'method' && $k !== 'token', ARRAY_FILTER_USE_KEY));
+        $url .= "?" . $queryParams;
+    }
+
+    $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+
+    $headers = ["Content-Type: application/json"];
+
+    // ✅ Añadir el token como header Authorization
+    if (isset($data["token"])) {
+        $headers[] = "Authorization: Bearer " . $data["token"];
+    }
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    if ($method === "POST") {
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    }
 
     $response = curl_exec($ch);
 
@@ -42,17 +59,12 @@ $server->on("message", function ($server, $frame) {
             'message' => 'Error al hacer la solicitud al backend: ' . $error
         ]));
     } else {
-        foreach ($server->connections as $fd) {
-            if ($server->isEstablished($fd)) {
-                $server->push($fd, $response);
-            }
-        }
+        $server->push($frame->fd, $response);
     }
 
     curl_close($ch);
 });
 
-// Evento cuando un cliente se desconecta
 $server->on("close", function ($server, $fd) {
     echo "❎ Conexión cerrada: {$fd}\n";
 });
