@@ -1,7 +1,7 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
 import TablaSistemaDeGestion from "../componentsClosed/TablaSistemaDeGestion";
-import FormularioParaAgregarSistemasDeGestion from "../componentsClosed/FormularioParaAgregarSistemasDeGestion";
+import FormularioParaAgregarSistemasDeGestion from "../componentsClosed/form/FormularioParaAgregarSistemasDeGestion";
 import { useLocation } from "react-router-dom";
 
 const SistemaDeGestion = () => {

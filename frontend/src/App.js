@@ -1,5 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'material-design-icons/iconfont/material-icons.css';
+import 'animate.css';
+
+
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './context/userContext';

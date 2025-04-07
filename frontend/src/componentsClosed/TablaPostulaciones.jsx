@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import AsignarEntrevistaModal from "./AsignarEntrevistaModal";
+import AsignarEntrevistaModal from "./form/AsignarEntrevistaModal";
 
 const TablaPostulaciones = () => {
     const [postulaciones, setPostulaciones] = useState([]);
@@ -87,7 +87,7 @@ const TablaPostulaciones = () => {
                                             <td className="py-3 px-4">
                                                 <button
                                                     className="btn btn-primary"
-                                                    onClick={() => handleShowModal(postulacion , postulacion.idpostulacion)}
+                                                    onClick={() => handleShowModal(postulacion, postulacion.idpostulacion)}
                                                 >
                                                     Asignar Entrevista
                                                 </button>
