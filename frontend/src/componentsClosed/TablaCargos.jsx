@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import FormularioCargo from "./form/FormularioAgregarCargo";
 
 const TablaCargos = () => {
     const [cargos, setCargos] = useState([]);
-    const [nombreCargo, setNombreCargo] = useState("");
 
     useEffect(() => {
-        // Obtener los cargos
         axios
             .get("http://localhost/gestorplus/backend/", {
                 params: { action: "obtenerCargos" },
@@ -25,32 +24,8 @@ const TablaCargos = () => {
             });
     }, []);
 
-    const handleInputChange = (e) => {
-        setNombreCargo(e.target.value);
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Enviar el nombre del cargo
-        axios
-            .post("http://localhost/gestorplus/backend/", {
-                action: "agregarCargo",
-                nombreCargo: nombreCargo,
-            })
-            .then((response) => {
-                console.log(response);
-                if (response.data.success) {
-                    alert("Cargo agregado con éxito");
-                    setCargos([...cargos, { nombre: nombreCargo, estado: "Activo" }]);
-                    setNombreCargo("");
-                } else {
-                    alert("No se pudo agregar el cargo");
-                }
-            })
-            .catch((err) => {
-                console.error("Error al agregar el cargo", err);
-                alert("Error al agregar el cargo");
-            });
+    const agregarCargo = (nuevoCargo) => {
+        setCargos([...cargos, nuevoCargo]);
     };
 
     return (
@@ -74,7 +49,9 @@ const TablaCargos = () => {
                                         {cargos.length === 0 ? (
                                             <tr>
                                                 <td colSpan="2" className="py-3 px-4">
-                                                    <span className="text-dark">No existen cargos en la base de datos</span>
+                                                    <span className="text-dark">
+                                                        No existen cargos en la base de datos
+                                                    </span>
                                                 </td>
                                             </tr>
                                         ) : (
@@ -96,27 +73,7 @@ const TablaCargos = () => {
                     </div>
                 </div>
                 <div className="col-md-5 container card shadow-sm border-0 mb-5">
-                    <form onSubmit={handleSubmit}>
-                        <h2>Formulario para agregar más cargos al sistema</h2>
-                        <p>Recuerda que cuando agregas un cargo es para una convocatoria, entonces eso significa que ese cargo se habilitará para una selección de convocatoria. Realmente es sencillo, solo debes colocar el nombre que usarás del cargo para poder usarlo en las siguientes postulaciones o convocatorias que crearás.</p>
-                        <div className="mb-3">
-                            <label htmlFor="nombreCargo" className="form-label text-dark">Nombre del cargo</label>
-                            <input
-                                type="text"
-                                id="nombreCargo"
-                                name="nombreCargo"
-                                className="form-control"
-                                value={nombreCargo}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <button className="btn btn-primary" type="submit">
-                                Agregar Cargo
-                            </button>
-                        </div>
-                    </form>
+                    <FormularioCargo onCargoAgregado={agregarCargo} />
                 </div>
             </div>
         </div>
