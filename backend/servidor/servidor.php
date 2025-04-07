@@ -2,26 +2,28 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
 header("Content-Type: application/json");
+
 use Controlador\UsuarioControlador;
 use Controlador\ChatControlador;
 use Controlador\AdministradorControlador;
 use Controlador\AspiranteControlador;
 use Controlador\EmpleadoControlador;
 
+// Obtener método y datos
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents('php://input'), true);
+
 $action = $_GET['action'] ?? ($data['action'] ?? null);
 
-
+// Validar acción
 if (!$action) {
     http_response_code(400);
     echo json_encode(['message' => 'No se recibió la acción.']);
     exit;
 }
 
-
+// Instanciar controladores
 $controllers = [
     'usuario' => new UsuarioControlador(),
     'empleado' => new EmpleadoControlador(),
@@ -30,9 +32,10 @@ $controllers = [
     'admin' => new AdministradorControlador(),
 ];
 
-
+// Rutas organizadas por método HTTP
 $routes = [
     'POST' => [
+        // Usuario
         'registrarse' => ['usuario', 'registrar'],
         'login' => ['usuario', 'iniciar'],
         'agregarEstudio' => ['usuario', 'agregarEstudio'],
@@ -41,53 +44,61 @@ $routes = [
         'consultarEstudio' => ['usuario', 'consultarEstudio'],
         'consultarExp' => ['usuario', 'consultarExp'],
 
+        // Empleado
         'solicitarQueja' => ['empleado', 'solicitarQueja'],
         'solicitarAusencia' => ['empleado', 'solicitarAusencia'],
         'solicitarVacaciones' => ['empleado', 'solicitarVacaciones'],
-        
+
+        // Aspirante
         'aplicacionDeAspirante' => ['aspirante', 'aplicacionDeAspirante'],
-        
+
+        // Chat
         'enviarMensaje' => ['chat', 'enviarMensaje'],
-        'obtenerOcrearChat' => ['chat' , 'obtenerOcrearChat'],
+        'obtenerOcrearChat' => ['chat', 'obtenerOcrearChat'],
         'iniciarChat' => ['chat', 'iniciarChat'],
 
-
-    
+        // Admin
         'agregarCargo' => ['admin', 'agregarCargo'],
-        'guardarResultadosSistemaDeGestion' => ['admin' , 'guardarResultadosSistemaDeGestion'],
+        'guardarResultadosSistemaDeGestion' => ['admin', 'guardarResultadosSistemaDeGestion'],
         'agregarConvocatoria' => ['admin', 'agregarConvocatoria'],
         'corroborarJornada' => ['admin', 'corroborarJornada'],
         'noCorroborarJornada' => ['admin', 'noCorroborarJornada'],
         'notificacionAceptada' => ['admin', 'notificacionAceptada'],
         'notificacionRechazada' => ['admin', 'notificacionRechazada'],
         'asignarEntrevista' => ['admin', 'asignarEntrevista'],
+        'asignarVinculacion' => ['admin', 'asignarVinculacion'],
         'asistenciaConfirmada' => ['admin', 'asistenciaConfirmada'],
-        'asignarVinculacion' => ['admin' , 'asignarVinculacion'],
-        'asistenciaNoConfirmada' => ['admin', 'asistenciaNoConfirmada']
+        'asistenciaNoConfirmada' => ['admin', 'asistenciaNoConfirmada'],
     ],
     'GET' => [
-        'obtenerMensajes' => ['chat', 'obtenerMensajes'],
-        'consultarHorasExtra' => ['usuario', 'agregarHorasExtra'],
+        // Usuario
         'obtenerConvocatorias' => ['usuario', 'obtenerConvocatorias'],
         'obtenerTotalEstadisticas' => ['usuario', 'obtenerTotalEstadisticas'],
         'obtenerRRHH' => ['usuario', 'obtenerRRHH'],
         'datosPerfil' => ['usuario', 'datosPerfil'],
         'obtenerDatosParaCertificado' => ['usuario', 'obtenerDatosParaCertificado'],
         'obtenerNotificaciones' => ['usuario', 'obtenerNotificaciones'],
-        'obtenerDatosParaCertificado' => ['usuario' , 'obtenerDatosParaCertificado'],
+        'obtenerEstudio' => ['usuario', 'obtenerEstudio'],
+        'obtenerExperiencia' => ['usuario', 'obtenerExperiencia'],
+        'consultarHorasExtra' => ['usuario', 'agregarHorasExtra'], // Revisa si este nombre es correcto
+
+        // Empleado
         'obtenerJornadas' => ['empleado', 'obtenerJornadas'],
         'obtenerAusencias' => ['empleado', 'obtenerAusencias'],
         'obtenerMisVacaciones' => ['empleado', 'obtenerMisVacaciones'],
         'obtenerMiPazySalvo' => ['empleado', 'obtenerMiPazYSalvo'],
-        'obtenerEstudio' => ['usuario', 'obtenerEstudio'],
-        'obtenerExperiencia' => ['usuario', 'obtenerExperiencia'],
-        
+
+        // Aspirante
         'obtenerPostulacionesAspirante' => ['aspirante', 'obtenerPostulacionesAspirante'],
         'obtenerDetalleConvocatoria' => ['aspirante', 'obtenerDetalleConvocatoria'],
         'verificarPostulacion' => ['aspirante', 'verificarPostulacion'],
-        'obtenerNotificacionesAspirante' => ['aspirante' , 'obtenerNotificacionesAspirante'],
+        'obtenerNotificacionesAspirante' => ['aspirante', 'obtenerNotificacionesAspirante'],
 
-        'obtenerVinculaciones' => ['admin', 'obtenerVinculaciones'], 
+        // Chat
+        'obtenerMensajes' => ['chat', 'obtenerMensajes'],
+
+        // Admin
+        'obtenerVinculaciones' => ['admin', 'obtenerVinculaciones'],
         'obtenerCargos' => ['admin', 'obtenerCargos'],
         'obtenerPostulaciones' => ['admin', 'obtenerPostulaciones'],
         'obtenerEmpleados' => ['admin', 'obtenerEmpleados'],
@@ -96,30 +107,48 @@ $routes = [
         'obtenerTodasLasJornadas' => ['admin', 'obtenerTodasLasJornadas'],
         'obtenerTodasLasAusencias' => ['admin', 'obtenerTodasLasAusencias'],
         'obtenerUsuarios' => ['admin', 'obtenerUsuarios'],
-        'obtenerCargosParaConvocatorias' => ['admin' , 'obtenerCargosParaConvocatorias'],
+        'obtenerCargosParaConvocatorias' => ['admin', 'obtenerCargosParaConvocatorias'],
         'obtenerEntrevistas' => ['admin', 'obtenerEntrevistas'],
         'obtenerTodasLasHorasExtra' => ['admin', 'obtenerTodasLasHorasExtra'],
         'obtenerTodasLasVacaciones' => ['admin', 'obtenerTodasLasVacaciones'],
         'obtenerDatosDelEntrevistado' => ['admin', 'obtenerDatosDelEntrevistado'],
-        'obtenerTodasLasEstadisticas' => ['admin' , 'obtenerTodasLasEstadisticas'],
-        'obtenerSistemaDeGestion' => ['admin' , 'obtenerSistemaDeGestion'],
-        'buscarIdEvaluacion' => ['admin' , 'buscarIdEvaluacion'],
-        'obtenerConvocatoriasPostulaciones' => ['admin', 'obtenerConvocatoriasPostulaciones']
+        'obtenerTodasLasEstadisticas' => ['admin', 'obtenerTodasLasEstadisticas'],
+        'obtenerSistemaDeGestion' => ['admin', 'obtenerSistemaDeGestion'],
+        'buscarIdEvaluacion' => ['admin', 'buscarIdEvaluacion'],
+        'obtenerConvocatoriasPostulaciones' => ['admin', 'obtenerConvocatoriasPostulaciones'],
     ],
     'PATCH' => [
         'actualizarPerfil' => ['usuario', 'actualizarPerfil'],
-        'actualizacionHojaDevida' => ['usuario', 'actualizacionHojaDevida']
-    ], 
+        'actualizacionHojaDevida' => ['usuario', 'actualizacionHojaDevida'],
+    ],
     'DELETE' => [
         'eliminarEstudio' => ['usuario', 'eliminarEstudio'],
         'eliminarExperiencia' => ['usuario', 'eliminarExperiencia'],
     ],
 ];
 
+// Ejecutar acción
 if (isset($routes[$method][$action])) {
-    [$controllerKey, $method] = $routes[$method][$action];
-    $controllers[$controllerKey]->$method($data);
+    [$controllerKey, $methodToCall] = $routes[$method][$action];
+    if (method_exists($controllers[$controllerKey], $methodToCall)) {
+        $controllers[$controllerKey]->$methodToCall($data);
+        exit;
+    } else {
+        http_response_code(500);
+        echo json_encode([
+            'message' => 'El método no existe en el controlador.',
+            'controller' => $controllerKey,
+            'method' => $methodToCall
+        ]);
+        exit;
+    }
 } else {
-    http_response_code(400);
-    echo json_encode(['message' => 'Acción no encontrada.']);
+    http_response_code(404);
+    echo json_encode([
+        'message' => 'Acción no encontrada.',
+        'method' => $method,
+        'action' => $action,
+        'routes' => array_keys($routes[$method] ?? [])
+    ]);
+    exit;
 }
