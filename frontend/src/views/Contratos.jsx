@@ -7,7 +7,7 @@ const Contratos = () => {
     const { num_doc, nombres, identrevista, idpostulacion } = location.state || {};
 
     return (
-        <div className="bg-light min-vh-100" style={{ display: "flex", Transition: "all 3s ease" }}>
+        <div className="bg-light min-vh-100" style={{ transition: "all 3s ease", display: "flex" }}>
             <NavbarClosed />
             <div className="flex-grow-1 p-4" style={{ background: "#ECF0F1" }}>
                 <TablaContratos num_doc={num_doc} nombres={nombres} identrevista={identrevista} idpostulacion={idpostulacion} />

@@ -125,10 +125,6 @@ const Registro = () => {
             background: 'linear-gradient(135deg, #dee2e6, #ffffff)',
             fontFamily: 'Poppins, sans-serif'
         }}>
-            <div className="position-absolute w-100 h-100" style={{
-                background: "url('https://www.transparenttextures.com/patterns/stardust.png')",
-                opacity: 0.05
-            }} />
 
             <div className="container animate__animated animate__fadeInDown">
                 <div className="row justify-content-center">

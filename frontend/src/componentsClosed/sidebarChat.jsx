@@ -53,32 +53,7 @@ const SidebarChat = ({ onChatSelect }) => {
     }
   }, [fetchUsuarios]);
 
-  useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8082");
 
-    ws.onopen = () => console.log("Conectado al WebSocket");
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data?.usuarios && Array.isArray(data.usuarios)) {
-          setUsuarios(data.usuarios);
-        }
-      } catch (error) {
-        console.error("Error al procesar datos de WebSocket:", error);
-      }
-    };
-
-    ws.onerror = (error) => {
-      console.error("Error en WebSocket:", error);
-      fetchUsuarios(decodedToken?.data?.rol === "3" ? "obtenerRRHH" : "obtenerUsuarios");
-    };
-
-    ws.onclose = () => console.log("Desconectado del WebSocket");
-
-    setSocket(ws);
-    return () => ws.close();
-  }, [fetchUsuarios, decodedToken]);
 
   const handleChatSelection = async (num_doc_receptor) => {
     try {

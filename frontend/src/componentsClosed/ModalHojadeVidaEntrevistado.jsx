@@ -84,6 +84,9 @@ const ModalHojaDeVida = ({ num_doc = null, identrevista, onClose }) => {
                         <button className="btn btn-outline-danger" onClick={onClose}>
                             ❌ Rechazar
                         </button>
+                        <button className="btn btn-outline-danger" onClick={onClose}>
+                            Cancelar
+                        </button>
                         {hasData && (
                             <button
                                 className="btn btn-success"

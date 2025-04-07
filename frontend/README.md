@@ -52,6 +52,10 @@ Este componente es el menú lateral de la aplicación. Lo diseñé para ser comp
   - `transition`: Apliqué una transición suave cuando el usuario interactúa con los enlaces del menú.
   - `borderTopRightRadius`, `borderBottomRightRadius`: Redondeé las esquinas del menú para darle un toque más amigable y moderno.
 
+# Libreria animate.css
+Con esta libreria es facil animar las cosas la clase para animacion es
+ - `animate_animated animate_fadeInDown` 
+
 ---
 
 ### 2. `TablaEmpleado` (Componente de Tabla)
