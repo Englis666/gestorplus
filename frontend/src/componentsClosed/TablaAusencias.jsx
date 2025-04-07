@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import FormularioAusencia from "./form/FormularioSolicitudAusencia";
 
 const TablaAusencias = () => {
   const [Ausencias, setAusencias] = useState([]);
@@ -277,66 +278,7 @@ const TablaAusencias = () => {
         </div>
       </div>
 
-      <div className="row mt-4 container mt-5 card shadow-sm border-0 mb-5"
-        style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
-        <div className="col-12">
-          <h4 className="p-2">Solicitar Ausencia</h4>
-          <form onSubmit={handleSolicitarAusencia}>
-            <div className="mb-3">
-              <label htmlFor="fechaInicio" className="form-label">Fecha de Inicio</label>
-              <input
-                type="date"
-                id="fechaInicio"
-                name="fechaInicio"
-                className="form-control"
-                value={solicitud.fechaInicio}
-                onChange={(e) => setSolicitud({ ...solicitud, fechaInicio: e.target.value })}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="fechaFin" className="form-label">Fecha de Fin</label>
-              <input
-                type="date"
-                id="fechaFin"
-                name="fechaFin"
-                className="form-control"
-                value={solicitud.fechaFin}
-                onChange={(e) => setSolicitud({ ...solicitud, fechaFin: e.target.value })}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="tipoAusencia" className="form-label">Tipo de Ausencia</label>
-              <select
-                id="tipoAusencia"
-                name="tipoAusencia"
-                className="form-select"
-                value={solicitud.tipoAusencia}
-                onChange={(e) => setSolicitud({ ...solicitud, tipoAusencia: e.target.value })}
-                required
-              >
-                <option value="">Seleccione un tipo</option>
-                <option value="Enfermedad">Enfermedad</option>
-                <option value="Vacaciones">Vacaciones</option>
-                <option value="Personal">Personal</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="descripcion" className="form-label">Descripción</label>
-              <textarea
-                id="descripcion"
-                name="descripcion"
-                className="form-control"
-                value={solicitud.descripcion}
-                onChange={(e) => setSolicitud({ ...solicitud, descripcion: e.target.value })}
-                required
-              ></textarea>
-            </div>
-            <button type="submit" className="btn btn-primary">Enviar Solicitud</button>
-          </form>
-        </div>
-      </div>
+      <FormularioAusencia />
     </div>
   );
 };
