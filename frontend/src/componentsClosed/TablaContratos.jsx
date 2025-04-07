@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ModalSubirContratoPdf from "../componentsClosed/ModalSubirContratoPdf";
+import FormularioVinculacion from "./form/FormularioAsignacionVinculacion";
 
 const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [vinculaciones, setVinculaciones] = useState([]);
@@ -210,32 +211,11 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
 
       {/* Formulario */}
       <div className="row mt-4 container-fluid mt-5 card shadow-sm border-0 mb-5">
-        <div className="col-12">
-          <h4 className="p-2">Asignación de vinculaciones</h4>
-
-          <form onSubmit={handleSubmit}>
-            <input type="hidden" className="form-control" value={formData.idevaluacion} readOnly />
-
-            {[
-              { label: "Número de Documento", name: "num_doc", type: "number" },
-              { label: "Nombre", name: "nombres", type: "text" },
-              { label: "Fecha de inicio", name: "fechaInicio", type: "date" },
-              { label: "Fecha de fin", name: "fechaFin", type: "date" },
-              { label: "Tipo de contrato", name: "tipoContrato", type: "text" },
-              { label: "Salario", name: "salario", type: "number" },
-              { label: "Estado", name: "estadoContrato", type: "text" },
-              { label: "Fecha de firma", name: "fechaFirma", type: "date" },
-            ].map(({ label, name, type }) => (
-              <div key={name} className="mb-3">
-                <label className="form-label">{label}</label>
-                <input type={type} name={name} className="form-control" value={formData[name]} onChange={handleChange} required />
-              </div>
-            ))}
-            <button type="submit" className="btn btn-primary mb-2">
-              Asignar vinculación al postulante
-            </button>
-          </form>
-        </div>
+        <FormularioVinculacion
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+        />
       </div>
 
       {/* Mostrar el modal con el PDF */}
