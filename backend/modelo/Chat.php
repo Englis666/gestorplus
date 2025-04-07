@@ -76,14 +76,11 @@ class Chat {
 
 
     // Obtener los mensajes de un chat
-   public function obtenerMensajes($idChat)
-{
-    error_log("ID del chat recibido: " . $idChat); // Verifica que el idChat esté llegando correctamente
-
+   public function obtenerMensajes($idChat){
     try {
-        $query = "SELECT m.idmensaje, m.usuario_num_doc, m.fecha_envio, m.mensaje, u.nombres 
+        $query = "SELECT *
                   FROM mensajes m
-                  JOIN usuarios u ON m.usuario_num_doc = u.num_doc
+                  JOIN usuario u ON m.usuario_num_doc = u.num_doc
                   WHERE m.idChat = :idChat
                   ORDER BY m.fecha_envio ASC";
 
