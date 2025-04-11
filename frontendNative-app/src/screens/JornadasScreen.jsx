@@ -3,13 +3,9 @@ import { View, StyleSheet } from "react-native";
 import TablaJornadasScreen from "../componentsClosed/TablaJornadasScreen";
 
 const Jornadas = () => {
-
     return (
-
         <View style={styles.container}>
-            <View style={styles.content}>
-                <TablaJornadasScreen />
-            </View>
+            <TablaJornadasScreen />
         </View>
     );
 };

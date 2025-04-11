@@ -20,51 +20,50 @@ const TablaEmpleado = ({ action }) => {
 
     const token = getCookie("auth_token");
     if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        setRol(decodedToken.data.rol); // Asumiendo que el rol está en el token
+      const decodedToken = jwtDecode(token);
+      setRol(decodedToken.data.rol);
 
-        const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
-        if (isTokenExpired) {
-          console.error("El token ha expirado.");
-          setError("El token ha expirado.");
-          setLoading(false);
-          return;
-        }
-
-        axios
-          .get("http://localhost/gestorplus/backend/", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: { action },
-          })
-          .then((response) => {
-            const notificaciones = response.data?.Notificaciones;
-            console.log(response.data);
-
-            if (Array.isArray(notificaciones)) {
-              setNotificaciones(notificaciones);
-            } else {
-              console.error("Las notificaciones no son un array");
-              setNotificaciones([]);
-            }
-            setLoading(false);
-          })
-          .catch((err) => {
-            console.error("Error al obtener las notificaciones:", err);
-            setError("Hubo un problema al cargar las notificaciones.");
-            setLoading(false);
-          });
-      } catch (error) {
-        console.error("Error al decodificar el token:", error);
-        setError("Token inválido o malformado.");
+      const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
+      if (isTokenExpired) {
+        console.error("El token ha expirado.");
+        setError("El token ha expirado.");
         setLoading(false);
+        return;
       }
-    } else {
-      console.error("No se encontró el token en las cookies o localStorage.");
-      setError("Token no encontrado.");
-      setLoading(false);
+
+      axios
+        .get("http://localhost/gestorplus/backend/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: { action },
+        })
+        .then((response) => {
+
+          let notificaciones;
+
+          if (response.data?.Notificaciones) {
+            notificaciones = response.data.Notificaciones;
+          } else if (response.data?.status === "Notificaciones" && Array.isArray(response.data?.message)) {
+            notificaciones = response.data.message;
+          } else {
+            console.error("Formato de notificaciones no reconocido");
+            notificaciones = [];
+          }
+
+          if (Array.isArray(notificaciones)) {
+            setNotificaciones(notificaciones);
+          } else {
+            console.error("Las notificaciones no son un array");
+            setNotificaciones([]);
+          }
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error al obtener las notificaciones:", err);
+          setError("Hubo un problema al cargar las notificaciones.");
+          setLoading(false);
+        });
     }
   }, [action]);
 
@@ -76,8 +75,21 @@ const TablaEmpleado = ({ action }) => {
     return <div>{error}</div>;
   }
 
+  // Filtrado de las notificaciones
   const jornadaNotificaciones = notificaciones.filter((n) => n.tipo === "Jornada");
-  const actualizacionNotificaciones = notificaciones.filter((n) => n.tipo === (rol === "Empleado" ? "Aceptacion" : "Postulacion"));
+  const actualizacionNotificaciones = notificaciones.filter((n) => {
+
+    if (rol === "3") {
+      return n.tipo === "PostulacionAspirantes";
+    }
+
+    else if (rol === "1" || rol === "2") {
+      return n.tipo === "Postulacion";
+    }
+
+    return false;
+  });
+
   const generalNotificaciones = notificaciones.filter((n) => n.tipo === "General");
 
   const handleVerClick = (notificacion) => {
@@ -95,7 +107,7 @@ const TablaEmpleado = ({ action }) => {
         <div className="col-12 col-md-6">
           <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
             <div className="card-body">
-              <p>Notificaciones de quejas o generales</p>
+              <p>Notificaciones generales</p>
               <div className="table-responsive">
                 <table className="table table-hover" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}>
                   <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
@@ -136,7 +148,7 @@ const TablaEmpleado = ({ action }) => {
           </div>
         </div>
 
-        {/* Segunda tabla: Notificaciones de actualizacion */}
+        {/* Segunda tabla: Notificaciones de actualización */}
         <div className="col-12 col-md-6">
           <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
             <div className="card-body">

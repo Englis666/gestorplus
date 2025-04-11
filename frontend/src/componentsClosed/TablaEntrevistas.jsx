@@ -76,7 +76,7 @@ const TablaEntrevistas = () => {
                                                 <td>{entrevista.fecha}</td>
                                                 <td>{entrevista.hora}</td>
                                                 <td>{entrevista.nombres}</td>
-                                                <td>{entrevista.num_doc}</td>
+                                                <td>{entrevista.usuario_num_doc}</td>
                                                 <td>{entrevista.estadoEntrevista}</td>
                                                 <td>
                                                     <button

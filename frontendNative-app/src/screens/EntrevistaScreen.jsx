@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import TablaEntrevistas from "../componentsClosed/TablaEntrevistas"
+import TablaEntrevistas from "../componentsClosed/TablaEntrevistas";
 
 const Entrevistas = () => {
     return (
@@ -9,14 +9,19 @@ const Entrevistas = () => {
                 <TablaEntrevistas />
             </View>
         </View>
-
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: '#fff',
+    },
+    content: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

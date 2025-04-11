@@ -59,7 +59,12 @@ $server->on("message", function ($server, $frame) {
             'message' => 'Error al hacer la solicitud al backend: ' . $error
         ]));
     } else {
-        $server->push($frame->fd, $response);
+       foreach ($server->connections as $client) {
+    if ($server->isEstablished($client)) {
+        $server->push($client, $response); // ⬅️ Enviar a todos
+    }
+}
+
     }
 
     curl_close($ch);

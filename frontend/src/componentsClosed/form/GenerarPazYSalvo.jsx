@@ -88,6 +88,30 @@ const GenerarPazYSalvo = ({ form, empleados, onChange, onSubmit }) => {
                     <form onSubmit={handleSubmit} noValidate>
                         <div className="mb-3">
                             <label htmlFor="motivo" className="form-label">Motivo del paz y salvo</label>
+
+                            <div className="mb-4">
+                                <label htmlFor="empleado" className="form-label">Asignar al empleado</label>
+                                <select
+                                    id="empleado"
+                                    name="empleado"
+                                    className={`form-select ${errores.empleado && tocado.empleado ? "is-invalid" : ""}`}
+                                    value={form.empleado}
+                                    onChange={(e) => {
+                                        onChange(e);
+                                        validar("empleado", e.target.value);
+                                    }}
+                                    onBlur={handleBlur}
+                                >
+                                    <option value="">Seleccione un empleado</option>
+                                    {empleados.map((empleado) => (
+                                        <option key={empleado.num_doc} value={empleado.num_doc}>
+                                            {empleado.nombres}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="invalid-feedback">{errores.empleado}</div>
+                            </div>
+
                             <input
                                 type="text"
                                 id="motivo"
@@ -137,28 +161,7 @@ const GenerarPazYSalvo = ({ form, empleados, onChange, onSubmit }) => {
                             <div className="invalid-feedback">{errores.estado}</div>
                         </div>
 
-                        <div className="mb-4">
-                            <label htmlFor="empleado" className="form-label">Asignar al empleado</label>
-                            <select
-                                id="empleado"
-                                name="empleado"
-                                className={`form-select ${errores.empleado && tocado.empleado ? "is-invalid" : ""}`}
-                                value={form.empleado}
-                                onChange={(e) => {
-                                    onChange(e);
-                                    validar("empleado", e.target.value);
-                                }}
-                                onBlur={handleBlur}
-                            >
-                                <option value="">Seleccione un empleado</option>
-                                {empleados.map((empleado) => (
-                                    <option key={empleado.num_doc} value={empleado.num_doc}>
-                                        {empleado.nombres}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="invalid-feedback">{errores.empleado}</div>
-                        </div>
+
 
                         <button
                             className="btn btn-primary w-100 d-flex justify-content-center align-items-center"

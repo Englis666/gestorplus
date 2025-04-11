@@ -7,7 +7,6 @@ const SidebarChat = ({ onChatSelect }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [decodedToken, setDecodedToken] = useState(null);
-  const [socket, setSocket] = useState(null);
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -26,6 +25,7 @@ const SidebarChat = ({ onChatSelect }) => {
         params: { action },
       });
 
+      console.log(data);
       if (data?.RRHH && Array.isArray(data.RRHH)) {
         setUsuarios(data.RRHH);
       } else {

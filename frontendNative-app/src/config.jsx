@@ -1,2 +1,2 @@
-const API_URL = "http://192.168.193.236/gestorplus/backend/";
+const API_URL = 'http://192.168.1.24/gestorplus/backend/';
 export default API_URL;

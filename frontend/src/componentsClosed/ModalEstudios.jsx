@@ -49,10 +49,8 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
       })
       .then((response) => {
         const serverMessage = response.data.message;
-        const nuevoEstudio = response.data.nuevoEstudio;
 
-        if (serverMessage === "Estudio agregado" && nuevoEstudio) {
-          onAgregarEstudio(nuevoEstudio); // Llamar a la función para actualizar el estado
+        if (serverMessage === "Estudio agregado") {
           alert("Estudio agregado correctamente.");
         } else {
           alert("Hubo un error al agregar el estudio.");

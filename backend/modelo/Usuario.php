@@ -134,24 +134,6 @@ class Usuario {
     }
 
 
-    //PORQUE VERGAS ESTO ESTA COMENTADO JAJAJAJAJJA
-    // public function actualizarPerfil($data,$num_doc){
-    
-    //     $sql = "UPDATE usuario SET num_doc = :num_doc, nombres =:nombres , apellidos = :apellidos, email = :email , tipodDoc = :tipodDoc,
-    //             password = :password, 
-    //             WHERE num_doc = :num_doc";
-
-    //     $stmt = $this->db->prepare($sql);
-    //     $stmt->bindParam(':num_doc', $data['num_doc']);
-    //     $stmt->bindParam(':nombres', $data['nombres']);
-    //     $stmt->bindParam(':apellidos', $data['apellidos']);
-    //     $stmt->bindParam(':email', $data['email']);
-    //     $stmt->bindParam(':tipoDoc', $data['tipoDoc']);
-    //     $stmt->bindParam(':password', $data['password']);
-        
-    //     return $stmt->execute();
-    
-    // }
    
     public function actualizacionHojadeVida($data, $hojadevida_idHojadevida) {
         $query = "UPDATE hojadevida SET 
@@ -173,7 +155,7 @@ class Usuario {
             $data['ciudadNacimiento'],
             $data['telefono'],
             $data['telefonoFijo'],
-            $data['estadohojadevida'],
+            'Activa',
             $hojadevida_idHojadevida
         ]);
     
@@ -199,7 +181,7 @@ class Usuario {
                     $hojadevida_idHojadevida
         ]);    
     
-        return json_encode(['message' => 'Experiencia agregada']);
+        return json_encode(['message' => 'Estudio agregado']);
     }
 
     public function agregarExp($data, $hojadevida_idHojadevida) {
@@ -237,19 +219,16 @@ class Usuario {
     }
 
     public function obtenerRRHH() {
-        $sql = "SELECT * FROM usuario as u
-                INNER JOIN rol as r ON u.rol_idrol = idrol
-                WHERE r.nombreRol = 'Recursos humanos'";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado){
-            return $resultado;
-        }
-        return [];
-    }
-    
+    $sql = "SELECT * FROM usuario AS u
+            INNER JOIN rol AS r ON u.rol_idrol = r.idrol
+            WHERE r.nombreRol = 'Recursos humanos' OR r.nombreRol = 'Administrador'";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute();
+
+    $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resultado ?: [];
+}
+
     public function obtenerDatosParaCertificado($num_doc){
          $sql = "SELECT * FROM vinculacion as v
                  INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc
@@ -272,33 +251,73 @@ class Usuario {
         }
         return[];
     }
-    
-    public function obtenerTotalEstadisticas($num_doc) {
+
+     public function obtenerTotalEstadisticas($num_doc, $rol = null) {
+        if ($rol === 'Administrador') {
+            return $this->obtenerEstadisticasGlobales();
+        }
+        return $this->obtenerEstadisticasPorUsuario($num_doc);
+    }
+
+    private function obtenerEstadisticasGlobales() {
         $sql = "
-           SELECT 
-            SUM(CASE WHEN tipo = 'Jornada' THEN 1 ELSE 0 END) AS totalEntradas,
-             SUM(CASE WHEN tipo = 'Ausencia' THEN 1 ELSE 0 END) AS totalAusencias
-                FROM notificacion
-                    WHERE num_doc = :num_doc
+            SELECT 
+                (SELECT COUNT(*) FROM notificacion WHERE tipo = 'Jornada') AS totalJornadas,
+                (SELECT COUNT(*) FROM notificacion WHERE tipo = 'General') AS totalGenerales,
+                (SELECT COUNT(*) FROM notificacion 
+                    WHERE tipo = 'Rechazo' OR tipo = 'Aceptacion') AS totalActualizaciones
         ";
+
+        // Preparar y ejecutar la consulta
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        // Obtener el resultado de la consulta
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Si el resultado existe, devolver las estadísticas
+        if ($resultado) {
+            return [
+                'totalJornadas' => $resultado['totalJornadas'] ?? 0,
+                'totalGenerales' => $resultado['totalGenerales'] ?? 0,
+                'totalActualizaciones' => $resultado['totalActualizaciones'] ?? 0
+            ];
+        }
+
+        return null;
+    }
+
+    // Función para obtener las estadísticas por usuario (sin ausencias)
+    private function obtenerEstadisticasPorUsuario($num_doc) {
+        $sql = "
+            SELECT 
+                SUM(CASE WHEN tipo = 'Jornada' THEN 1 ELSE 0 END) AS totalJornadas,
+                SUM(CASE WHEN tipo = 'General' THEN 1 ELSE 0 END) AS totalGenerales,
+                SUM(CASE WHEN tipo = 'Rechazo' OR tipo = 'Aceptacion' THEN 1 ELSE 0 END) AS totalActualizaciones
+            FROM notificacion
+            WHERE num_doc = :num_doc;
+        ";
+
+        // Preparar la consulta y asociar el parámetro num_doc
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
         $stmt->execute();
-    
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
+        // Obtener el resultado de la consulta
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Si el resultado existe, devolver las estadísticas
         if ($resultado) {
             return [
-                'totalEntradas' => (int)$resultado['totalEntradas'],    
-                'totalAusencias' => (int)$resultado['totalAusencias']
-            ];
-        } else {
-            return [
-                'totalEntradas' => 0,
-                'totalAusencias' => 0
+                'totalJornadas' => $resultado['totalJornadas'] ?? 0,
+                'totalGenerales' => $resultado['totalGenerales'] ?? 0,
+                'totalActualizaciones' => $resultado['totalActualizaciones'] ?? 0
             ];
         }
+
+        return null;
     }
+
 
     public function obtenerEstudio($idhojadevida) {
         $sql = "

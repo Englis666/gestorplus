@@ -40,7 +40,7 @@ const TablaVacantes = () => {
     // Cargar Convocatorias
     useEffect(() => {
         axios.get("http://localhost/gestorplus/backend/", {
-            params: { action: "obtenerConvocatoriasPostulaciones" },
+            params: { action: "obtenerConvocatorias" },
         })
             .then((response) => {
                 console.log("Convocatorias obtenidas:", response.data);
@@ -89,7 +89,34 @@ const TablaVacantes = () => {
                     <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
                         <div className="card-body">
                             <b>Lista de Convocatorias</b>
-                            
+                            <table className="table table-striped mt-3">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Requisitos</th>
+                                        <th scope="col">Salario</th>
+                                        <th scope="col">Cantidad de puestos</th>
+                                        <th scope="col">Cargo</th>
+                                        <th scope="col">Fecha Apertura</th>
+                                        <th scope="col">Fecha Limite</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {convocatorias.map((convocatoria) => (
+                                        <tr key={convocatoria.idconvocatoria}>
+                                            <td>{convocatoria.nombreConvocatoria}</td>
+                                            <td>{convocatoria.descripcion}</td>
+                                            <td>{convocatoria.requisitos}</td>
+                                            <td>{convocatoria.salario}</td>
+                                            <td>{convocatoria.cantidadConvocatoria}</td>
+                                            <td>{convocatoria.nombreCargo}</td>
+                                            <td>{convocatoria.fecha_apertura}</td>
+                                            <td>{convocatoria.fecha_limite}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -102,7 +129,6 @@ const TablaVacantes = () => {
                 handleAgregar={handleAgregar}
                 cargos={cargos}
             />
-
         </div>
     );
 };

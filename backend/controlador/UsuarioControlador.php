@@ -127,8 +127,9 @@ class UsuarioControlador {
         $resultados = $this->usuario->obtenerTotalEstadisticas($decoded->data->num_doc);
         
         $this->jsonResponse('success', '', [
-            'totalEntradas' => $resultados['totalEntradas'] ?? 0,
-            'totalAusencias' => $resultados['totalAusencias'] ?? 0
+            'totalJornadas' => $resultados['totalJornadas'] ?? 0,
+            'totalActualizaciones' => $resultados['totalActualizaciones'] ?? 0,
+            'notificacionesGenerales' => $resultados['totalGenerales'] ?? 0
         ]);
     }
 

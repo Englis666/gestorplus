@@ -102,7 +102,7 @@ const ChatContainer = ({ selectedChat, socket }) => {
     };
 
     socket.current.send(JSON.stringify(payload));
-    setMessage(""); // Limpiar input
+    setMessage("");
   };
 
   return (

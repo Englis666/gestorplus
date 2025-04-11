@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "animate.css"; // Asegúrate de importar esto
+import "animate.css";
 
-const ModalHojaDeVida = ({ num_doc = null, identrevista, onClose }) => {
+const ModalHojaDeVidaEntrevistado = ({ num_doc, identrevista, onClose }) => {
     const [formData, setFormData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [hasData, setHasData] = useState(true);
@@ -23,16 +23,41 @@ const ModalHojaDeVida = ({ num_doc = null, identrevista, onClose }) => {
                     num_doc: num_doc
                 }
             });
-            const data = response.data?.Entrevistado || {};
-            setHasData(Object.keys(data).length > 0);
-            setFormData(data);
+
+            const data = response.data.Entrevistado ?? null;
+
+            if (data) {
+                setFormData(data);
+                setHasData(true);
+            } else {
+                setFormData({});
+                setHasData(false);
+            }
         } catch (error) {
             console.error("Error al obtener la hoja de vida:", error);
             alert("Ocurrió un error al cargar los datos.");
+            setFormData({});
+            setHasData(false);
         } finally {
             setIsLoading(false);
         }
     };
+
+    const rechazarEntrevistado = async () => {
+        try {
+            const response = await axios.post("http://localhost/gestorplus/backend", {
+                params: {
+                    action: "rechazarEntrevistado",
+                    num_doc: num_doc
+                }
+            });
+        } catch (error) {
+            console.error("error al rechazar al entreevistado", error);
+            alert("Ocurrio un error en el catch");
+        }
+
+    }
+
 
     if (isLoading) {
         return (
@@ -55,36 +80,93 @@ const ModalHojaDeVida = ({ num_doc = null, identrevista, onClose }) => {
                     <div className="modal-body">
                         {!hasData ? (
                             <div className="alert alert-warning d-flex justify-content-between align-items-center">
-                                <div>
-                                    ⚠️ Este aspirante aún no ha registrado su hoja de vida.
-                                </div>
+                                <div>⚠️ Este aspirante aún no ha registrado su hoja de vida.</div>
                                 <button className="btn btn-sm btn-outline-secondary" onClick={onClose}>
                                     Cerrar
                                 </button>
                             </div>
                         ) : (
-                            <ul className="list-group list-group-flush">
-                                <li className="list-group-item"><strong>👤 Nombre:</strong> {formData.nombres}</li>
-                                <li className="list-group-item"><strong>📧 Correo:</strong> {formData.email}</li>
-                                <li className="list-group-item"><strong>🎂 Fecha de Nacimiento:</strong> {formData.fechaNacimiento}</li>
-                                <li className="list-group-item"><strong>🏠 Dirección:</strong> {formData.direccion}</li>
-                                <li className="list-group-item"><strong>🌆 Ciudad:</strong> {formData.ciudad}</li>
-                                <li className="list-group-item"><strong>📞 Teléfono:</strong> {formData.telefono}</li>
-                                <li className="list-group-item"><strong>🎓 Nivel de Estudio:</strong> {formData.nivelEstudio}</li>
-                                <li className="list-group-item"><strong>🏅 Título Obtenido:</strong> {formData.tituloEstudio}</li>
-                                <li className="list-group-item"><strong>🏫 Institución:</strong> {formData.institucionEstudio}</li>
-                                <li className="list-group-item"><strong>💼 Profesión:</strong> {formData.profesion}</li>
-                                <li className="list-group-item"><strong>🧠 Perfil:</strong> {formData.descripcion}</li>
-                                <li className="list-group-item"><strong>📅 Inicio Experiencia:</strong> {formData.fechaInicioExp}</li>
-                                <li className="list-group-item"><strong>📅 Fin Experiencia:</strong> {formData.fechaFinExp}</li>
-                            </ul>
+                            <>
+                                <ul className="list-group list-group-flush">
+                                    <li className="list-group-item"><strong>👤 Nombre:</strong> {formData.nombres} {formData.apellidos}</li>
+                                    <li className="list-group-item"><strong>📧 Correo:</strong> {formData.email}</li>
+                                    <li className="list-group-item"><strong>🎂 Fecha de Nacimiento:</strong> {formData.fechaNacimiento}</li>
+                                    <li className="list-group-item"><strong>🏠 Dirección:</strong> {formData.direccion}</li>
+                                    <li className="list-group-item"><strong>🌆 Ciudad:</strong> {formData.ciudad}</li>
+                                    <li className="list-group-item"><strong>📞 Teléfono:</strong> {formData.telefono}</li>
+                                </ul>
+
+                                <h5 className="mt-4">🎓 Estudios:</h5>
+                                {formData.estudios && formData.estudios.length > 0 ? (
+                                    <div className="table-responsive rounded shadow-sm">
+                                        <table className="table table-striped table-hover table-bordered align-middle">
+                                            <thead className="table-info text-center">
+                                                <tr>
+                                                    <th>Nivel</th>
+                                                    <th>Área</th>
+                                                    <th>Estado</th>
+                                                    <th>Inicio</th>
+                                                    <th>Fin</th>
+                                                    <th>Título</th>
+                                                    <th>Institución</th>
+                                                    <th>Ubicación</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {formData.estudios.map((estudio, index) => (
+                                                    <tr key={index}>
+                                                        <td>{estudio.nivelEstudio}</td>
+                                                        <td>{estudio.areaEstudio}</td>
+                                                        <td>{estudio.estadoEstudio}</td>
+                                                        <td>{estudio.fechaInicioEstudio}</td>
+                                                        <td>{estudio.fechaFinEstudio}</td>
+                                                        <td>{estudio.tituloEstudio}</td>
+                                                        <td>{estudio.institucionEstudio}</td>
+                                                        <td>{estudio.ubicacionEstudio}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ) : (
+                                    <p>No se encontraron registros de estudios.</p>
+                                )}
+
+                                <h5 className="mt-4">💼 Experiencia:</h5>
+                                {formData.experiencias && formData.experiencias.length > 0 ? (
+                                    <div className="table-responsive rounded shadow-sm">
+                                        <table className="table table-striped table-hover table-bordered align-middle">
+                                            <thead className="table-secondary text-center">
+                                                <tr>
+                                                    <th>Profesión</th>
+                                                    <th>Descripción</th>
+                                                    <th>Inicio</th>
+                                                    <th>Fin</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {formData.experiencias.map((exp, index) => (
+                                                    <tr key={index}>
+                                                        <td>{exp.profesion}</td>
+                                                        <td>{exp.descripcionPerfil}</td>
+                                                        <td>{exp.fechaInicioExp}</td>
+                                                        <td>{exp.fechaFinExp}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ) : (
+                                    <p>No se encontraron registros de experiencia.</p>
+                                )}
+                            </>
                         )}
                     </div>
                     <div className="modal-footer d-flex justify-content-between">
                         <button className="btn btn-outline-danger" onClick={onClose}>
                             ❌ Rechazar
                         </button>
-                        <button className="btn btn-outline-danger" onClick={onClose}>
+                        <button className="btn btn-outline-secondary" onClick={onClose}>
                             Cancelar
                         </button>
                         {hasData && (
@@ -111,4 +193,4 @@ const ModalHojaDeVida = ({ num_doc = null, identrevista, onClose }) => {
     );
 };
 
-export default ModalHojaDeVida;
+export default ModalHojaDeVidaEntrevistado;

@@ -3,7 +3,7 @@ import { View, Text, Modal, ActivityIndicator, ScrollView, TouchableOpacity, Ale
 import axios from "axios";
 import API_URL from "../config";
 
-const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
+const ModalHojadeVidaEntrevistado = ({ num_doc, onClose }) => {
     const [formData, setFormData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
@@ -15,11 +15,12 @@ const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
 
     const fetchHojaDeVida = async () => {
         try {
-            const response = await axios.get(`${API_URL}`, {
+            const response = await axios.get(API_URL, {
                 params: { action: "obtenerDatosDelEntrevistado" },
                 data: { num_doc },
             });
 
+            console.log("Datos recibidos:", response.data);
             setFormData(response.data);
         } catch (error) {
             console.error("Error al obtener la hoja de vida:", error);
@@ -44,6 +45,7 @@ const ModalHojaDeVida = ({ num_doc = null, onClose }) => {
                         </View>
                     ) : (
                         <ScrollView contentContainerStyle={styles.modalBody}>
+                            {/* Verifica si formData tiene valores antes de mostrar */}
                             <Text style={styles.label}>Nombre y Apellido:</Text>
                             <Text style={styles.value}>{formData.nombres || "No disponible"}</Text>
 
@@ -166,4 +168,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ModalHojaDeVida;
+export default ModalHojadeVidaEntrevistado;

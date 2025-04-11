@@ -12,385 +12,230 @@ class Administrador {
     public function __construct($db){
         $this->db = $db;
     }
-    public function obtenerCargos(){
+
+    private function ejecutarConsulta($sql, $params = []) {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (PDOException $e) {
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return [];
+        }
+    }
+
+    public function obtenerCargos() {
         $sql = "SELECT * FROM cargo";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado){
-            return $resultado;
-        }
-        return [];
+        return $this->ejecutarConsulta($sql);
     }
 
-    public function obtenerEmpleados(){
+    public function obtenerEmpleados() {
         $sql = "SELECT * FROM vinculacion as v
-         INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc
-         INNER JOIN postulacion as p ON u.num_doc = p.usuario_num_doc
-         INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
-         INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo
-        ";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado){
-            return $resultado;
-        }
-        return [];
+                INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc
+                INNER JOIN postulacion as p ON u.num_doc = p.usuario_num_doc
+                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo";
+        return $this->ejecutarConsulta($sql);
     }
 
-    public function obtenerSistemaDeGestion(){
+    public function obtenerSistemaDeGestion() {
         $sql = "SELECT * FROM evaluacionessg as e 
                 INNER JOIN postulacion as p ON e.entrevista_postulacion_idpostulaciones = p.idpostulacion
                 INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado){
-            return $resultado;
-        }
-        return [];
+        return $this->ejecutarConsulta($sql);
     }
 
-    public function obtenerTodasLasNotificaciones(){
-        try{
-            $sql = "SELECT * FROM notificacion";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            if($resultado){
-                return $resultado;
-            }
-            return [];
-        }catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
-            return [];
-        }
-    }
-    public function obtenerTotalEstadisticas() {
-        $sql = "
-           SELECT 
-            SUM(CASE WHEN tipo = 'Jornada' THEN 1 ELSE 0 END) AS totalEntradas,
-            SUM(CASE WHEN tipo = 'Ausencia' THEN 1 ELSE 0 END) AS totalAusencias
-           FROM notificacion
-        ";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-    
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-        if ($resultado) {
-            return [
-                'totalEntradas' => (int)$resultado['totalEntradas'],    
-                'totalAusencias' => (int)$resultado['totalAusencias']
-            ];
-        } else {
-            return [
-                'totalEntradas' => 0,
-                'totalAusencias' => 0
-            ];
-        }
-    }
-    
-
-
-    public function obtenerTodasLasVacaciones(){
-        try{
-            $sql = "SELECT * FROM vacacion as v 
-                    INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            if($resultado){
-                return $resultado;
-            }
-            return [];
-        } catch (PDOException $e){
-            echo json_encode(['error' => 'Error en la consulta ' . $e->getMessage()]);
-            http_response_code(500);
-            return[];
-        }
+    public function obtenerTodasLasNotificaciones() {
+        $sql = "SELECT * FROM notificacion";
+        return $this->ejecutarConsulta($sql);
     }
 
-    public function obtenerVinculaciones(){
-        $sql = "SELECT * FROM vinculacion as v INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc;";
-        $stmt = $this->db->prepare($sql);
-        
-        
-        if($stmt->execute()){
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $resultado ?: [];
-        }
-        
-        return [];
+    public function obtenerTodasLasVacaciones() {
+        $sql = "SELECT * FROM vacacion as v 
+                INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc";
+        return $this->ejecutarConsulta($sql);
     }
 
-    public function obtenerDatosDelEntrevistado($num_doc){
-    $sql = "SELECT * FROM postulacion as p
-            INNER JOIN entrevista as e ON p.idpostulacion = e.postulacion_idpostulaciones
-            INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc
-            INNER JOIN hojadevida as h ON u.hojadevida_idHojadevida = h.idHojadevida
-            WHERE u.num_doc = :num_doc";
-    
-    $stmt = $this->db->prepare($sql);
-    $stmt->bindParam(":num_doc", $num_doc, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    $resultado = $stmt->fetch(PDO::FETCH_ASSOC); 
-
-    if (!$resultado) {
-        return ['error' => 'No se encontró el usuario'];
+    public function obtenerVinculaciones() {
+        $sql = "SELECT * FROM vinculacion as v 
+                INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc";
+        return $this->ejecutarConsulta($sql);
     }
 
-    return $resultado; 
+   public function obtenerDatosDelEntrevistado($num_doc) {
+    $sqlDatos = "SELECT 
+                    *
+                 FROM postulacion AS p
+                 INNER JOIN entrevista AS e ON p.idpostulacion = e.postulacion_idpostulaciones
+                 INNER JOIN usuario AS u ON p.usuario_num_doc = u.num_doc
+                 INNER JOIN hojadevida AS h ON u.hojadevida_idHojadevida = h.idHojadevida
+                 WHERE u.num_doc = :num_doc";
+    $datos = $this->ejecutarConsulta($sqlDatos, [':num_doc' => $num_doc]);
+    if (!$datos) return null;
+
+    $datos = $datos[0];
+
+    $sqlEstudios = "SELECT * FROM estudio WHERE hojadevida_idHojadevida = :idHojadevida";
+    $estudios = $this->ejecutarConsulta($sqlEstudios, [':idHojadevida' => $datos['idHojadevida']]);
+
+    // Experiencia laboral
+    $sqlExperiencia = "SELECT * FROM experiencialaboral WHERE hojadevida_idHojadevida = :idHojadevida";
+    $experiencias = $this->ejecutarConsulta($sqlExperiencia, [':idHojadevida' => $datos['idHojadevida']]);
+
+    // Armar estructura final
+    $datos['estudios'] = $estudios ?: [];
+    $datos['experiencias'] = $experiencias ?: [];
+
+    return $datos;
 }
-
-    public function obtenerConvocatoriasPostulaciones(){
-        $sql = "SELECT * FROM convocatoria
-        LEFT JOIN postulacion ON convocatoria.idconvocatoria = postulacion.convocatoria_idconvocatoria";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-
-        $resultado = fetchAll(PDO::FETCH_ASSOCC);
-        if($resultado){
-            return $resultado;
-        }
-        return [];
-    }
-
-
-
-        public function verificarRol($num_doc) {
-            $sql = "SELECT r.idrol 
-                    FROM usuario AS u 
-                    INNER JOIN rol AS r ON u.rol_idrol = r.idrol 
-                    WHERE u.num_doc = :num_doc";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-            $stmt->execute();
-    
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (!$resultado) {
-                return ['error' => 'No se encontró el usuario'];
-            }
-    
-            $idrol = $resultado['idrol'];
-    
-            // Si es administrador (idrol = 1), obtiene todas las horas extra
-            return ($idrol == 1) ? $this->calcularHorasExtra() : $this->calcularHorasExtraUsuario($num_doc);
-        }
-    
-        public function calcularHorasExtra() {
-            try {
-                // Obtener todas las jornadas laborales
-                $sql = "SELECT j.*, u.nombres, r.nombreRol 
-                        FROM jornada AS j
-                        INNER JOIN usuario AS u ON j.usuario_num_doc = u.num_doc      
-                        INNER JOIN rol AS r ON u.rol_idrol = r.idrol";
-                
-                $stmt = $this->db->prepare($sql);
-                $stmt->execute();
-                $jornadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-                $totalHorasSemana = []; 
-                $jornadasExtra = [];
-    
-                foreach ($jornadas as $jornada) {
-                    $num_doc = $jornada['usuario_num_doc'];
-                    $nombres = $jornada['nombres'];
-                    $nombreRol = $jornada['nombreRol'];
-    
-                    if (!isset($totalHorasSemana[$num_doc])) {
-                        $totalHorasSemana[$num_doc] = 0;
-                    }
-    
-                    // Calcular las horas trabajadas en la jornada
-                    $horaEntrada = strtotime($jornada['horaEntrada']);
-                    $horaSalida = strtotime($jornada['horaSalida']);
-                    $horasTrabajadas = ($horaSalida - $horaEntrada) / 3600;
-    
-                    $totalHorasSemana[$num_doc] += $horasTrabajadas;
-    
-                    if ($totalHorasSemana[$num_doc] > 48) {
-                        $horasExtra = $totalHorasSemana[$num_doc] - 48;
-                        $this->registrarHorasExtra($num_doc, $horasExtra);
-                        
-                        $jornadasExtra[] = [
-                            'num_doc' => $num_doc,
-                            'nombres' => $nombres,
-                            'nombreRol' => $nombreRol,
-                            'horas_extra' => $horasExtra,
-                        ];
-                    }
-                }
-    
-                return $jornadasExtra;
-    
-            } catch (PDOException $e) {
-                return ['error' => 'Error en la consulta: ' . $e->getMessage()];
-            }
-        }
-    
-        public function calcularHorasExtraUsuario($num_doc) {
-            try {
-                // Obtener las jornadas del usuario
-                $sql = "SELECT * FROM jornada WHERE usuario_num_doc = :num_doc";
-                $stmt = $this->db->prepare($sql);
-                $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-                $stmt->execute();
-                $jornadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-                $totalHorasSemana = 0;
-                $horasExtra = 0;
-    
-                foreach ($jornadas as $jornada) {
-                    $horaEntrada = strtotime($jornada['horaEntrada']);
-                    $horaSalida = strtotime($jornada['horaSalida']);
-                    $horasTrabajadas = ($horaSalida - $horaEntrada) / 3600;
-    
-                    $totalHorasSemana += $horasTrabajadas;
-                }
-    
-                if ($totalHorasSemana > 48) {
-                    $horasExtra = $totalHorasSemana - 48;
-                    $this->registrarHorasExtra($num_doc, $horasExtra);
-                }
-    
-                return [
-                    'num_doc' => $num_doc,
-                    'horas_extra' => $horasExtra,
-                ];
-    
-            } catch (PDOException $e) {
-                return ['error' => 'Error en la consulta: ' . $e->getMessage()];
-            }
-        }
-    
-        private function registrarHorasExtra($num_doc, $horasExtra) {
-            // Verificar si ya existe un registro para hoy
-            $sql_check = "SELECT horasExtra FROM horaextra WHERE usuario_num_doc = :usuario_num_doc AND DATE(fecha) = CURDATE()";
-            $stmt_check = $this->db->prepare($sql_check);
-            $stmt_check->bindParam(':usuario_num_doc', $num_doc);
-            $stmt_check->execute();
-    
-            if ($stmt_check->rowCount() > 0) {
-                $existing_hours = $stmt_check->fetch(PDO::FETCH_ASSOC)['horasExtra'];
-                if ($horasExtra > $existing_hours) {
-                    $sql_update = "UPDATE horaextra 
-                                   SET horasExtra = :horasExtra
-                                   WHERE usuario_num_doc = :usuario_num_doc AND DATE(fecha) = CURDATE()";
-                    $stmt_update = $this->db->prepare($sql_update);
-                    $stmt_update->bindParam(':usuario_num_doc', $num_doc);
-                    $stmt_update->bindParam(':horasExtra', $horasExtra);
-                    $stmt_update->execute();
-                }
-            } else {
-                $sql_insert = "INSERT INTO horaextra (usuario_num_doc, horasExtra, fecha) 
-                               VALUES (:usuario_num_doc, :horasExtra, CURDATE())";
-                $stmt_insert = $this->db->prepare($sql_insert);
-                $stmt_insert->bindParam(':usuario_num_doc', $num_doc);
-                $stmt_insert->bindParam(':horasExtra', $horasExtra);
-                $stmt_insert->execute();
-            }
-        }
 
     public function obtenerConvocatorias(){
         $sql = "SELECT * FROM convocatoria";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado){
-            return $resultado;
-        }
-        return [];
-    
+        return $this->ejecutarConsulta($sql);
     }
 
+    public function obtenerConvocatoriasPostulaciones() {
+        $sql = "SELECT * FROM convocatoria
+                INNER JOIN postulacion ON convocatoria.idconvocatoria = postulacion.convocatoria_idconvocatoria";
+        return $this->ejecutarConsulta($sql);
+    }
 
-    public function obtenerTodasLasJornadas(){
-        try{
-            $sql = "SELECT * FROM jornada as j
-                    INNER JOIN usuario as u ON j.usuario_num_doc = u.num_doc
-                    WHERE NOT estadoJornada = 'Jornada Corroborada'
-                    ";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-            if($resultado){
-                return $resultado;
+    public function verificarRol($num_doc) {
+        $sql = "SELECT r.idrol 
+                FROM usuario AS u 
+                INNER JOIN rol AS r ON u.rol_idrol = r.idrol 
+                WHERE u.num_doc = :num_doc";
+        $rol = $this->ejecutarConsulta($sql, [':num_doc' => $num_doc]);
+
+        if (!$rol) return ['error' => 'No se encontró el usuario'];
+
+        return ($rol[0]['idrol'] == 1) ? $this->calcularHorasExtra() : $this->calcularHorasExtraUsuario($num_doc);
+    }
+
+    public function calcularHorasExtra() {
+        $sql = "SELECT j.*, u.nombres, r.nombreRol 
+                FROM jornada AS j
+                INNER JOIN usuario AS u ON j.usuario_num_doc = u.num_doc      
+                INNER JOIN rol AS r ON u.rol_idrol = r.idrol";
+        $jornadas = $this->ejecutarConsulta($sql);
+        $totalHorasSemana = [];
+        $jornadasExtra = [];
+
+        foreach ($jornadas as $jornada) {
+            $num_doc = $jornada['usuario_num_doc'];
+            $nombres = $jornada['nombres'];
+            $nombreRol = $jornada['nombreRol'];
+
+            if (!isset($totalHorasSemana[$num_doc])) {
+                $totalHorasSemana[$num_doc] = 0;
             }
-        }catch (PDOException $e) {
-        echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-        http_response_code(500);
-        return [];
-        }
-    }
 
-    public function obtenerTodasLasAusencias(){
-        try{
-            $sql = "SELECT * FROM ausencia WHERE NOT justificada = 'Justificada'";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if($resultado){
-                return $resultado;
+            $horaEntrada = strtotime($jornada['horaEntrada']);
+            $horaSalida = strtotime($jornada['horaSalida']);
+            $horasTrabajadas = ($horaSalida - $horaEntrada) / 3600;
+
+            $totalHorasSemana[$num_doc] += $horasTrabajadas;
+
+            if ($totalHorasSemana[$num_doc] > 48) {
+                $horasExtra = $totalHorasSemana[$num_doc] - 48;
+                $this->registrarHorasExtra($num_doc, $horasExtra);
+
+                $jornadasExtra[] = [
+                    'num_doc' => $num_doc,
+                    'nombres' => $nombres,
+                    'nombreRol' => $nombreRol,
+                    'horas_extra' => $horasExtra,
+                ];
             }
-        }catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
-            return [];
+        }
+
+        return $jornadasExtra;
+    }
+
+    public function calcularHorasExtraUsuario($num_doc) {
+        $sql = "SELECT * FROM jornada WHERE usuario_num_doc = :num_doc";
+        $jornadas = $this->ejecutarConsulta($sql, [':num_doc' => $num_doc]);
+
+        $totalHorasSemana = 0;
+        $horasExtra = 0;
+
+        foreach ($jornadas as $jornada) {
+            $horaEntrada = strtotime($jornada['horaEntrada']);
+            $horaSalida = strtotime($jornada['horaSalida']);
+            $horasTrabajadas = ($horaSalida - $horaEntrada) / 3600;
+
+            $totalHorasSemana += $horasTrabajadas;
+        }
+
+        if ($totalHorasSemana > 48) {
+            $horasExtra = $totalHorasSemana - 48;
+            $this->registrarHorasExtra($num_doc, $horasExtra);
+        }
+
+        return [
+            'num_doc' => $num_doc,
+            'horas_extra' => $horasExtra,
+        ];
+    }
+
+    private function registrarHorasExtra($num_doc, $horasExtra) {
+        $sql_check = "SELECT horasExtra FROM horaextra WHERE usuario_num_doc = :usuario_num_doc AND DATE(fecha) = CURDATE()";
+        $stmt_check = $this->db->prepare($sql_check);
+        $stmt_check->bindParam(':usuario_num_doc', $num_doc);
+        $stmt_check->execute();
+
+        if ($stmt_check->rowCount() > 0) {
+            $existing_hours = $stmt_check->fetch(PDO::FETCH_ASSOC)['horasExtra'];
+            if ($horasExtra > $existing_hours) {
+                $sql_update = "UPDATE horaextra 
+                               SET horasExtra = :horasExtra
+                               WHERE usuario_num_doc = :usuario_num_doc AND DATE(fecha) = CURDATE()";
+                $stmt_update = $this->db->prepare($sql_update);
+                $stmt_update->bindParam(':usuario_num_doc', $num_doc);
+                $stmt_update->bindParam(':horasExtra', $horasExtra);
+                $stmt_update->execute();
+            }
+        } else {
+            $sql_insert = "INSERT INTO horaextra (usuario_num_doc, horasExtra, fecha) 
+                           VALUES (:usuario_num_doc, :horasExtra, CURDATE())";
+            $stmt_insert = $this->db->prepare($sql_insert);
+            $stmt_insert->bindParam(':usuario_num_doc', $num_doc);
+            $stmt_insert->bindParam(':horasExtra', $horasExtra);
+            $stmt_insert->execute();
         }
     }
 
-    public function obtenerUsuarios(){
+    public function obtenerTodasLasJornadas() {
+        $sql = "SELECT * FROM jornada as j
+                INNER JOIN usuario as u ON j.usuario_num_doc = u.num_doc
+                WHERE NOT estadoJornada = 'Jornada Corroborada'";
+        return $this->ejecutarConsulta($sql);
+    }
+
+    public function obtenerTodasLasAusencias() {
+        $sql = "SELECT * FROM ausencia WHERE NOT justificada = 'Justificada'";
+        return $this->ejecutarConsulta($sql);
+    }
+
+    public function obtenerUsuarios() {
         $sql = "SELECT * FROM usuario as u
                  INNER JOIN rol as r ON u.rol_idrol = r.idrol
                  WHERE r.nombreRol = 'Empleado'";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado){
-            return $resultado;
-        }
-        return [];
+        return $this->ejecutarConsulta($sql);
     }
-    public function obtenerCargosParaConvocatorias(){
+
+    public function obtenerCargosParaConvocatorias() {
         $sql = "SELECT idCargo , nombreCargo FROM cargo";
-        $stmt =  $this->db->prepare($sql);
-        $stmt->execute();
-
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado) {
-            return $resultado;
-        }
-        return [];
+        return $this->ejecutarConsulta($sql);
     }
 
-
-    public function obtenerEntrevistas(){
+    public function obtenerEntrevistas() {
         $sql = "SELECT * FROM entrevista as e 
-                INNER JOIN postulacion as p ON e.postulacion_idpostulaciones =  idpostulacion
-                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN postulacion as p ON e.postulacion_idpostulaciones = p.idpostulacion
                 INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc
-                ";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-
-        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($resultado){
-            return $resultado;
-        }
-        return [];
+                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria";
+        return $this->ejecutarConsulta($sql);
     }
 
       public function buscarIdEvaluacion($identrevista) {
@@ -600,7 +445,6 @@ class Administrador {
         return [];
     }
 
-   
 
     public function obtenerPostulaciones(){
         $sql = "SELECT * FROM postulacion as p

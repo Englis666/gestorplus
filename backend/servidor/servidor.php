@@ -107,6 +107,7 @@ $routes = [
         'obtenerTodasLasJornadas' => ['admin', 'obtenerTodasLasJornadas'],
         'obtenerTodasLasAusencias' => ['admin', 'obtenerTodasLasAusencias'],
         'obtenerUsuarios' => ['admin', 'obtenerUsuarios'],
+        //becerra termina de arreglar esto sopla monda monda
         'obtenerCargosParaConvocatorias' => ['admin', 'obtenerCargosParaConvocatorias'],
         'obtenerEntrevistas' => ['admin', 'obtenerEntrevistas'],
         'obtenerTodasLasHorasExtra' => ['admin', 'obtenerTodasLasHorasExtra'],

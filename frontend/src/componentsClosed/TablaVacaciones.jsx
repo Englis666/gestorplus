@@ -51,7 +51,10 @@ const TablaVacaciones = () => {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { action },
             }).then((response) => {
-                setVacaciones(Array.isArray(response.data?.Vacaciones) ? response.data.Vacaciones : []);
+
+                const vacacionesData = Array.isArray(response.data) ? response.data : (response.data.Vacaciones || []);
+
+                setVacaciones(vacacionesData);
                 setLoading(false);
             }).catch(() => {
                 setError("Hubo un problema al cargar las vacaciones.");
@@ -62,6 +65,8 @@ const TablaVacaciones = () => {
             setLoading(false);
         }
     }, []);
+
+
 
     const handleInputChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -112,13 +117,29 @@ const TablaVacaciones = () => {
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
                                     <label className="form-label">Fecha Inicio:</label>
-                                    <input type="date" className="form-control" name="fechaInicio" value={form.fechaInicio} onChange={handleInputChange} required />
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        name="fechaInicio"
+                                        value={form.fechaInicio}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Fecha Finalización:</label>
-                                    <input type="date" className="form-control" name="fechaFin" value={form.fechaFin} onChange={handleInputChange} required />
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        name="fechaFin"
+                                        value={form.fechaFin}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
                                 </div>
-                                <button type="submit" className="btn btn-primary">Solicitar</button>
+                                <button type="submit" className="btn btn-primary">
+                                    Solicitar
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -126,7 +147,7 @@ const TablaVacaciones = () => {
                 <div className="col-md-6">
                     <Calendar
                         localizer={localizer}
-                        events={vacaciones.map(v => ({
+                        events={vacaciones.map((v) => ({
                             title: `Vacaciones de ${v.nombres}`,
                             start: new Date(v.fechaInicio),
                             end: new Date(v.fechaFin),
@@ -145,9 +166,10 @@ const TablaVacaciones = () => {
                             <th>Fecha Finalización</th>
                             <th>Aprobado por</th>
                             <th>Estado</th>
-                            <th>Nombre completo del usuario </th>
-                            <th>Accion</th>
-                            <th>Accion</th>
+                            {/* Solo mostrar "Nombre completo" y las acciones si no es rol 3 */}
+                            {rol !== "3" && <th>Nombre completo del usuario</th>}
+                            {rol !== "3" && <th>Acción</th>}
+                            {rol !== "3" && <th>Acción</th>}
                         </tr>
                     </thead>
                     <tbody className="text-center">
@@ -158,22 +180,28 @@ const TablaVacaciones = () => {
                                     <td className="py-3 px-4">{vacacion.fechaFin || "N/A"}</td>
                                     <td className="py-3 px-4">{vacacion.aprobadoPor || "Pendiente"}</td>
                                     <td className="py-3 px-4">{vacacion.estadoVacacion || "Desconocido"}</td>
-                                    <td className="py-3 px-4">{vacacion.nombres ? `${vacacion.nombres} ${vacacion.apellidos}` : "N/A"}</td>
-                                    <td className="py-3 px-4">
-                                        <button className="btn btn-primary">
-                                            Aceptar Vacacion
-                                        </button>
-                                    </td>
-                                    <td className="py-3 px-4">
-                                        <button className="btn btn-danger">
-                                            Rechazar Vacacion
-                                        </button>
-                                    </td>
+                                    {/* Solo mostrar "Nombre completo" si el rol no es 3 */}
+                                    {rol !== "3" && (
+                                        <td className="py-3 px-4">
+                                            {vacacion.nombres ? `${vacacion.nombres} ${vacacion.apellidos}` : "N/A"}
+                                        </td>
+                                    )}
+                                    {/* Solo mostrar los botones si el rol no es 3 */}
+                                    {rol !== "3" && (
+                                        <>
+                                            <td className="py-3 px-4">
+                                                <button className="btn btn-primary">Aceptar Vacacion</button>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                <button className="btn btn-danger">Rechazar Vacacion</button>
+                                            </td>
+                                        </>
+                                    )}
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="5">No hay vacaciones registradas.</td>
+                                <td colSpan={rol === "3" ? 5 : 7}>No hay vacaciones registradas.</td>
                             </tr>
                         )}
                     </tbody>
@@ -181,6 +209,7 @@ const TablaVacaciones = () => {
             </div>
         </div>
     );
+
 };
 
 export default TablaVacaciones;

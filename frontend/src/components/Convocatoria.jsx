@@ -100,7 +100,7 @@ const Convocatoria = () => {
                     ))}
                 </div>
                 <div className="text-center mt-5">
-                    <button onClick={() => navigate("/aspirante/Trabajo")} className="btn btn-primary rounded-pill px-4 py-2">
+                    <button onClick={() => navigate("/Login")} className="btn btn-primary rounded-pill px-4 py-2">
                         Ver todas las convocatorias
                     </button>
                 </div>

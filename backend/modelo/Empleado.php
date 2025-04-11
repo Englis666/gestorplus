@@ -36,7 +36,7 @@ class Empleado {
 
     public function obtenerMisVacaciones($num_doc){
         try{
-            $sql = "SELECT * FROM vacacion WHERE num_doc = :num_doc";
+            $sql = "SELECT * FROM vacacion WHERE usuario_num_doc = :num_doc";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(":num_doc" , $num_doc, PDO::PARAM_INT);
             $stmt->execute();

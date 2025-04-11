@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Bar } from "react-chartjs-2"; 
+import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { jwtDecode } from "jwt-decode";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Grafica = () => {
-  const [totalEntradas, setTotalEntradas] = useState(0); 
-  const [totalAusencias, setTotalAusencias] = useState(0); 
+  const [totalJornadas, setTotalJornadas] = useState(0);
+  const [totalActualizaciones, setTotalActualizaciones] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rol, setRol] = useState(null);
@@ -26,8 +26,8 @@ const Grafica = () => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        
-        const isTokenExpired = decodedToken.exp * 1000 < Date.now();  
+
+        const isTokenExpired = decodedToken.exp * 1000 < Date.now();
         if (isTokenExpired) {
           console.error("El token ha expirado.");
           setError("El token ha expirado.");
@@ -37,42 +37,23 @@ const Grafica = () => {
         const Rol = decodedToken?.data?.rol;
         setRol(Rol);
 
-        const action = (() => {
-          switch (Rol){
-            case "1":
-              return "obtenerTodasLasEstadisticas";
-            case "2":
-              return "obtenerTodasLasEstadisticas";
-            case "3": 
-            return "obtenerTotalEstadisticas";
-            default:
-              console.error("El rol no es valido");
-              setError("Rol no reconocido");
-              setLoading(false);
-              return null;
-            }
-        })();
-
-        if (!action) return;
-
-
         axios.get('http://localhost/gestorplus/backend/', {
           headers: {
             Authorization: `Bearer ${token}`
           },
-          params: { action},
+          params: { action: "obtenerTotalEstadisticas" },
         })
-        .then(response => {
-          const { totalEntradas, totalAusencias } = response.data; 
-          setTotalEntradas(totalEntradas);
-          setTotalAusencias(totalAusencias);
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error('Error al obtener las estadísticas:', err);
-          setError('Hubo un problema al cargar las estadísticas.');
-          setLoading(false);
-        });
+          .then(response => {
+            const { totalJornadas, totalActualizaciones } = response.data;
+            setTotalJornadas(totalJornadas);
+            setTotalActualizaciones(totalActualizaciones);
+            setLoading(false);
+          })
+          .catch(err => {
+            console.error('Error al obtener las estadísticas:', err);
+            setError('Hubo un problema al cargar las estadísticas.');
+            setLoading(false);
+          });
       } catch (error) {
         console.error('Error al decodificar el token:', error);
         setError('Token inválido o malformado.');
@@ -83,7 +64,7 @@ const Grafica = () => {
       setLoading(false);
     }
 
-  }, []);  
+  }, []);
 
   if (loading) {
     return <div>Cargando gráfico...</div>;
@@ -93,25 +74,23 @@ const Grafica = () => {
     return <div>{error}</div>;
   }
 
-  // Datos para la gráfica
+  // Datos para la gráfica (sin la serie de Generales)
   const data = {
-    labels: ["Estadísticas"], 
+    labels: ["Estadísticas"],
     datasets: [
       {
-        label: "Ausencias",
+        label: "Jornadas",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         borderColor: "rgba(255,99,132,1)",
         borderWidth: 1,
-        yAxisID: "y",
-        data: [totalAusencias], 
+        data: [totalJornadas],
       },
       {
-        label: "Entradas de trabajo",
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderColor: "rgba(54, 162, 235, 1)",
+        label: "Actualizaciones",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
-        yAxisID: "y1",
-        data: [totalEntradas], 
+        data: [totalActualizaciones],
       },
     ],
   };
@@ -122,9 +101,9 @@ const Grafica = () => {
     plugins: {
       title: {
         display: true,
-        text: "Control de Ausencias y Entradas de trabajo",
+        text: "Estadísticas Globales",
       },
-      tooltip: {  
+      tooltip: {
         callbacks: {
           label: (tooltipItem) => `Cantidad: ${tooltipItem.raw}`,
         },
@@ -134,15 +113,7 @@ const Grafica = () => {
       y: {
         beginAtZero: true,
         ticks: {
-          max: Math.max(totalAusencias, totalEntradas),
-          stepSize: 1,
-        },
-      },
-      y1: {
-        beginAtZero: true,
-        position: "right",
-        ticks: {
-          max: Math.max(totalAusencias, totalEntradas),
+          max: Math.max(totalJornadas, totalActualizaciones) + 1, // Ajustamos para ver todos los valores
           stepSize: 1,
         },
       },
@@ -154,9 +125,9 @@ const Grafica = () => {
       <div className="card shadow-lg border-0 mb-5" style={{ borderRadius: "15px", width: "500px", height: "400px", overflow: "hidden" }}>
         <div className="card-body p-4">
           <h5 className="text-center mb-4" style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#333" }}>
-            Gráfica de Ausencias y Control de Entradas al Trabajo
+            Gráfica de Estadísticas Globales
           </h5>
-          <div className="chart-container" style={{ position: "relative", height: "400px"}}>
+          <div className="chart-container" style={{ position: "relative", height: "400px" }}>
             <Bar data={data} options={options} />
           </div>
         </div>

@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
-import { decode as jwtDecode } from "jwt-decode";
-import axios from "axios";
-import RNHTMLtoPDF from "react-native-html-to-pdf";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, ActivityIndicator, StyleSheet, ScrollView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { decode as jwtDecode } from 'jwt-decode';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import { PermissionsAndroid, Platform } from 'react-native';
 
 const Certificados = () => {
-    const fechaEmision = new Date().toLocaleDateString("es-ES");
-    const [tipoCertificado, setTipoCertificado] = useState("laboral");
-    const [userData, setUserData] = useState({});
+    const [tipoCertificado, setTipoCertificado] = useState('laboral');
+    const [userData, setUserData] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const fechaEmision = new Date().toLocaleDateString('es-ES');
+
     const getToken = async () => {
-        return await AsyncStorage.getItem("auth_token");
+        return await AsyncStorage.getItem('auth_token');
     };
 
     const isTokenExpired = (decodedToken) => decodedToken.exp * 1000 < Date.now();
@@ -22,7 +24,7 @@ const Certificados = () => {
             setLoading(true);
             const token = await getToken();
             if (!token) {
-                Alert.alert("Error", "No se encontró un token de autenticación");
+                Alert.alert('Error', 'No se encontró un token de autenticación');
                 setLoading(false);
                 return;
             }
@@ -30,24 +32,24 @@ const Certificados = () => {
             try {
                 const decodedToken = jwtDecode(token);
                 if (isTokenExpired(decodedToken)) {
-                    Alert.alert("Error", "El token está expirado");
+                    Alert.alert('Error', 'El token está expirado');
                     setLoading(false);
                     return;
                 }
 
-                const response = await axios.get("http://192.168.80.28/gestorplus/backend/", {
+                const response = await axios.get('http://localhost/gestorplus/backend/', {
                     headers: { Authorization: `Bearer ${token}` },
-                    params: { action: "obtenerDatosParaCertificado" },
+                    params: { action: 'obtenerDatosParaCertificado' },
                 });
 
-                if (response.data?.Certificado) {
+                if (response.data?.Certificado?.length > 0) {
                     setUserData(response.data.Certificado);
                 } else {
-                    Alert.alert("Error", "Los datos de los certificados no son válidos");
+                    setUserData([]);
                 }
             } catch (err) {
-                console.error("Error al obtener datos para el certificado", err);
-                setUserData({});
+                console.error(err);
+                setUserData([]);
             } finally {
                 setLoading(false);
             }
@@ -56,67 +58,75 @@ const Certificados = () => {
         getUserData();
     }, []);
 
-    const handleDownload = async () => {
-        const titulo = tipoCertificado === "laboral" ? "Certificado Laboral" : "Certificado ARL";
-        const contenido = `
-      <h1>${titulo}</h1>
-      <p>Fecha de emisión: ${fechaEmision}</p>
-      <p>Rol: ${userData?.rol || "No disponible"}</p>
-      <p>Departamento: ${userData?.departamento || "No especificado"}</p>
-      <p>Fecha de ingreso: ${userData?.fechaIngreso || "No disponible"}</p>
-      <p>Tipo de contrato: ${userData?.contrato || "No especificado"}</p>
-      <p>Certificación: Esta hoja certifica que ${userData?.nombre || "Nombre del empleado"} pertenece a la empresa La Frayette.</p>
-      ${tipoCertificado === "arl" ? `<p>Información ARL: El empleado cuenta con afiliación activa a una ARL.</p>` : ""}
-      <p>Firma autorizada: La Frayette</p>
+    const generatePDF = async () => {
+        const user = userData[0] || {};
+
+        const htmlContent = `
+      <h1 style="text-align: center;">Certificado ${tipoCertificado.toUpperCase()}</h1>
+      <p>La Fayette S.A.S.<br/>
+      NIT: 900.123.456-7<br/>
+      Dirección: Calle 123 # 45-67, Bogotá, Colombia<br/>
+      Teléfono: (1) 123 4567<br/>
+      Email: contacto@lafayette.com.co</p>
+      <p>Bogotá, ${fechaEmision}</p>
+      <p>A quien corresponda:</p>
+      <p>Por la presente certificamos que ${user.nombres || '[Nombre]'}, con cédula ${user.num_doc || '[Doc]'} ha trabajado como ${user.nombreCargo || '[Cargo]'} desde el ${user.fechaInicio || '[Fecha]'} hasta la fecha.</p>
+      <p>Este certificado se expide para fines que el interesado estime convenientes.</p>
+      <p>Atentamente,<br/><br/>[Nombre del firmante]<br/>Cargo<br/>Teléfono</p>
     `;
 
         try {
-            const options = {
-                html: contenido,
-                fileName: `certificado_${tipoCertificado}`,
-                directory: "Documents",
-            };
+            if (Platform.OS === 'android') {
+                await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+                );
+            }
 
-            const file = await RNHTMLtoPDF.convert(options);
-            Alert.alert("Descarga completada", `Certificado guardado en: ${file.filePath}`);
-        } catch (error) {
-            Alert.alert("Error", "No se pudo generar el PDF");
+            const file = await RNHTMLtoPDF.convert({
+                html: htmlContent,
+                fileName: `certificado_${tipoCertificado}`,
+                directory: 'Documents',
+            });
+
+            Alert.alert('Éxito', `PDF guardado en: ${file.filePath}`);
+        } catch (err) {
+            console.error(err);
+            Alert.alert('Error', 'No se pudo generar el PDF');
         }
     };
 
     return (
-        <View style={{ flex: 1, padding: 20, backgroundColor: "#ECF0F1" }}>
+        <ScrollView style={styles.container}>
+            <Text style={styles.header}>Certificado {tipoCertificado.toUpperCase()}</Text>
+
             {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
-                <View>
-                    <Text style={{ fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 20 }}>
-                        {tipoCertificado === "laboral" ? "Certificado Laboral" : "Certificado ARL"}
-                    </Text>
-                    <Text><Text style={{ fontWeight: "bold" }}>Rol:</Text> {userData?.rol || "No disponible"}</Text>
-                    <Text><Text style={{ fontWeight: "bold" }}>Departamento:</Text> {userData?.departamento || "No especificado"}</Text>
-                    <Text><Text style={{ fontWeight: "bold" }}>Fecha de ingreso:</Text> {userData?.fechaIngreso || "No disponible"}</Text>
-                    <Text><Text style={{ fontWeight: "bold" }}>Tipo de contrato:</Text> {userData?.contrato || "No especificado"}</Text>
-                    {tipoCertificado === "arl" && (
-                        <Text><Text style={{ fontWeight: "bold" }}>Información ARL:</Text> El empleado cuenta con afiliación activa.</Text>
-                    )}
-                    <Text style={{ marginTop: 10 }}><Text style={{ fontWeight: "bold" }}>Fecha de emisión:</Text> {fechaEmision}</Text>
+                <ActivityIndicator size="large" color="#000" />
+            ) : userData.length > 0 ? (
+                <View style={styles.card}>
+                    <Text><Text style={styles.bold}>Nombre:</Text> {userData[0]?.nombres}</Text>
+                    <Text><Text style={styles.bold}>Departamento:</Text> {userData[0]?.nombreConvocatoria}</Text>
+                    <Text><Text style={styles.bold}>Fecha de ingreso:</Text> {userData[0]?.fechaInicio}</Text>
+                    <Text><Text style={styles.bold}>Tipo de contrato:</Text> {userData[0]?.tipoContrato}</Text>
                 </View>
+            ) : (
+                <Text>No hay datos disponibles</Text>
             )}
 
-            <View style={{ marginTop: 20, flexDirection: "row", justifyContent: "space-around" }}>
-                <TouchableOpacity onPress={() => setTipoCertificado("laboral")} style={{ backgroundColor: "gray", padding: 10, borderRadius: 5 }}>
-                    <Text style={{ color: "white" }}>Certificado Laboral</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setTipoCertificado("arl")} style={{ backgroundColor: "gray", padding: 10, borderRadius: 5 }}>
-                    <Text style={{ color: "white" }}>Certificado ARL</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleDownload} style={{ backgroundColor: "blue", padding: 10, borderRadius: 5 }}>
-                    <Text style={{ color: "white" }}>Descargar</Text>
-                </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+                <Button title="Laboral" onPress={() => setTipoCertificado("laboral")} />
+                <Button title="ARL" onPress={() => setTipoCertificado("arl")} />
+                <Button title={`Descargar ${tipoCertificado}`} onPress={generatePDF} color="green" />
             </View>
-        </View>
+        </ScrollView>
     );
 };
+
+const styles = StyleSheet.create({
+    container: { padding: 20, backgroundColor: '#f4f4f4' },
+    header: { fontSize: 22, fontWeight: 'bold', marginBottom: 15 },
+    card: { padding: 15, backgroundColor: '#fff', borderRadius: 8, marginBottom: 20 },
+    bold: { fontWeight: 'bold' },
+    buttonContainer: { gap: 10, marginTop: 20 }
+});
 
 export default Certificados;

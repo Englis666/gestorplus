@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, Alert, Modal, StyleSheet } from "react-native";
 import axios from "axios";
-import API_URL from "../config";
-import CalendarioDeEntrevistas from "./CalendarioDeEntrevistas";
-import ModalHojadeVidaEntrevistado from "./ModalHojadeVidaEntrevistado";
+import API_URL from "../config"; // Asegúrate de que la URL de la API esté bien configurada.
+import CalendarioDeEntrevistas from "./CalendarioDeEntrevistas"; // Asegúrate de que este componente esté importado correctamente.
+import ModalHojadeVidaEntrevistado from "./ModalHojadeVidaEntrevistado"; // Asegúrate de que este componente esté importado correctamente.
 
 const TablaEntrevistas = () => {
     const [entrevistas, setEntrevistas] = useState([]);
@@ -19,20 +19,25 @@ const TablaEntrevistas = () => {
                     params: { action: "obtenerEntrevistas" },
                 });
 
-                console.log("Respuesta de la API:", response.data); // Verificar formato de datos
-
                 const data = response.data.Entrevista;
-                console.log(data);
-                
-                setEntrevistas(Array.isArray(data) ? data : []);
+                if (Array.isArray(data)) {
+                    setLoading(false);
+                    setEntrevistas(data);
+                } else {
+                    setError("Formato de datos incorrecto.");
+                }
+
             } catch (err) {
-                setError("Hubo un problema al cargar las entrevistas");
-            } finally {
                 setLoading(false);
+                setError("Hubo un error al cargar las entrevistas.");
             }
         };
+
         fetchEntrevistas();
     }, []);
+
+    if (loading) return <Text>Cargando entrevistas...</Text>;
+    if (error) return <Text>{error}</Text>;
 
     const enviarAsistencia = async (asistencia, identrevista) => {
         try {
@@ -45,9 +50,6 @@ const TablaEntrevistas = () => {
             Alert.alert("Error", "Hubo un problema al corroborar la asistencia");
         }
     };
-
-    if (loading) return <Text>Cargando entrevistas...</Text>;
-    if (error) return <Text>{error}</Text>;
 
     return (
         <View style={styles.container}>
@@ -62,13 +64,19 @@ const TablaEntrevistas = () => {
                         <Text>Nombre: {item.nombres}</Text>
                         <Text>Documento: {item.num_doc}</Text>
                         <Text>Estado: {item.estadoEntrevista}</Text>
-                        <TouchableOpacity style={styles.buttonPrimary} onPress={() => enviarAsistencia(true, item.identrevista)}>
+                        <TouchableOpacity
+                            style={styles.buttonPrimary}
+                            onPress={() => enviarAsistencia(true, item.identrevista)}>
                             <Text style={styles.buttonText}>Asistencia</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonDanger} onPress={() => enviarAsistencia(false, item.identrevista)}>
+                        <TouchableOpacity
+                            style={styles.buttonDanger}
+                            onPress={() => enviarAsistencia(false, item.identrevista)}>
                             <Text style={styles.buttonText}>No asistencia</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonSecondary} onPress={() => setSelectedInterview(item)}>
+                        <TouchableOpacity
+                            style={styles.buttonSecondary}
+                            onPress={() => setSelectedInterview(item)}>
                             <Text style={styles.buttonText}>Ver detalles</Text>
                         </TouchableOpacity>
                     </View>
@@ -77,30 +85,53 @@ const TablaEntrevistas = () => {
 
             <CalendarioDeEntrevistas entrevistas={entrevistas} onSelectInterview={setSelectedInterview} />
 
-            <Modal visible={!!selectedInterview} animationType="slide">
-                {selectedInterview && (
+            {/* Modal para ver los detalles de la entrevista */}
+            <Modal visible={!!selectedInterview} animationType="slide" transparent={true}>
+                <View style={styles.modalBackdrop}>
                     <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Detalles de la Entrevista</Text>
-                        <Text>Nombre: {selectedInterview.nombres}</Text>
-                        <Text>Fecha: {selectedInterview.fecha}</Text>
-                        <Text>Hora: {selectedInterview.hora}</Text>
-                        <Text>Lugar: {selectedInterview.lugarMedio}</Text>
-                        <Text>Descripción: {selectedInterview.descripcion}</Text>
-                        <TouchableOpacity style={styles.buttonSecondary} onPress={() => setSelectedInterview(null)}>
-                            <Text style={styles.buttonText}>Cerrar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonPrimary} onPress={() => setModalOpen(true)}>
-                            <Text style={styles.buttonText}>Revisar hoja de vida</Text>
-                        </TouchableOpacity>
+                        {selectedInterview && (
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>Detalles de la Entrevista</Text>
+                                <Text>Nombre: {selectedInterview.nombres}</Text>
+                                <Text>Fecha: {selectedInterview.fecha}</Text>
+                                <Text>Hora: {selectedInterview.hora}</Text>
+                                <Text>Lugar: {selectedInterview.lugarMedio}</Text>
+                                <Text>Descripción: {selectedInterview.descripcion}</Text>
+
+                                <TouchableOpacity style={styles.buttonSecondary} onPress={() => setSelectedInterview(null)}>
+                                    <Text style={styles.buttonText}>Cerrar</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={styles.buttonPrimary} onPress={() => setModalOpen(true)}>
+                                    <Text style={styles.buttonText}>Revisar hoja de vida</Text>
+                                </TouchableOpacity>
+
+
+                            </View>
+                        )}
                     </View>
-                )}
+                </View>
             </Modal>
+            // Dentro del componente TablaEntrevistas
+            <TouchableOpacity
+                style={styles.buttonSecondary}
+                onPress={() => {
+                    setSelectedInterview(item); // Asigna la entrevista seleccionada
+                    setModalOpen(true);  // Abre el modal
+                }}
+            >
+                <Text style={styles.buttonText}>Ver detalles</Text>
+            </TouchableOpacity>
 
             <Modal visible={modalOpen} animationType="slide">
                 {selectedInterview && (
-                    <ModalHojadeVidaEntrevistado num_doc={selectedInterview.num_doc} onClose={() => setModalOpen(false)} />
+                    <ModalHojadeVidaEntrevistado
+                        num_doc={selectedInterview.num_doc} // Pasa el num_doc correcto aquí
+                        onClose={() => setModalOpen(false)}
+                    />
                 )}
             </Modal>
+
         </View>
     );
 };
@@ -147,11 +178,25 @@ const styles = StyleSheet.create({
         color: "white",
         textAlign: "center",
     },
-    modalContainer: {
+    modalBackdrop: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        padding: 16,
+        backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo translúcido para destacar el modal
+    },
+    modalContainer: {
+        backgroundColor: "white",
+        borderRadius: 10,
+        padding: 20,
+        width: "90%",
+        maxWidth: 500, // Evitar que el modal ocupe todo el ancho
+        shadowColor: "#000",
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalContent: {
+        alignItems: "center",
     },
     modalTitle: {
         fontSize: 20,
