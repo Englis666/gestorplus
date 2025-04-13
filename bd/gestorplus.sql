@@ -105,7 +105,7 @@ CREATE TABLE `cargo` (
   `estadoCargo` int(11) NOT NULL,
   PRIMARY KEY (`idcargo`),
   UNIQUE KEY `nombreCargo` (`nombreCargo`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -249,7 +249,7 @@ CREATE TABLE `entrevista` (
   PRIMARY KEY (`identrevista`),
   KEY `postulacion_idpostulaciones` (`postulacion_idpostulaciones`),
   CONSTRAINT `entrevista_ibfk_1` FOREIGN KEY (`postulacion_idpostulaciones`) REFERENCES `postulacion` (`idpostulacion`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -260,7 +260,8 @@ LOCK TABLES `entrevista` WRITE;
 /*!40000 ALTER TABLE `entrevista` DISABLE KEYS */;
 INSERT INTO `entrevista` VALUES
 (4,'2025-03-28','14:30:00','Chapinero',25,'Pendiente'),
-(6,'2025-04-08','11:30:00','Via Google Meet',26,'Pendiente');
+(6,'2025-04-08','11:30:00','Via Google Meet',26,'Pendiente'),
+(7,'2025-04-10','11:00:00','Sala 2 Oficina Principal Av 68',26,'Pendiente');
 /*!40000 ALTER TABLE `entrevista` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -285,7 +286,7 @@ CREATE TABLE `estudio` (
   PRIMARY KEY (`idestudio`),
   KEY `hojadevida_idHojadevida` (`hojadevida_idHojadevida`),
   CONSTRAINT `estudio_ibfk_1` FOREIGN KEY (`hojadevida_idHojadevida`) REFERENCES `hojadevida` (`idHojadevida`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -295,7 +296,10 @@ CREATE TABLE `estudio` (
 LOCK TABLES `estudio` WRITE;
 /*!40000 ALTER TABLE `estudio` DISABLE KEYS */;
 INSERT INTO `estudio` VALUES
-(2,'Tecnologa','Tecnologia','Activa','0007-01-26','2025-12-09','Desarrollador de Software','SENA','Cra 30 Con Primera de Mayo',45);
+(2,'Tecnologa','Tecnologia','Activa','0007-01-26','2025-12-09','Desarrollador de Software','SENA','Cra 30 Con Primera de Mayo',45),
+(4,'Tecnologo','Software','Activo','2025-04-10','2025-04-17','Desarrollador de Software','SENA','Cra 30 Con Primera de Mayo',38),
+(6,'Tecnico','Programacion','Activo','2025-04-01','2025-04-10','Programacion en software','SENA','Quirigua, Engativa , Bogota',38),
+(7,'Profesional','Director Comercial','Activo','2025-04-09','2025-04-24','Director Comercial','UNAD','BOGOTA , CHAPINERO',39);
 /*!40000 ALTER TABLE `estudio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -391,8 +395,8 @@ CREATE TABLE `hojadevida` (
 LOCK TABLES `hojadevida` WRITE;
 /*!40000 ALTER TABLE `hojadevida` DISABLE KEYS */;
 INSERT INTO `hojadevida` VALUES
-(38,'2006-01-02','call sur 99','bogota ','bogota ','312312',3123123123,NULL),
-(39,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(38,'2006-01-02','call sur 99','bogota ','bogota ','312312',3123123123,'Activa'),
+(39,'2025-04-17','Calle 100B # 10-50','BOGOTA','BOGOTA','1541345112',4133413,'Activa'),
 (40,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (41,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (42,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
@@ -450,7 +454,7 @@ CREATE TABLE `jornada` (
   PRIMARY KEY (`idJornada`),
   KEY `usuario_num_doc` (`usuario_num_doc`),
   CONSTRAINT `jornada_ibfk_1` FOREIGN KEY (`usuario_num_doc`) REFERENCES `usuario` (`num_doc`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=237 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=267 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -461,8 +465,8 @@ LOCK TABLES `jornada` WRITE;
 /*!40000 ALTER TABLE `jornada` DISABLE KEYS */;
 INSERT INTO `jornada` VALUES
 (154,'2025-03-21','20:32:00','04:32:00',1014736,'Jornada Corroborada'),
-(155,'2025-03-25','14:58:00','22:58:00',1014736,'Jornada rechazada'),
-(156,'2025-03-25','15:00:00','23:00:00',1014736,'Pendiente'),
+(155,'2025-03-25','14:58:00','22:58:00',1014736,'Jornada Corroborada'),
+(156,'2025-03-25','15:00:00','23:00:00',1014736,'Jornada Corroborada'),
 (157,'2025-03-25','15:02:00','23:02:00',1014736,'Pendiente'),
 (158,'2025-03-25','15:08:00','23:08:00',1014736,'Pendiente'),
 (159,'2025-03-25','16:14:00','00:14:00',1014736,'Pendiente'),
@@ -518,7 +522,7 @@ INSERT INTO `jornada` VALUES
 (209,'2025-04-04','12:02:00','20:02:00',1014736,'Pendiente'),
 (210,'2025-04-04','12:08:00','20:08:00',1014736,'Pendiente'),
 (211,'2025-04-04','12:32:00','20:32:00',1014736,'Pendiente'),
-(212,'2025-04-04','12:35:00','20:35:00',1014736,'Pendiente'),
+(212,'2025-04-04','12:35:00','20:35:00',1014736,'Jornada rechazada'),
 (213,'2025-04-04','12:42:00','20:42:00',1014736,'Pendiente'),
 (214,'2025-04-04','12:46:00','20:46:00',1014736,'Pendiente'),
 (215,'2025-04-04','12:46:00','20:46:00',1014736,'Pendiente'),
@@ -542,7 +546,37 @@ INSERT INTO `jornada` VALUES
 (233,'2025-04-07','10:10:00','18:10:00',1014736,'Pendiente'),
 (234,'2025-04-07','10:20:00','18:20:00',1014736,'Pendiente'),
 (235,'2025-04-07','10:24:00','18:24:00',1014736,'Pendiente'),
-(236,'2025-04-07','10:30:00','18:30:00',1014736,'Pendiente');
+(236,'2025-04-07','10:30:00','18:30:00',1014736,'Pendiente'),
+(237,'2025-04-09','17:20:00','01:20:00',1014736,'Pendiente'),
+(238,'2025-04-09','17:29:00','01:29:00',1014736,'Pendiente'),
+(239,'2025-04-09','17:32:00','01:32:00',1014736,'Pendiente'),
+(240,'2025-04-09','18:34:00','02:34:00',1014736,'Pendiente'),
+(241,'2025-04-09','19:12:00','03:12:00',1014736,'Pendiente'),
+(242,'2025-04-09','19:25:00','03:25:00',1014736,'Pendiente'),
+(243,'2025-04-09','19:40:00','03:40:00',1014736,'Pendiente'),
+(244,'2025-04-10','14:08:00','22:08:00',1014736,'Pendiente'),
+(245,'2025-04-10','15:06:00','23:06:00',1014736,'Pendiente'),
+(246,'2025-04-10','15:16:00','23:16:00',1141114912,'Pendiente'),
+(247,'2025-04-10','16:09:00','00:09:00',1014736,'Pendiente'),
+(248,'2025-04-10','16:19:00','00:19:00',1141114912,'Pendiente'),
+(249,'2025-04-10','17:13:00','01:13:00',1014736,'Pendiente'),
+(250,'2025-04-10','17:20:00','01:20:00',1141114912,'Pendiente'),
+(251,'2025-04-10','17:42:00','01:42:00',1014736,'Pendiente'),
+(252,'2025-04-10','18:10:00','02:10:00',1014736,'Pendiente'),
+(253,'2025-04-10','18:27:00','02:27:00',1014736,'Pendiente'),
+(254,'2025-04-10','18:31:00','02:31:00',1014736,'Pendiente'),
+(255,'2025-04-10','19:38:00','03:38:00',1014736,'Pendiente'),
+(256,'2025-04-10','20:39:00','04:39:00',1014736,'Pendiente'),
+(257,'2025-04-10','21:16:00','05:16:00',1014736,'Pendiente'),
+(258,'2025-04-10','21:24:00','05:24:00',1014736,'Pendiente'),
+(259,'2025-04-10','21:50:00','05:50:00',1014736,'Pendiente'),
+(260,'2025-04-11','06:10:00','14:10:00',1014736,'Pendiente'),
+(261,'2025-04-11','06:10:00','14:10:00',1014736,'Pendiente'),
+(262,'2025-04-11','06:13:00','14:13:00',1014736,'Pendiente'),
+(263,'2025-04-12','11:41:00','19:41:00',1014736,'Pendiente'),
+(264,'2025-04-12','14:03:00','22:03:00',1014736,'Pendiente'),
+(265,'2025-04-12','14:04:00','22:04:00',1014736,'Pendiente'),
+(266,'2025-04-12','15:17:00','23:17:00',1014736,'Pendiente');
 /*!40000 ALTER TABLE `jornada` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -590,7 +624,7 @@ CREATE TABLE `mensajes` (
   KEY `mensajes_ibfk_2` (`idChat`),
   CONSTRAINT `mensajes_ibfk_1` FOREIGN KEY (`usuario_num_doc`) REFERENCES `usuario` (`num_doc`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `mensajes_ibfk_2` FOREIGN KEY (`idChat`) REFERENCES `chat` (`idChat`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -610,7 +644,13 @@ INSERT INTO `mensajes` VALUES
 (12,1014736,'2025-04-07 02:52:30','ytt',3),
 (13,1014736,'2025-04-07 12:18:15','uwu',3),
 (14,1014736,'2025-04-07 15:44:15','asd',3),
-(15,1014736,'2025-04-07 15:50:31','wtf',3);
+(15,1014736,'2025-04-07 15:50:31','wtf',3),
+(16,1014736,'2025-04-10 20:15:18','Hola',3),
+(17,1014736,'2025-04-10 20:27:13','g',3),
+(18,1014736,'2025-04-10 21:09:44','asd',3),
+(19,1014736,'2025-04-10 21:10:35','Hola',3),
+(20,1014736,'2025-04-10 21:12:31','wtf',3),
+(21,1014736,'2025-04-10 21:19:09','hola',3);
 /*!40000 ALTER TABLE `mensajes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -632,7 +672,7 @@ CREATE TABLE `notificacion` (
   PRIMARY KEY (`idnotificacion`),
   KEY `num_doc` (`num_doc`),
   CONSTRAINT `notificacion_ibfk_1` FOREIGN KEY (`num_doc`) REFERENCES `usuario` (`num_doc`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=328 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=362 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -647,22 +687,22 @@ INSERT INTO `notificacion` VALUES
 (192,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-25 22:11:50'),
 (193,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-25 22:11:50'),
 (194,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-25 22:11:50'),
-(202,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-13 hasta el dia 2025-03-29',NULL,'1','Ausencia',1014736,'2025-03-25 22:11:50'),
-(204,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-30',NULL,'1','Ausencia',1014736,'2025-03-25 22:11:50'),
-(206,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','Ausencia',1014736,'2025-03-25 22:11:50'),
-(208,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','Ausencia',1014736,'2025-03-25 22:11:50'),
-(210,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','Ausencia',1014736,'2025-03-25 22:11:50'),
-(215,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','Ausencia',1014736,'2025-03-25 22:11:50'),
+(202,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-13 hasta el dia 2025-03-29',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
+(204,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-30',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
+(206,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
+(208,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
+(210,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
+(215,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
 (217,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-25 22:11:50'),
-(218,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','Ausencia',1014736,'2025-03-25 22:11:50'),
-(220,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','Ausencia',1014736,'2025-03-25 22:11:50'),
+(218,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
+(220,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
 (221,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:11:50'),
 (222,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:11:50'),
 (223,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:11:50'),
 (224,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-25 22:11:50'),
 (225,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:11:50'),
 (226,'Ausencia aceptada',NULL,'0','Aceptacion',1014736,'2025-03-25 22:11:50'),
-(227,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','Ausencia',1014736,'2025-03-25 22:11:50'),
+(227,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
 (228,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:11:50'),
 (229,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:11:50'),
 (230,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:12:06'),
@@ -670,20 +710,20 @@ INSERT INTO `notificacion` VALUES
 (232,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:14:26'),
 (233,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:14:26'),
 (234,'Ausencia aceptada',NULL,'0','Aceptacion',1014736,'2025-03-25 22:14:50'),
-(235,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','Ausencia',1014736,'2025-03-25 22:15:23'),
+(235,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
 (236,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:15:29'),
 (237,'Ausencia rechazada',NULL,'0','Rechazo',1014736,'2025-03-25 22:15:29'),
 (238,'Ausencia aceptada',NULL,'0','Aceptacion',1014736,'2025-03-25 22:16:26'),
 (239,'Ausencia aceptada',NULL,'0','Aceptacion',1014736,'2025-03-25 22:16:26'),
 (240,'Ausencia aceptada',NULL,'0','Aceptacion',1014736,'2025-03-25 22:17:27'),
 (241,'Ausencia aceptada',NULL,'0','Aceptacion',1014736,'2025-03-25 22:17:27'),
-(242,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','Ausencia',1014736,'2025-03-25 22:23:38'),
+(242,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-25 hasta el dia 2025-03-31',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
 (243,'Ausencia aceptada',NULL,'0','Aceptacion',1014736,'2025-03-25 22:23:55'),
 (244,'Ausencia aceptada',NULL,'0','Aceptacion',1014736,'2025-03-25 22:23:55'),
 (245,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-26 20:44:31'),
 (246,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-26 20:57:33'),
 (247,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-26 21:02:28'),
-(248,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-26 hasta el dia 2025-03-28',NULL,'1','Ausencia',1014736,'2025-03-26 21:04:16'),
+(248,'El empleado identificado con la cedula 1014736 ha solicitado una ausencia para el dia 2025-03-26 hasta el dia 2025-03-28',NULL,'1','General',1014736,'2025-04-11 01:06:47'),
 (249,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-26 21:07:51'),
 (250,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-26 21:46:32'),
 (251,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'1','Jornada',1014736,'2025-03-26 22:27:25'),
@@ -760,7 +800,41 @@ INSERT INTO `notificacion` VALUES
 (324,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-07 15:10:58'),
 (325,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-07 15:20:45'),
 (326,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-07 15:24:12'),
-(327,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-07 15:30:44');
+(327,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-07 15:30:44'),
+(328,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-09 22:20:51'),
+(329,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-09 22:29:42'),
+(330,'Has aplicado a una convocatoria',NULL,'No leida','PostulacionAspirantes',1056789123,'2025-04-09 22:32:23'),
+(331,'El aspirante con número de documento 1056789123 ha aplicado a una convocatoria',NULL,'No leida','Postulacion',1056789123,'2025-04-09 22:32:23'),
+(332,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-09 22:32:46'),
+(333,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-09 23:34:33'),
+(334,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 00:12:43'),
+(335,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 00:25:42'),
+(336,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 00:40:57'),
+(337,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 19:08:41'),
+(338,'El empleado identificado con la cedula 1014736 ha solicitado una vacacion',NULL,'Pendiente','General ',1014736,'2025-04-10 19:15:15'),
+(339,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 20:06:22'),
+(340,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1141114912 y con el nombre Yised Dayana',NULL,'Jornada Registrada','Jornada',1141114912,'2025-04-10 20:16:50'),
+(341,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 21:09:31'),
+(342,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1141114912 y con el nombre Yised Dayana',NULL,'Jornada Registrada','Jornada',1141114912,'2025-04-10 21:19:01'),
+(343,'El empleado identificado con la cedula 1141114912 ha solicitado una vacacion',NULL,'Pendiente','General ',1141114912,'2025-04-10 22:08:31'),
+(344,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 22:13:28'),
+(345,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1141114912 y con el nombre Yised Dayana',NULL,'Jornada Registrada','Jornada',1141114912,'2025-04-10 22:20:26'),
+(346,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 22:42:03'),
+(347,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 23:10:14'),
+(348,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 23:27:17'),
+(349,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-10 23:31:04'),
+(350,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-11 00:38:34'),
+(351,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-11 01:39:45'),
+(352,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-11 02:16:04'),
+(353,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-11 02:24:08'),
+(354,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-11 02:50:36'),
+(355,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-11 11:10:00'),
+(356,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-11 11:10:56'),
+(357,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-11 11:13:43'),
+(358,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-12 16:41:00'),
+(359,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-12 19:03:25'),
+(360,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-12 19:04:40'),
+(361,'Nueva jornada registrada por inicio de sesión para el usuario con documento: 1014736 y con el nombre Englis',NULL,'Jornada Registrada','Jornada',1014736,'2025-04-12 20:17:00');
 /*!40000 ALTER TABLE `notificacion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -811,7 +885,7 @@ CREATE TABLE `postulacion` (
   KEY `convocatoria_idconvocatoria` (`convocatoria_idconvocatoria`),
   CONSTRAINT `postulacion_ibfk_1` FOREIGN KEY (`usuario_num_doc`) REFERENCES `usuario` (`num_doc`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `postulacion_ibfk_2` FOREIGN KEY (`convocatoria_idconvocatoria`) REFERENCES `convocatoria` (`idconvocatoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -822,7 +896,8 @@ LOCK TABLES `postulacion` WRITE;
 /*!40000 ALTER TABLE `postulacion` DISABLE KEYS */;
 INSERT INTO `postulacion` VALUES
 (25,'En proceso','2025-03-28 02:47:59',7,1141114912),
-(26,'En proceso','2025-04-07 01:13:14',15,1014189999);
+(26,'En proceso','2025-04-07 01:13:14',15,1014189999),
+(27,'En proceso','2025-04-09 22:32:23',6,1056789123);
 /*!40000 ALTER TABLE `postulacion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -938,13 +1013,13 @@ CREATE TABLE `vacacion` (
   `idvacacion` int(11) NOT NULL AUTO_INCREMENT,
   `fechaInicio` date NOT NULL,
   `fechaFin` date NOT NULL,
-  `aprovadoPor` varchar(45) NOT NULL,
+  `aprovadoPor` int(11) DEFAULT NULL,
   `estadoVacacion` varchar(45) NOT NULL,
   `usuario_num_doc` int(11) NOT NULL,
   PRIMARY KEY (`idvacacion`),
   KEY `usuario_num_doc` (`usuario_num_doc`),
   CONSTRAINT `vacacion_ibfk_1` FOREIGN KEY (`usuario_num_doc`) REFERENCES `usuario` (`num_doc`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -953,6 +1028,9 @@ CREATE TABLE `vacacion` (
 
 LOCK TABLES `vacacion` WRITE;
 /*!40000 ALTER TABLE `vacacion` DISABLE KEYS */;
+INSERT INTO `vacacion` VALUES
+(1,'2025-04-11','2025-04-17',NULL,'Pendiente',1014736),
+(2,'2025-05-06','2025-04-21',NULL,'Pendiente',1141114912);
 /*!40000 ALTER TABLE `vacacion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1002,4 +1080,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-04-07 17:14:49
+-- Dump completed on 2025-04-12 19:37:09
