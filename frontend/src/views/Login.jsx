@@ -32,6 +32,7 @@ const Login = () => {
         setIsSubmitting(true);
         axios.post("http://localhost/gestorplus/backend/", data)
             .then((response) => {
+                console.log(response.data);
                 const res = response.data;
                 if (res?.status === 'success') {
                     const token = res.token;

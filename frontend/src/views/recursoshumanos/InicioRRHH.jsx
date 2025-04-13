@@ -1,5 +1,5 @@
 import React from "react";
-import TablaEmpleado from "../../componentsClosed/TablaEmpleado"; 
+import TablaEmpleado from "../../componentsClosed/tables/TablaEmpleado"; 
 import NavbarClosed from "../../componentsClosed/Navbar";
 
 const InicioRRHH = () => {

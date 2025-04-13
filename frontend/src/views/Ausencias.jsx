@@ -1,6 +1,6 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
-import TablaAusencias from "../componentsClosed/TablaAusencias";
+import TablaAusencias from "../componentsClosed/tables/TablaAusencias";
 import FormularioSolicitud from "../componentsClosed/form/FormularioSolicitudAusencia";
 
 const Ausencias = () => {

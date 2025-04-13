@@ -96,6 +96,7 @@ const TablaHorasExtra = () => {
                                     )}
                                 </tr>
                             ))
+                            
                         ) : (
                             <tr>
                                 <td colSpan="5" className="py-3 px-4 text-center">No hay horas extra registradas.</td>

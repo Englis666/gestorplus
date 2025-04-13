@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-import GenerarPazYSalvo from "./form/GenerarPazYSalvo";
+import GenerarPazYSalvo from "../form/GenerarPazYSalvo";
 
 const TablaPazYSalvo = () => {
     const [Salvos, setSalvos] = useState([]);

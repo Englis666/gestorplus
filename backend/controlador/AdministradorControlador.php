@@ -109,9 +109,7 @@ class AdministradorControlador {
 
 
     public function obtenerTodasLasHorasExtra() {
-        $decoded = $this->verificarToken();
-        $num_doc = $decoded->data->num_doc;
-        $this->jsonResponse($this->administrador->verificarRol($num_doc));
+        $this->jsonResponse($this->administrador->obtenerTodasLasHorasExtra());
     }
 
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; 
-import TablaEmpleado from "../../componentsClosed/TablaEmpleado";
+import TablaEmpleado from "../../componentsClosed/tables/TablaEmpleado";
 import NavbarClosed from "../../componentsClosed/Navbar";
 
 const InicioEmpleado = () => {

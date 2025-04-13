@@ -1,6 +1,6 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
-import TablaVacaciones from "../componentsClosed/TablaVacaciones";
+import TablaVacaciones from "../componentsClosed/tables/TablaVacaciones";
 
 
 const Vacaciones = () => {

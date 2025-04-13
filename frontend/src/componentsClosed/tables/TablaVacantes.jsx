@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import FormularioAgregarConvocatoria from "./form/agregarConvocatoria";
+import FormularioAgregarConvocatoria from "../form/agregarConvocatoria";
 
 const TablaVacantes = () => {
     const [convocatorias, setConvocatorias] = useState([]);

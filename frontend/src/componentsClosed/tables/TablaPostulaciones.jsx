@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import AsignarEntrevistaModal from "./form/AsignarEntrevistaModal";
+import AsignarEntrevistaModal from "../form/AsignarEntrevistaModal";
 
 const TablaPostulaciones = () => {
     const [postulaciones, setPostulaciones] = useState([]);

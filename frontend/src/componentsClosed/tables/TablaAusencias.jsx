@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-import FormularioAusencia from "./form/FormularioSolicitudAusencia";
+import FormularioAusencia from "../form/FormularioSolicitudAusencia";
 
 const TablaAusencias = () => {
   const [Ausencias, setAusencias] = useState([]);

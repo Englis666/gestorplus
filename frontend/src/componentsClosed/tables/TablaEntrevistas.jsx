@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import CalendarioDeEntrevistas from "./CalendarioDeEntrevistas";
-import ModalHojadeVidaEntrevistado from "./ModalHojadeVidaEntrevistado";
+import CalendarioDeEntrevistas from "../CalendarioDeEntrevistas";
+import ModalHojadeVidaEntrevistado from "../modals/ModalHojadeVidaEntrevistado";
 
 const TablaEntrevistas = () => {
     const [entrevistas, setEntrevistas] = useState([]);

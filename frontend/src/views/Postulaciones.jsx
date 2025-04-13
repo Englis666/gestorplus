@@ -1,6 +1,7 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
-import TablaPostulaciones from "../componentsClosed/TablaPostulaciones";
+import TablaPostulaciones from "../componentsClosed/tables/TablaPostulaciones";
+import TablaConvocatoriasAgrupadas from "../componentsClosed/tables/TablaConvocatoriasAgrupadas";
 
 const Postulaciones = () => {
     return (
@@ -8,6 +9,7 @@ const Postulaciones = () => {
             <NavbarClosed />
         <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
             <TablaPostulaciones/>
+            <TablaConvocatoriasAgrupadas/>
         </div>
         </div>
     );

@@ -9,6 +9,7 @@ use Controlador\ChatControlador;
 use Controlador\AdministradorControlador;
 use Controlador\AspiranteControlador;
 use Controlador\EmpleadoControlador;
+use Controlador\CalculoControlador;
 
 // Obtener método y datos
 $method = $_SERVER['REQUEST_METHOD'];
@@ -30,6 +31,7 @@ $controllers = [
     'aspirante' => new AspiranteControlador(),
     'chat' => new ChatControlador(),
     'admin' => new AdministradorControlador(),
+    'calculo' => new CalculoControlador(),
 ];
 
 // Rutas organizadas por método HTTP
@@ -40,7 +42,7 @@ $routes = [
         'login' => ['usuario', 'iniciar'],
         'agregarEstudio' => ['usuario', 'agregarEstudio'],
         'agregarExp' => ['usuario', 'agregarExp'],
-        'registroHorasExtra' => ['usuario', 'agregarHorasExtra'],
+        'registroHorasExtra' => ['usuario', 'registroHorasExtra'],
         'consultarEstudio' => ['usuario', 'consultarEstudio'],
         'consultarExp' => ['usuario', 'consultarExp'],
 
@@ -80,7 +82,6 @@ $routes = [
         'obtenerNotificaciones' => ['usuario', 'obtenerNotificaciones'],
         'obtenerEstudio' => ['usuario', 'obtenerEstudio'],
         'obtenerExperiencia' => ['usuario', 'obtenerExperiencia'],
-        'consultarHorasExtra' => ['usuario', 'agregarHorasExtra'], // Revisa si este nombre es correcto
 
         // Empleado
         'obtenerJornadas' => ['empleado', 'obtenerJornadas'],
@@ -107,7 +108,6 @@ $routes = [
         'obtenerTodasLasJornadas' => ['admin', 'obtenerTodasLasJornadas'],
         'obtenerTodasLasAusencias' => ['admin', 'obtenerTodasLasAusencias'],
         'obtenerUsuarios' => ['admin', 'obtenerUsuarios'],
-        //becerra termina de arreglar esto sopla monda monda
         'obtenerCargosParaConvocatorias' => ['admin', 'obtenerCargosParaConvocatorias'],
         'obtenerEntrevistas' => ['admin', 'obtenerEntrevistas'],
         'obtenerTodasLasHorasExtra' => ['admin', 'obtenerTodasLasHorasExtra'],
@@ -116,7 +116,8 @@ $routes = [
         'obtenerTodasLasEstadisticas' => ['admin', 'obtenerTodasLasEstadisticas'],
         'obtenerSistemaDeGestion' => ['admin', 'obtenerSistemaDeGestion'],
         'buscarIdEvaluacion' => ['admin', 'buscarIdEvaluacion'],
-        'obtenerConvocatoriasPostulaciones' => ['admin', 'obtenerConvocatoriasPostulaciones'],
+        //NEW
+        'calcularPostulacionesEnConvocatorias' => ['calculo', 'calcularPostulacionesEnConvocatorias'],
     ],
     'PATCH' => [
         'actualizarPerfil' => ['usuario', 'actualizarPerfil'],

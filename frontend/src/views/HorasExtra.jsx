@@ -1,6 +1,6 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
-import TablaHorasExtra from "../componentsClosed/TablaHorasExtra";
+import TablaHorasExtra from "../componentsClosed/tables/TablaHorasExtra";
 
 const HorasExtra = () => {
     return (

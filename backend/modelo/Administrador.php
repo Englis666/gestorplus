@@ -57,6 +57,11 @@ class Administrador {
         return $this->ejecutarConsulta($sql);
     }
 
+    public function obtenerTodasLasHorasExtra(){
+        $sql = "SELECT * FROM horaextra";
+        return $this->ejecutarConsulta($sql);
+    }
+
     public function obtenerVinculaciones() {
         $sql = "SELECT * FROM vinculacion as v 
                 INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc";
@@ -95,116 +100,7 @@ class Administrador {
         return $this->ejecutarConsulta($sql);
     }
 
-    public function obtenerConvocatoriasPostulaciones() {
-        $sql = "SELECT * FROM convocatoria
-                INNER JOIN postulacion ON convocatoria.idconvocatoria = postulacion.convocatoria_idconvocatoria";
-        return $this->ejecutarConsulta($sql);
-    }
 
-    public function verificarRol($num_doc) {
-        $sql = "SELECT r.idrol 
-                FROM usuario AS u 
-                INNER JOIN rol AS r ON u.rol_idrol = r.idrol 
-                WHERE u.num_doc = :num_doc";
-        $rol = $this->ejecutarConsulta($sql, [':num_doc' => $num_doc]);
-
-        if (!$rol) return ['error' => 'No se encontró el usuario'];
-
-        return ($rol[0]['idrol'] == 1) ? $this->calcularHorasExtra() : $this->calcularHorasExtraUsuario($num_doc);
-    }
-
-    public function calcularHorasExtra() {
-        $sql = "SELECT j.*, u.nombres, r.nombreRol 
-                FROM jornada AS j
-                INNER JOIN usuario AS u ON j.usuario_num_doc = u.num_doc      
-                INNER JOIN rol AS r ON u.rol_idrol = r.idrol";
-        $jornadas = $this->ejecutarConsulta($sql);
-        $totalHorasSemana = [];
-        $jornadasExtra = [];
-
-        foreach ($jornadas as $jornada) {
-            $num_doc = $jornada['usuario_num_doc'];
-            $nombres = $jornada['nombres'];
-            $nombreRol = $jornada['nombreRol'];
-
-            if (!isset($totalHorasSemana[$num_doc])) {
-                $totalHorasSemana[$num_doc] = 0;
-            }
-
-            $horaEntrada = strtotime($jornada['horaEntrada']);
-            $horaSalida = strtotime($jornada['horaSalida']);
-            $horasTrabajadas = ($horaSalida - $horaEntrada) / 3600;
-
-            $totalHorasSemana[$num_doc] += $horasTrabajadas;
-
-            if ($totalHorasSemana[$num_doc] > 48) {
-                $horasExtra = $totalHorasSemana[$num_doc] - 48;
-                $this->registrarHorasExtra($num_doc, $horasExtra);
-
-                $jornadasExtra[] = [
-                    'num_doc' => $num_doc,
-                    'nombres' => $nombres,
-                    'nombreRol' => $nombreRol,
-                    'horas_extra' => $horasExtra,
-                ];
-            }
-        }
-
-        return $jornadasExtra;
-    }
-
-    public function calcularHorasExtraUsuario($num_doc) {
-        $sql = "SELECT * FROM jornada WHERE usuario_num_doc = :num_doc";
-        $jornadas = $this->ejecutarConsulta($sql, [':num_doc' => $num_doc]);
-
-        $totalHorasSemana = 0;
-        $horasExtra = 0;
-
-        foreach ($jornadas as $jornada) {
-            $horaEntrada = strtotime($jornada['horaEntrada']);
-            $horaSalida = strtotime($jornada['horaSalida']);
-            $horasTrabajadas = ($horaSalida - $horaEntrada) / 3600;
-
-            $totalHorasSemana += $horasTrabajadas;
-        }
-
-        if ($totalHorasSemana > 48) {
-            $horasExtra = $totalHorasSemana - 48;
-            $this->registrarHorasExtra($num_doc, $horasExtra);
-        }
-
-        return [
-            'num_doc' => $num_doc,
-            'horas_extra' => $horasExtra,
-        ];
-    }
-
-    private function registrarHorasExtra($num_doc, $horasExtra) {
-        $sql_check = "SELECT horasExtra FROM horaextra WHERE usuario_num_doc = :usuario_num_doc AND DATE(fecha) = CURDATE()";
-        $stmt_check = $this->db->prepare($sql_check);
-        $stmt_check->bindParam(':usuario_num_doc', $num_doc);
-        $stmt_check->execute();
-
-        if ($stmt_check->rowCount() > 0) {
-            $existing_hours = $stmt_check->fetch(PDO::FETCH_ASSOC)['horasExtra'];
-            if ($horasExtra > $existing_hours) {
-                $sql_update = "UPDATE horaextra 
-                               SET horasExtra = :horasExtra
-                               WHERE usuario_num_doc = :usuario_num_doc AND DATE(fecha) = CURDATE()";
-                $stmt_update = $this->db->prepare($sql_update);
-                $stmt_update->bindParam(':usuario_num_doc', $num_doc);
-                $stmt_update->bindParam(':horasExtra', $horasExtra);
-                $stmt_update->execute();
-            }
-        } else {
-            $sql_insert = "INSERT INTO horaextra (usuario_num_doc, horasExtra, fecha) 
-                           VALUES (:usuario_num_doc, :horasExtra, CURDATE())";
-            $stmt_insert = $this->db->prepare($sql_insert);
-            $stmt_insert->bindParam(':usuario_num_doc', $num_doc);
-            $stmt_insert->bindParam(':horasExtra', $horasExtra);
-            $stmt_insert->execute();
-        }
-    }
 
     public function obtenerTodasLasJornadas() {
         $sql = "SELECT * FROM jornada as j

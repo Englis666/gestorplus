@@ -1,6 +1,7 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
-import TablaVacantes from "../componentsClosed/TablaVacantes";
+import TablaVacantes from "../componentsClosed/tables/TablaVacantes";
+import TablaConvocatoriasAgrupadas from "../componentsClosed/tables/TablaConvocatoriasAgrupadas";
 
 const Convocatorias = () => {
     return (
@@ -9,6 +10,7 @@ const Convocatorias = () => {
             <NavbarClosed/>
             <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
                 <TablaVacantes/>
+                <TablaConvocatoriasAgrupadas/>
             </div>
         </div>
     );

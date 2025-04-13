@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import ModalSubirContratoPdf from "../componentsClosed/ModalSubirContratoPdf";
-import FormularioVinculacion from "./form/FormularioAsignacionVinculacion";
+import ModalSubirContratoPdf from "../modals/ModalSubirContratoPdf";
+import FormularioVinculacion from "../form/FormularioAsignacionVinculacion";
 
 const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [vinculaciones, setVinculaciones] = useState([]);

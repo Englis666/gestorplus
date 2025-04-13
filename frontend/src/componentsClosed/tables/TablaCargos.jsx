@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import FormularioCargo from "./form/FormularioAgregarCargo";
+import FormularioCargo from "../form/FormularioAgregarCargo";
 
 const TablaCargos = () => {
     const [cargos, setCargos] = useState([]);

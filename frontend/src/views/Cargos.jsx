@@ -1,6 +1,6 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
-import TablaCargos from "../componentsClosed/TablaCargos";
+import TablaCargos from "../componentsClosed/tables/TablaCargos";
 
 const Cargos = () => {
     return (

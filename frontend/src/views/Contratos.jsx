@@ -1,6 +1,6 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
-import TablaContratos from "../componentsClosed/TablaContratos";
+import TablaContratos from "../componentsClosed/tables/TablaContratos";
 import { useLocation } from "react-router-dom";
 const Contratos = () => {
     const location = useLocation();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Estadisticas from "./Estadisticas";
-import Grafica from "./Grafica";
+import Estadisticas from "../Estadisticas";
+import Grafica from "../Grafica";
 import { jwtDecode } from "jwt-decode";
 
 const TablaEmpleado = ({ action }) => {
@@ -113,7 +113,6 @@ const TablaEmpleado = ({ action }) => {
                   <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                     <tr>
                       <th className="py-3 px-4">Actividad</th>
-                      <th className="py-3 px-4">Acción</th>
                     </tr>
                   </thead>
                   <tbody className="text-center">
@@ -122,17 +121,6 @@ const TablaEmpleado = ({ action }) => {
                         <tr key={notificacion.idnotificacion}>
                           <td className="py-3 px-4">
                             <span className="text-dark">{notificacion.descripcionNotificacion}</span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <button
-                              className="btn btn-primary btn-sm"
-                              style={{ borderRadius: "20px", transition: "all 0.3s ease" }}
-                              onClick={() => handleVerClick(notificacion)}
-                              onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
-                              onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
-                            >
-                              Ver
-                            </button>
                           </td>
                         </tr>
                       ))

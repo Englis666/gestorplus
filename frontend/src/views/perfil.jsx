@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import ModalHojaDeVida from "../componentsClosed/ModalHojadevida";
-import Estudios from "../componentsClosed/ModalEstudios";
-import Experiencia from "../componentsClosed/ModalExperienciaLaboral";
+import ModalHojaDeVida from "../componentsClosed/modals/ModalHojadevida";
+import Estudios from "../componentsClosed/modals/ModalEstudios";
+import Experiencia from "../componentsClosed/modals/ModalExperienciaLaboral";
 import axios from "axios";
 
 const Perfil = () => {

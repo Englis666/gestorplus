@@ -1,6 +1,6 @@
 import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
-import TablaPazYSalvo from "../componentsClosed/TablaPazYSalvo";
+import TablaPazYSalvo from "../componentsClosed/tables/TablaPazYSalvo";
 
 const PazySalvo = () => {
   return (

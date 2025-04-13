@@ -122,6 +122,12 @@ class UsuarioControlador {
         $this->jsonResponse('success', '', ['convocatorias' => $resultado ?: []]);
     }
 
+    public function consultarHorasExtra(){
+        $decoded = $this->verificarToken();
+        $resultado = $this->usuario->consultarhorasExtra($decoded->data->num_doc);
+        $this->jsonResponse($resultado ? 'success' : 'error' , $resultado ? 'Horas extra consultadas' : 'No se pudo consultar las horas extra');
+    }
+
     public function obtenerTotalEstadisticas() {
         $decoded = $this->verificarToken();
         $resultados = $this->usuario->obtenerTotalEstadisticas($decoded->data->num_doc);
