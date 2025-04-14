@@ -358,7 +358,7 @@ class Usuario {
         return $stmt->execute();
     }
 
-    public function eliminarExperiencia($idexperiencia) {
+    public function eliminarExperiencia($idexperiencialaboral) {
         $sql = "DELETE FROM experienciaLaboral WHERE idexperienciaLaboral = :idexperienciaLaboral";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idexperienciaLaboral', $idexperiencia, PDO::PARAM_INT);
