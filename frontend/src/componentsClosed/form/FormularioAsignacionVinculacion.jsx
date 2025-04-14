@@ -1,4 +1,3 @@
-// src/componentsClosed/FormularioVinculacion.jsx
 import React, { useState } from "react";
 
 const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
@@ -10,7 +9,13 @@ const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
         { label: "Nombre", name: "nombres", type: "text", icon: "person" },
         { label: "Fecha de inicio", name: "fechaInicio", type: "date", icon: "calendar_month" },
         { label: "Fecha de fin", name: "fechaFin", type: "date", icon: "event_busy" },
-        { label: "Tipo de contrato", name: "tipoContrato", type: "text", icon: "description" },
+        {
+            label: "Tipo de contrato",
+            name: "tipoContrato",
+            type: "select",
+            icon: "description",
+            options: ["Prestación de servicios", "Obra labor", "Fijo", "Indefinido"],
+        },
         { label: "Salario", name: "salario", type: "number", icon: "attach_money" },
         { label: "Estado", name: "estadoContrato", type: "text", icon: "flag" },
         { label: "Fecha de firma", name: "fechaFirma", type: "date", icon: "edit_calendar" },
@@ -80,38 +85,55 @@ const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
     };
 
     return (
-        <div className="card border-0 shadow-sm mb-5 animate__animated animate__fadeInUp">
+        <div className="card border-0 shadow-sm mb-5 animate__animated animate__fadeIn">
             <div className="card-header bg-white border-0 py-3 px-4">
-                <h5 className="mb-0 fw-bold text-primary d-flex align-items-center animate__animated animate__fadeInDown">
+                <h5 className="mb-0 fw-bold text-primary d-flex align-items-center animate__animated">
                     <span className="material-icons me-2 text-primary">assignment_ind</span>
                     Asignación de Vinculaciones
                 </h5>
-                <p className="text-muted mb-0 animate__animated animate__fadeInDown animate__delay-1s" style={{ fontSize: "0.9rem" }}>
+                <p className="text-muted mb-0 animate__animated animate__delay-1s" style={{ fontSize: "0.9rem" }}>
                     Completa el siguiente formulario para asignar una vinculación al postulante.
                 </p>
             </div>
-            <div className="card-body px-4 animate__animated animate__fadeInUp animate__faster">
-                <form onSubmit={onSubmit} className="animate__animated animate__fadeInUp animate__faster">
+            <div className="card-body px-4 animate__animated  animate__faster">
+                <form onSubmit={onSubmit} className="animate__animated  animate__faster">
                     <input type="hidden" value={formData.idevaluacion} readOnly />
 
                     <div className="row">
-                        {campos.map(({ label, name, type, icon }, index) => (
+                        {campos.map(({ label, name, type, icon, options = [] }, index) => (
                             <div
-                                className={`col-md-6 mb-4 animate__animated animate__fadeInUp animate__delay-${index % 5}s`}
+                                className={`col-md-6 mb-4 animate__animated animate__delay-${index % 5}s`}
                                 key={name}
                             >
                                 <label className="form-label fw-semibold">
                                     <span className="material-icons me-1 text-secondary" style={{ fontSize: "1.2rem", verticalAlign: "middle" }}>{icon}</span>
                                     {label}
                                 </label>
-                                <input
-                                    type={type}
-                                    name={name}
-                                    className={`form-control ${errores[name] && tocado[name] ? "is-invalid" : ""}`}
-                                    value={formData[name]}
-                                    onChange={handleInputChange}
-                                    onBlur={handleBlur}
-                                />
+
+                                {type === "select" ? (
+                                    <select
+                                        name={name}
+                                        className={`form-select ${errores[name] && tocado[name] ? "is-invalid" : ""}`}
+                                        value={formData[name]}
+                                        onChange={handleInputChange}
+                                        onBlur={handleBlur}
+                                    >
+                                        <option value="">Seleccione un tipo</option>
+                                        {options.map((opt, i) => (
+                                            <option key={i} value={opt}>{opt}</option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <input
+                                        type={type}
+                                        name={name}
+                                        className={`form-control ${errores[name] && tocado[name] ? "is-invalid" : ""}`}
+                                        value={formData[name]}
+                                        onChange={handleInputChange}
+                                        onBlur={handleBlur}
+                                    />
+                                )}
+
                                 {errores[name] && tocado[name] && (
                                     <div className="invalid-feedback">{errores[name]}</div>
                                 )}

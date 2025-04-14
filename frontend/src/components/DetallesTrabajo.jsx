@@ -87,6 +87,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
             .then((response) => {
                 console.log(response);
                 if (response.data.success) {
+                    alert("Has aplicado a una convocatoria");
                     setSuccessMessage(response.data.message);
                 } else {
                     console.error("Error en la respuesta del servidor: ", response.data.error);
@@ -116,7 +117,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
         >
             <section className="job-details py-5 flex-grow-1">
                 <div className="container">
-                    <h1 className="heading text-center mb-4 text-primary">
+                    <h1 className="heading text-center mt-4 text-primary">
                         Detalles del trabajo
                     </h1>
                     <div className="row justify-content-center">

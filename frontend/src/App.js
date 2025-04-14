@@ -1,11 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'material-design-icons/iconfont/material-icons.css';
 import 'animate.css';
-
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './context/userContext';
+import './utils/handleAlerts';
 
 // Importaciones de vistas
 import Login from './views/Login';
@@ -33,7 +34,8 @@ import Postulaciones from './views/Postulaciones';
 import Cargos from './views/Cargos';
 import Contratos from './views/Contratos';
 import SistemaDeGestion from './views/SistemaDeGestion';
-
+import Permisos from './views/Permisos';
+import Publicaciones from './views/Publicaciones';
 // Vistas Administrador
 import InicioAdmin from './views/administrador/InicioAdmin';
 
@@ -71,6 +73,8 @@ function App() {
               <Route path="/Jornadas" element={<Jornadas />} />
               <Route path="/HorasExtra" element={<HorasExtra />} />
               <Route path="/Ausencias" element={<Ausencias />} />
+              <Route path="/Permisos" element={<Permisos/>}/>
+              <Route path="/Publicaciones" element={<Publicaciones/>}/>
               <Route path="/Vacaciones" element={<Vacaciones />} />
               <Route path="/Quejas" element={<Quejas />} />
               <Route path="/Empleados" element={<Empleados />} />

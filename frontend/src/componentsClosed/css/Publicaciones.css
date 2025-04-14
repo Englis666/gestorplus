@@ -1,0 +1,59 @@
+/* Contenedor principal exclusivo para el componente */
+.publicaciones-wrapper {
+    position: relative;
+    min-height: 100vh;
+  }
+  
+  /* Cabecera estilo blog */
+  .blog-header {
+    background: url("https://via.placeholder.com/1920x400?text=Blog+Header") no-repeat center center;
+    background-size: cover;
+  }
+  
+  /* Tarjetas (Cards) */
+  .card {
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .card-text {
+    font-size: 0.95rem;
+    color: #555;
+  }
+  
+  /* Botón de acción flotante (FAB) */
+  .fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+  }
+  
+  .fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    text-decoration: none;
+    color: #fff;
+  }
+  
+  /* Ajustes para botones */
+  .btn i {
+    font-size: 1.2rem;
+  }
+  

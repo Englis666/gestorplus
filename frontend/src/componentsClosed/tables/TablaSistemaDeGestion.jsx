@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+
 
 const TablaSistemaDeGestion = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sistemaDeGestion, setSistemaDeGestion] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -90,8 +93,20 @@ const TablaSistemaDeGestion = () => {
                       <td>{item.aptitudLaboral}</td>
                       <td>{item.comentarios}</td>
                       <td>
-                        <button className="btn btn-danger">
-                          Asignarle contrato
+                        <button
+                            className="btn btn-danger"
+                            onClick={() =>
+                              navigate("/Contratos", {
+                                state: {
+                                  num_doc: item.usuario_num_doc,
+                                  nombres: item.nombres,
+                                  identrevista: item.identrevista,
+                                  idpostulacion: item.idpostulacion,
+                                },
+                              })
+                            }
+                          >
+                            Asignarle contrato
                         </button>
                       </td>
                     </tr>

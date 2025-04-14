@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
 import axios from "axios";
+import logo from "../assets/Gestorplus.png"; 
+import "./css/Navbar.css"
 
 const Navbar = () => {
     const { logout, user } = useUser();
@@ -9,34 +11,25 @@ const Navbar = () => {
     const [notifications, setNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
 
-    const getCookie = (name) => {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-        return null;
-    };
-
-    const token = getCookie("auth_token");
-
-    const fetchNotifications = async () => {
-        try {
-            const response = await axios.get("http://localhost/gestorplus/backend/", {
-                params: { action: "obtenerNotificacionesAspirante" },
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            console.log("Estructura de respuesta:", response.data);
-
-            setNotifications(response.data.Notificaciones || []);
-        } catch (error) {
-            console.error("Error al obtener las notificaciones:", error);
-        }
-    };
+    const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("auth_token="))
+        ?.split("=")[1];
 
     useEffect(() => {
-        if (user) {
-            fetchNotifications();
-        }
+        const fetchNotifications = async () => {
+            try {
+                const response = await axios.get("http://localhost/gestorplus/backend/", {
+                    params: { action: "obtenerNotificacionesAspirante" },
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setNotifications(response.data.Notificaciones || []);
+            } catch (error) {
+                console.error("Error al obtener las notificaciones:", error);
+            }
+        };
+
+        if (user) fetchNotifications();
     }, [user]);
 
     const handleLogout = () => {
@@ -45,93 +38,76 @@ const Navbar = () => {
         navigate("/");
     };
 
-    const toggleNotifications = () => {
-        setShowNotifications(!showNotifications);
-    };
-
     return (
-        <header>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <div className="container">
-                    <a className="navbar-brand text-primary">Gestor Plus</a>
-                    <button
-                        className="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarNav"
-                        aria-controls="navbarNav"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav ms-auto">
-                            <li className="nav-item">
-                                <button className="nav-link btn btn-primary" onClick={() => navigate("/")}>Inicio</button>
-                            </li>
-                            <li className="nav-item">
-                                <button className="nav-link btn btn-primary" onClick={() => navigate("/aspirante/trabajo")}>
-                                    Todos los trabajos
-                                </button>
-                            </li>
-
-                            {user ? (
-                                <>
-                                    <li className="nav-item">
-                                        <button className="nav-link btn btn-primary" onClick={() => navigate("/aspirante/MisPostulaciones")}>
-                                            Mis Postulaciones
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button className="nav-link btn btn-primary" onClick={() => navigate("/Perfil")}>
-                                            Perfil
-                                        </button>
-                                    </li>
-                                    <li className="nav-item">
-                                        <button className="nav-link btn btn-primary" onClick={handleLogout}>
-                                            Cerrar sesión
-                                        </button>
-                                    </li>
-                                    <li className="nav-item">
-                                        <button className="nav-link btn btn-primary">{user.num_doc}</button>
-                                    </li>
-                                    <li className="nav-item position-relative">
-                                        <button className="nav-link btn btn-light position-relative" onClick={toggleNotifications}>
-                                            <i className="material-icons">notifications</i>
-                                            {notifications.length > 0 && (
-                                                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                                    {notifications.length}
-                                                </span>
-                                            )}
-                                        </button>
-                                        {showNotifications && (
-                                            <div className="dropdown-content position-absolute bg-white shadow-lg rounded p-3 mt-2"
-                                                style={{ width: "250px", right: "0", zIndex: "1000", border: "1px solid #ddd" }}>
-                                                {notifications.length > 0 ? (
-                                                    notifications.map((notification, index) => (
-                                                        <div key={index} className="notification-item mb-2">
-                                                            <p><strong>{notification.descripcionNotificacion}</strong></p>
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <p>No tienes notificaciones nuevas.</p>
-                                                )}
-                                            </div>
-                                        )}
-                                    </li>
-                                </>
-                            ) : (
-                                <li className="nav-item">
-                                    <button className="nav-link btn btn-primary" onClick={() => navigate("/login")}>
-                                        Iniciar Sesión
-                                    </button>
-                                </li>
-                            )}
-                        </ul>
-                    </div>
+        <header className="navbar-modern position-fixed top-0 w-100 d-flex align-items-center justify-content-between px-4 py-2">
+            <div
+                className="d-flex align-items-center gap-2 cursor-pointer animate__animated animate__fadeInLeft"
+                onClick={() => navigate("/")}
+                style={{ textDecoration: "none" }}
+                >
+                <img
+                    src={logo}
+                    alt="Gestorplus Logo"
+                    style={{ width: "75px", height: "75px", borderRadius: "3px" }}
+                />
+                <span
+                    className="fw-bold text-dark"
+                    style={{ fontSize: "1.5rem", fontFamily: "Poppins, sans-serif" }}
+                >
+                    Gestorplus
+                </span>
                 </div>
-            </nav>
+            <div className="d-flex align-items-center gap-3">
+                <button className="btn-modern btn-primary" onClick={() => navigate("/")}>Inicio</button>
+                <button className="btn-modern" onClick={() => navigate("/aspirante/trabajo")}>Trabajos</button>
+
+                {user && (
+                    <>
+                        <button className="btn-modern" onClick={() => navigate("/aspirante/MisPostulaciones")}>Postulaciones</button>
+                        <button className="btn-modern" onClick={() => navigate("/Perfil")}>Perfil</button>
+
+                        <div className="position-relative">
+                            <button
+                                className="btn btn-light rounded-circle p-2"
+                                onClick={() => setShowNotifications(!showNotifications)}
+                            >
+                                <i className="material-icons text-primary">notifications</i>
+                                {notifications.length > 0 && (
+                                    <span className="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-pill">
+                                        {notifications.length}
+                                    </span>
+                                )}
+                            </button>
+                            {showNotifications && (
+                                <div className="notification-box position-absolute end-0 mt-2">
+                                    {notifications.length > 0 ? (
+                                        notifications.map((n, i) => (
+                                            <div key={i} className="notification-item">
+                                                {n.descripcionNotificacion}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="notification-item text-muted">No hay notificaciones nuevas.</div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        <span className="badge bg-light text-dark px-3 py-2 rounded-pill">
+                            {user.num_doc}
+                        </span>
+                        <button className="btn-modern bg-danger" onClick={handleLogout}>
+                            Cerrar sesión
+                        </button>
+                    </>
+                )}
+
+                {!user && (
+                    <button className="btn-modern" onClick={() => navigate("/login")}>
+                        Iniciar Sesión
+                    </button>
+                )}
+            </div>
         </header>
     );
 };

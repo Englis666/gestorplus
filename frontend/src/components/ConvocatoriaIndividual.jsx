@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
+import logoGP from "../assets/GestorplusXFayette.png"; 
 
 const ConvocatoriaIndividual = () => {
     const navigate = useNavigate();
@@ -30,9 +30,7 @@ const ConvocatoriaIndividual = () => {
 
     useEffect(() => {
         axios.get('http://localhost/gestorplus/backend/', {
-            params: {
-                action: 'obtenerConvocatorias',
-            },
+            params: { action: 'obtenerConvocatorias' },
         })
             .then(response => {
                 if (Array.isArray(response.data.convocatorias)) {
@@ -62,10 +60,7 @@ const ConvocatoriaIndividual = () => {
     if (error) return <div className="text-center text-danger mt-5">{error}</div>;
 
     return (
-        <div
-            className="d-flex flex-column min-vh-100"
-            style={{ background: "linear-gradient(to bottom, #E3F2FD, #ECF0F1)" }}
-        >
+        <div className="d-flex flex-column min-vh-100" style={{ background: "linear-gradient(to bottom, #E3F2FD, #ECF0F1)" }}>
             <section className="container py-5 flex-grow-1">
                 <h1 className="mb-4 text-center text-primary fw-bold">Convocatorias</h1>
                 
@@ -76,11 +71,9 @@ const ConvocatoriaIndividual = () => {
                         placeholder="Buscar vacante por nombre..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        style={{
-                            transition: "all 0.3s ease-in-out",
-                        }}
-                        onFocus={(e) => (e.target.style.boxShadow = "0px 0px 12px rgba(0, 123, 255, 0.4)")}
-                        onBlur={(e) => (e.target.style.boxShadow = "none")}
+                        style={{ transition: "all 0.3s ease-in-out" }}
+                        onFocus={(e) => e.target.style.boxShadow = "0px 0px 12px rgba(0, 123, 255, 0.4)"}
+                        onBlur={(e) => e.target.style.boxShadow = "none"}
                     />
                 </div>
 
@@ -89,41 +82,58 @@ const ConvocatoriaIndividual = () => {
                         filteredConvocatorias.map(convocatoria => (
                             <div key={convocatoria.idconvocatoria} className="col">
                                 <div
-                                    className="card shadow-lg rounded-4 border-0 text-center p-4"
-                                    style={{
-                                        transition: "transform 0.3s ease-in-out",
-                                        background: "white",
-                                    }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-                                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                                    className="card shadow-lg rounded-4 border-0"
+                                    style={{ overflow: "hidden", transition: "transform 0.3s ease-in-out" }}
+                                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.03)"}
+                                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
                                 >
-                                    <h3 className="fs-4 text-dark mb-3 text-capitalize text-truncate">
-                                        {convocatoria.nombreConvocatoria}
-                                    </h3>
-                                    <p className="text-muted">Día de publicación</p>
-                                    
-                                    <div className="tags d-flex justify-content-center gap-3 mb-4">
-                                        <p className="p-2 rounded bg-light shadow-sm text-dark">
-                                            <i className="fas fa-dollar-sign me-2 text-success"></i>
-                                            <span>{convocatoria.salario}</span>
-                                        </p>
-                                        <p className="p-2 rounded bg-light shadow-sm text-dark">
-                                            <i className="fas fa-briefcase me-2 text-primary"></i>
-                                            <span>{convocatoria.nombreCargo}</span>
-                                        </p>
-                                    </div>
-                                    
-                                    <button 
-                                        className="btn btn-primary w-100 shadow-sm rounded-pill py-2 fw-bold"
-                                        onClick={() => handleClick(convocatoria)}
+                                    {/* Encabezado con logo como background */}
+                                    <div
+                                        className="card-header p-0 rounded-top"
                                         style={{
-                                            transition: "all 0.3s ease-in-out",
+                                            height: "220px",
+                                            backgroundImage: `url(${logoGP})`,
+                                            backgroundSize: "cover",
+                                            backgroundPosition: "center",
+                                            position: "relative",
                                         }}
-                                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#007bff")}
-                                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#0d6efd")}
                                     >
-                                        Ver detalles
-                                    </button>
+                                        <div
+                                            style={{
+                                                position: "absolute",
+                                                bottom: 0,
+                                                width: "100%",
+                                                background: "linear-gradient(transparent, rgba(0,0,0,0.7))",
+                                                color: "#fff",
+                                                padding: "10px",
+                                            }}
+                                        >
+                                            <h3 className="fs-5 text-capitalize m-0">{convocatoria.nombreConvocatoria}</h3>
+                                            <p className="m-0 small">Día de publicación</p>
+                                        </div>
+                                    </div>
+                                    {/* Cuerpo de la tarjeta */}
+                                    <div className="card-body">
+                                        <div className="d-flex flex-wrap gap-2 mb-3 justify-content-center">
+                                            <span className="p-2 rounded bg-light shadow-sm text-dark small">
+                                                <i className="fas fa-dollar-sign me-1 text-success"></i>
+                                                {convocatoria.salario}
+                                            </span>
+                                            <span className="p-2 rounded bg-light shadow-sm text-dark small">
+                                                <i className="fas fa-briefcase me-1 text-primary"></i>
+                                                {convocatoria.nombreCargo}
+                                            </span>
+                                        </div>
+                                        <button
+                                            className="btn btn-primary w-100 rounded-pill py-2 fw-bold"
+                                            onClick={() => handleClick(convocatoria)}
+                                            style={{ transition: "all 0.3s ease-in-out" }}
+                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#007bff"}
+                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0d6efd"}
+                                        >
+                                            Ver detalles
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))
@@ -132,7 +142,7 @@ const ConvocatoriaIndividual = () => {
                     )}
                 </div>
             </section>
-            <Footer className="mt-auto" />
+            <Footer />
         </div>
     );
 }

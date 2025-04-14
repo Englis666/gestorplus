@@ -81,6 +81,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
         },
       })
       .then((res) => {
+        console.log(res);
         alert("✅ Estudio agregado correctamente.");
         onAgregarEstudio?.();
       })

@@ -70,6 +70,7 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia, onAgregarExperi
         },
       })
       .then((response) => {
+        console.log(response);
         if (response.data.message === "Experiencia agregada") {
           alert("✅ Experiencia agregada correctamente");
           onAgregarExperiencia(response.data.nuevaExperiencia);

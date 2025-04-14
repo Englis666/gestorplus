@@ -10,6 +10,7 @@ use Controlador\AdministradorControlador;
 use Controlador\AspiranteControlador;
 use Controlador\EmpleadoControlador;
 use Controlador\CalculoControlador;
+use Controlador\PublicacionesControlador;
 
 // Obtener método y datos
 $method = $_SERVER['REQUEST_METHOD'];
@@ -32,6 +33,7 @@ $controllers = [
     'chat' => new ChatControlador(),
     'admin' => new AdministradorControlador(),
     'calculo' => new CalculoControlador(),
+    'publicaciones' => new PublicacionesControlador(),
 ];
 
 // Rutas organizadas por método HTTP
@@ -50,6 +52,7 @@ $routes = [
         'solicitarQueja' => ['empleado', 'solicitarQueja'],
         'solicitarAusencia' => ['empleado', 'solicitarAusencia'],
         'solicitarVacaciones' => ['empleado', 'solicitarVacaciones'],
+        'solicitarPermiso' => ['empleado', 'solicitarPermiso'],
 
         // Aspirante
         'aplicacionDeAspirante' => ['aspirante', 'aplicacionDeAspirante'],
@@ -67,10 +70,15 @@ $routes = [
         'noCorroborarJornada' => ['admin', 'noCorroborarJornada'],
         'notificacionAceptada' => ['admin', 'notificacionAceptada'],
         'notificacionRechazada' => ['admin', 'notificacionRechazada'],
+        'aceptarVacacion' => ['admin', 'aceptarVacacion'],
+        'rechazarVacacion' => ['admin' , 'aceptarVacacion'],
         'asignarEntrevista' => ['admin', 'asignarEntrevista'],
         'asignarVinculacion' => ['admin', 'asignarVinculacion'],
         'asistenciaConfirmada' => ['admin', 'asistenciaConfirmada'],
         'asistenciaNoConfirmada' => ['admin', 'asistenciaNoConfirmada'],
+        'permisoAceptado' => ['admin', 'permisoAceptado'],
+        'permisoRechazado' => ['admin' , 'permisoRechazado'],
+        'realizarPublicacionParaContratosHibridos' => ['admin' , 'realizarPublicacionParaContratosHibridos'],
     ],
     'GET' => [
         // Usuario
@@ -88,6 +96,7 @@ $routes = [
         'obtenerAusencias' => ['empleado', 'obtenerAusencias'],
         'obtenerMisVacaciones' => ['empleado', 'obtenerMisVacaciones'],
         'obtenerMiPazySalvo' => ['empleado', 'obtenerMiPazYSalvo'],
+        'obtenerPermisos' => ['empleado', 'obtenerPermisos'],
 
         // Aspirante
         'obtenerPostulacionesAspirante' => ['aspirante', 'obtenerPostulacionesAspirante'],
@@ -116,8 +125,15 @@ $routes = [
         'obtenerTodasLasEstadisticas' => ['admin', 'obtenerTodasLasEstadisticas'],
         'obtenerSistemaDeGestion' => ['admin', 'obtenerSistemaDeGestion'],
         'buscarIdEvaluacion' => ['admin', 'buscarIdEvaluacion'],
-        //NEW
+        'obtenerTodosLosPermisos' => ['admin' , 'obtenerTodosLosPermisos'],
+        
+        //Calculo
         'calcularPostulacionesEnConvocatorias' => ['calculo', 'calcularPostulacionesEnConvocatorias'],
+        'calcularHorasExtra' =>  ['calculo', 'calcularHorasExtra'],
+
+        //Publicacion
+        'obtenerPublicacionPorTipoDeContrato' => ['publicaciones', 'obtenerPublicacionPorTipoDeContrato'],
+
     ],
     'PATCH' => [
         'actualizarPerfil' => ['usuario', 'actualizarPerfil'],

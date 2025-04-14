@@ -1,5 +1,4 @@
 <?php
-
 $server = new Swoole\WebSocket\Server("0.0.0.0", 8082);
 
 $server->on("start", function ($server) {
@@ -23,13 +22,12 @@ $server->on("message", function ($server, $frame) {
         return;
     }
 
-    $method = isset($data["method"]) ? strtoupper($data["method"]) : "POST";
-
+    $method = isset($data["method"]) ? strtoupper($data["method"]) : "GET";
     $url = "http://localhost/gestorplus/backend/";
 
     if ($method === "GET") {
         $queryParams = http_build_query(array_filter($data, fn($k) => $k !== 'method' && $k !== 'token', ARRAY_FILTER_USE_KEY));
-        $url .= "?" . $queryParams;
+        $url .= "?" . $queryParams; 
     }
 
     $ch = curl_init($url);
@@ -37,16 +35,17 @@ $server->on("message", function ($server, $frame) {
 
     $headers = ["Content-Type: application/json"];
 
-    // ✅ Añadir el token como header Authorization
+    // Añadir el token como header Authorization si está presente
     if (isset($data["token"])) {
         $headers[] = "Authorization: Bearer " . $data["token"];
     }
 
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
+    // Si es POST, enviamos los datos como POSTFIELDS
     if ($method === "POST") {
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data)); // Aquí pasamos todo el cuerpo de la solicitud
     }
 
     $response = curl_exec($ch);
@@ -59,12 +58,18 @@ $server->on("message", function ($server, $frame) {
             'message' => 'Error al hacer la solicitud al backend: ' . $error
         ]));
     } else {
-       foreach ($server->connections as $client) {
-    if ($server->isEstablished($client)) {
-        $server->push($client, $response); // ⬅️ Enviar a todos
-    }
-}
-
+        // Verificar si la respuesta es JSON válido
+        $decodedResponse = json_decode($response, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            echo "🔍 Respuesta del servidor: $response\n"; // Esto es para verificar qué datos estamos recibiendo
+            $server->push($frame->fd, $response);  // ⬅️ Enviar solo al cliente que realizó la solicitud
+        } else {
+            echo "❌ Respuesta no válida JSON: $response\n";
+            $server->push($frame->fd, json_encode([
+                'status' => 'error',
+                'message' => 'Respuesta inválida del backend.'
+            ]));
+        }
     }
 
     curl_close($ch);

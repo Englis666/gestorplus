@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ModalSubirContratoPdf from "../modals/ModalSubirContratoPdf";
+import ModalVerContratoPdf from "../modals/ModalVerContrato";
+
 import FormularioVinculacion from "../form/FormularioAsignacionVinculacion";
 
 const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
@@ -8,8 +10,10 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [modalContratoAbierto, setModalContratoAbierto] = useState(null);
+  const [modalContratoAbierto, setModalContratoAbierto] = useState(false);
+  const [modalVerContratoAbierto, setModalVerContratoAbierto] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
+  const [selectedVinculacion, setSelectedVinculacion] = useState(null); // Estado para la vinculacion seleccionada
 
   const [formData, setFormData] = useState({
     num_doc,
@@ -82,7 +86,6 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
 
       if (response.data.Vinculacion) {
         alert("Vinculación asignada con éxito");
-        // Resetear formulario después de la asignación exitosa
         setFormData({
           num_doc,
           nombres,
@@ -115,23 +118,31 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
         throw new Error("El archivo está vacío o no existe.");
       }
 
-      // Verificar si el archivo realmente es un PDF
       const fileType = response.data.type;
       if (fileType !== "application/pdf") {
         throw new Error(`El servidor no devolvió un PDF. Tipo recibido: ${fileType}`);
       }
 
-      // Crear la URL del blob
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileURL = URL.createObjectURL(file);
       setPdfUrl(fileURL);
+      setModalVerContratoAbierto(true); // Abre el modal
     } catch (err) {
       console.error("Error al obtener contrato:", err);
       setErrorMessage("Hubo un error al obtener el contrato.");
     }
   };
 
+  const closeModal = () => {
+    setModalContratoAbierto(false);
+    setModalVerContratoAbierto(false); // Cierra el modal
+    setPdfUrl(""); // Limpiar URL del PDF
+  };
 
+  const openModal = (vinculacion) => {
+    setSelectedVinculacion(vinculacion);
+    setModalContratoAbierto(true);
+  };
 
   return (
     <div className="container mt-5">
@@ -178,7 +189,7 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                           <td>
                             <button
                               className="btn btn-primary"
-                              onClick={() => setModalContratoAbierto(vinculacion.idvinculacion)}
+                              onClick={() => openModal(vinculacion)} // Abre el modal de subida de contrato
                             >
                               Subir contrato físico
                             </button>
@@ -193,7 +204,6 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                               Revisar Contrato
                             </button>
                           </td>
-
                         </tr>
                       ))
                     ) : (
@@ -218,24 +228,20 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
         />
       </div>
 
-      {/* Mostrar el modal con el PDF */}
-      {pdfUrl && (
-        <div className="modal show" tabIndex="-1" role="dialog" style={{ display: "block" }}>
-          <div className="modal-dialog modal-lg" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Ver contrato</h5>
-                <button type="button" className="close" onClick={() => setPdfUrl("")}>
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <iframe src={pdfUrl} width="100%" height="600px" title="Contrato PDF"></iframe>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Modal para subir contrato PDF */}
+      {modalContratoAbierto && selectedVinculacion && (
+        <ModalSubirContratoPdf
+          isOpen={modalContratoAbierto}
+          onClose={closeModal}
+          num_doc={selectedVinculacion.usuario_num_doc}
+          nombres={selectedVinculacion.nombres}
+          idvinculacion={selectedVinculacion.idvinculacion} // O el id correspondiente de la vinculacion
+        />
       )}
+      {modalVerContratoAbierto && (
+        <ModalVerContratoPdf pdfUrl={pdfUrl} closeModal={closeModal} />
+      )}
+
 
       {/* Mostrar mensaje de error */}
       {errorMessage && <div className="alert alert-danger mt-3">{errorMessage}</div>}
