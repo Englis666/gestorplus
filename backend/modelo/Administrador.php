@@ -45,6 +45,12 @@ class Administrador {
                 INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc";
         return $this->ejecutarConsulta($sql);
     }
+    public function obtenerTodosLosPermisos(){
+        $sql = "SELECT * FROM permisos as p
+                INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc";
+        return $this->ejecutarConsulta($sql);
+    }
+
 
     public function obtenerTodasLasNotificaciones() {
         $sql = "SELECT * FROM notificacion";
