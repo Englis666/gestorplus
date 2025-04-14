@@ -34,6 +34,27 @@ class Empleado {
         }
     }
 
+    public function obtenerPermisos($num_doc){ 
+        try{
+            $sql = "SELECT * FROM permiso as p
+                    INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc
+                    WHERE u.num_doc = :num_doc";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(":num_doc" , $num_doc, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if($resultado){
+                return $resultado;
+            }
+            return [];
+        } catch (PDOException $e){
+            echo json_encode(['error' => 'error en la consulta: ' . $e->getMessage()]);
+            http_response_code(500);
+            return [];                                  
+        }
+    }
+
     public function obtenerMisVacaciones($num_doc){
         try{
             $sql = "SELECT * FROM vacacion WHERE usuario_num_doc = :num_doc";
@@ -184,6 +205,43 @@ class Empleado {
             return false;
         }
     }
+
+    public function solicitarPermiso($num_doc, $data) {
+        try {
+            $estado = 'Pendiente';
+    
+            $sql = "INSERT INTO permiso (tipo, fechaInicio, fechaFin, estado, usuario_num_doc) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $data['tipoPermiso'],
+                $data['fechaInicio'],
+                $data['fechaFin'],
+                $estado,
+                $num_doc
+            ]);
+    
+            if ($stmt->rowCount() > 0) {
+                $descripcionNotificacion = "El empleado identificado con la cédula {$num_doc} ha solicitado un permiso de tipo {$data['tipoPermiso']}";
+    
+                $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) VALUES (?, ?, ?, ?)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    $descripcionNotificacion,
+                    'Pendiente',
+                    'General',
+                    $num_doc
+                ]);
+    
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+    
 
 }
 ?>
