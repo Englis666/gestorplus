@@ -58,20 +58,20 @@ class AdministradorControlador {
         $this->jsonResponse(['Vinculaciones' => $this->administrador->obtenerVinculaciones() ? : []]);
     }
 
-     public function buscarIdEvaluacion() {
-        $identrevista = $_GET['identrevista'] ?? null;
-        if (!$identrevista) {
-            echo json_encode(["error" => "Identificador de entrevista no encontrado"]);
-            return;
-        }
-
-        $evaluacion = $this->administrador->buscarIdEvaluacion($identrevista);
-        if ($evaluacion) {
-            echo json_encode(["encontrada" => true, "idevaluacion" => $evaluacion['idevaluacion']]);
-        } else {
-            echo json_encode(["encontrada" => false]);
-        }
+    public function buscarIdEvaluacion() {
+    $identrevista = $_GET['identrevista'] ?? null;
+    if (!$identrevista) {
+        $this->jsonResponse(["error" => "Identificador de entrevista no encontrado"], 400);
     }
+
+    $evaluacion = $this->administrador->buscarIdEvaluacion($identrevista);
+    if ($evaluacion) {
+        $this->jsonResponse(["encontrada" => true, "idevaluacion" => $evaluacion['idevaluacion']]);
+    } else {
+        $this->jsonResponse(["encontrada" => false]);
+    }
+}
+
 
     public function obtenerPazYSalvos() {
         $this->jsonResponse(['Salvos' => $this->administrador->obtenerPazYSalvos() ?: []]);
@@ -87,6 +87,10 @@ class AdministradorControlador {
 
     public function obtenerSistemaDeGestion(){
         $this->jsonResponse(['sistemaDeGestion' => $this->administrador->obtenerSistemaDeGestion() ?: []]);
+    }
+
+    public function obtenerTodosLosPermisos(){
+        $this->jsonResponse(['permisos' =>$this->administrador->obtenerTodosLosPermisos() ?  : []]);
     }
 
     public function obtenerTodasLasNotificaciones() {
@@ -175,6 +179,20 @@ class AdministradorControlador {
         }
         $this->jsonResponse(['success' => true, 'AusenciaRechaza' => $this->administrador->notificacionRechazada($data['data']['idausencia']) ?: []]);
     }
+
+    public function permisoAceptado($data){
+        if(!isset($data['data']['idpermiso'])){
+            $this->jsonResponse(['error' => 'Falta el id de el permiso'], 400);
+        }
+        $this->jsonResponse(['Permiso' => $this->administrador->permisoAceptado($data['data']['idpermiso']) ?: []]);
+    }
+    public function permisoRechazado($data){
+        if (!isset($data['data']['idpermiso'])) {
+            $this->jsonResponse(['error' => 'Falta el id del permiso'], 400);
+        }
+        $this->jsonResponse(['success' => true , 'permisoRechazado' => $this->administrador->permisoRechazado($data['data']['idpermiso']) ?: []]);
+    }
+
 
     public function agregarCargo($data) {
         if (!isset($data['nombreCargo'])) {
