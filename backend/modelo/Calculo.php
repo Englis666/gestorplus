@@ -8,39 +8,47 @@ use PDOException;
 class Calculo {
     private $db;
 
+    // Constructor que recibe la conexión a la base de datos
     public function __construct($db){
         $this->db = $db;
     }
 
-    private function ejecutarConsulta($sql, $params = []){
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (PDOException $e){
-            http_response_code(500);
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            exit;
-        }
-    }
-
+    // Método para calcular las horas extra de la semana
     public function calcularHorasExtra(){
-        $sql = "SELECT j.usuario_num_doc, j.horaEntrada, j.horaSalida, u.nombres, r.nombreRol
-                FROM jornada j
+        // Verifica la fecha actual
+        $sql = "SELECT * FROM jornada j
                 INNER JOIN usuario u ON j.usuario_num_doc = u.num_doc
                 INNER JOIN rol r ON u.rol_idrol = r.idrol
                 WHERE WEEK(j.fecha) = WEEK(CURDATE())";
+        
+        $stmt = $this->db->prepare($sql);
+        
+        // Maneja posibles errores en la ejecución de la consulta
+        try {
+            $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Error en la ejecución de la consulta: " . $e->getMessage() . "\n";
+            exit;
+        }
 
-        $jornadas = $this->ejecutarConsulta($sql);
+        // Recupera todos los resultados de las jornadas
+        $jornadas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (empty($jornadas)) {
+            return [];
+        }
+
 
         $totalHorasSemana = [];
         $datosUsuario = [];
 
+        // Calculamos las horas trabajadas y las acumulamos
         foreach ($jornadas as $jornada) {
             $num_doc = $jornada['usuario_num_doc'];
             $horaEntrada = strtotime($jornada['horaEntrada']);
             $horaSalida = strtotime($jornada['horaSalida']);
             $horasTrabajadas = ($horaSalida - $horaEntrada) / 3600;
+
 
             $totalHorasSemana[$num_doc] = ($totalHorasSemana[$num_doc] ?? 0) + $horasTrabajadas;
             $datosUsuario[$num_doc] = [
@@ -51,11 +59,10 @@ class Calculo {
 
         $jornadasExtra = [];
 
+        // Filtramos las jornadas que superan las 48 horas de trabajo
         foreach ($totalHorasSemana as $num_doc => $totalHoras) {
             if ($totalHoras > 48) {
                 $horasExtra = $totalHoras - 48;
-                $this->registrarHorasExtra($num_doc, $horasExtra);
-
                 $jornadasExtra[] = [
                     'num_doc' => $num_doc,
                     'nombres' => $datosUsuario[$num_doc]['nombres'],
@@ -65,50 +72,86 @@ class Calculo {
             }
         }
 
-        return $jornadasExtra;
-    }
 
-    private function registrarHorasExtra($num_doc, $horasExtra){
-        $sql = "SELECT horasExtra FROM horaextra 
-                WHERE usuario_num_doc = :num_doc 
-                AND DATE(fecha) = CURDATE()";
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':num_doc', $num_doc);
-        $stmt->execute();
-
-        if($stmt->rowCount() > 0 ){
-            $horasExistentes = $stmt->fetch(PDO::FETCH_ASSOC)['horasExtra'];
-
-            if($horasExtra > $horasExistentes){
-                $sql = "UPDATE horaextra 
-                        SET horasExtra = :horasExtra 
-                        WHERE usuario_num_doc = :num_doc 
-                        AND DATE(fecha) = CURDATE()";
-                $stmt = $this->db->prepare($sql);
-                $stmt->bindParam(':num_doc', $num_doc);
-                $stmt->bindParam(':horasExtra', $horasExtra);
-                $stmt->execute();
-            }
-        } else {
-            $sql = "INSERT INTO horaextra (usuario_num_doc, horasExtra, fecha) 
-                    VALUES (:num_doc, :horasExtra, CURDATE())";
+        // Registrar las horas extra en la base de datos
+        foreach ($jornadasExtra as $jornada) {
+            $sql = "SELECT horasExtra FROM horaextra 
+                    WHERE usuario_num_doc = :num_doc 
+                    AND DATE(fecha) = CURDATE()";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':num_doc', $num_doc);
-            $stmt->bindParam(':horasExtra', $horasExtra);
-            $stmt->execute();
+            $stmt->bindParam(':num_doc', $jornada['num_doc']);
+            
+            try {
+                $stmt->execute();
+            } catch (PDOException $e) {
+                echo "Error al ejecutar la consulta para verificar horas extra: " . $e->getMessage() . "\n";
+                exit;
+            }
+
+            if ($stmt->rowCount() > 0) {
+                $horasExistentes = $stmt->fetch(PDO::FETCH_ASSOC)['horasExtra'];
+
+                if ($jornada['horasExtra'] > $horasExistentes) {
+                    $sql = "UPDATE horaextra 
+                            SET horasExtra = :horasExtra 
+                            WHERE usuario_num_doc = :num_doc 
+                            AND DATE(fecha) = CURDATE()";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->bindParam(':num_doc', $jornada['num_doc']);
+                    $stmt->bindParam(':horasExtra', $jornada['horasExtra']);
+
+                    try {
+                        $stmt->execute();
+                    } catch (PDOException $e) {
+                        echo "Error al ejecutar la actualización de horas extra: " . $e->getMessage() . "\n";
+                        exit;
+                    }
+                }
+            } else {
+                // Convertir horas extra a formato TIME (hh:mm:ss)
+                $horasExtraFormato = gmdate("H:i:s", $jornada['horasExtra'] * 3600);
+
+                $sql = "INSERT INTO horaextra (usuario_num_doc, horasExtra, fecha) 
+                        VALUES (:num_doc, :horasExtra, CURDATE())";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(':num_doc', $jornada['num_doc']);
+                $stmt->bindParam(':horasExtra', $horasExtraFormato);
+                
+                try {
+                    $stmt->execute();
+                } catch (PDOException $e) {
+                    echo "Error al ejecutar la inserción de horas extra: " . $e->getMessage() . "\n";
+                    exit;
+                }
+            }
         }
+
+      return $jornadasExtra;
     }
 
+    // Método para calcular la cantidad de postulaciones en convocatorias
     public function calcularPostulacionesEnConvocatorias(){
         $sql = "SELECT c.*, ca.nombreCargo , COUNT(p.idpostulacion) as cantidad_postulaciones
-        FROM convocatoria AS c
-        INNER JOIN  postulacion AS p ON c.idconvocatoria = p.convocatoria_idconvocatoria
-        INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo
-        GROUP BY c.idconvocatoria";
+                FROM convocatoria AS c
+                INNER JOIN postulacion AS p ON c.idconvocatoria = p.convocatoria_idconvocatoria
+                INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo
+                GROUP BY c.idconvocatoria";
         
         return $this->ejecutarConsulta($sql); 
     }
-    
 
+    // Método genérico para ejecutar consultas
+    private function ejecutarConsulta($sql){
+        $stmt = $this->db->prepare($sql);
+        
+        try {
+            $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Error al ejecutar la consulta: " . $e->getMessage() . "\n";
+            exit;
+        }
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
