@@ -59,6 +59,7 @@ class EmpleadoControlador {
         $this->responder('Vacaciones', $this->empleado->obtenerMisVacaciones($num_doc));
     }
 
+    
     public function obtenerJornadas(): void {
         $num_doc = $this->validarToken();
         $this->responder('Jornadas', $this->empleado->obtenerJornadas($num_doc));
@@ -92,6 +93,13 @@ class EmpleadoControlador {
         $num_doc = $this->validarToken();
         $this->jsonResponse([
             'message' => $this->empleado->solicitarVacaciones($num_doc, $data) ? 'Vacaciones solicitadas' : 'Error al solicitar las vacaciones'
+        ]);
+    }
+
+    public function solicitarPermiso(array $data): void{
+        $num_doc = $this->validarToken();
+        $this->jsonResponse([
+            'message' => $this->empleado->solicitarPermiso($num_doc, $data) ? 'Permiso solicitado' : 'Error al solicitar el permiso'
         ]);
     }
 }
