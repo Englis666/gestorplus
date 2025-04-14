@@ -33,4 +33,8 @@ class CalculoControlador{
         $this->responder('convocatorias',  $this->calculo->calcularPostulacionesEnConvocatorias());
     }
 
+    public function calcularHorasExtra(){
+        $this->responder('calculo', $this->calculo->calcularHorasExtra());
+    }
+
 }
