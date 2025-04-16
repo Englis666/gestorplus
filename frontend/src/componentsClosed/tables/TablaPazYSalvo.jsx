@@ -80,7 +80,6 @@ const TablaPazYSalvo = () => {
                         setLoading(false);
                     });
 
-                // Obtener la lista de empleados
                 axios
                     .get("http://localhost/gestorplus/backend/", {
                         headers: {

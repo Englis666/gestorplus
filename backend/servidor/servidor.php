@@ -78,7 +78,7 @@ $routes = [
         'asistenciaNoConfirmada' => ['admin', 'asistenciaNoConfirmada'],
         'permisoAceptado' => ['admin', 'permisoAceptado'],
         'permisoRechazado' => ['admin' , 'permisoRechazado'],
-        'realizarPublicacionParaContratosHibridos' => ['admin' , 'realizarPublicacionParaContratosHibridos'],
+        'agregarPublicacion' => ['publicaciones' , 'agregarPublicacion']
     ],
     'GET' => [
         // Usuario
@@ -130,6 +130,8 @@ $routes = [
         //Calculo
         'calcularPostulacionesEnConvocatorias' => ['calculo', 'calcularPostulacionesEnConvocatorias'],
         'calcularHorasExtra' =>  ['calculo', 'calcularHorasExtra'],
+        'obtenerMinutosTrabajadosDelEmpleado' => ['calculo', 'obtenerMinutosTrabajadosDelEmpleado'],
+        'obtenerMinutosTrabajados' => ['calculo' , 'obtenerMinutosTrabajados'],
 
         //Publicacion
         'obtenerPublicacionPorTipoDeContrato' => ['publicaciones', 'obtenerPublicacionPorTipoDeContrato'],
@@ -138,10 +140,12 @@ $routes = [
     'PATCH' => [
         'actualizarPerfil' => ['usuario', 'actualizarPerfil'],
         'actualizacionHojaDevida' => ['usuario', 'actualizacionHojaDevida'],
+        'actualizarPublicacion' => ['publicaciones' , 'actualizarPublicacion'],
     ],
     'DELETE' => [
         'eliminarEstudio' => ['usuario', 'eliminarEstudio'],
         'eliminarExperiencia' => ['usuario', 'eliminarExperiencia'],
+        'eliminarPublicacion' => ['publicaciones' , 'eliminarPublicacion'],
     ],
 ];
 

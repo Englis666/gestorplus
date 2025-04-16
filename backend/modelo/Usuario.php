@@ -56,45 +56,44 @@ class Usuario {
                 $num_doc = $usuario['num_doc'];
                 $nombres = $usuario['nombres'];
                 $fecha = date('Y-m-d'); 
-                $horaEntrada = date('H:i'); 
-                $horaSalida = date('H:i', strtotime('+8 hours')); 
+                $horaEntrada = date('H:i:s'); 
                 $estadoJornada = "Pendiente";
     
-                $insertarMiJornada = $this->db->prepare("INSERT INTO jornada (fecha, horaEntrada, horaSalida, usuario_num_doc, estadoJornada) 
-                                                          VALUES (?, ?, ?, ?, ?)");
-                if ($insertarMiJornada->execute([$fecha, $horaEntrada, $horaSalida, $num_doc, $estadoJornada])) {
-    
-                    $descripcionNotificacion = "Nueva jornada registrada por inicio de sesión para el usuario con documento: $num_doc y con el nombre $nombres";
-                    
-                    $insertarNotificacion = $this->db->prepare("INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
-                                                               VALUES (?, ?, ?, ?)");
-                    if ($insertarNotificacion->execute([$descripcionNotificacion, 'Jornada Registrada', 'Jornada', $num_doc])) {
-                        return [
-                            'num_doc' => $usuario['num_doc'],
-                            'nombres' => $usuario['nombres'],
-                            'rol' => $usuario['rol_idrol'],  
-                            'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
-                        ];
-                    } else {
-                        return false;
+                $verificar = $this->db->prepare("SELECT * FROM jornada WHERE usuario_num_doc = ? AND fecha = ? AND horaSalida IS NULL");
+                $verificar->execute([$num_doc, $fecha]);
+                
+                if ($verificar->rowCount() === 0) {
+                    $insertarMiJornada = $this->db->prepare("INSERT INTO jornada (fecha, horaEntrada, usuario_num_doc, estadoJornada) 
+                                                             VALUES (?, ?, ?, ?)");
+                    if ($insertarMiJornada->execute([$fecha, $horaEntrada, $num_doc, $estadoJornada])) {
+                        $descripcion = "Nueva jornada registrada por inicio de sesión para el usuario con documento: $num_doc y con el nombre $nombres";
+                        
+                        $insertarNotificacion = $this->db->prepare("INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
+                                                                     VALUES (?, ?, ?, ?)");
+                        $insertarNotificacion->execute([$descripcion, 'Jornada Registrada', 'Jornada', $num_doc]);
                     }
-                } else {
-                    return false;
                 }
     
-            } else {
                 return [
                     'num_doc' => $usuario['num_doc'],
                     'nombres' => $usuario['nombres'],
-                    'rol' => $usuario['rol_idrol'],  
+                    'rol' => $usuario['rol_idrol'],
+                    'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
+                ];
+            } else {
+                // Rol 4 (ej: administrador), solo retorna datos
+                return [
+                    'num_doc' => $usuario['num_doc'],
+                    'nombres' => $usuario['nombres'],
+                    'rol' => $usuario['rol_idrol'],
                     'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
                 ];
             }
-    
         } else {
             return false; 
         }
     }
+    
 
     public function obtenerNotificaciones($num_doc){
         try{

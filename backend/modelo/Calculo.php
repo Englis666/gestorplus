@@ -13,9 +13,7 @@ class Calculo {
         $this->db = $db;
     }
 
-    // Método para calcular las horas extra de la semana
     public function calcularHorasExtra(){
-        // Verifica la fecha actual
         $sql = "SELECT * FROM jornada j
                 INNER JOIN usuario u ON j.usuario_num_doc = u.num_doc
                 INNER JOIN rol r ON u.rol_idrol = r.idrol
@@ -23,7 +21,6 @@ class Calculo {
         
         $stmt = $this->db->prepare($sql);
         
-        // Maneja posibles errores en la ejecución de la consulta
         try {
             $stmt->execute();
         } catch (PDOException $e) {
@@ -141,7 +138,9 @@ class Calculo {
         return $this->ejecutarConsulta($sql); 
     }
 
-    // Método genérico para ejecutar consultas
+    
+
+
     private function ejecutarConsulta($sql){
         $stmt = $this->db->prepare($sql);
         
@@ -154,4 +153,107 @@ class Calculo {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function obtenerMinutosTrabajados($num_doc) {
+    
+        $sql = "SELECT 
+                    j.idJornada,
+                    j.fecha,
+                    j.horaEntrada,
+                    u.nombres,
+                    j.horaSalida,
+                    TIMESTAMPDIFF(MINUTE, 
+                        CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
+                        IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
+                            CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
+                            CONCAT(DATE(j.fecha), ' ', j.horaSalida)
+                        )
+                    ) AS minutos_trabajados,
+                    CASE
+                        WHEN TIMESTAMPDIFF(MINUTE, 
+                            CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
+                            IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
+                                CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
+                                CONCAT(DATE(j.fecha), ' ', j.horaSalida)
+                            )
+                        ) > 480 
+                        THEN TIMESTAMPDIFF(MINUTE, 
+                            CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
+                            IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
+                                CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
+                                CONCAT(DATE(j.fecha), ' ', j.horaSalida)
+                            )
+                        ) - 480
+                        ELSE 0
+                    END AS minutos_extra
+                FROM jornada as j
+                INNER JOIN usuario as u ON j.usuario_num_doc = u.num_doc 
+                WHERE j.usuario_num_doc = :num_doc
+                LIMIT 1";
+    
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':num_doc', $num_doc);
+    
+        try {
+            $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Error al ejecutar la consulta de jornada del día: " . $e->getMessage() . "\n";
+            return null;
+        }
+    
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    public function obtenerMinutosTrabajadosDelEmpleado() {
+    
+        $sql = "SELECT 
+                j.idJornada,
+                j.fecha,
+                j.horaEntrada,
+                j.horaSalida,
+                u.nombres,
+                u.apellidos,
+                u.num_doc,
+                TIMESTAMPDIFF(MINUTE, 
+                    CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
+                    IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
+                        CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
+                        CONCAT(DATE(j.fecha), ' ', j.horaSalida)
+                    )
+                ) AS minutos_trabajados,
+                CASE
+                    WHEN TIMESTAMPDIFF(MINUTE, 
+                        CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
+                        IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
+                            CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
+                            CONCAT(DATE(j.fecha), ' ', j.horaSalida)
+                        )
+                    ) > 480 
+                    THEN TIMESTAMPDIFF(MINUTE, 
+                        CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
+                        IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
+                            CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
+                            CONCAT(DATE(j.fecha), ' ', j.horaSalida)
+                        )
+                    ) - 480
+                    ELSE 0
+                END AS minutos_extra
+            FROM jornada AS j
+            INNER JOIN usuario AS u ON j.usuario_num_doc = u.num_doc;";
+    
+        $stmt = $this->db->prepare($sql);
+    
+        try {
+            $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Error al ejecutar la consulta de jornada del día: " . $e->getMessage() . "\n";
+            return null;
+        }
+    
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+
+
+
 }

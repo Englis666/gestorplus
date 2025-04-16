@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const SolicitudPermiso = ({ userDoc }) => {
+const SolicitudPermiso = ({ }) => {
   const [formData, setFormData] = useState({
     tipo: '',
     fechaInicio: '',
@@ -9,6 +10,21 @@ const SolicitudPermiso = ({ userDoc }) => {
 
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
+  const [token, setToken] = useState(null); 
+
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  };
+
+  useEffect(() => {
+    const authToken = getCookie('auth_token'); 
+    if (authToken) {
+      setToken(authToken);
+    }
+  }, []);
 
   const handleChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,27 +51,33 @@ const SolicitudPermiso = ({ userDoc }) => {
     }
 
     try {
-      const response = await fetch('/api/permiso', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        "http://localhost/gestorplus/backend",
+        {
+          action: "solicitarPermiso",
           ...formData,
-          usuario_num_doc: userDoc
-        })
-      });
-
-      const result = await response.json();
-      if (response.ok) {
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response);
+      if (response.status === 200) {
         setSuccess('Permiso solicitado con éxito.');
         setFormData({ tipo: '', fechaInicio: '', fechaFin: '' });
       } else {
-        setErrors({ general: result.message || 'Error al enviar la solicitud.' });
+        setErrors({ general: response.data.message || 'Error al enviar la solicitud.' });
       }
     } catch (error) {
-      setErrors({ general: 'Error de conexión con el servidor.' });
+      if (error.response) {
+        setErrors({ general: error.response.data.message || 'Error del servidor.' });
+      } else if (error.request) {
+        setErrors({ general: 'No se recibió respuesta del servidor.' });
+      } else {
+        setErrors({ general: 'Error de conexión: ' + error.message });
+      }
     }
   };
 
@@ -71,21 +93,21 @@ const SolicitudPermiso = ({ userDoc }) => {
           {errors.general && <div className="alert alert-danger">{errors.general}</div>}
 
           <form onSubmit={handleSubmit} noValidate>
-          <div className="mb-3">
-            <label htmlFor="tipo" className="form-label">Tipo de Permiso</label>
-            <select
+            <div className="mb-3">
+              <label htmlFor="tipo" className="form-label">Tipo de Permiso</label>
+              <select
                 className={`form-select ${errors.tipo ? 'is-invalid' : ''}`}
                 name="tipo"
                 id="tipo"
                 value={formData.tipo}
                 onChange={handleChange}
-            >
+              >
                 <option value="">Selecciona una opción</option>
                 <option value="Incapacidad">Incapacidad</option>
                 <option value="Permiso por hijo menor de edad">Permiso por hijo menor de edad</option>
                 <option value="Cita médica por especialista">Cita médica por especialista</option>
-            </select>
-            {errors.tipo && <div className="invalid-feedback">{errors.tipo}</div>}
+              </select>
+              {errors.tipo && <div className="invalid-feedback">{errors.tipo}</div>}
             </div>
             <div className="row">
               <div className="col-md-6 mb-3">

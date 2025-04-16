@@ -43,7 +43,6 @@ const TablaHorasExtra = () => {
     }
   }, [sendMessage]);
 
-  // Aquí agregamos un useEffect que escucha el último mensaje y actualiza las horas extra
   useEffect(() => {
     if (ultimoMensaje?.calculo) {
 
@@ -63,13 +62,12 @@ const TablaHorasExtra = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-center text-dark font-weight-bold">Horas Extra</h2>
-
       <div className="alert alert-info text-center">
         <span className="spinner-border spinner-border-sm me-2"></span>
         {error || socketMensajeEstado || setMensajeEstado}
       </div>
 
+      <h2 className="mb-4 text-center text-dark font-weight-bold">Horas Extra</h2>
       <div className="table-responsive">
         <p className="text-dark">
           Aquí podrás analizar tus horas extra. Si tienes alguna duda, contacta
@@ -103,7 +101,7 @@ const TablaHorasExtra = () => {
             ) : (
               <tr>
                 <td colSpan="5" className="py-3 px-4 text-center">
-                  {loading ? "Cargando horas extra..." : "No hay horas extra registradas."}
+                  {loading ? "Cargando horas extra..." : "No hay horas extra registradas para esta semana."}
                 </td>
               </tr>
             )}

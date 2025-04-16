@@ -12,27 +12,35 @@ class Empleado {
     public function __construct($db){
         $this->db = $db;
     }
-
     
+    public function obtenerMiPazYSalvo($num_doc) {
+        try {
+            $sql = "SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc";
+            $stmtVinculacion = $this->db->prepare($sql);
+            $stmtVinculacion->bindParam(':num_doc', $num_doc, PDO::PARAM_STR); 
+            $stmtVinculacion->execute();
     
-    public function obtenerMiPazYSalvo($vinculacion_idvinculacion){
-        try{
-            $sql = "SELECT * FROM pazysalvo WHERE vinculacion_idvinculacion = :vinculacion_idvinculacion";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':vinculacion_idvinculacion', $vinculacion_idvinculacion, PDO::PARAM_INT);
-            $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            if($resultado){
-                return $resultado;
+            $vinculacion = $stmtVinculacion->fetch(PDO::FETCH_ASSOC);
+    
+            if ($vinculacion) {
+                $sql = "SELECT * FROM pazysalvo WHERE vinculacion_idvinculacion = :vinculacion_idvinculacion";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindParam(':vinculacion_idvinculacion', $vinculacion_idvinculacion, PDO::PARAM_INT);
+                $stmt->execute();
+                $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+                return $resultado ? $resultado : [];
             }
-            return [];
-        }catch (PDOException $e) {
+    
+            return []; 
+    
+        } catch (PDOException $e) {
             echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
             http_response_code(500);
             return [];
         }
     }
+    
 
     public function obtenerPermisos($num_doc){ 
         try{
@@ -94,6 +102,19 @@ class Empleado {
         return [];
         }
     }
+    public function finalizarJornada($num_doc){
+        date_default_timezone_set('America/Bogota');
+        $fecha = date('Y-m-d');
+        $horaSalida = date('H:i:s');
+    
+        $sql = "UPDATE jornada 
+                SET horaSalida = ?, estadoJornada = 'Finalizada' 
+                WHERE usuario_num_doc = ? AND fecha = ? AND horaSalida IS NULL";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$horaSalida, $num_doc, $fecha]);
+    }
+    
 
 
     public function obtenerAusencias($num_doc){
@@ -213,7 +234,7 @@ class Empleado {
             $sql = "INSERT INTO permiso (tipo, fechaInicio, fechaFin, estado, usuario_num_doc) VALUES (?, ?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                $data['tipoPermiso'],
+                $data['tipo'],
                 $data['fechaInicio'],
                 $data['fechaFin'],
                 $estado,
@@ -221,7 +242,7 @@ class Empleado {
             ]);
     
             if ($stmt->rowCount() > 0) {
-                $descripcionNotificacion = "El empleado identificado con la cédula {$num_doc} ha solicitado un permiso de tipo {$data['tipoPermiso']}";
+                $descripcionNotificacion = "El empleado identificado con la cédula {$num_doc} ha solicitado un permiso de tipo {$data['tipo']}";
     
                 $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) VALUES (?, ?, ?, ?)";
                 $stmt = $this->db->prepare($sql);

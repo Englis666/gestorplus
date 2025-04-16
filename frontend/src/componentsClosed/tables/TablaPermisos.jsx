@@ -208,10 +208,10 @@ const TablaPermisos = () => {
                 >
                   <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                     <tr>
+                      <th>Nombre Empleado</th>
                       <th>Fecha de inicio</th>
                       <th>Fecha de fin</th>
                       <th>Tipo de Permiso</th>
-                      <th>Descripción</th>
                       <th>Aprobado</th>
                       {(rol === "1" || rol === "2") && <th>Acciones</th>}
                     </tr>
@@ -220,10 +220,10 @@ const TablaPermisos = () => {
                     {permisos.length > 0 ? (
                       permisos.map((permiso) => (
                         <tr key={permiso.idpermiso}>
+                          <td>{permiso.nombres}, {permiso.apellidos}</td>
                           <td>{permiso.fechaInicio}</td>
                           <td>{permiso.fechaFin}</td>
-                          <td>{permiso.tipoPermiso}</td>
-                          <td>{permiso.descripcion}</td>
+                          <td>{permiso.tipo}</td>
                           <td>{permiso.aprobado ? "Sí" : "No"}</td>
                           {(rol === "1" || rol === "2") && (
                             <td>

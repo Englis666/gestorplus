@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
 
 const TablaJornadas = () => {
   const [Jornadas, setJornadas] = useState([]);
+  const [filtrado, setFiltrado] = useState([]);
+  const [empleados, setEmpleados] = useState([]);
+  const [minutosTrabajados, setMinutosTrabajados] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rol, setRol] = useState(null);
+  const [filtroNombreTabla, setFiltroNombreTabla] = useState("todos");
+  const [filtroFechaTabla, setFiltroFechaTabla] = useState("");
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -23,7 +28,6 @@ const TablaJornadas = () => {
         const decodedToken = jwtDecode(token);
         const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
         if (isTokenExpired) {
-          console.error("El token ha expirado");
           setError("El token ha expirado.");
           setLoading(false);
           return;
@@ -32,182 +36,203 @@ const TablaJornadas = () => {
         const Rol = decodedToken?.data?.rol;
         setRol(Rol);
 
-        const roleActions = {
+        const action = {
           "1": "obtenerTodasLasJornadas",
           "2": "obtenerTodasLasJornadas",
           "3": "obtenerJornadas",
-        };
-
-        const action = roleActions[Rol];
-        if (!action) {
-          console.error("Rol no válido");
-          setError("Rol no reconocido");
-          setLoading(false);
-          return;
-        }
+        }[Rol];
 
         axios
           .get("http://localhost/gestorplus/backend/", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
             params: { action },
           })
-          .then((response) => {
-            const Jornadas = response.data?.Jornadas;
-            if (Array.isArray(Jornadas)) {
-              setJornadas(Jornadas);
-            } else {
-              console.error("Las Jornadas no son un array");
-              setJornadas([]);
-            }
+          .then((res) => {
+            const jornadas = res.data?.Jornadas || [];
+            setJornadas(jornadas);
+            setFiltrado(jornadas);
+            const nombres = [...new Set(jornadas.map((j) => j.nombres))];
+            setEmpleados(nombres);
+            cargarMinutos(jornadas);
             setLoading(false);
           })
-          .catch((err) => {
-            console.error("Error al obtener las Jornadas:", err);
+          .catch(() => {
             setError("Hubo un problema al cargar las Jornadas.");
             setLoading(false);
           });
-      } catch (error) {
-        console.error("Error al decodificar el token:", error);
+      } catch {
         setError("Token inválido o malformado.");
         setLoading(false);
       }
     } else {
-      console.error("No se encontró el token en las cookies o localStorage.");
       setError("Token no encontrado.");
       setLoading(false);
     }
   }, []);
 
+  useEffect(() => {
+    aplicarFiltros();
+  }, [Jornadas, filtroNombreTabla, filtroFechaTabla]);
+
+  const aplicarFiltros = () => {
+    let resultado = [...Jornadas];
+
+    if (filtroNombreTabla !== "todos") {
+      resultado = resultado.filter((j) => j.nombres === filtroNombreTabla);
+    }
+
+    if (filtroFechaTabla !== "") {
+      resultado = resultado.filter((j) => j.fecha === filtroFechaTabla);
+    }
+
+    setFiltrado(resultado);
+  };
+
+  const cargarMinutos = async (jornadas) => {
+    const minutos = {};
+    for (const jornada of jornadas) {
+      try {
+        const { data } = await axios.get("http://localhost/gestorplus/backend/", {
+          params: {
+            action: "obtenerMinutosTrabajados",
+            num_doc: jornada.usuario_num_doc,
+            fecha: jornada.fecha,
+          },
+        });
+        minutos[jornada.idJornada] = data;
+      } catch {
+        minutos[jornada.idJornada] = { minutos_trabajados: "-", minutos_extra: "-" };
+      }
+    }
+    setMinutosTrabajados(minutos);
+  };
+
   const handleCorroborar = (idJornada) => {
-    console.log("Datos enviados al backend:", { idJornada });
-    axios
-      .post("http://localhost/gestorplus/backend/", {
-        action: "corroborarJornada",
-        data: { idJornada },
-      })
-      .then((response) => {
-        console.log("Respuesta del servidor:", response.data); 
-        alert("La jornada ha sido corroborada correctamente.");
-      })
-      .catch((err) => {
-        console.error("Error al corroborar la jornada:", err);
-        if (err.response) {
-          console.error("Respuesta del servidor (error):", err.response.data);
-          alert(`Error: ${err.response.data.error || 'Hubo un problema al corroborar la jornada.'}`);
-        } else if (err.request) {
-          console.error("No hubo respuesta del servidor:", err.request);
-          alert("No se recibió respuesta del servidor.");
-        } else {
-          console.error("Error en la configuración de la solicitud:", err.message);
-          alert("Hubo un problema al procesar la solicitud.");
-        }
-      });
+    // Acción al corroborar
+    console.log("Corroborar", idJornada);
   };
 
   const handleNoCorroborar = (idJornada) => {
-    console.log("Datos enviados al backend:", { idJornada });
-    console.log("Intentando marcar como no corroborada la jornada con ID:", idJornada);
-
-    axios
-      .post("http://localhost/gestorplus/backend/", {
-        action: "noCorroborarJornada",
-        data: { idJornada }, 
-      })
-      .then((response) => {
-        console.log("Respuesta del servidor:", response.data); 
-        alert("La jornada ha sido marcada como no corroborada.");
-      })
-      .catch((err) => {
-        console.error("Error al marcar la jornada como no corroborada:", err);
-        if (err.response) {
-          console.error("Datos de la respuesta del servidor:", err.response.data);
-          console.error("Estado de la respuesta:", err.response.status);
-          alert(`Error: ${err.response.data.error || 'Hubo un problema al procesar la solicitud.'}`);
-        } else if (err.request) {
-          console.error("No hubo respuesta del servidor:", err.request);
-          alert("No se recibió respuesta del servidor.");
-        } else {
-          console.error("Error en la configuración de la solicitud:", err.message);
-          alert("Hubo un problema al procesar la solicitud.");
-        }
-      });
+    // Acción al no corroborar
+    console.log("No corroborar", idJornada);
   };
 
-  if (loading) {
-    return <div>Cargando jornadas...</div>;
-  }
+  const handleFinalizarJornada = async (idJornada, fecha) => {
+    try {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("auth_token="))
+        ?.split("=")[1];
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+      await axios.post("http://localhost/gestorplus/backend/", null, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          action: "finalizarJornada",
+          idJornada,
+          fecha,
+        },
+      });
+
+      // Refrescar jornadas después de finalizar
+      setJornadas((prev) =>
+        prev.map((j) =>
+          j.idJornada === idJornada
+            ? { ...j, estadoJornada: "Finalizada", horaSalida: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+            : j
+        )
+      );
+    } catch (error) {
+      alert("Error al finalizar la jornada.");
+    }
+  };
+
+  if (loading) return <div>Cargando jornadas...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-center text-dark font-weight-bold mt-4">Jornadas (Control de Entrada de Trabajo)</h2>
-      <div className="row g-4">
-        <div className="col-12 col-md-12">
-          <div
-            className="card shadow-sm border-0 mb-5"
-            style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}
-          >
-            <div className="card-body">
-              <p>Control de Entradas de Trabajo</p>
-              <div className="table-responsive">
-                <table
-                  className="table table-hover"
-                  style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}
-                >
-                  <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
-                    <tr>
-                      <th>Fecha</th>
-                      <th>Hora de Entradas</th>
-                      <th>Hora de Salida</th>
-                      <th>Nombre del Empleado</th>
-                      <th>Estado de Jornada</th>
-                      {rol === "1" || rol === "2" ? (
-                        <th>Acciones</th>
-                      ) : null}
+      <h2 className="text-center text-dark font-weight-bold mb-4">
+        Jornadas (Control de Entrada de Trabajo)
+      </h2>
+
+      <div className="card shadow-sm border-0" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
+        <div className="card-body">
+          <div className="table-responsive">
+            <table className="table table-hover table-bordered">
+              <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
+                <tr>
+                  <th>
+                    <input
+                      type="date"
+                      className="form-control form-control-sm"
+                      value={filtroFechaTabla}
+                      onChange={(e) => setFiltroFechaTabla(e.target.value)}
+                    />
+                  </th>
+                  <th>Hora Entrada</th>
+                  <th>Hora Salida</th>
+                  <th>
+                    <select
+                      className="form-select form-select-sm"
+                      value={filtroNombreTabla}
+                      onChange={(e) => setFiltroNombreTabla(e.target.value)}
+                    >
+                      <option value="todos">Todos</option>
+                      {empleados.map((nombre, idx) => (
+                        <option key={idx} value={nombre}>{nombre}</option>
+                      ))}
+                    </select>
+                  </th>
+                  <th>Estado</th>
+                  {(rol === "1" || rol === "2") && <th>Acciones</th>}
+                  {rol === "3" && <th>Acciones</th>}
+                </tr>
+              </thead>
+              <tbody className="text-center">
+                {filtrado.length > 0 ? (
+                  filtrado.map((j) => (
+                    <tr key={j.idJornada}>
+                      <td>{j.fecha}</td>
+                      <td>{j.horaEntrada}</td>
+                      <td>{j.horaSalida}</td>
+                      <td>{j.nombres}</td>
+                      <td>{j.estadoJornada}</td>
+                      {(rol === "1" || rol === "2") && (
+                        <td className="d-flex flex-column">
+                          <button
+                            className="btn btn-success btn-sm mb-2"
+                            onClick={() => handleCorroborar(j.idJornada)}
+                          >
+                            Corroborar
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleNoCorroborar(j.idJornada)}
+                            disabled={j.estadoJornada === "Jornada rechazada"}
+                          >
+                            No Corroborar
+                          </button>
+                        </td>
+                      )}
+                      {rol === "3" && j.estadoJornada === "Pendiente" && (
+                        <td>
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => handleFinalizarJornada(j.idJornada, j.fecha)}
+                          >
+                            Finalizar Jornada
+                          </button>
+                        </td>
+                      )}
                     </tr>
-                  </thead>
-                  <tbody className="text-center">
-                    {Jornadas.length > 0 ? (
-                      Jornadas.map((jornada) => (
-                        <tr key={jornada.idJornada}>
-                          <td className="py-3 px-4">{jornada.fecha}</td>
-                          <td className="py-3 px-4">{jornada.horaEntrada}</td>
-                          <td className="py-3 px-4">{jornada.horaSalida}</td>
-                          <td className="py-3 px-4">{jornada.nombres}</td>
-                          <td className="py-3 px-4">{jornada.estadoJornada}</td>
-                            {rol === "1" || rol === "2" ? (
-                              <td className="py-3 px-4 d-flex flex-column">
-                                <button
-                                  className="btn btn-success btn-sm me-2 mb-2"
-                                  onClick={() => handleCorroborar(jornada.idJornada)}
-                                >
-                                  Corroborar
-                                </button>
-                                <button
-                                  className="btn btn-danger btn-sm"
-                                  onClick={() => handleNoCorroborar(jornada.idJornada)}
-                                  disabled={jornada.estadoJornada === "Jornada rechazada"}
-                                >
-                                  No corroborar
-                                </button>
-                              </td>
-                            ) : null}
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="6">No hay jornadas disponibles.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8">No hay jornadas disponibles.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

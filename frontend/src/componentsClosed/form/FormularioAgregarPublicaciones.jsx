@@ -43,7 +43,6 @@ const FormularioPublicacion = () => {
     setErrors({});
     setEnviado(true);
 
-    // Aquí se enviaría el formulario con fetch/axios
     console.log("Formulario enviado:", form);
   };
 

@@ -59,7 +59,12 @@ class EmpleadoControlador {
         $this->responder('Vacaciones', $this->empleado->obtenerMisVacaciones($num_doc));
     }
 
-    
+    public function obtenerMipazYSalvo(): vodi{
+        $num_doc = $this->validarToken();
+        $this->responder('Salvos', $this->empleado->obtenerMipazYSalvo());
+    }
+
+
     public function obtenerJornadas(): void {
         $num_doc = $this->validarToken();
         $this->responder('Jornadas', $this->empleado->obtenerJornadas($num_doc));
@@ -73,6 +78,11 @@ class EmpleadoControlador {
     public function obtenerPazYsalvos(): void {
         $num_doc = $this->validarToken();
         $this->responder('PazYSalvo', $this->empleado->obtenerPazYsalvos($num_doc));
+    }
+
+    public function obtenerPermisos(): void{
+        $num_doc = $this->validarToken();
+        $this->responder('permisos', $this->empleado->obtenerPermisos($num_doc));
     }
 
     public function solicitarQueja(array $data): void {
@@ -102,4 +112,10 @@ class EmpleadoControlador {
             'message' => $this->empleado->solicitarPermiso($num_doc, $data) ? 'Permiso solicitado' : 'Error al solicitar el permiso'
         ]);
     }
+
+    public function finalizarJornada(){
+        $num_doc = $this->validarToken();
+        $this->jsonResponse(['message' => $this->empleado->finalizarJornada($num_doc) ? 'Jornada finalizada' : 'Error al finalizar la jornada']);
+    }
+
 }

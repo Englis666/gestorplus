@@ -7,17 +7,17 @@ use Config\Clave;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class PublicacionesControlador{
+class PublicacionesControlador {
     private $db;
     private $publicaciones;
 
-    public function __construct(){
+    public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
         $this->publicaciones = new Publicaciones($this->db);
     }
 
-    public function jsonResponse($data, $status = 200){
+    public function jsonResponse($data, $status = 200) {
         http_response_code($status);
         echo json_encode($data);
         exit;
@@ -52,10 +52,48 @@ class PublicacionesControlador{
         $this->jsonResponse([$clave => $resultado ?: []]);
     }
 
-    public function obtenerPublicacionPorTipoDeContrato(){
+    public function obtenerPublicacionPorTipoDeContrato() {
         $num_doc = $this->validarToken();
         $this->responder('Publicaciones', $this->publicaciones->obtenerPublicacionPorTipoDeContrato($num_doc));
     }
 
+    public function agregarPublicacion($data) {
+        $num_doc = $this->validarToken();
+        
+        if ($this->publicaciones->agregarPublicacion($data, $num_doc)) {
+            $this->jsonResponse(['mensaje' => 'Publicación agregada exitosamente'], 201);
+        } else {
+            $this->jsonResponse(['error' => 'Error al agregar la publicación'], 500);
+        }
+    }
 
+    public function actualizarPublicacion($data) {
+        $num_doc = $this->validarToken();
+
+        if (empty($data['idPublicacion'])) {
+            $this->jsonResponse(['error' => 'ID de publicación no proporcionado'], 400);
+        }
+
+        if ($this->publicaciones->actualizarPublicacion($data)) {
+            $this->jsonResponse(['mensaje' => 'Publicación actualizada exitosamente'], 200);
+        } else {
+            $this->jsonResponse(['error' => 'Error al actualizar la publicación'], 500);
+        }
+    }
+
+    public function eliminarPublicacion($data) {
+        $num_doc = $this->validarToken();
+
+        // Validar si se proporciona el ID
+        if (empty($data['idPublicacion'])) {
+            $this->jsonResponse(['error' => 'ID de publicación no proporcionado'], 400);
+        }
+
+        // Llamamos al modelo para eliminar la publicación
+        if ($this->publicaciones->eliminarPublicacion($data['idPublicacion'])) {
+            $this->jsonResponse(['mensaje' => 'Publicación eliminada exitosamente'], 200);
+        } else {
+            $this->jsonResponse(['error' => 'Error al eliminar la publicación'], 500);
+        }
+    }
 }
