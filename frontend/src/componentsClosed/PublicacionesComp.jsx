@@ -28,8 +28,10 @@ const PublicacionesComp = () => {
       console.log("Token expirado");
       return;
     }
-    const Rol = decodedToken?.data?.rol;
+
+    const Rol = Number(decodedToken?.data?.rol); // 👈 Conversión a número
     setRol(Rol);
+    console.log("ROL:", Rol);
 
     const fetchPublicaciones = async () => {
       try {

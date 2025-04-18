@@ -40,7 +40,12 @@ const TablaVacaciones = () => {
             const Rol = decodedToken?.data?.rol;
             setRol(Rol);
 
-            const action = Rol === "1" || Rol === "2" ? "obtenerTodasLasVacaciones" : Rol === "3" ? "obtenerMisVacaciones" : null;
+            const action = Rol === "1" || Rol === "2"
+                ? "obtenerTodasLasVacaciones"
+                : Rol === "3"
+                    ? "obtenerMisVacaciones"
+                    : null;
+
             if (!action) {
                 setError("Rol no válido.");
                 setLoading(false);
@@ -51,9 +56,9 @@ const TablaVacaciones = () => {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { action },
             }).then((response) => {
-
-                const vacacionesData = Array.isArray(response.data) ? response.data : (response.data.Vacaciones || []);
-
+                const vacacionesData = Array.isArray(response.data)
+                    ? response.data
+                    : (response.data.Vacaciones || []);
                 setVacaciones(vacacionesData);
                 setLoading(false);
             }).catch(() => {
@@ -65,8 +70,6 @@ const TablaVacaciones = () => {
             setLoading(false);
         }
     }, []);
-
-
 
     const handleInputChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -98,7 +101,7 @@ const TablaVacaciones = () => {
             console.log("Respuesta del backend", response);
             alert("Vacaciones solicitadas correctamente.");
         }).catch((err) => {
-            console.error("Error al enviar la vacacion", err);
+            console.error("Error al enviar la vacación", err);
             alert("Error al solicitar vacaciones.");
         });
     };
@@ -144,13 +147,15 @@ const TablaVacaciones = () => {
                         </div>
                     </div>
                 </div>
+
                 <div className="col-md-6">
                     <Calendar
                         localizer={localizer}
                         events={vacaciones.map((v) => ({
                             title: `Vacaciones de ${v.nombres}`,
-                            start: new Date(v.fechaInicio),
-                            end: new Date(v.fechaFin),
+                            start: moment(v.fechaInicio).startOf("day").toDate(),
+                            end: moment(v.fechaFin).add(1, "day").startOf("day").toDate(),
+                            allDay: true,
                         }))}
                         startAccessor="start"
                         endAccessor="end"
@@ -158,6 +163,7 @@ const TablaVacaciones = () => {
                     />
                 </div>
             </div>
+
             <div className="table-responsive mt-4">
                 <table className="table table-hover">
                     <thead className="text-center">
@@ -166,7 +172,6 @@ const TablaVacaciones = () => {
                             <th>Fecha Finalización</th>
                             <th>Aprobado por</th>
                             <th>Estado</th>
-                            {/* Solo mostrar "Nombre completo" y las acciones si no es rol 3 */}
                             {rol !== "3" && <th>Nombre completo del usuario</th>}
                             {rol !== "3" && <th>Acción</th>}
                             {rol !== "3" && <th>Acción</th>}
@@ -180,20 +185,18 @@ const TablaVacaciones = () => {
                                     <td className="py-3 px-4">{vacacion.fechaFin || "N/A"}</td>
                                     <td className="py-3 px-4">{vacacion.aprobadoPor || "Pendiente"}</td>
                                     <td className="py-3 px-4">{vacacion.estadoVacacion || "Desconocido"}</td>
-                                    {/* Solo mostrar "Nombre completo" si el rol no es 3 */}
                                     {rol !== "3" && (
                                         <td className="py-3 px-4">
                                             {vacacion.nombres ? `${vacacion.nombres} ${vacacion.apellidos}` : "N/A"}
                                         </td>
                                     )}
-                                    {/* Solo mostrar los botones si el rol no es 3 */}
                                     {rol !== "3" && (
                                         <>
                                             <td className="py-3 px-4">
-                                                <button className="btn btn-primary">Aceptar Vacacion</button>
+                                                <button className="btn btn-primary">Aceptar Vacación</button>
                                             </td>
                                             <td className="py-3 px-4">
-                                                <button className="btn btn-danger">Rechazar Vacacion</button>
+                                                <button className="btn btn-danger">Rechazar Vacación</button>
                                             </td>
                                         </>
                                     )}
@@ -209,7 +212,6 @@ const TablaVacaciones = () => {
             </div>
         </div>
     );
-
 };
 
 export default TablaVacaciones;
