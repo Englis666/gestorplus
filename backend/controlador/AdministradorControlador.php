@@ -1,272 +1,303 @@
 <?php
+
 namespace Controlador;
 
-use Modelo\Administrador;
 use Config\Database;
-use Config\Clave;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+use Exception;
+use Modelo\Administrador;
+use Servicio\JsonResponseService;
+use Servicio\TokenService;
 
+class AdministradorControlador
+{
+    private Administrador $administrador;
+    private Database $db;
+    private JsonResponseService $jsonResponseService;
+    private TokenService $tokenService;
 
-class AdministradorControlador {
-    private $db;
-    private $administrador;
-
-    public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
-        $this->administrador = new Administrador($this->db);
+    public function __construct()
+    {
+        $this->db = new Database();
+        $this->administrador = new Administrador($this->db->getConnection());
+        $this->tokenService = new TokenService();
+        $this->jsonResponseService = new JsonResponseService();
     }
 
-    private function jsonResponse($data, $status = 200) {
-        http_response_code($status);
-        echo json_encode($data);
-        exit;
-    }
-
-    private function verificarToken() {
-    $headers = getallheaders(); 
-    
-    // Intenta obtener el Authorization desde varias fuentes
-    //SOLUCION DE TOKEN EN APP MOVIL
-    
-    $authHeader = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
-
-    if (!$authHeader || !preg_match('/^Bearer\s+(\S+)$/', $authHeader, $matches)) {
-        $this->jsonResponse(['error' => 'Token no proporcionado o formato incorrecto'], 401);
-    }
-
-    $jwt = $matches[1];
-
-    try {
-        $decoded = JWT::decode($jwt, new Key(Clave::SECRET_KEY, Clave::JWT_ALGO));
-        return $decoded; 
-    } catch (\Firebase\JWT\ExpiredException $e) {
-        $this->jsonResponse(['error' => 'El token ha expirado'], 401);
-    } catch (\Firebase\JWT\SignatureInvalidException $e) {
-        $this->jsonResponse(['error' => 'Firma del token no válida'], 401);
-    } catch (\Exception $e) {
-        $this->jsonResponse(['error' => 'Error en el token: ' . $e->getMessage()], 401);
-    }
-}
-
-
-    public function obtenerCargos() {
-        $this->jsonResponse(['cargos' => $this->administrador->obtenerCargos() ?: []]);
-    }
-    public function obtenerVinculaciones(){
-        $this->jsonResponse(['Vinculaciones' => $this->administrador->obtenerVinculaciones() ? : []]);
-    }
-
-    public function buscarIdEvaluacion() {
-    $identrevista = $_GET['identrevista'] ?? null;
-    if (!$identrevista) {
-        $this->jsonResponse(["error" => "Identificador de entrevista no encontrado"], 400);
-    }
-
-    $evaluacion = $this->administrador->buscarIdEvaluacion($identrevista);
-    if ($evaluacion) {
-        $this->jsonResponse(["encontrada" => true, "idevaluacion" => $evaluacion['idevaluacion']]);
-    } else {
-        $this->jsonResponse(["encontrada" => false]);
-    }
-}
-
-
-    public function obtenerPazYSalvos() {
-        $this->jsonResponse(['Salvos' => $this->administrador->obtenerPazYSalvos() ?: []]);
-    }
-
-    public function obtenerPostulaciones() {
-        $this->jsonResponse(['Postulaciones' => $this->administrador->obtenerPostulaciones() ?: []]);
-    }
-
-    public function obtenerEmpleados() {
-        $this->jsonResponse(['empleados' => $this->administrador->obtenerEmpleados() ?: []]);
-    }
-
-    public function obtenerSistemaDeGestion(){
-        $this->jsonResponse(['sistemaDeGestion' => $this->administrador->obtenerSistemaDeGestion() ?: []]);
-    }
-
-    public function obtenerTodosLosPermisos(){
-        $this->jsonResponse(['permisos' =>$this->administrador->obtenerTodosLosPermisos() ?  : []]);
-    }
-
-    public function obtenerTodasLasNotificaciones() {
-        $this->verificarToken();
-        $this->jsonResponse(['Notificaciones' => $this->administrador->obtenerTodasLasNotificaciones() ?: []]);
-    }
-
-    public function obtenerTodasLasEstadisticas() {
-        $this->verificarToken();
-        $estadisticas = $this->administrador->obtenerTotalEstadisticas();
-        
-        $this->jsonResponse([
-            'totalEntradas' => $estadisticas['totalEntradas'],
-            'totalAusencias' => $estadisticas['totalAusencias']
-        ]);
-    }
-    public function obtenerTodasLasVacaciones(){
-        $this->jsonResponse($this->administrador->obtenerTodasLasVacaciones());
-    }
-
-
-    public function obtenerTodasLasHorasExtra() {
-        $this->jsonResponse($this->administrador->obtenerTodasLasHorasExtra());
-    }
-
-
-
-    public function obtenerTodasLasJornadas() {
-        $this->jsonResponse(['Jornadas' => $this->administrador->obtenerTodasLasJornadas() ?: []]);
-    }
-
-    public function obtenerTodasLasAusencias() {
-        $this->jsonResponse(['Ausencias' => $this->administrador->obtenerTodasLasAusencias() ?: []]);
-    }
-
-    public function obtenerUsuarios() {
-        $this->jsonResponse(['RRHH' => $this->administrador->obtenerUsuarios() ?: []]);
-    }
-
-    public function obtenerCargosParaConvocatorias(){
-        $this->jsonResponse(['Cargos' => $this->administrador->obtenerCargosParaConvocatorias() ?: []]);
-    }
-
-    public function obtenerEntrevistas() {
-        $this->jsonResponse(['Entrevista' => $this->administrador->obtenerEntrevistas() ?: []]);
-    }
-
-    public function obtenerDatosDelEntrevistado($num_doc) {
-    $num_doc = $_GET['num_doc'] ?? null;
-    $entrevistado = $this->administrador->obtenerDatosDelEntrevistado($num_doc);
-    $this->jsonResponse(["Entrevistado" => $entrevistado ?: ["error" => "hubo un error"]]);
-    }
-
-    public function obtenerConvocatorias(){
-        $this->jsonResponse(['convocatorias' => $this->administrador->obtenerConvocatorias() ? : []]);
-    }
-    public function obtenerConvocatoriasPostulaciones() {
-        $this->jsonResponse(['ConvocatoriaPostulaciones' => $this->administrador->obtenerConvocatoriasPostulaciones() ?: []]);
-    }
-
-    public function corroborarJornada($data) {
-        if (!isset($data['data']['idJornada'])) {
-            $this->jsonResponse(['error' => 'Falta el id de la jornada'], 400);
+    protected function validarToken(): ?string
+    {
+        try {
+            return $this->tokenService->validarToken();
+        } catch (Exception $e) {
+            $this->jsonResponseService->responder(['error' => $e->getMessage()], $e->getCode());
+            return null;
         }
-        $this->jsonResponse(['JornadaCorroborada' => $this->administrador->corroborarJornada($data['data']['idJornada']) ?: []]);
     }
-    
-    public function noCorroborarJornada($data) {
-        if (!isset($data['data']['idJornada'])) {
-            $this->jsonResponse(['error' => 'Falta el id de la jornada'], 400);
+
+    protected function verificarToken(): void
+    {
+        if ($this->validarToken() === null) {
+            exit;
         }
-        $this->jsonResponse(['JornadaNoCorroborada' => $this->administrador->noCorroborarJornada($data['data']['idJornada']) ?: []]);
     }
 
+    private function responder(array $data, int $httpCode = 200): void
+    {
+        $this->jsonResponseService->responder($data, $httpCode);
+    }
 
-    public function notificacionAceptada($data) {
-        if (!isset($data['data']['idausencia'])) {
-            $this->jsonResponse(['error' => 'Falta el id de la ausencia'], 400);
+    private function verificarDatosRequeridos(array $data, array $camposRequeridos): bool
+    {
+        foreach ($camposRequeridos as $campo) {
+            if (!isset($data[$campo])) {
+                $this->responder(['error' => "Falta el campo requerido: $campo"], 400);
+                return false;
+            }
         }
-        $this->jsonResponse(['Ausencia' => $this->administrador->notificacionAceptada($data['data']['idausencia']) ?: []]);
+        return true;
     }
 
-    public function notificacionRechazada($data) {
-        if (!isset($data['data']['idausencia'])) {
-            $this->jsonResponse(['error' => 'Falta el id de la ausencia'], 400);
+    public function agregarCargo(array $data)
+    {
+        if (!$this->verificarDatosRequeridos($data, ['nombreCargo'])) {
+            return;
         }
-        $this->jsonResponse(['success' => true, 'AusenciaRechaza' => $this->administrador->notificacionRechazada($data['data']['idausencia']) ?: []]);
+        $resultado = $this->administrador->agregarCargo($data['nombreCargo']);
+        $this->responder(['success' => true, 'cargo' => $resultado]);
     }
 
-    public function permisoAceptado($data){
-        if(!isset($data['data']['idpermiso'])){
-            $this->jsonResponse(['error' => 'Falta el id de el permiso'], 400);
-        }
-        $this->jsonResponse(['Permiso' => $this->administrador->permisoAceptado($data['data']['idpermiso']) ?: []]);
-    }
-    public function permisoRechazado($data){
-        if (!isset($data['data']['idpermiso'])) {
-            $this->jsonResponse(['error' => 'Falta el id del permiso'], 400);
-        }
-        $this->jsonResponse(['success' => true , 'permisoRechazado' => $this->administrador->permisoRechazado($data['data']['idpermiso']) ?: []]);
-    }
-
-
-    public function agregarCargo($data) {
-        if (!isset($data['nombreCargo'])) {
-            $this->jsonResponse(['error' => 'Faltan datos'], 400);
-        }
-        $this->jsonResponse(['success' => true, 'cargo' => $this->administrador->agregarCargo($data['nombreCargo']) ?: []]);
-    }
-
-    public function agregarConvocatoria($data) {
+    public function agregarConvocatoria(array $data)
+    {
         $required = ['nombreConvocatoria', 'descripcion', 'requisitos', 'salario', 'cantidadConvocatoria', 'idcargo'];
-        foreach ($required as $key) {
-            if (!isset($data[$key])) {
-                $this->jsonResponse(['error' => 'Faltan datos'], 400);
-            }
+        if (!$this->verificarDatosRequeridos($data, $required)) {
+            return;
         }
-        $this->jsonResponse(['Convocatoria' => $this->administrador->agregarConvocatoria($data) ?: []]);
+        $resultado = $this->administrador->agregarConvocatoria($data);
+        $this->responder(['Convocatoria' => $resultado]);
     }
-    public function guardarResultadosSistemaDeGestion($data) {
-        $required = ['identrevista', 'idpostulacion','estado_salud', 'evaluacionRiesgos', 'recomendaciones', 'aptitudLaboral', 'comentarios', 'estadoEvaluacion'];
 
-        foreach ($required as $key) {
-            if (!isset($data[$key]) || empty($data[$key])) {
-                $this->jsonResponse(['error' => "Faltan datos: $key"], 400);
-                return;
-            }
+    public function asignarEntrevista(array $data)
+    {
+        $required = ['fecha', 'hora', 'lugarMedio'];
+        if (!$this->verificarDatosRequeridos($data, $required)) {
+            return;
+        }
+        $resultado = $this->administrador->asignarEntrevista($data);
+        $this->responder(['Entrevista' => $resultado]);
+    }
+
+    public function asignarVinculacion(array $data)
+    {
+        $required = ['num_doc', 'fechaInicio', 'fechaFin', 'tipoContrato', 'salario', 'estadoContrato', 'fechaFirma'];
+        if (!$this->verificarDatosRequeridos($data, $required)) {
+            return;
+        }
+        $resultado = $this->administrador->asignarVinculacion($data);
+        $this->responder(['Vinculacion' => $resultado]);
+    }
+
+    public function asistenciaConfirmada(array $data)
+    {
+        if (!$this->verificarDatosRequeridos($data, ['identrevista'])) {
+            return;
+        }
+        $resultado = $this->administrador->asistenciaConfirmada($data['identrevista']);
+        $this->responder(['Asistencia' => $resultado]);
+    }
+
+    public function asistenciaNoConfirmada(array $data)
+    {
+        if (!$this->verificarDatosRequeridos($data, ['identrevista'])) {
+            return;
+        }
+        $resultado = $this->administrador->asistenciaNoConfirmada($data['identrevista']);
+        $this->responder(['noAsistencia' => $resultado]);
+    }
+
+    public function buscarIdEvaluacion()
+    {
+        $identrevista = $_GET['identrevista'] ?? null;
+        if (!$identrevista) {
+            $this->responder(["error" => "Identificador de entrevista no encontrado"], 400);
+            return;
+        }
+
+        $evaluacion = $this->administrador->buscarIdEvaluacion($identrevista);
+        if ($evaluacion) {
+            $this->responder(["encontrada" => true, "idevaluacion" => $evaluacion['idevaluacion']]);
+        } else {
+            $this->responder(["encontrada" => false]);
+        }
+    }
+
+    public function corroborarJornada(array $data)
+    {
+        if (!$this->verificarDatosRequeridos($data, ['data' => ['idJornada']])) {
+            return;
+        }
+        $resultado = $this->administrador->corroborarJornada($data['data']['idJornada']);
+        $this->responder(['JornadaCorroborada' => $resultado]);
+    }
+
+    public function guardarResultadosSistemaDeGestion(array $data)
+    {
+        $required = ['identrevista', 'idpostulacion', 'estado_salud', 'evaluacionRiesgos', 'recomendaciones', 'aptitudLaboral', 'comentarios', 'estadoEvaluacion'];
+        if (!$this->verificarDatosRequeridos($data, $required)) {
+            return;
         }
         $resultado = $this->administrador->guardarResultadosSistemaDeGestion($data);
 
         if ($resultado) {
-            $this->jsonResponse(['success' => true, 'message' => 'Resultados guardados con éxito.']);
+            $this->responder(['success' => true, 'message' => 'Resultados guardados con éxito.']);
         } else {
-            $this->jsonResponse(['error' => 'No se pudo guardar en la base de datos.'], 500);
+            $this->responder(['error' => 'No se pudo guardar en la base de datos.'], 500);
         }
     }
 
-
-
-    public function asignarEntrevista($data) {
-        $required = ['fecha', 'hora', 'lugarMedio'];
-        foreach ($required as $key) {
-            if (!isset($data[$key])) {
-                $this->jsonResponse(['error' => 'Faltan datos'], 400);
-            }
+    public function noCorroborarJornada(array $data)
+    {
+        if (!$this->verificarDatosRequeridos($data, ['data' => ['idJornada']])) {
+            return;
         }
-        $this->jsonResponse(['Entrevista' => $this->administrador->asignarEntrevista($data) ?: []]);
+        $resultado = $this->administrador->noCorroborarJornada($data['data']['idJornada']);
+        $this->responder(['JornadaNoCorroborada' => $resultado]);
     }
-    public function asignarVinculacion($data){
-        $required = ['num_doc', 'fechaInicio', 'fechaFin', 'tipoContrato', 'salario', 'estadoContrato', 'fechaFirma'];
-        foreach ($required as $key){
-            if(!isset($data[$key])){
-                $this->jsonResponse(['error' => 'Faltan datos'], 400);
-            }
+
+    public function notificacionAceptada(array $data)
+    {
+        if (!$this->verificarDatosRequeridos($data, ['data' => ['idausencia']])) {
+            return;
         }
-        $this->jsonResponse(['Vinculacion' => $this->administrador->asignarVinculacion($data) ?: []]);
+        $resultado = $this->administrador->notificacionAceptada($data['data']['idausencia']);
+        $this->responder(['Ausencia' => $resultado]);
     }
 
-    public function asistenciaConfirmada($data){
-        $required = $data['identrevista'];
-
-        foreach ($required as $key){
-            if (!isset($data[$key])){
-                $this->jsonResponse(['error' => 'Falta el numero de identificacion de la entrevista'], 400);
-            }
-            $this->jsonResponse(['Asistencia' => $this->administrador->asistenciaConfirmada($data) ?: []]);
+    public function notificacionRechazada(array $data)
+    {
+        if (!$this->verificarDatosRequeridos($data, ['data' => ['idausencia']])) {
+            return;
         }
+        $resultado = $this->administrador->notificacionRechazada($data['data']['idausencia']);
+        $this->responder(['success' => true, 'AusenciaRechaza' => $resultado]);
     }
 
-    public function asistenciaNoConfirmada($data){
-        $required = $data['identrevista'];
-
-        foreach ($required as $key){
-            $this->jsonResponse(['error' => 'Falta el numero de identificacion de la entrevista'] , 400);
-        }  
-        $this->jsonResponse(['noAsistencia' => $this->administrador->asistenciaNoConfirmada($data) ?: []]);
+    public function obtenerCargos()
+    {
+        $this->responder(['cargos' => $this->administrador->obtenerCargos()]);
     }
 
+    public function obtenerCargosParaConvocatorias()
+    {
+        $this->responder(['Cargos' => $this->administrador->obtenerCargosParaConvocatorias()]);
+    }
+
+    public function obtenerConvocatorias()
+    {
+        $this->responder(['convocatorias' => $this->administrador->obtenerConvocatorias()]);
+    }
+
+    public function obtenerConvocatoriasPostulaciones()
+    {
+        $this->responder(['ConvocatoriaPostulaciones' => $this->administrador->obtenerConvocatoriasPostulaciones()]);
+    }
+
+    public function obtenerDatosDelEntrevistado(?string $num_doc = null)
+    {
+        $num_doc = $_GET['num_doc'] ?? $num_doc;
+        $entrevistado = $this->administrador->obtenerDatosDelEntrevistado($num_doc);
+        $this->responder(["Entrevistado" => $entrevistado ?: ["error" => "No se encontraron datos para el documento proporcionado"]]);
+    }
+
+    public function obtenerEmpleados()
+    {
+        $this->responder(['empleados' => $this->administrador->obtenerEmpleados()]);
+    }
+
+    public function obtenerEntrevistas()
+    {
+        $this->responder(['Entrevista' => $this->administrador->obtenerEntrevistas()]);
+    }
+
+    public function obtenerPazYSalvos()
+    {
+        $this->responder(['Salvos' => $this->administrador->obtenerPazYSalvos()]);
+    }
+
+    public function obtenerPostulaciones()
+    {
+        $this->responder(['Postulaciones' => $this->administrador->obtenerPostulaciones()]);
+    }
+
+    public function obtenerSistemaDeGestion()
+    {
+        $this->responder(['sistemaDeGestion' => $this->administrador->obtenerSistemaDeGestion()]);
+    }
+
+    public function obtenerTodasLasAusencias()
+    {
+        $this->responder(['Ausencias' => $this->administrador->obtenerTodasLasAusencias()]);
+    }
+
+    public function obtenerTodasLasEstadisticas()
+    {
+        $this->verificarToken();
+        $estadisticas = $this->administrador->obtenerTotalEstadisticas();
+        $this->responder([
+            'totalEntradas' => $estadisticas['totalEntradas'],
+            'totalAusencias' => $estadisticas['totalAusencias'],
+        ]);
+    }
+
+    public function obtenerTodasLasHorasExtra()
+    {
+        $this->responder($this->administrador->obtenerTodasLasHorasExtra());
+    }
+
+    public function obtenerTodasLasJornadas()
+    {
+        $this->responder(['Jornadas' => $this->administrador->obtenerTodasLasJornadas()]);
+    }
+
+    public function obtenerTodasLasNotificaciones()
+    {
+        $this->verificarToken();
+        $this->responder(['Notificaciones' => $this->administrador->obtenerTodasLasNotificaciones()]);
+    }
+
+    public function obtenerTodosLosPermisos()
+    {
+        $this->responder(['permisos' => $this->administrador->obtenerTodosLosPermisos()]);
+    }
+
+    public function obtenerTodasLasVacaciones()
+    {
+        $this->responder($this->administrador->obtenerTodasLasVacaciones());
+    }
+
+    public function obtenerUsuarios()
+    {
+        $this->responder(['RRHH' => $this->administrador->obtenerUsuarios()]);
+    }
+
+    public function obtenerVinculaciones()
+    {
+        $this->responder(['Vinculaciones' => $this->administrador->obtenerVinculaciones()]);
+    }
+
+    public function permisoAceptado(array $data)
+    {
+        if (!$this->verificarDatosRequeridos($data, ['data' => ['idpermiso']])) {
+            return;
+        }
+        $resultado = $this->administrador->permisoAceptado($data['data']['idpermiso']);
+        $this->responder(['Permiso' => $resultado]);
+    }
+
+    public function permisoRechazado(array $data)
+    {
+        if (!$this->verificarDatosRequeridos($data, ['data' => ['idpermiso']])) {
+            return;
+        }
+        $resultado = $this->administrador->permisoRechazado($data['data']['idpermiso']);
+        $this->responder(['success' => true, 'permisoRechazado' => $resultado]);
+    }
 }
