@@ -9,34 +9,39 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
     const [aplicado, setAplicado] = useState(false);
 
     useEffect(() => {
-        axios
-            .get("http://localhost/gestorplus/backend/", {
-                params: {
-                    action: "obtenerDetalleConvocatoria",
-                    idconvocatoria: idconvocatoria,
-                },
-            })
-            .then((response) => {
-                if (response.data.DetalleConvocatoria) {
-                    setDetalleConvocatoria(response.data.DetalleConvocatoria);
+        // Cargar los detalles de la convocatoria
+        const fetchConvocatoriaDetails = async () => {
+            try {
+                const response = await axios.get("http://localhost/gestorplus/backend/", {
+                    params: {
+                        action: "obtenerDetalleConvocatoria",
+                        idconvocatoria: idconvocatoria,
+                    },
+                });
+
+                if (response.data && response.data.message === "DetalleConvocatoria" && response.data.data) {
+                    setDetalleConvocatoria(response.data.data);
                 } else {
-                    console.error("Detalle de convocatoria no encontrado");
+                    console.error("Detalle de convocatoria no encontrado", response.data);
                     setDetalleConvocatoria(null);
                     setError("No se encontró la convocatoria seleccionada.");
                 }
                 setLoading(false);
-            })
-            .catch((err) => {
+            } catch (err) {
                 console.error("Error al cargar el detalle: ", err);
                 setError("Error al cargar el detalle de la convocatoria");
                 setLoading(false);
-            });
+            }
+        };
 
-        const checkIfApplied = () => {
-            const token = getCookie("auth_token");
+        fetchConvocatoriaDetails();
 
-            axios
-                .get("http://localhost/gestorplus/backend/", {
+        // Verificar si el usuario ya ha aplicado
+        const checkIfApplied = async () => {
+            try {
+                const token = getCookie("auth_token");
+        
+                const response = await axios.get("http://localhost/gestorplus/backend/", {
                     params: {
                         action: "verificarPostulacion",
                         idconvocatoria: idconvocatoria,
@@ -44,18 +49,17 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
-                })
-                .then((response) => {
-                    console.log("Respuesta de la API:", response.data);
-                    if (!response.data.PostulacionVerificada || response.data.PostulacionVerificada.length === 0) {
-                        setAplicado(false);
-                    } else {
-                        setAplicado(true);
-                    }
-                })
-                .catch((err) => {
-                    console.error("Error al verificar la aplicación: ", err);
                 });
+        
+                console.log("Respuesta de la API (verificarPostulacion):", response.data);
+                if (response.data && response.data.message === "PostulacionVerificada" && response.data.data.length > 0) {
+                    setAplicado(true);
+                } else {
+                    setAplicado(false);
+                }
+            } catch (err) {
+                console.error("Error al verificar la aplicación: ", err);
+            }
         };
 
         checkIfApplied();
@@ -85,24 +89,31 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                 },
             })
             .then((response) => {
-                console.log(response);
-                if (response.data.success) {
-                    alert("Has aplicado a una convocatoria");
+                console.log("Respuesta de la API (aplicacionDeAspirante):", response.data);
+                if (response.data && response.data.message === "success") {
+                    alert("Has aplicado a la convocatoria");
                     setSuccessMessage(response.data.message);
-                } else {
+                } else if (response.data && response.data.error) {
                     console.error("Error en la respuesta del servidor: ", response.data.error);
                     setError(response.data.error);
+                    setAplicado(false);
+                } else {
+                    console.error("Respuesta inesperada del servidor: ", response.data);
+                    setError("Error al aplicar a la convocatoria.");
+                    setAplicado(false);
                 }
             })
             .catch((err) => {
                 console.error("Error al enviar la aplicación: ", err);
                 setError("Error al enviar la aplicación.");
+                setAplicado(false);
             });
     };
 
     if (loading) {
         return <div className="text-center py-5">Cargando detalles...</div>;
     }
+
     if (error) {
         return <div className="text-center py-5 text-danger">{error}</div>;
     }
@@ -129,45 +140,37 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                                     background: "white",
                                 }}
                                 onMouseEnter={(e) =>
-                                (e.currentTarget.style.transform =
-                                    "scale(1.02)")
+                                    (e.currentTarget.style.transform = "scale(1.02)")
                                 }
                                 onMouseLeave={(e) =>
-                                (e.currentTarget.style.transform =
-                                    "scale(1)")
+                                    (e.currentTarget.style.transform = "scale(1)")
                                 }
                             >
                                 <div className="card-body p-5">
                                     <h3 className="card-title text-primary text-center">
-                                        {detalleConvocatoria?.nombreConvocatoria}
+                                        {detalleConvocatoria ? detalleConvocatoria.nombreConvocatoria : "Detalles no disponibles"}
                                     </h3>
 
                                     <hr className="mb-4" />
 
                                     <div className="mb-3">
-                                        <h5 className="text-secondary">
-                                            Salario
-                                        </h5>
+                                        <h5 className="text-secondary">Salario</h5>
                                         <p className="fw-bold text-dark">
-                                            {detalleConvocatoria?.salario}
+                                            {detalleConvocatoria?.salario || "No disponible"}
                                         </p>
                                     </div>
 
                                     <div className="mb-3">
-                                        <h5 className="text-secondary">
-                                            Requerimientos
-                                        </h5>
+                                        <h5 className="text-secondary">Requerimientos</h5>
                                         <p className="text-dark">
-                                            {detalleConvocatoria?.requisitos}
+                                            {detalleConvocatoria?.requisitos || "No disponible"}
                                         </p>
                                     </div>
 
                                     <div className="mb-3">
-                                        <h5 className="text-secondary">
-                                            Descripción del trabajo
-                                        </h5>
+                                        <h5 className="text-secondary">Descripción del trabajo</h5>
                                         <p className="text-dark">
-                                            {detalleConvocatoria?.descripcion}
+                                            {detalleConvocatoria?.descripcion || "No disponible"}
                                         </p>
                                     </div>
 
@@ -187,18 +190,17 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                                             type="button"
                                             className="btn btn-primary rounded-pill px-5 py-2 fw-bold"
                                             style={{
-                                                transition:
-                                                    "all 0.3s ease-in-out",
+                                                transition: "all 0.3s ease-in-out",
                                             }}
                                             onClick={handleApply}
                                             disabled={aplicado}
                                             onMouseEnter={(e) =>
-                                            (e.currentTarget.style.backgroundColor =
-                                                "#007bff")
+                                                (e.currentTarget.style.backgroundColor =
+                                                    "#007bff")
                                             }
                                             onMouseLeave={(e) =>
-                                            (e.currentTarget.style.backgroundColor =
-                                                "#0d6efd")
+                                                (e.currentTarget.style.backgroundColor =
+                                                    "#0d6efd")
                                             }
                                         >
                                             {aplicado ? "Ya aplicado" : "Aplicar ahora"}

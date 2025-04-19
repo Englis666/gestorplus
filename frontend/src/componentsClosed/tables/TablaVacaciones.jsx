@@ -56,6 +56,7 @@ const TablaVacaciones = () => {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { action },
             }).then((response) => {
+                console.log(response);
                 const vacacionesData = Array.isArray(response.data)
                     ? response.data
                     : (response.data.Vacaciones || []);

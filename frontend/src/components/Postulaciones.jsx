@@ -35,8 +35,8 @@ const Postulaciones = () => {
 
                 console.log("Respuesta de la API:", response.data);
                 
-                if (Array.isArray(response.data.MisPostulaciones)) {
-                    setPostulaciones(response.data.MisPostulaciones);
+                if (Array.isArray(response.data.data)) {
+                    setPostulaciones(response.data.data);
                 } else {
                     setPostulaciones([]);
                 }

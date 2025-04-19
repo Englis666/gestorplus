@@ -17,7 +17,6 @@ import Layout from './views/Layout';
 // Aspirante
 import Trabajo from './views/aspirante/Trabajo';
 import DetallesDeTrabajo from './views/aspirante/DetallesTrabajo';
-import InicioEmpleado from './views/empleado/InicioEmpleado';
 import MisPostulaciones from './views/aspirante/MisPostulaciones';
 
 // Otras vistas
@@ -37,11 +36,10 @@ import SistemaDeGestion from './views/SistemaDeGestion';
 import Permisos from './views/Permisos';
 import Publicaciones from './views/Publicaciones';
 // Vistas Administrador
-import InicioAdmin from './views/administrador/InicioAdmin';
 
 // Vistas Recursos Humanos
-import InicioRRHH from './views/recursoshumanos/InicioRRHH';
 import InicioAspirante from './views/aspirante/InicioAspirante';
+import Inicio from './views/Inicio';
 import PazySalvo from './views/PazYSalvos';
 
 // Hooks y Componentes de Seguridad
@@ -69,7 +67,6 @@ function App() {
               <Route path="/aspirante/Trabajo" element={<Trabajo />} />
               <Route path="/aspirante/DetallesDeTrabajo" element={<DetallesDeTrabajo />} />
               <Route path="/aspirante/MisPostulaciones" element={<MisPostulaciones />} />
-              <Route path="/empleado/InicioEmpleado" element={<InicioEmpleado />} />
               <Route path="/Jornadas" element={<Jornadas />} />
               <Route path="/HorasExtra" element={<HorasExtra />} />
               <Route path="/Ausencias" element={<Ausencias />} />
@@ -87,10 +84,7 @@ function App() {
               <Route path="/PazYsalvo" element={<PazySalvo />} />
               <Route path="/Certificados" element={<Certificados />} />
               <Route path="/" element={<PrivateRoute />} />
-
-              {/* Administrador y RRHH */}
-              <Route path="/administrador/InicioAdmin" element={<InicioAdmin />} />
-              <Route path="/recursoshumanos/InicioRRHH" element={<InicioRRHH />} />
+              <Route path="/Inicio" element={<Inicio/>} />
             </Route>
           </Routes>
         </div>

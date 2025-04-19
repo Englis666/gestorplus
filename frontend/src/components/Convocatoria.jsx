@@ -16,6 +16,7 @@ const Convocatoria = () => {
     useEffect(() => {
         axios.get("http://localhost/gestorplus/backend/", { params: { action: "obtenerConvocatorias" } })
             .then((response) => {
+                console.log(response);
                 if (Array.isArray(response.data.convocatorias)) {
                     setConvocatorias(response.data.convocatorias);
                 } else {

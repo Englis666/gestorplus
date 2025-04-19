@@ -16,6 +16,7 @@ const TablaEntrevistas = () => {
                 const response = await axios.get("http://localhost/gestorplus/backend/", {
                     params: { action: "obtenerEntrevistas" },
                 });
+                console.log(response);
                 const data = response.data.Entrevista;
                 setEntrevistas(Array.isArray(data) ? data : []);
             } catch (err) {

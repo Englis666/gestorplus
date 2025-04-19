@@ -33,6 +33,7 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
         params: { action: "obtenerVinculaciones" },
       })
       .then((response) => {
+        console.log(response);
         if (Array.isArray(response.data.Vinculaciones)) {
           setVinculaciones(response.data.Vinculaciones);
         } else {

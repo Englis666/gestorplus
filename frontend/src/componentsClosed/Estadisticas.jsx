@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import StatisticCard from "./StaticCard";
-
+import EstadisticaCard from "./card/EstadisticaCard";
 const Estadisticas = () => {
   const [totalEntradas, setTotalEntradas] = useState(0);
   const [totalActualizaciones, setTotalActualizaciones] = useState(0);
@@ -19,86 +18,73 @@ const Estadisticas = () => {
     };
 
     const token = getCookie("auth_token");
-
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-
-        const isTokenExpired = decodedToken.exp * 1000 < Date.now();
-        if (isTokenExpired) {
-          console.error("El token ha expirado.");
-          setError("El token ha expirado.");
-          setLoading(false);
-          return;
-        }
-
-        axios.get("http://localhost/gestorplus/backend/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: { action: "obtenerTotalEstadisticas" },
-        })
-          .then((response) => {
-            console.log(response.data);
-            const { totalJornadas, totalActualizaciones, notificacionesGenerales } = response.data;
-
-            // Convierte los valores a números (asegúrate de que sean números válidos)
-            const totalJornadasNumber = parseInt(totalJornadas, 10); // Usamos parseInt
-            const totalActualizacionesNumber = parseInt(totalActualizaciones, 10); // Usamos parseInt
-            const notificacionesGeneralesNumber = parseInt(notificacionesGenerales, 10); // Usamos parseInt
-
-            if (
-              !isNaN(totalJornadasNumber) &&
-              !isNaN(totalActualizacionesNumber) &&
-              !isNaN(notificacionesGeneralesNumber)
-            ) {
-              // Asignar valores al estado
-              setTotalEntradas(totalJornadasNumber); // Se asigna a totalEntradas
-              setTotalActualizaciones(totalActualizacionesNumber);
-              setNotificacionesGenerales(notificacionesGeneralesNumber);
-            } else {
-              setError("No se encontraron estadísticas válidas.");
-            }
-            setLoading(false);
-          })
-          .catch((err) => {
-            console.error("Error al obtener las estadísticas:", err);
-            setError(err.message || "Error desconocido");
-            setLoading(false);
-          });
-      } catch (error) {
-        console.error("Error al procesar el token:", error);
-        setError("Error al procesar el token.");
-        setLoading(false);
-      }
-    } else {
+    if (!token) {
       setError("No se encontró un token de autenticación.");
       setLoading(false);
+      return;
     }
-  }, []); // El array vacío asegura que el efecto solo se ejecute una vez
 
-  if (loading) {
-    return <div>Cargando estadísticas...</div>;
-  }
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp * 1000 < Date.now()) {
+        setError("El token ha expirado.");
+        setLoading(false);
+        return;
+      }
+    } catch {
+      setError("Token inválido.");
+      setLoading(false);
+      return;
+    }
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+    axios
+      .get("http://localhost/gestorplus/backend/", {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { action: "obtenerTotalEstadisticas" },
+      })
+      .then((res) => {
+        const { totalJornadas, totalActualizaciones, totalGenerales } = res.data;
+
+        const totalJornadasNumber = Number(totalJornadas);
+        const totalActualizacionesNumber = Number(totalActualizaciones);
+        const totalGeneralesNumber = Number(totalGenerales);
+
+        if (
+          isNaN(totalJornadasNumber) ||
+          isNaN(totalActualizacionesNumber) ||
+          isNaN(totalGeneralesNumber)
+        ) {
+          setError("Datos no válidos en la respuesta.");
+        } else {
+          setTotalEntradas(totalJornadasNumber);
+          setTotalActualizaciones(totalActualizacionesNumber);
+          setNotificacionesGenerales(totalGeneralesNumber);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Error al obtener las estadísticas.");
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div>Cargando estadísticas...</div>;
+  if (error)   return <div>{error}</div>;
 
   return (
     <section className="container-fluid d-flex justify-content-center mt-5">
       <div className="row g-5">
-        <StatisticCard
+        <EstadisticaCard
           icon="trending_up"
-          title="Actualizaciones de informacion"
+          title="Actualizaciones de información"
           value={totalActualizaciones}
         />
-        <StatisticCard
+        <EstadisticaCard
           icon="trending_up"
           title="Entradas al trabajo"
           value={totalEntradas}
         />
-        <StatisticCard
+        <EstadisticaCard
           icon="trending_up"
           title="Notificaciones Generales"
           value={notificacionesGenerales}

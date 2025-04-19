@@ -76,13 +76,18 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
     if (!validateForm()) return;
     setIsSubmitting(true);
 
+    const formDataToSend = {
+      ...formData,
+      telefonoFijo: formData.telefonoFijo === "" ? null : formData.telefonoFijo,
+    };
+
     try {
       const token = getCookie("auth_token");
       if (!token) return alert("No se encontró el token de autenticación.");
 
       const response = await axios.patch(
         "http://localhost/gestorplus/backend/",
-        { ...formData, action: "actualizacionHojaDevida", num_doc },
+        { ...formDataToSend, action: "actualizacionHojaDevida", num_doc },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -93,6 +98,7 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
 
       if (response.data.message === "Hoja de vida actualizada") {
         alert("Hoja de vida actualizada correctamente");
+        toggleModalHojaDeVida(); // Cerrar el modal después de la actualización exitosa
       } else {
         alert("Error al actualizar la hoja de vida.");
       }
@@ -101,7 +107,6 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
       alert("Error del servidor: " + (error.response?.data?.message || "Inténtalo nuevamente."));
     } finally {
       setIsSubmitting(false);
-      toggleModalHojaDeVida();
     }
   };
 

@@ -4,7 +4,7 @@ import Estadisticas from "../Estadisticas";
 import Grafica from "../Grafica";
 import { jwtDecode } from "jwt-decode";
 
-const TablaEmpleado = ({ action }) => {
+const TablaEmpleado = () => {
   const [notificaciones, setNotificaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,10 +19,28 @@ const TablaEmpleado = ({ action }) => {
     };
 
     const token = getCookie("auth_token");
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      setRol(decodedToken.data.rol);
 
+    if (token) {
+      let decodedToken = null;
+
+      try {
+        decodedToken = jwtDecode(token);
+      } catch (err) {
+        console.error("Error al decodificar el token:", err);
+        setError("Token inválido.");
+        setLoading(false);
+        return;
+      }
+
+      if (!decodedToken || !decodedToken.data || !decodedToken.data.rol) {
+        setError("Token inválido o sin rol definido.");
+        setLoading(false);
+        return;
+      }
+
+      const Rol = decodedToken.data.rol;
+      setRol(Rol);
+      
       const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
       if (isTokenExpired) {
         console.error("El token ha expirado.");
@@ -31,20 +49,29 @@ const TablaEmpleado = ({ action }) => {
         return;
       }
 
+      const actionMap = {
+        "1": "obtenerTodasLasNotificaciones",
+        "2": "obtenerTodasLasNotificaciones",
+        "3": "obtenerNotificaciones",
+      };
+
+      const actionToSend = actionMap[Rol];
+
       axios
         .get("http://localhost/gestorplus/backend/", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          params: { action },
+          params: { action: actionToSend },
         })
         .then((response) => {
-
           let notificaciones;
-
           if (response.data?.Notificaciones) {
             notificaciones = response.data.Notificaciones;
-          } else if (response.data?.status === "Notificaciones" && Array.isArray(response.data?.message)) {
+          } else if (
+            response.data?.status === "Notificaciones" &&
+            Array.isArray(response.data?.message)
+          ) {
             notificaciones = response.data.message;
           } else {
             console.error("Formato de notificaciones no reconocido");
@@ -64,52 +91,39 @@ const TablaEmpleado = ({ action }) => {
           setError("Hubo un problema al cargar las notificaciones.");
           setLoading(false);
         });
+    } else {
+      setError("No se encontró el token de autenticación.");
+      setLoading(false);
     }
-  }, [action]);
+  }, []);
 
-  if (loading) {
-    return <div>Cargando notificaciones...</div>;
-  }
+  if (loading) return <div>Cargando notificaciones...</div>;
+  if (error) return <div>{error}</div>;
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  // Filtrado de las notificaciones
+  // Clasificación de notificaciones
   const jornadaNotificaciones = notificaciones.filter((n) => n.tipo === "Jornada");
+
   const actualizacionNotificaciones = notificaciones.filter((n) => {
-
-    if (rol === "3") {
-      return n.tipo === "PostulacionAspirantes";
-    }
-
-    else if (rol === "1" || rol === "2") {
-      return n.tipo === "Postulacion";
-    }
-
+    if (rol === "3") return n.tipo === "PostulacionAspirantes";
+    if (rol === "1" || rol === "2") return n.tipo === "Postulacion";
     return false;
   });
 
   const generalNotificaciones = notificaciones.filter((n) => n.tipo === "General");
 
-  const handleVerClick = (notificacion) => {
-    console.log("Ver detalles de notificación", notificacion);
-  };
-
   return (
     <div className="container mt-5">
-      {/* Componente de estadísticas */}
       <Estadisticas />
 
-      <h2 className="mb-4 text-center text-dark font-weight-bold mt-4">Notificaciones</h2>
+      <h2 className="mb-4 text-center text-dark fw-bold mt-4">Notificaciones</h2>
       <div className="row g-4">
-        {/* Primera tabla: Notificaciones generales */}
+        {/* Notificaciones Generales */}
         <div className="col-12 col-md-6">
           <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
             <div className="card-body">
               <p>Notificaciones generales</p>
               <div className="table-responsive">
-                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}>
+                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa" }}>
                   <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                     <tr>
                       <th className="py-3 px-4">Actividad</th>
@@ -119,14 +133,12 @@ const TablaEmpleado = ({ action }) => {
                     {generalNotificaciones.length > 0 ? (
                       generalNotificaciones.map((notificacion) => (
                         <tr key={notificacion.idnotificacion}>
-                          <td className="py-3 px-4">
-                            <span className="text-dark">{notificacion.descripcionNotificacion}</span>
-                          </td>
+                          <td className="py-3 px-4 text-dark">{notificacion.descripcionNotificacion}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="2">No hay notificaciones generales.</td>
+                        <td>No hay notificaciones generales.</td>
                       </tr>
                     )}
                   </tbody>
@@ -136,13 +148,13 @@ const TablaEmpleado = ({ action }) => {
           </div>
         </div>
 
-        {/* Segunda tabla: Notificaciones de actualización */}
+        {/* Notificaciones de Actualización */}
         <div className="col-12 col-md-6">
           <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
             <div className="card-body">
               <p>Notificaciones de actualizaciones</p>
               <div className="table-responsive">
-                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}>
+                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa" }}>
                   <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                     <tr>
                       <th className="py-3 px-4">Actualizaciones</th>
@@ -152,9 +164,7 @@ const TablaEmpleado = ({ action }) => {
                     {actualizacionNotificaciones.length > 0 ? (
                       actualizacionNotificaciones.map((notificacion) => (
                         <tr key={notificacion.idnotificacion}>
-                          <td className="py-3 px-4">
-                            <span className="text-dark">{notificacion.descripcionNotificacion}</span>
-                          </td>
+                          <td className="py-3 px-4 text-dark">{notificacion.descripcionNotificacion}</td>
                         </tr>
                       ))
                     ) : (
@@ -169,13 +179,13 @@ const TablaEmpleado = ({ action }) => {
           </div>
         </div>
 
-        {/* Tercera tabla: Notificaciones de Sesión */}
+        {/* Notificaciones de Jornada */}
         <div className="col-12 col-md-6">
           <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
-            <p>Control de entradas de trabajo</p>
             <div className="card-body">
+              <p>Control de entradas de trabajo</p>
               <div className="table-responsive">
-                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}>
+                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa" }}>
                   <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
                     <tr>
                       <th className="py-3 px-4">Control de entrada de trabajo</th>
@@ -185,9 +195,7 @@ const TablaEmpleado = ({ action }) => {
                     {jornadaNotificaciones.length > 0 ? (
                       jornadaNotificaciones.map((notificacion) => (
                         <tr key={notificacion.idnotificacion}>
-                          <td className="py-3 px-4">
-                            <span className="text-dark">{notificacion.descripcionNotificacion}</span>
-                          </td>
+                          <td className="py-3 px-4 text-dark">{notificacion.descripcionNotificacion}</td>
                         </tr>
                       ))
                     ) : (
@@ -202,7 +210,7 @@ const TablaEmpleado = ({ action }) => {
           </div>
         </div>
 
-        {/* Componente de gráfico */}
+        {/* Gráfico */}
         <div className="col-12 col-md-6">
           <Grafica />
         </div>

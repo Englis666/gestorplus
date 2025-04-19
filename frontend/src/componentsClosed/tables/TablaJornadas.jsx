@@ -48,6 +48,7 @@ const TablaJornadas = () => {
             params: { action },
           })
           .then((res) => {
+            console.log(res.data);
             const jornadas = res.data?.Jornadas || [];
             setJornadas(jornadas);
             setFiltrado(jornadas);

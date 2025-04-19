@@ -5,8 +5,7 @@ use Config\Database;
 use PDO;
 use PDOException;
 
-class Administrador {
-
+class Cargo {
     private $db;
 
     public function __construct($db){
@@ -19,7 +18,7 @@ class Administrador {
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            echo json_encode(['error' => 'Ocurrió un error en la base de datos']);
             http_response_code(500);
             return [];
         }
@@ -30,40 +29,16 @@ class Administrador {
         return $this->ejecutarConsulta($sql);
     }
 
-  
+    public function agregarCargo($nombreCargo) {
+        $sql = "INSERT INTO cargo (nombreCargo, estadoCargo) VALUES (?, ?)";
+        $stmt = $this->db->prepare($sql);
+        
+        if ($stmt->execute([$nombreCargo, "1"])) {
+            return $this->db->lastInsertId();
+        }
 
-
-
-
-
-
-
+        return false;
+    }
     
 
-   
-
-    
-   
-   
-
-    
-   
-    
-
-
-
-    
-
-
-
-   
-
-   
- 
-
-    
 }
-
-
-
-?>

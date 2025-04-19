@@ -72,8 +72,8 @@ const ModalEditarPublicacion = ({ modalEditarAbierto, setModalEditarAbierto, pub
                 <textarea className="form-control" id="descripcion" name="descripcion" value={publicacionEditada.descripcion || ""} onChange={handleChange} />
               </div>
               <div className="mb-3">
-                <label htmlFor="imagen" className="form-label">URL de la imagen</label>
-                <input type="text" className="form-control" id="imagen" name="imagen" value={publicacionEditada.imagen || ""} onChange={handleChange} />
+                <label htmlFor="imagen" className="form-label">Subir imagen para la publicacion</label>
+                <input type="file" className="form-control" id="imagen" name="imagen" value={publicacionEditada.imagen || ""} onChange={handleChange} />
               </div>
               <button type="submit" className="btn btn-primary">Guardar cambios</button>
             </form>

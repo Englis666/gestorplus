@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; 
-import TablaEmpleado from "../../componentsClosed/tables/TablaEmpleado";
-import NavbarClosed from "../../componentsClosed/Navbar";
-
-const InicioEmpleado = () => {
+import TablaEmpleado from "../componentsClosed/tables/TablaEmpleado";
+import NavbarClosed from "../componentsClosed/Navbar";
+const Inicio = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,10 +44,10 @@ const InicioEmpleado = () => {
     <div className="bg-light min-vh-100" style={{ transition: "all 3s ease", display: "flex" }}>
       <NavbarClosed />
       <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
-        <TablaEmpleado action="obtenerNotificaciones"/>
+        <TablaEmpleado/>
       </div>
     </div>
   );
 };
 
-export default InicioEmpleado;
+export default Inicio;

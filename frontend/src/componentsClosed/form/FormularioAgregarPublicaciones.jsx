@@ -1,7 +1,17 @@
-import React, { useState } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'material-design-icons/iconfont/material-icons.css';
-import 'animate.css';
+import React, { useState, useEffect } from "react";
+
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? decodeURIComponent(match[2]) : null;
+};
+
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split(".")[1]));
+  } catch (e) {
+    return null;
+  }
+};
 
 const FormularioPublicacion = () => {
   const [form, setForm] = useState({
@@ -16,13 +26,23 @@ const FormularioPublicacion = () => {
   const [errors, setErrors] = useState({});
   const [enviado, setEnviado] = useState(false);
 
+  useEffect(() => {
+    const token = getCookie("auth_token");
+    const decoded = token ? parseJwt(token) : null;
+
+    if (decoded && decoded.data && decoded.data.num_doc) {
+      setForm((prev) => ({
+        ...prev,
+        usuario_num_doc: decoded.data.num_doc,
+      }));
+    }
+  }, []);
+
   const validar = () => {
     const newErrors = {};
-
     if (!form.titulo.trim()) newErrors.titulo = "El título es obligatorio.";
     if (!form.descripcion.trim()) newErrors.descripcion = "La descripción es obligatoria.";
     if (!form.usuario_num_doc) newErrors.usuario_num_doc = "El documento del usuario es obligatorio.";
-
     return newErrors;
   };
 
@@ -50,7 +70,7 @@ const FormularioPublicacion = () => {
     <div className="container mt-5 animate__animated animate__fadeIn">
       <div className="card shadow rounded-4 p-4">
         <h2 className="text-center mb-4 fw-bold text-primary">Nueva Publicación</h2>
-        
+
         {enviado && (
           <div className="alert alert-success animate__animated animate__fadeInDown">
             Publicación agregada correctamente.
@@ -88,23 +108,11 @@ const FormularioPublicacion = () => {
               type="file"
               name="imagen"
               className="form-control"
-              value={form.imagen}
               onChange={handleChange}
-              placeholder="Sube tu imagen"
             />
           </div>
 
-          <div className="mb-3">
-            <label className="form-label fw-semibold">Documento del Usuario *</label>
-            <input
-              type="number"
-              name="usuario_num_doc"
-              className={`form-control ${errors.usuario_num_doc ? "is-invalid" : ""}`}
-              value={form.usuario_num_doc}
-              onChange={handleChange}
-            />
-            {errors.usuario_num_doc && <div className="invalid-feedback">{errors.usuario_num_doc}</div>}
-          </div>
+          <input type="hidden" name="usuario_num_doc" value={form.usuario_num_doc} />
 
           <div className="mb-3">
             <label className="form-label fw-semibold">Tipo de Contrato</label>

@@ -65,6 +65,7 @@ const TablaAusencias = () => {
             params: { action },
           })
           .then((response) => {
+            console.log(response);
             const Ausencias = response.data?.Ausencias;
             if (Array.isArray(Ausencias)) {
               setAusencias(Ausencias);

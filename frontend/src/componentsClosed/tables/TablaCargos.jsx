@@ -11,6 +11,7 @@ const TablaCargos = () => {
                 params: { action: "obtenerCargos" },
             })
             .then((response) => {
+                console.log(response);
                 const cargos = response.data?.cargos;
                 if (Array.isArray(cargos)) {
                     setCargos(cargos);

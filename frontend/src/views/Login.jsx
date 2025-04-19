@@ -35,26 +35,13 @@ const Login = () => {
                 console.log(response.data);
                 const res = response.data;
                 if (res?.status === 'success') {
-                    const token = res.token;
+                    const token = res?.data?.token; // Corconst token = res?.token;rección: acceder al token dentro de res.data
                     document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
                     login({ token });
 
                     const decoded = decodeToken(token);
                     const role = decoded?.data?.rol;
-
-                    const routes = {
-                        "1": "/administrador/inicioAdmin",
-                        "2": "/recursoshumanos/inicioRRHH",
-                        "3": "/empleado/inicioEmpleado",
-                        "4": "/aspirante/inicio"
-                    };
-
-                    if (routes[role]) navigate(routes[role]);
-                    else {
-                        document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                        alert("Rol desconocido");
-                        navigate("/");
-                    }
+                    navigate("/inicio");                       
                 } else {
                     alert(res?.message || "Error en el inicio de sesión");
                     setIsSubmitting(false);

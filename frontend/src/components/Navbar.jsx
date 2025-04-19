@@ -23,7 +23,7 @@ const Navbar = () => {
                     params: { action: "obtenerNotificacionesAspirante" },
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                setNotifications(response.data.Notificaciones || []);
+                setNotifications(response.data.data || []);
             } catch (error) {
                 console.error("Error al obtener las notificaciones:", error);
             }

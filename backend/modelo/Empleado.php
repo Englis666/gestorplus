@@ -13,74 +13,17 @@ class Empleado {
         $this->db = $db;
     }
     
-    public function obtenerMiPazYSalvo($num_doc) {
-        try {
-            $sql = "SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc";
-            $stmtVinculacion = $this->db->prepare($sql);
-            $stmtVinculacion->bindParam(':num_doc', $num_doc, PDO::PARAM_STR); 
-            $stmtVinculacion->execute();
     
-            $vinculacion = $stmtVinculacion->fetch(PDO::FETCH_ASSOC);
-    
-            if ($vinculacion) {
-                $sql = "SELECT * FROM pazysalvo WHERE vinculacion_idvinculacion = :vinculacion_idvinculacion";
-                $stmt = $this->db->prepare($sql);
-                $stmt->bindParam(':vinculacion_idvinculacion', $vinculacion_idvinculacion, PDO::PARAM_INT);
-                $stmt->execute();
-                $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-                return $resultado ? $resultado : [];
-            }
-    
-            return []; 
-    
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
-            return [];
-        }
-    }
-    
-
-    public function obtenerPermisos($num_doc){ 
-        try{
-            $sql = "SELECT * FROM permiso as p
-                    INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc
-                    WHERE u.num_doc = :num_doc";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(":num_doc" , $num_doc, PDO::PARAM_INT);
-            $stmt->execute();
-
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if($resultado){
-                return $resultado;
-            }
-            return [];
-        } catch (PDOException $e){
-            echo json_encode(['error' => 'error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
-            return [];                                  
-        }
+    public function obtenerEmpleados() {
+        $sql = "SELECT * FROM vinculacion as v
+                INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc
+                INNER JOIN postulacion as p ON u.num_doc = p.usuario_num_doc
+                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo";
+        return $this->ejecutarConsulta($sql);
     }
 
-    public function obtenerMisVacaciones($num_doc){
-        try{
-            $sql = "SELECT * FROM vacacion WHERE usuario_num_doc = :num_doc";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(":num_doc" , $num_doc, PDO::PARAM_INT);
-            $stmt->execute();
-            
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if($resultado){
-                return $resultado;
-            }
-            return[];
-        }catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
-            return [];
-        }
-    }
+  
 
     
     public function obtenerJornadas($num_doc){
@@ -194,38 +137,7 @@ class Empleado {
         }
     }
 
-    public function solicitarVacaciones($num_doc, $data){
-        try{
-            $estado = 'Pendiente';
-            $sql = "INSERT INTO vacacion (fechaInicio, fechaFin,estadoVacacion, usuario_num_doc) VALUES (? , ? , ? , ?)";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                $data['fechaInicio'],
-                $data['fechaFin'],
-                $estado,
-                $num_doc
-            ]);
-        
-            if($stmt->rowCount() > 0 ){
-                $descripcionNotificacion = "El empleado identificado con la cedula $num_doc ha solicitado una vacacion";
-                $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) VALUES ( ? , ? , ? , ? )";
-                $stmt = $this->db->prepare($sql);
-                $stmt->execute([
-                    $descripcionNotificacion,
-                    'Pendiente',
-                    'General ',
-                    $num_doc
-                ]);
-                
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception $e) {
-            error_log($e->getMessage());
-            return false;
-        }
-    }
+   
 
     public function solicitarPermiso($num_doc, $data) {
         try {

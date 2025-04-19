@@ -24,7 +24,10 @@
             "App\\": "App/",
             "Controlador\\": "controlador/",
             "Config\\": "config/",
-            "Modelo\\": "modelo/"
+            "Modelo\\": "modelo/",
+            "Servicio\\": "servicio/",
+            "Core\\": "core/",
+            "Routes\\": "routes/"
         }
     }
 }

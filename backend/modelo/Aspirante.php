@@ -50,24 +50,7 @@ class Aspirante {
         }
     }
 
-    public function obtenerPostulacionesAspirante($num_doc) {
-        try {
-            $sql = "SELECT * FROM postulacion p INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria WHERE p.usuario_num_doc = :num_doc";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-            $stmt->execute();
-            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            if ($resultados) {
-                return $resultados;
-            }
-            return null;
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
-            return null;
-        } 
-    }
+   
 
     public function verificarPostulacion($num_doc, $idconvocatoria) {
         try {
