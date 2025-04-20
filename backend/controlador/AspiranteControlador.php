@@ -37,10 +37,6 @@ class AspiranteControlador {
         return $token;
     }
 
-    private function responder(array $data, int $httpCode = 200): void{
-        $this->jsonResponseService->responder($data, $httpCode);
-    }
- 
 
     
     public function aplicacionDeAspirante($data) {
@@ -49,17 +45,17 @@ class AspiranteControlador {
         $idconvocatoria = $data['idconvocatoria'] ?? null;
 
         if (!$idconvocatoria) {
-            $this->responder(['error' => 'Datos insuficientes'], 400);
+            $this->jsonResponseSerivce->responder(['error' => 'Datos insuficientes'], 400);
             return;
         }
 
         try {
             $resultado = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
             if (!$resultado) {
-                $this->responder(['error' => 'No se pudo completar la aplicación'], 500);
+                $this->jsonResponseService->responder(['error' => 'No se pudo completar la aplicación'], 500);
                 return;
             }
-            $this->responder(['message' => 'success', 'data' => true]);
+            $this->jsonResponseService->responder(['message' => 'success', 'data' => true]);
         } catch (Exception $e) {
             $this->responder(['error' => $e->getMessage()], $e->getCode());
         }
