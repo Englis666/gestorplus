@@ -1,80 +1,68 @@
 <?php
+declare(strict_types=1);
+
 namespace Controlador;
 
+use Core\Controller\BaseController;
 use Modelo\Postulacion;
-use Servicio\JsonResponseService;
-use Servicio\TokenService;
+use servicio\TokenService;
+use PDO;
+use Exception;
 
-class PostulacionController{
+
+class PostulacionController extends BaseController{
     private Postulacion $postulacion;
-    private ?\PDO $db;
-    private JsonResponseService $jsonResponseService;
+    private PDO $db;
     private TokenService $tokenService;
 
     public function __construct(){
+        parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->postulacion = new Postulacion($this->db);
         $this->tokenService = new TokenService();
-        $this->jsonResponseService = new jsonResponseService();
-    }
-    public function responder(array $data , int $httpCode = 200): void{
-        $this->jsonResponseService->responder($data , $httpCode);
-    }
-    public function verificarDatosRequeridos(array $data, array $camposRequeridos): boold{
-        foreach ($camposRequeridos as $campo){
-            if (!isset($data[$campo])){
-                $this->responder(['error' => "Falta el campo requerido: $campo"], 400);
-                return false;
-            }
         }
-    return false;
-    }
 
     public function obtenerPostulaciones()
     {
-        $this->responder(['Postulaciones' => $this->postulacion->obtenerPostulaciones()]);
+        $this->jsonResponseService->responder(['Postulaciones' => $this->postulacion->obtenerPostulaciones()]);
     }
 
 
     public function obtenerConvocatoriasPostulaciones()
     {
-        $this->responder(['ConvocatoriaPostulaciones' => $this->postulacion->obtenerConvocatoriasPostulaciones()]);
+        $this->jsonResponseService->responder(['ConvocatoriaPostulaciones' => $this->postulacion->obtenerConvocatoriasPostulaciones()]);
     }
     
-
     public function verificarPostulacion() {
-        $num_doc = $this->obtenerNumDocDesdeToken();
+        $num_doc = $this->tokenService->validarToken();
         if ($num_doc === null) return;
+    
         $idconvocatoria = $_GET['idconvocatoria'] ?? null;
-
         if (!$idconvocatoria) {
-            $this->responder(['error' => 'Datos insuficientes'], 400);
+            $this->jsonResponseService->responderError(['error' => 'Parámetro idconvocatoria requerido'], 400);
             return;
         }
-
+    
         try {
             $resultados = $this->postulacion->verificarPostulacion($num_doc, $idconvocatoria);
-            $this->responder(['message' => 'PostulacionVerificada', 'data' => $resultados ?: []]);
+            $this->jsonResponseService->responder(['message' => 'PostulacionVerificada', 'data' => $resultados ?: []]);
         } catch (Exception $e) {
-            $this->responder(['error' => $e->getMessage()], $e->getCode());
+            $this->jsonResponseService->responderError($e->getMessage(), $e->getCode() ?: 400);
         }
     }
-
     
-
-
     public function obtenerPostulacionesAspirante() {
-        $num_doc = $this->obtenerNumDocDesdeToken();
+        $num_doc = $this->tokenService->validarToken();
         if ($num_doc === null) return;
         try {
-            $postulaciones = $this->postulacion->obtenerPostulacionespostulacion($num_doc);
+            $postulaciones = $this->postulacion->obtenerPostulacionesAspirante($num_doc);
             if (!$postulaciones) {
-                $this->responder(['message' => 'No hay postulaciones', 'data' => []], 404);
+                $this->jsonResponseService->responderError(['message' => 'No hay postulaciones', 'data' => []], 404);
                 return;
             }
-            $this->responder(['message' => 'MisPostulaciones', 'data' => $postulaciones]);
+            $this->jsonResponseService->responder(['message' => 'MisPostulaciones', 'data' => $postulaciones]);
         } catch (Exception $e) {
-            $this->responder(['error' => $e->getMessage()], $e->getCode());
+            $this->jsonResponseService->responderError(['error' => $e->getMessage()], $e->getCode());
         }
     }
 

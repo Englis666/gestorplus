@@ -52,7 +52,7 @@ class NotificacionController{
 
     public function obtenerNotificaciones(): void {
         $decoded = $this->verificarToken();
-        $this->jsonResponse('Notificaciones', $this->notificacion->obtenerNotificaciones($decoded->data->num_doc));
+        $this->responder(['Notificaciones', $this->notificacion->obtenerNotificaciones($decoded->data->num_doc)]);
     }
     public function obtenerTodasLasNotificaciones(){
         $this->verificarToken();

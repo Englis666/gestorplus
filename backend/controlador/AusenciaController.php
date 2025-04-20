@@ -1,64 +1,76 @@
-<?php 
+<?php
+declare(strict_types=1);
+
 namespace Controlador;
 
+use Core\Controller\BaseController;
 use Modelo\Ausencia;
-use Servicio\JsonResponseService;
 use Servicio\TokenService;
+use PDO;
+use Exception;
 
-class AusenciaController{
-    private $db;
+class AusenciaController extends BaseController
+{
+    private PDO $db;
     private Ausencia $ausencia;
-    private JsonResponseService $jsonResponseService;
     private TokenService $tokenService;
 
     public function __construct()
     {
+        parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->ausencia = new Ausencia($this->db);
         $this->tokenService = new TokenService();
-        $this->jsonResponseService = new JsonResponseService();
     }
 
-    private function responder(array $data , int $httpCode = 200): void{
-        $this->jsonResponseService->responder($data,$httpCode);
-    }
-
-    private function verificarDatosRequeridos(array $data, array $camposRequeridos): bool
+    public function obtenerTodasLasAusencias(): void
     {
-        foreach ($camposRequeridos as $campo) {
-            if (!isset($data[$campo])) {
-                $this->responder(['error' => "Falta el campo requerido: $campo"], 400);
-                return false;
-            }
+        $ausencias = $this->ausencia->obtenerTodasLasAusencias();
+        $this->jsonResponseService->responder(['Ausencias' => $ausencias]);
+    }
+
+    public function obtenerAusencias(): void
+    {
+        try {
+            $num_doc = $this->tokenService->validarToken();
+            $ausencias = $this->ausencia->obtenerAusencias($num_doc);
+            $this->jsonResponseService->responder(['Ausencias' => $ausencias]);
+        } catch (Exception $e) {
+            $this->jsonResponseService->responderError($e->getMessage(), $e->getCode() ?: 400);
         }
-        return true;
     }
 
-    public function obtenerTodasLasAusencias()
+    public function solicitarAusencia(array $data): void
     {
-        $this->responder(['Ausencias' => $this->ausencia->obtenerTodasLasAusencias()]);
+        try {
+            $num_doc = $this->tokenService->validarToken();
+            $this->ausencia->solicitarAusencia($num_doc, $data);
+            $this->jsonResponseService->responder(['mensaje' => 'Solicitud de ausencia registrada exitosamente']);
+
+        } catch (Exception $e) {
+            $this->jsonResponseService->responderError($e->getMessage(), $e->getCode() ?: 400);
+        }
     }
-    
-    public function asistenciaConfirmada(array $data)
+
+    public function asistenciaConfirmada(array $data): void
     {
-        if (!$this->verificarDatosRequeridos($data, ['identrevista'])) {
+        if (!$this->parametrosRequeridos($data, ['identrevista'])) {
             return;
         }
-        $resultado = $this->ausencia->asistenciaConfirmada($data['identrevista']);
-        $this->responder(['Asistencia' => $resultado]);
+
+        $identrevista = $this->getIntParam($data, 'identrevista');
+        $resultado = $this->ausencia->asistenciaConfirmada($identrevista);
+        $this->jsonResponseService->responder(['AsistenciaConfirmada' => $resultado]);
     }
 
-
-
-    public function asistenciaNoConfirmada(array $data)
+    public function asistenciaNoConfirmada(array $data): void
     {
-        if (!$this->verificarDatosRequeridos($data, ['identrevista'])) {
+        if (!$this->requireParams($data, ['identrevista'])) {
             return;
         }
-        $resultado = $this->ausencia->asistenciaNoConfirmada($data['identrevista']);
-        $this->responder(['noAsistencia' => $resultado]);
+
+        $identrevista = $this->getIntParam($data, 'identrevista');
+        $resultado = $this->ausencia->asistenciaNoConfirmada($identrevista);
+        $this->jsonResponseService->responder(['AsistenciaNoConfirmada' => $resultado]);
     }
-
-   
-
 }

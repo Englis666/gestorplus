@@ -29,11 +29,7 @@ class AuthController {
             return null;
         }
     }
-    private function responder(string $clave, $resultado): void{
-        $this->jsonResponseService->responder([$clave => $resultado ?: []]);
-    }
-
-
+ 
     public function registrar($data) {
         $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
         $data['estado'] = 1;

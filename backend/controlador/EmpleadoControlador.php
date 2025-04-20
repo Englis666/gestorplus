@@ -1,40 +1,34 @@
 <?php
+declare(strict_types = 1);
 namespace Controlador;
 
+use Core\Controller\BaseController;
 use Modelo\Empleado;
-use Config\DataBase;
 use Servicio\TokenService;
-use Servicio\JsonResponseService;
+use PDO;
+use Exception;
 
-class EmpleadoControlador {
-    private $db;
+
+class EmpleadoControlador extends BaseController{
+    private PDO $db;
     private Empleado $empleado;
     private TokenService $tokenService;
-    private JsonResponseService $jsonResponseService;
-
+    
     public function __construct() {
-        $this->db = (new DataBase())->getConnection();
+        parent::__construct();
+        $this->db = (new \Config\Database())->getConnection();
         $this->empleado = new Empleado($this->db);
         $this->tokenService = new TokenService();
-        $this->jsonResponseService = new JsonResponseService();
     }
 
-    protected function validarToken(): string {
-       return $this->tokenService->validarToken();
+    public function obtenerEmpleados()
+    {
+      $this->jsonResponseService->responder(['empleados' => $this->empleado->obtenerEmpleados()]);
     }
-
-    private function responder(string $clave, $resultado): void {
-        $this->jsonResponseService->responder([$clave => $resultado ?: []]);
-    }
-
-    
-
- 
-
     
 
     public function solicitarQueja(array $data): void {
-        $num_doc = $this->validarToken();
+        $num_doc = $this->tokenService->validarToken();
         $this->responder('message', $this->empleado->solicitarQueja($num_doc, $data) ? 'Queja enviada' : 'Error al enviar la queja');
     }
    
