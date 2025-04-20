@@ -14,16 +14,16 @@ return [
         
         // Empleado
         'obtenerJornadas' => ['empleado', 'obtenerJornadas'],
-        'obtenerAusencias' => ['ausencias', 'obtenerAusencias'],
+        'obtenerAusencias' => ['ausencia', 'obtenerAusencias'],
         'obtenerMisVacaciones' => ['empleado', 'obtenerMisVacaciones'],
         'obtenerMiPazySalvo' => ['empleado', 'obtenerMiPazYSalvo'],
         'obtenerPermisos' => ['permiso', 'obtenerPermisos'],
 
         // Aspirante
-        'obtenerPostulacionesAspirante' => ['aspirante', 'obtenerPostulacionesAspirante'],
-        'obtenerDetalleConvocatoria' => ['aspirante', 'obtenerDetalleConvocatoria'],
-        'verificarPostulacion' => ['aspirante', 'verificarPostulacion'],
-        'obtenerNotificacionesAspirante' => ['aspirante', 'obtenerNotificacionesAspirante'],
+        'obtenerPostulacionesAspirante' => ['postulacion', 'obtenerPostulacionesAspirante'],
+        'obtenerDetalleConvocatoria' => ['convocatoria', 'obtenerDetalleConvocatoria'],
+        'verificarPostulacion' => ['postulacion', 'verificarPostulacion'],
+        'obtenerNotificacionesAspirante' => ['notificacion', 'obtenerNotificacionesAspirante'],
 
         // Chat
         'obtenerMensajes' => ['chat', 'obtenerMensajes'],
@@ -33,8 +33,8 @@ return [
         'obtenerCargos' => ['cargo', 'obtenerCargos'],
         'obtenerPostulaciones' => ['postulacion', 'obtenerPostulaciones'],
         //arreglar
-        'obtenerEmpleados' => ['admin', 'obtenerEmpleados'],
-        'obtenerPazYSalvos' => ['paysalvo', 'obtenerPazYSalvos'],
+        'obtenerEmpleados' => ['empleado', 'obtenerEmpleados'],
+        'obtenerPazYSalvos' => ['pazysalvo', 'obtenerPazYSalvos'],
         'obtenerTodasLasNotificaciones' => ['notificacion', 'obtenerTodasLasNotificaciones'],
         'obtenerTodasLasJornadas' => ['jornada', 'obtenerTodasLasJornadas'],
         'obtenerTodasLasAusencias' => ['ausencia', 'obtenerTodasLasAusencias'],

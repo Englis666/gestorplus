@@ -7,4 +7,7 @@ class jsonResponseService{
         echo json_encode($data);
         exit;
     }
-}
+    public function responderError(string $mensaje, int $statusCode = 400): void{
+        $this->responder(['error' => $mensaje], $statusCode);
+    }
+}  
