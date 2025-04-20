@@ -24,21 +24,29 @@ class Ausencia{
         }
     }
 
-    public function obtenerAusencias(): void {
-        $num_doc = $this->validarToken();
-        $this->responder('Ausencias', $this->empleado->obtenerAusencias($num_doc));
-    }
+
+    public function obtenerAusencias($num_doc){
+        try{
+           $sql = "SELECT * FROM ausencia WHERE usuario_num_doc = :num_doc";
+           $stmt = $this->db->prepare($sql);
+           $stmt->bindParam(':num_doc' , $num_doc , PDO::PARAM_STR);
+           $stmt->execute();
+           $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+           if($resultado){
+               return $resultado;
+           }
+        }catch (PDOException $e) {
+           echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+           http_response_code(500);
+           return [];
+           }
+       }
 
     public function obtenerTodasLasAusencias() {
         $sql = "SELECT * FROM ausencia WHERE NOT justificada = 'Justificada'";
         return $this->ejecutarConsulta($sql);
     }
 
-     
-    public function solicitarAusencia(array $data): void {
-        $num_doc = $this->validarToken();
-        $this->responder('message', $this->empleado->solicitarAusencia($num_doc, $data) ? 'Ausencia solicitada' : 'Error al solicitar la ausencia');
-    }
 
     public function asitenciaConfirmada($data){
         $sql = "UPDATE entrevista SET estadoEntrevista = 'Asistencia' WHERE identrevista = :identrevista";
@@ -52,6 +60,43 @@ class Ausencia{
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(":identrevista" , $data['identrevista'], PDO::PARAM_INT);
         return;
+    }
+
+
+    public function solicitarAusencia($num_doc, $data) {
+        try {
+            $sql = "INSERT INTO ausencia (fechaInicio, fechaFin, tipoAusencia, descripcion, fechaRegistro, justificada, usuario_num_doc) VALUES (?, ?, ?, ?, ?, 'En proceso', ?)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $data['fechaInicio'],
+                $data['fechaFin'],
+                $data['tipoAusencia'],
+                $data['descripcion'],
+                date('Y-m-d H:i:s'),
+                $num_doc
+            ]);
+    
+            if ($stmt->rowCount() > 0) {
+                $descripcionNotificacion = "El empleado identificado con la cedula $num_doc ha solicitado una ausencia para el dia " . $data['fechaInicio'] . " hasta el dia " . $data['fechaFin'];
+    
+            
+                $notificationSql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) VALUES (?, ?, ?, ?)";
+                $notificationStmt = $this->db->prepare($notificationSql);
+                $notificationStmt->execute([
+                    $descripcionNotificacion,
+                    'No leida', 
+                    'General', 
+                    $num_doc
+                ]);
+    
+                return true; 
+            } else {
+                return false; 
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false; 
+        }
     }
     
 

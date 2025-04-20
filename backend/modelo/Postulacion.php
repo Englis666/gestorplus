@@ -14,7 +14,10 @@ class Postulacion{
 
     public function obtenerPostulacionesAspirante($num_doc) {
         try {
-            $sql = "SELECT * FROM postulacion p INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria WHERE p.usuario_num_doc = :num_doc";
+            $sql = "SELECT * FROM postulacion p 
+                    INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                    INNER JOIN cargo as ca ON c.cargo_idCargo = ca.idCargo
+                     WHERE p.usuario_num_doc = :num_doc";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
             $stmt->execute();

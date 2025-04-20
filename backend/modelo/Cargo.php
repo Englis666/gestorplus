@@ -33,7 +33,7 @@ class Cargo {
         $sql = "INSERT INTO cargo (nombreCargo, estadoCargo) VALUES (?, ?)";
         $stmt = $this->db->prepare($sql);
         
-        if ($stmt->execute([$nombreCargo, "1"])) {
+        if ($stmt->execute([$nombreCargo, "Activo"])) {
             return $this->db->lastInsertId();
         }
 
