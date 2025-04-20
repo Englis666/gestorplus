@@ -35,13 +35,17 @@ const Login = () => {
                 console.log(response.data);
                 const res = response.data;
                 if (res?.status === 'success') {
-                    const token = res?.data?.token; // Corconst token = res?.token;rección: acceder al token dentro de res.data
+                    const token = res?.data?.token; // Corrección: acceder al token dentro de res.data
                     document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
                     login({ token });
 
                     const decoded = decodeToken(token);
                     const role = decoded?.data?.rol;
-                    navigate("/inicio");                       
+                    if (["1", "2", "3"].includes(role)) {
+                        navigate("/inicio");
+                      } else {
+                        navigate("/aspirante/inicio");
+                      }     
                 } else {
                     alert(res?.message || "Error en el inicio de sesión");
                     setIsSubmitting(false);

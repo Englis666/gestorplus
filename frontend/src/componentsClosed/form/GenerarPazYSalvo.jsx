@@ -1,8 +1,5 @@
-// src/components/GenerarPazYSalvo.jsx
 import React, { useState } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'material-design-icons/iconfont/material-icons.css';
-import 'animate.css';
+
 
 const GenerarPazYSalvo = ({ form, empleados, onChange, onSubmit }) => {
     const [enviando, setEnviando] = useState(false);

@@ -65,6 +65,7 @@ const TablaPazYSalvo = () => {
                         params: { action },
                     })
                     .then((response) => {
+                        console.log(response);
                         const Salvos = response.data?.Salvos;
                         if (Array.isArray(Salvos)) {
                             setSalvos(Salvos);

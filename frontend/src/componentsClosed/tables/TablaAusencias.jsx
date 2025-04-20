@@ -65,7 +65,6 @@ const TablaAusencias = () => {
             params: { action },
           })
           .then((response) => {
-            console.log(response);
             const Ausencias = response.data?.Ausencias;
             if (Array.isArray(Ausencias)) {
               setAusencias(Ausencias);
@@ -103,7 +102,6 @@ const TablaAusencias = () => {
         console.log("Respuesta del servidor:", response.data);
         alert("Notificación aceptada con éxito.");
 
-        // Actualizar la lista de ausencias
         setAusencias((prevAusencias) =>
           prevAusencias.map((ausencia) =>
             ausencia.idausencia === idausencia
@@ -231,9 +229,16 @@ const TablaAusencias = () => {
                       <th>Fecha de fin</th>
                       <th>Tipo de Ausencia</th>
                       <th>Descripción</th>
-                      <th>Justificación</th>
+                      <th>
+                        <select className="form-select form-select-sm">
+                          <option value="">Todos</option>
+                          <option value="en proceso">En Proceso</option>
+                          <option value="aceptada">Aceptada</option>
+                          <option value="rechazada">Rechazada</option>
+                        </select>
+                      </th>
                       {rol === "1" || rol === "2" ? (
-                        <th>Acciones</th>
+                        <th>Acciones</th> 
                       ) : null}
                     </tr>
                   </thead>

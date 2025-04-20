@@ -53,7 +53,7 @@ const FormularioAusencia = () => {
         setEnviando(true);
 
         try {
-            await axios.post(
+            const response = await axios.post(
                 "http://localhost/gestorplus/backend/",
                 {
                     action: "solicitarAusencia",
@@ -65,7 +65,7 @@ const FormularioAusencia = () => {
                     },
                 }
             );
-
+            console.log(response.data);
             setSolicitud({
                 fechaInicio: "",
                 fechaFin: "",
@@ -138,7 +138,7 @@ const FormularioAusencia = () => {
                             <option value="Personal">Personal</option>
                             <option value="Incapacidad">Incapacidad</option>
                             <option value="Entrega de boletines (Hijo)">Entrega de boletines (Hijo)</option>
-\                           <option value="Otro">Otro</option>
+                            <option value="Otro">Otro</option>
                         </select>
                         <div className="invalid-feedback">{errores.tipoAusencia}</div>
                     </div>

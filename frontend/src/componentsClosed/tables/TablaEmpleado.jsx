@@ -65,6 +65,7 @@ const TablaEmpleado = () => {
           params: { action: actionToSend },
         })
         .then((response) => {
+          console.log(response);
           let notificaciones;
           if (response.data?.Notificaciones) {
             notificaciones = response.data.Notificaciones;
