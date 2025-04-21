@@ -21,7 +21,7 @@ class CargoController extends BaseController {
     }
 
     public function obtenerCargos(){
-        $this->responder(['cargos' => $this->cargo->obtenerCargos()]);
+        $this->jsonResponseService->responder(['cargos' => $this->cargo->obtenerCargos()]);
     }
 
     public function agregarCargo(array $data)
@@ -30,7 +30,31 @@ class CargoController extends BaseController {
             return;
         }
         $resultado = $this->cargo->agregarCargo($data['nombreCargo']);
-        $this->responder(['success' => true, 'cargo' => $resultado]);
+        $this->jsonResponseService->responder(['success' => true, 'cargo' => $resultado]);
     }
+    
+    public function activarCargo(array $data){
+        if(!$this->parametrosrequeridos($data, ['idCargo'])){
+            return; 
+        }
+    
+        $resultado = $this->cargo->activarCargo((int) $data['idCargo']);
+        $this->jsonResponseService->responder(['success' => true, 'cargo' => $resultado]);
+    }
+    
+    public function desactivarCargo(array $data){
+        if(!$this->parametrosrequeridos($data, ['idCargo'])){
+            return;
+        }
+    
+        try {
+            $resultado = $this->cargo->desactivarCargo((int) $data['idCargo']);
+            $this->jsonResponseService->responder(['success' => true, 'cargo' => $resultado]);
+        } catch (Exception $e) {
+            $this->jsonResponseService->responder(['error' => $e->getMessage()], 400);
+        }
+    }
+    
+    
 
 }
