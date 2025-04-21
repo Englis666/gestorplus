@@ -33,19 +33,7 @@ class UsuarioControlador extends BaseController {
             'status' => 'success',
             'RRHH' => $resultado ?: []
         ]);
-    }
-    
-    public function obtener
-
- //   public function obtenerUsuariosConSistemaDeGestion(){
-
-// }
-    //public function obtenerUsuariosConEntrevista(){
-
-    //}
-    
-
-   
+    } 
 }
 
 ?>
