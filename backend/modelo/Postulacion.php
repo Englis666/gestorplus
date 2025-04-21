@@ -77,6 +77,42 @@ class Postulacion{
             return null;
         }
     }
-
+    public function obtenerPostulacionesAgrupadasPorConvocatoria($idconvocatoria) {
+        try {
+            $sql = "SELECT 
+                        u.num_doc,
+                        u.nombres,
+                        u.email,
+                        h.fechaNacimiento,
+                        h.direccion,
+                        h.ciudad,
+                        h.ciudadNacimiento,
+                        h.telefono,
+                        c.idconvocatoria,
+                        ca.nombreCargo as cargo
+                    FROM postulacion p
+                    INNER JOIN usuario u ON p.usuario_num_doc = u.num_doc
+                    INNER JOIN hojadevida h ON u.hojadevida_idHojadevida = h.idHojadevida
+                    INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                    INNER JOIN cargo ca ON c.cargo_idcargo = ca.idcargo
+                    WHERE c.idconvocatoria = :idconvocatoria";
+    
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':idconvocatoria', $idconvocatoria, PDO::PARAM_INT);
+            $stmt->execute();
+    
+            $postulantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            if ($postulantes) {
+                return $postulantes;
+            }
+            return [];
+        } catch (PDOException $e) {
+            echo json_encode(['error' => 'Error al obtener los postulantes: ' . $e->getMessage()]);
+            http_response_code(500);
+            return [];
+        }
+    }
+    
 
 }

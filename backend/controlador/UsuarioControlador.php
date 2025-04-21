@@ -35,16 +35,7 @@ class UsuarioControlador extends BaseController {
         ]);
     }
     
-    public function obtener
-
- //   public function obtenerUsuariosConSistemaDeGestion(){
-
-// }
-    //public function obtenerUsuariosConEntrevista(){
-
-    //}
     
-
    
 }
 

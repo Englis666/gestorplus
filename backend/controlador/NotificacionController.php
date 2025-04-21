@@ -22,7 +22,6 @@ class NotificacionController extends BaseController{
         $this->tokenService = new TokenService();
     }
 
-
     public function obtenerNotificaciones(): void {
         $num_doc = $this->tokenService->validarToken();
         $this->jsonResponseService->responder(['Notificaciones' => $this->notificacion->obtenerNotificaciones($num_doc)]);
@@ -38,17 +37,16 @@ class NotificacionController extends BaseController{
         try {
             $notificaciones = $this->notificacion->obtenerNotificacionesAspirante($num_doc);
             if (!$notificaciones) {
-                $this->jsonResponseService->responderError(['message' => 'No hay notificaciones', 'data' => []], 404);
+                $this->jsonResponseService->responderError('No hay notificaciones', 404);
                 return;
             }
             $this->jsonResponseService->responder(['message' => 'Notificaciones', 'data' => $notificaciones]);
         } catch (Exception $e) {
-            $this->jsonResponseService->responder(['error' => $e->getMessage()], $e->getCode());
+            $this->jsonResponseService->responderError($e->getMessage(), $e->getCode() ?: 400);
         }
     }
 
-    public function notificacionAceptada(array $data)
-    {
+    public function notificacionAceptada(array $data) {
         if (!$this->verificarDatosRequeridos($data, ['data' => ['idausencia']])) {
             return;
         }
@@ -56,19 +54,11 @@ class NotificacionController extends BaseController{
         $this->jsonResponseService->responder(['Ausencia' => $resultado]);
     }
 
-
-
-    public function notificacionRechazada(array $data)
-    {
+    public function notificacionRechazada(array $data) {
         if (!$this->verificarDatosRequeridos($data, ['data' => ['idausencia']])) {
             return;
         }
         $resultado = $this->notificacion->notificacionRechazada($data['data']['idausencia']);
         $this->jsonResponseService->responder(['success' => true, 'AusenciaRechaza' => $resultado]);
     }
-
-
-
-    
-
 }

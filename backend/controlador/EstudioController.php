@@ -59,4 +59,8 @@ class EstudioController extends BaseController
             $this->jsonResponseService->responderError($e->getMessage(), $e->getCode());
         }
     }
+
+    public function eliminarEstudio(){
+        
+    }
 }

@@ -21,7 +21,7 @@ class EmpleadoControlador extends BaseController{
         $this->tokenService = new TokenService();
     }
 
-    public function obtenerEmpleados()
+    public function obtenerEmpleados(): void
     {
       $this->jsonResponseService->responder(['empleados' => $this->empleado->obtenerEmpleados()]);
     }

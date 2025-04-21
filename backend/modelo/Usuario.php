@@ -26,7 +26,7 @@ class Usuario {
 
     // Obtener Recursos Humanos y Administradores
     public function obtenerRRHH() {
-        $sql = "SELECT * FROM usuario AS u
+        $sql = "SELECT u.num_doc, u.nombres,u.apellidos, r.nombreRol FROM usuario AS u
                 INNER JOIN rol AS r ON u.rol_idrol = r.idrol
                 WHERE r.nombreRol = 'Recursos humanos' OR r.nombreRol = 'Administrador'";
         return $this->ejecutarConsulta($sql);

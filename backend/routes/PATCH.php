@@ -5,6 +5,9 @@ return [
     'actualizarPublicacion' => ['publicaciones' , 'actualizarPublicacion'],
     'activarCargo' => ['cargo' , 'activarCargo'],
     'desactivarCargo' => ['cargo' , 'desactivarCargo'],
+    'desactivarConvocatoria' => ['convocatoria' , 'desactivarConvocatoria'], 
+    'activarConvocatoria' => ['convocatoria' , 'activarConvocatoria'],
+    
 ];
 
 ?>

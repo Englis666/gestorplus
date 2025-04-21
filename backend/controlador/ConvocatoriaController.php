@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Controlador;
@@ -6,16 +7,13 @@ namespace Controlador;
 use Core\Controller\BaseController;
 use Modelo\Convocatoria;
 use Servicio\TokenService;
-use Servicio\ValidationService;
 use PDO;
 use Exception;
 
-class ConvocatoriaController extends BaseController
-{
+class ConvocatoriaController extends BaseController{
     private PDO $db;
     private Convocatoria $convocatoria;
     private TokenService $tokenService;
-    private ValidationService $validationService;
 
     public function __construct()
     {
@@ -23,7 +21,6 @@ class ConvocatoriaController extends BaseController
         $this->db = (new \Config\Database())->getConnection();
         $this->convocatoria = new Convocatoria($this->db);
         $this->tokenService = new TokenService();
-        $this->validationService = new ValidationService();
     }
 
     public function agregarConvocatoria(array $data): void
@@ -37,8 +34,8 @@ class ConvocatoriaController extends BaseController
             'idcargo'
         ];
 
-        if (!$this->validationService->verificarDatosRequeridos($data, $required)) {
-            return; // Ya responde desde el servicio
+        if (!$this->verificarDatosRequeridos($data, $required)) {
+            return; 
         }
 
         $resultado = $this->convocatoria->agregarConvocatoria($data);
@@ -51,22 +48,21 @@ class ConvocatoriaController extends BaseController
         $this->jsonResponseService->responder(['convocatorias' => $convocatorias]);
     }
 
-    public function obtenerDetalleConvocatoria(): void
-    {
+    public function obtenerDetalleConvocatoria(): void{
         $idconvocatoria = $_GET['idconvocatoria'] ?? null;
 
         if (!$idconvocatoria) {
-            $this->jsonResponseService->responderError(['error' => "No se encontró la convocatoria"], 400);
+            $this->jsonResponseService->responderError(json_encode(['error' => "No se encontró la convocatoria"]), 400);
             return;
         }
 
         try {
             $detalleConvocatoria = $this->convocatoria->obtenerDetalleConvocatoria((int)$idconvocatoria);
             if (!$detalleConvocatoria) {
-                $this->jsonResponseService->responderError([
+                $this->jsonResponseService->responderError(json_encode([
                     'message' => "No se encontraron detalles para esta convocatoria",
                     'data' => []
-                ], 404);
+                ]), 404);
                 return;
             }
 
@@ -75,9 +71,16 @@ class ConvocatoriaController extends BaseController
                 'data' => $detalleConvocatoria
             ]);
         } catch (Exception $e) {
-            $this->jsonResponseService->responderError([
+            $this->jsonResponseService->responderError(json_encode([
                 'error' => $e->getMessage()
-            ], $e->getCode() ?: 500);
+            ]), $e->getCode() ?: 500);
         }
     }
+    public function activarConvocatoria(): void{
+
+    }
+    public function desactivarConvocatoria(): void{
+        
+    }
+
 }
