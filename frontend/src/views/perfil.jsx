@@ -372,7 +372,7 @@ const Perfil = () => {
                         </p>
                         <div className="d-flex justify-content-end">
                           <button className="btn btn-sm btn-primary me-2"><i className="material-icons">edit</i></button>
-                          <button className="btn btn-sm btn-danger" onClick={() => eliminarExperienciaHandler(experiencia.idexperiencialaboral)}><i className="material-icons">delete</i></button>
+                          <button className="btn btn-sm btn-danger" onClick={() => eliminarExperienciaHandler(experiencia.idexperienciaLaboral)}><i className="material-icons">delete</i></button>
                         </div>
                       </div>
                     </div>
