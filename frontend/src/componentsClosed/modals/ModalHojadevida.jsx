@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "material-design-icons/iconfont/material-icons.css";
-import "animate.css";
+
 
 const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) => {
   const [formData, setFormData] = useState({
@@ -34,27 +32,31 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
     try {
       const token = getCookie("auth_token");
       if (!token) return alert("No se encontró el token de autenticación.");
-
+  
       const { data } = await axios.get("http://localhost/gestorplus/backend/", {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "datosPerfil", num_doc },
       });
-
-      setFormData({
-        fechaNacimiento: data.fechaNacimiento ?? "",
-        direccion: data.direccion ?? "",
-        ciudad: data.ciudad ?? "",
-        ciudadNacimiento: data.ciudadNacimiento ?? "",
-        telefono: data.telefono ?? "",
-        telefonoFijo: data.telefonoFijo ?? "",
-        estadohojadevida: "Activa",
-      });
+  
+      if (data.status === "success" && data.data) {
+        setFormData({
+          fechaNacimiento: data.data.fechaNacimiento ?? "",
+          direccion: data.data.direccion ?? "",
+          ciudad: data.data.ciudad ?? "",
+          ciudadNacimiento: data.data.ciudadNacimiento ?? "",
+          telefono: data.data.telefono ?? "",
+          telefonoFijo: data.data.telefonoFijo ?? "",
+          estadohojadevida: "Activa",
+        });
+      } else {
+        alert("No se encontraron datos.");
+      }
     } catch (error) {
       console.error("Error al obtener hoja de vida:", error);
       alert("Error al cargar los datos.");
     }
   };
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -95,10 +97,10 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
           },
         }
       );
-
-      if (response.data.message === "Hoja de vida actualizada") {
+      console.log(response);
+      if (response.data.status === "success") {
         alert("Hoja de vida actualizada correctamente");
-        toggleModalHojaDeVida(); // Cerrar el modal después de la actualización exitosa
+        toggleModalHojaDeVida();
       } else {
         alert("Error al actualizar la hoja de vida.");
       }

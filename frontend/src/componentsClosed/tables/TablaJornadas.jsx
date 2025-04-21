@@ -122,7 +122,7 @@ const TablaJornadas = () => {
     try {
       const token = document.cookie
         .split("; ")
-        .find((row) => row.startsWith("auth_token="))
+        .find((row) => row.startsWith("auth_token"))
         ?.split("=")[1];
 
       await axios.post("http://localhost/gestorplus/backend/", null, {

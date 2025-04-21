@@ -9,8 +9,11 @@ use Exception;
 class TokenService{
 
     public function obtenerToken(): string{
-        $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
+        $headers = apache_request_headers() ?: getallheaders();
+        $authHeader = $headers['Authorization'] 
+           ?? $_SERVER['HTTP_AUTHORIZATION'] 
+           ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] 
+           ?? null;
 
         if (!$authHeader || !preg_match('/^Bearer\s+(\S+)$/', $authHeader, $matches)) {
             throw new Exception('Token no proporcionado o formato incorrecto', 401);

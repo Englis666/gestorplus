@@ -23,13 +23,13 @@ const TablaJornadas = () => {
     const fetchData = async () => {
       try {
         const token = await AsyncStorage.getItem('auth_token');
-
+  
         if (!token) {
           setError('Token no encontrado.');
           setLoading(false);
           return;
         }
-
+  
         const decodedToken = jwtDecode(token);
         const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
         if (isTokenExpired) {
@@ -37,40 +37,38 @@ const TablaJornadas = () => {
           setLoading(false);
           return;
         }
-
+  
         const Rol = String(decodedToken?.data?.rol);
         setRol(Rol);
-
+  
         const roleActions = {
           '1': 'obtenerTodasLasJornadas',
           '2': 'obtenerTodasLasJornadas',
           '3': 'obtenerJornadas',
         };
-
+  
         const action = roleActions[Rol];
-
+  
         const response = await axios.get(API_URL, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
           params: { action },
         });
-
-        const jornadasData = response.data?.Jornadas;
-        console.log('Jornadas recibidas:', jornadasData);
-
-        setJornadas(Array.isArray(jornadasData) ? jornadasData : []);
-        setLoading(false);
+  
+        const jornadasData = response.data?.Jornadas || [];
+        setJornadas(jornadasData);
+        setLoading(false); // Make sure to set loading to false after data is fetched.
       } catch (err) {
         console.error('Error:', err);
         setError('Hubo un problema al cargar las jornadas.');
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, []);
-
+  
   const handleCorroborar = async (idJornada) => {
     try {
       await axios.post(API_URL, {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import API_URL from '../config';
 import Chat from '../componentsClosed/Chat';
 import SidebarChat from '../componentsClosed/SidebarChat';
 
@@ -14,7 +15,6 @@ const Quejas = () => {
     const navigation = useNavigation();
 
     const getCookie = (name) => {
-        // Simulación de obtención de cookie en React Native
         return null;
     };
 
@@ -40,7 +40,7 @@ const Quejas = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await axios.post('http://192.168.80.28/gestorplus/backend/', data, {
+            const response = await axios.post(API_URL, data, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

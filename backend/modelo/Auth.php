@@ -82,7 +82,6 @@ class Auth {
                     'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
                 ];
             } else {
-                // Rol 4 (ej: administrador), solo retorna datos
                 return [
                     'num_doc' => $usuario['num_doc'],
                     'nombres' => $usuario['nombres'],

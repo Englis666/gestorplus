@@ -57,6 +57,7 @@ const TablaPazYSalvo = () => {
 
                 if (!action) return;
 
+                // Obtener Paz y Salvos
                 axios
                     .get("http://localhost/gestorplus/backend/", {
                         headers: {
@@ -65,8 +66,8 @@ const TablaPazYSalvo = () => {
                         params: { action },
                     })
                     .then((response) => {
-                        console.log(response);
-                        const Salvos = response.data?.Salvos;
+                        console.log("Respuesta Paz y Salvo:", response);  // Agrega esta línea para ver la respuesta completa
+                        const Salvos = response.data.Salvos;
                         if (Array.isArray(Salvos)) {
                             setSalvos(Salvos);
                         } else {
@@ -81,6 +82,7 @@ const TablaPazYSalvo = () => {
                         setLoading(false);
                     });
 
+                // Obtener Empleados
                 axios
                     .get("http://localhost/gestorplus/backend/", {
                         headers: {
@@ -89,6 +91,7 @@ const TablaPazYSalvo = () => {
                         params: { action: "obtenerEmpleados" },
                     })
                     .then((response) => {
+                        console.log("Respuesta Empleados:", response);  // Agrega esta línea para ver los empleados
                         const empleados = response.data?.empleados;
                         if (Array.isArray(empleados)) {
                             setEmpleados(empleados);
@@ -181,7 +184,7 @@ const TablaPazYSalvo = () => {
                                         {Salvos.length === 0 ? (
                                             <tr>
                                                 <td colSpan="3" className="py-3 px-4">
-                                                    <span className="text-dark">No existen Paz y Salvos en la base de datos</span>
+                                                    <span className="text-dark">No existen Paz y Salvos</span>
                                                 </td>
                                             </tr>
                                         ) : (

@@ -1,73 +1,83 @@
 <?php
+declare(strict_types=1);
+
 namespace Controlador;
 
+use Core\Controller\BaseController;
 use Modelo\Convocatoria;
-use Servicio\JsonResponseService;
 use Servicio\TokenService;
+use Servicio\ValidationService;
+use PDO;
+use Exception;
 
-class ConvocatoriaController{
+class ConvocatoriaController extends BaseController
+{
+    private PDO $db;
     private Convocatoria $convocatoria;
-    private ?\PDO $db;
-    private JsonResponseService $jsonResponseService;
     private TokenService $tokenService;
+    private ValidationService $validationService;
 
-    public function __construct(){
+    public function __construct()
+    {
+        parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->convocatoria = new Convocatoria($this->db);
         $this->tokenService = new TokenService();
-        $this->jsonResponseService = new jsonResponseService();
+        $this->validationService = new ValidationService();
     }
 
-    public function responder(array $data, int $httpCode = 200): void{
-        $this->jsonResponseService->responder($data, $httpCode);
-    }
-
-    public function verificarDatosRequeridos(array $data, array $camposRequeridos): bool{
-        foreach ($camposRequeridos as $campo){
-            if (!isset($data[$campo])){
-                $this->responder(['error' => "Falta el campo requerido : $campo"], 400);
-                return false;
-            }
-        }
-    return true;
-    }
-
-    public function agregarConvocatoria(array $data){
-        $required = ['nombreConvocatoria', 'descripcion', 'requisitos', 'salario', 'cantidadConvocatoria', 'idcargo'];
-        if(!$this->verificarDatosRequeridos($data, $required)){
-            return;
-        }
-        $resultado = $this->convocatoria->agregarConvocatoria($data);
-        $this->responder(['Convocatoria' => $resultado]);
-    }
-
-    public function obtenerConvocatorias()
+    public function agregarConvocatoria(array $data): void
     {
-        $this->responder(['convocatorias' => $this->convocatoria->obtenerConvocatorias()]);
+        $required = [
+            'nombreConvocatoria',
+            'descripcion',
+            'requisitos',
+            'salario',
+            'cantidadConvocatoria',
+            'idcargo'
+        ];
+
+        if (!$this->validationService->verificarDatosRequeridos($data, $required)) {
+            return; // Ya responde desde el servicio
+        }
+
+        $resultado = $this->convocatoria->agregarConvocatoria($data);
+        $this->jsonResponseService->responder(['Convocatoria' => $resultado]);
     }
 
-    public function obtenerDetalleConvocatoria() {
+    public function obtenerConvocatorias(): void
+    {
+        $convocatorias = $this->convocatoria->obtenerConvocatorias();
+        $this->jsonResponseService->responder(['convocatorias' => $convocatorias]);
+    }
+
+    public function obtenerDetalleConvocatoria(): void
+    {
         $idconvocatoria = $_GET['idconvocatoria'] ?? null;
 
         if (!$idconvocatoria) {
-            $this->responder(['error' => "No se encontró la convocatoria"], 400);
+            $this->jsonResponseService->responderError(['error' => "No se encontró la convocatoria"], 400);
             return;
         }
 
         try {
-            $detalleConvocatoria = $this->aspirante->obtenerDetalleConvocatoria($idconvocatoria);
+            $detalleConvocatoria = $this->convocatoria->obtenerDetalleConvocatoria((int)$idconvocatoria);
             if (!$detalleConvocatoria) {
-                $this->responder(['message' => "No se encontraron detalles para esta convocatoria", 'data' => []], 404);
+                $this->jsonResponseService->responderError([
+                    'message' => "No se encontraron detalles para esta convocatoria",
+                    'data' => []
+                ], 404);
                 return;
             }
-            $this->responder(['message' => 'DetalleConvocatoria', 'data' => $detalleConvocatoria]);
+
+            $this->jsonResponseService->responder([
+                'message' => 'DetalleConvocatoria',
+                'data' => $detalleConvocatoria
+            ]);
         } catch (Exception $e) {
-            $this->responder(['error' => $e->getMessage()], $e->getCode());
+            $this->jsonResponseService->responderError([
+                'error' => $e->getMessage()
+            ], $e->getCode() ?: 500);
         }
     }
-
-
 }
-
-
-?>

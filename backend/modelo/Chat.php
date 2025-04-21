@@ -93,7 +93,8 @@ class Chat {
         error_log("Error al obtener mensajes: " . $e->getMessage());
         return false;
     }
-}
+    }
 
+    
 }
 ?>

@@ -11,8 +11,8 @@ use Exception;
 
 
 class PostulacionController extends BaseController{
-    private Postulacion $postulacion;
     private PDO $db;
+    private Postulacion $postulacion;
     private TokenService $tokenService;
 
     public function __construct(){

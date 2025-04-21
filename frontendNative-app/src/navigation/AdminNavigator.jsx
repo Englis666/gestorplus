@@ -111,7 +111,6 @@ const AdminNavigator = ({ navigation }) => {
           <Tab.Screen name="Sistema De Gestion" component={SistemaDeGestion} />
           <Tab.Screen name="Vacaciones" component={Vacaciones} />
 
-          {/* Botón de Cerrar Sesión */}
           <Tab.Screen name="Logout">
             {() => (
               <TouchableOpacity

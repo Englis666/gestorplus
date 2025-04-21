@@ -11,7 +11,20 @@ class Hojadevida{
         $this->db = $db;
     }
 
-    public function actualizacionHojadeVida($data, $hojadevida_idHojadevida) {
+    public function obtenerHojadevida(int $hojadevida_idHojadevida): ?array {
+        $sql = "SELECT * FROM hojadevida WHERE idHojadevida = ?";
+        $stmt = $this->db->prepare($sql);
+        
+        $stmt->execute([$hojadevida_idHojadevida]);
+        
+        if ($stmt->rowCount() > 0) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            return null;
+        }
+    }
+    
+    public function actualizacionHojadeVida($hojadevida_idHojadevida,$data) {
         $query = "UPDATE hojadevida SET 
                     fechaNacimiento = ?,
                     direccion = ?,

@@ -1,34 +1,49 @@
 <?php
 namespace Controlador;
 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+
+use Core\Controller\BaseController;
 use Modelo\Usuario;
-use Config\Database;
-use Config\Clave;
+use PDO;
+use Exception;
 
-class UsuarioControlador {
+class UsuarioControlador extends BaseController {
 
-    private $db;
-    private $usuario;
+    private PDO $db;
+    private Usuario $usuario;
 
     public function __construct() {
-        $this->db = (new DataBase())->getConnection();
+        parent::__construct();
+        $this->db = (new \Config\Database())->getConnection();
         $this->usuario = new Usuario($this->db);
-    }
-
-    private function jsonResponse($status, $message, $data = []) {
-        echo json_encode(array_merge(['status' => $status, 'message' => $message], $data));
     }
 
     //chat
     public function obtenerRRHH() {
         $resultado = $this->usuario->obtenerRRHH();
-        $this->jsonResponse('success', '', ['RRHH' => $resultado ?: []]);
+        $this->jsonResponseService->responder([
+            'status' => 'success',
+            'RRHH' => $resultado ?: []
+        ]);
     }
+    
+    public function obtenerUsuarios(){
+        $resultado = $this->usuario->obtenerUsuarios(); 
+        $this->jsonResponseService->responder([
+            'status' => 'success',
+            'RRHH' => $resultado ?: []
+        ]);
+    }
+    
+    public function obtener
 
-    //Certificado
-   
+ //   public function obtenerUsuariosConSistemaDeGestion(){
+
+// }
+    //public function obtenerUsuariosConEntrevista(){
+
+    //}
+    
 
    
 }

@@ -17,7 +17,7 @@ const ConvocatoriaLayout = () => {
     useEffect(() => {
         axios.get(`${API_URL}`, { params: { action: "obtenerConvocatorias" } })
             .then((response) => {
-                console.log("API Response:", response.data);
+                console.log("API Response:", response);
                 setConvocatorias(response.data.convocatorias || []);
             })
             .catch((error) => {

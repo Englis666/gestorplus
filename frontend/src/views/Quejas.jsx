@@ -34,12 +34,6 @@ const Quejas = () => {
       return;
     }
 
-    socket.current = new WebSocket("ws://localhost:8082");
-
-
-    return () => {
-      socket.current?.close();
-    };
   }, [navigate, token]);
 
   return (
@@ -55,13 +49,7 @@ const Quejas = () => {
             <SidebarChat onChatSelect={setSelectedChatId} />
           </div>
           <div className="col-md-8 d-flex flex-column">
-            <div className="bg-primary text-white px-4 py-3">
-              <h6 className="mb-0">
-                {selectedChatId
-                  ? `Conversación ID: ${selectedChatId}`
-                  : "Selecciona un chat"}
-              </h6>
-            </div>
+
             <div
               className="flex-grow-1 overflow-auto px-4 py-3"
               style={{ backgroundColor: "#f8f9fa" }}

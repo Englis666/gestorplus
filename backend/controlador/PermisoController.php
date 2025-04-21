@@ -1,71 +1,57 @@
 <?php
+declare(strict_types=1);
+
 namespace Controlador;
 
+use Core\Controller\BaseController;
 use Modelo\Permiso;
-use Servicio\jsonResponseService;
 use Servicio\TokenService;
+use PDO;
 
-class PermisoController{
+class PermisoController extends BaseController {
     private Permiso $permiso;
-    private ?\PDO $db;
-    private JsonResponseService $jsonResponseService;
+    private PDO $db;
     private TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct() {
+        parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->permiso = new Permiso($this->db);
         $this->tokenService = new TokenService();
-        $this->jsonResponseService = new jsonResponseService();
     }
 
-    public function responder(array $data , int $httpCode = 200): void{
-        $this->jsonResponseService->responder($data, $httpCode);
+    public function obtenerPermisos(): void {
+        $num_doc = $this->tokenService->validarToken();
+        $permisos = $this->permiso->obtenerPermisos($num_doc);
+        $this->jsonResponseService->responder(['permisos' => $permisos]);
     }
 
-    private function verificarDatosRequeridos(array $data, array $camposRequeridos): bool{
-        foreach ($camposRequeridos as $campo){
-            if (!isset($data[$campo])){
-                $this->responder(['error' => "Falta el campo requerido: $campo"], 400);
-                return false;
-            }
-        }
-    return true;
-    }
-
-    public function obtenerPermisos(): void{
-        $num_doc = $this->validarToken();
-        $this->responder('permisos', $this->empleado->obtenerPermisos($num_doc));
-    }
-
-       
     public function solicitarPermiso(array $data): void {
-        $num_doc = $this->validarToken();
-        $this->responder('message', $this->empleado->solicitarPermiso($num_doc, $data) ? 'Permiso solicitado' : 'Error al solicitar el permiso');
+        $num_doc = $this->tokenService->validarToken();
+        $mensaje = $this->permiso->solicitarPermiso($num_doc, $data)
+            ? 'Permiso solicitado'
+            : 'Error al solicitar el permiso';
+        $this->jsonResponseService->responder(['message' => $mensaje]);
     }
 
-    public function permisoAceptado(array $data)
-    {
+    public function permisoAceptado(array $data): void {
         if (!$this->verificarDatosRequeridos($data, ['data' => ['idpermiso']])) {
             return;
         }
         $resultado = $this->permiso->permisoAceptado($data['data']['idpermiso']);
-        $this->responder(['Permiso' => $resultado]);
+        $this->jsonResponseService->responder(['permisoAceptado' => $resultado]);
     }
 
-
-    public function permisoRechazado(array $data)
-    {
+    public function permisoRechazado(array $data): void {
         if (!$this->verificarDatosRequeridos($data, ['data' => ['idpermiso']])) {
             return;
         }
         $resultado = $this->permiso->permisoRechazado($data['data']['idpermiso']);
-        $this->responder(['success' => true, 'permisoRechazado' => $resultado]);
+        $this->jsonResponseService->responder(['permisoRechazado' => $resultado]);
     }
 
-    public function obtenerTodosLosPermisos()
-    {
-        $this->responder(['permisos' => $this->permiso->obtenerTodosLosPermisos()]);
+    public function obtenerTodosLosPermisos(): void {
+        $permisos = $this->permiso->obtenerTodosLosPermisos();
+        $this->jsonResponseService->responder(['permisos' => $permisos]);
     }
-
-    
 }

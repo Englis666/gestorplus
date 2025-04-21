@@ -39,6 +39,7 @@ const TablaSistemaDeGestion = () => {
           params: { action: "obtenerSistemaDeGestion" },
         })
         .then((response) => {
+          console.log(response);
           const data = response.data?.sistemaDeGestion;
           setSistemaDeGestion(Array.isArray(data) ? data : []);
         })

@@ -35,7 +35,7 @@ const Login = () => {
                 console.log(response.data);
                 const res = response.data;
                 if (res?.status === 'success') {
-                    const token = res?.data?.token; // Corrección: acceder al token dentro de res.data
+                    const token = res?.data?.token;
                     document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
                     login({ token });
 

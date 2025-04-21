@@ -3,6 +3,8 @@ return[
     // AUTH
     'login' => ['auth', 'iniciar'],
     'registrarse' => ['auth', 'registrar'],
+    //Archivo
+    'subirContrato' => ['archivos', 'subirContrato'],
     //ESTUDIO
     'agregarEstudio' => ['estudio', 'agregarEstudio'],
     //EXPERIENCIA

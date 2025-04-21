@@ -53,7 +53,6 @@ const Perfil = () => {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "datosPerfil" },
       });
-      console.log(response);
       if (response.status === 200) {
         const mappedData = mapData(response.data.data);
         setFormData((prevFormData) => ({
@@ -98,9 +97,9 @@ const Perfil = () => {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerEstudio" },
         });
-        const data = responseEstudios.data?.obtenerEstudio || [];
-        console.log(data.data?.obtenerEstudio);
-setEstudios(Array.isArray(data) ? data : []);
+        const data = responseEstudios.data?.obtenerEstudio|| [];
+        console.log(data);
+        setEstudios(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error al obtener estudios:", error);
         setEstudios([]);

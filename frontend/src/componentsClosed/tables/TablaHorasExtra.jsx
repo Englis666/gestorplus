@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import useWebSocket from "../../hook/useWebSocket";
+import axios from "axios";
 
 const TablaHorasExtra = () => {
   const [horasExtra, setHorasExtra] = useState([]);
@@ -15,57 +15,71 @@ const TablaHorasExtra = () => {
     return null;
   };
 
-  const {
-    mensajeEstado: socketMensajeEstado,
-    sendMessage,
-    ultimoMensaje,
-  } = useWebSocket("ws://localhost:8082");
-
-  useEffect(() => {
+  const fetchHorasExtra = async () => {
     const token = getCookie("auth_token");
+
+    if (!token) {
+      setError("Token no disponible.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const decodedToken = jwtDecode(token);
       const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
 
-      const timer = setTimeout(() => {
-        sendMessage({
-          action: "calcularHorasExtra",
-          method: "GET",
-          token: token,
-        });
-      }, 1000);
+      if (isTokenExpired) {
+        setError("El token ha expirado.");
+        setLoading(false);
+        return;
+      }
 
-      return () => clearTimeout(timer);
+      setMensajeEstado("Consultando horas extra...");
+
+      const response = await axios.get("http://localhost/gestorplus/backend/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          action: "calcularHorasExtra",
+        },
+      });
+
+      if (response.data?.calculo?.length > 0) {
+        const datos = response.data.calculo.map((item, index) => ({
+          idHoraextra: index,
+          fecha: new Date().toLocaleDateString(),
+          horasExtra: item.horasExtra,
+          usuario_num_doc: item.num_doc,
+          nombres: item.nombres,
+          rol: item.nombreRol,
+        }));
+        setHorasExtra(datos);
+      } else {
+        setHorasExtra([]);
+      }
+
+      setLoading(false);
+      setMensajeEstado("Horas extra actualizadas.");
     } catch (err) {
-      setError("Token inválido o malformado.");
+      console.error(err);
+      setError("Error al cargar datos.");
       setLoading(false);
     }
-  }, [sendMessage]);
+  };
 
   useEffect(() => {
-    if (ultimoMensaje?.calculo) {
+    fetchHorasExtra(); // Primera carga inmediata
 
-      const datos = ultimoMensaje.calculo.map((item, index) => ({
-        idHoraextra: index,
-        fecha: new Date().toLocaleDateString(), // Ajusta si hay fecha real
-        horasExtra: item.horasExtra,
-        usuario_num_doc: item.num_doc,
-        nombres: item.nombres,
-        rol: item.nombreRol,
-      }));
+    const interval = setInterval(() => {
+      fetchHorasExtra(); // Polling cada 5 segundos
+    }, 5000);
 
-      setHorasExtra(datos);
-      setLoading(false); 
-    }
-  }, [ultimoMensaje]);
+    return () => clearInterval(interval); // Limpiar intervalo al desmontar
+  }, []);
 
   return (
     <div className="container mt-5">
-      <div className="alert alert-info text-center">
-        <span className="spinner-border spinner-border-sm me-2"></span>
-        {error || socketMensajeEstado || setMensajeEstado}
-      </div>
 
       <h2 className="mb-4 text-center text-dark font-weight-bold">Horas Extra</h2>
       <div className="table-responsive">

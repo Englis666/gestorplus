@@ -10,14 +10,15 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import API_URL from "../config";
+import API_URL from "../config"; 
+import jwtDecode from "jwt-decode";
 
 const LoginScreen = ({ navigation, setIsAuthenticated }) => {
   const [formData, setFormData] = useState({ num_doc: "", password: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (name, value) => {
-    if (name === "num_doc" && !/^\d*$/.test(value)) return; // Solo permitir números
+    if (name === "num_doc" && !/^\d*$/.test(value)) return; 
     setFormData({ ...formData, [name]: value });
   };
 
@@ -37,21 +38,30 @@ const LoginScreen = ({ navigation, setIsAuthenticated }) => {
       });
 
       if (response.data?.status === "success") {
-        const token = response.data.token;
+        console.log("Respuesta exitosa:", response);
+        const token = response.data.data.token;
         await AsyncStorage.setItem("auth_token", token);
         setIsAuthenticated(true);
+
+        const decoded = jwtDecode(token);
+        const role = decoded?.data?.rol;
+
+        if (role === "1" || role === "2" || role === "3") {
+          navigation.navigate("Administrador");
+        } else if (role === "4") {
+          navigation.navigate("InicioAspirante");
+        }
+
       } else {
         Alert.alert("Error", response.data?.message || "Inicio de sesión fallido.");
       }
     } catch (error) {
-      console.error("Error al iniciar sesión:", error);
+      console.error("Error al iniciar sesión:", error.response?.data || error.message);
       Alert.alert("Error", "Hubo un problema con la conexión.");
     } finally {
       setIsSubmitting(false);
     }
   };
-
-
 
   return (
     <View style={styles.container}>
@@ -95,7 +105,7 @@ const LoginScreen = ({ navigation, setIsAuthenticated }) => {
             onPress={() => navigation.navigate("Register")}
             style={styles.registerButton}
           >
-            <Text style={styles.registerText}>No tengo cuenta</Text>
+            <Text style={styles.registerText}>¿No tienes cuenta?</Text>
           </TouchableOpacity>
         </View>
       </View>

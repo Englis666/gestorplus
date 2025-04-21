@@ -107,32 +107,33 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
     }
   };
 
+
   const handleSearch = async (e, num_doc) => {
     e.preventDefault();
     try {
       const response = await axios.get("http://localhost/gestorplus/backend/", {
-        params: { endpoint: "archivos", action: "obtenerContrato", num_doc },
+        params: { action: "obtenerContrato", num_doc },
         responseType: "blob",
       });
-
-      if (!response.data || response.data.size === 0) {
-        throw new Error("El archivo está vacío o no existe.");
+  
+      const contentType = response.headers["content-type"];
+  
+      if (contentType !== "application/pdf") {
+        const text = await response.data.text();
+        const jsonError = JSON.parse(text);
+        throw new Error(jsonError.error || "Error inesperado del servidor");
       }
-
-      const fileType = response.data.type;
-      if (fileType !== "application/pdf") {
-        throw new Error(`El servidor no devolvió un PDF. Tipo recibido: ${fileType}`);
-      }
-
+  
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileURL = URL.createObjectURL(file);
       setPdfUrl(fileURL);
-      setModalVerContratoAbierto(true); // Abre el modal
+      setModalVerContratoAbierto(true);
     } catch (err) {
-      console.error("Error al obtener contrato:", err);
-      setErrorMessage("Hubo un error al obtener el contrato.");
+      console.error("Error al obtener contrato:", err.message);
+      setErrorMessage(err.message || "Hubo un error al obtener el contrato.");
     }
   };
+  
 
   const closeModal = () => {
     setModalContratoAbierto(false);

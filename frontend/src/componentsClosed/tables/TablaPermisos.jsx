@@ -64,6 +64,7 @@ const TablaPermisos = () => {
             params: { action },
           })
           .then((response) => {
+            console.log(response);
             const permisos = response.data?.permisos;
             if (Array.isArray(permisos)) {
               setPermisos(permisos);

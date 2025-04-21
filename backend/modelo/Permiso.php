@@ -53,11 +53,41 @@ class Permiso{
         }
     }
 
+    public function solicitarPermiso($num_doc, $data) {
+        try {
+            $estado = 'Pendiente';
     
-
- 
+            $sql = "INSERT INTO permiso (tipo, fechaInicio, fechaFin, estado, usuario_num_doc) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $data['tipo'],
+                $data['fechaInicio'],
+                $data['fechaFin'],
+                $estado,
+                $num_doc
+            ]);
     
-
+            if ($stmt->rowCount() > 0) {
+                $descripcionNotificacion = "El empleado identificado con la cédula {$num_doc} ha solicitado un permiso de tipo {$data['tipo']}";
+    
+                $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) VALUES (?, ?, ?, ?)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    $descripcionNotificacion,
+                    'Pendiente',
+                    'General',
+                    $num_doc
+                ]);
+    
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
     //realizar PermisoAceptado 
 
     //Realizar PermisoRechazado

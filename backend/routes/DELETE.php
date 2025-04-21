@@ -1,6 +1,6 @@
 <?php
 return [
-    'eliminarEstudio' => ['perfil', 'eliminarEstudio'],
+    'eliminarEstudio' => ['estudio', 'eliminarEstudio'],
     'eliminarExperiencia' => ['experiencia', 'eliminarExperiencia'],
     'eliminarPublicacion' => ['publicaciones' , 'eliminarPublicacion'],
 ];

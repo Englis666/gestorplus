@@ -1,76 +1,49 @@
 <?php
+declare(strict_types=1);
+
 namespace Controlador;
 
+use Core\Controller\BaseController;
 use Modelo\Notificacion;
-use Servicio\JsonResponseService;
 use Servicio\TokenService;
+use PDO;
+use Exception;
 
-class NotificacionController{
-
+class NotificacionController extends BaseController{
+    
+    private PDO $db;
     private Notificacion $notificacion;
-    private ?\PDO $db;
-    private JsonResponseService $jsonResponseService;
     private TokenService $tokenService;
 
     public function __construct(){
+        parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->notificacion = new Notificacion($this->db);
         $this->tokenService = new TokenService();
-        $this->jsonResponseService = new jsonResponseService();
     }
 
-    protected function validarToken(): ?string
-    {
-        try {
-            return $this->tokenService->validarToken();
-        } catch (Exception $e) {
-            $this->jsonResponseService->responder(['error' => $e->getMessage()], $e->getCode());
-            return null;
-        }
-    }
-    protected function verificarToken(): void
-    {
-        if ($this->validarToken() === null) {
-            exit;
-        }
-    }
-
-    private function responder(array $data , int $httpCode = 200): void{
-        $this->jsonResponseService->responder($data,$httpCode);
-    }
-
-    private function verificarDatosRequeridos(array $data, array $camposRequeridos): bool
-    {
-        foreach ($camposRequeridos as $campo) {
-            if (!isset($data[$campo])) {
-                $this->responder(['error' => "Falta el campo requerido: $campo"], 400);
-                return false;
-            }
-        }
-        return true;
-    }
 
     public function obtenerNotificaciones(): void {
-        $decoded = $this->verificarToken();
-        $this->responder(['Notificaciones', $this->notificacion->obtenerNotificaciones($decoded->data->num_doc)]);
+        $num_doc = $this->tokenService->validarToken();
+        $this->jsonResponseService->responder(['Notificaciones' => $this->notificacion->obtenerNotificaciones($num_doc)]);
     }
+
     public function obtenerTodasLasNotificaciones(){
-        $this->verificarToken();
-        $this->responder(['Notificaciones' => $this->notificacion->obtenerTodasLasNotificaciones()]);
+        $this->jsonResponseService->responder(['Notificaciones' => $this->notificacion->obtenerTodasLasNotificaciones()]);
     }
 
     public function obtenerNotificacionesAspirante() {
-        $num_doc = $this->obtenerNumDocDesdeToken();
+        $num_doc = $this->tokenService->validarToken();
         if ($num_doc === null) return;
         try {
             $notificaciones = $this->notificacion->obtenerNotificacionesAspirante($num_doc);
             if (!$notificaciones) {
-                $this->responder(['message' => 'No hay notificaciones', 'data' => []], 404);
+                $this->jsonResponseService->responderError(['message' => 'No hay notificaciones', 'data' => []], 404);
                 return;
             }
-            $this->responder(['message' => 'Notificaciones', 'data' => $notificaciones]);
+            $this->jsonResponseService->responder(['message' => 'Notificaciones', 'data' => $notificaciones]);
         } catch (Exception $e) {
-            $this->responder(['error' => $e->getMessage()], $e->getCode());
+            $this->jsonResponseService->responder(['error' => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -80,7 +53,7 @@ class NotificacionController{
             return;
         }
         $resultado = $this->notificacion->notificacionAceptada($data['data']['idausencia']);
-        $this->responder(['Ausencia' => $resultado]);
+        $this->jsonResponseService->responder(['Ausencia' => $resultado]);
     }
 
 
@@ -91,7 +64,7 @@ class NotificacionController{
             return;
         }
         $resultado = $this->notificacion->notificacionRechazada($data['data']['idausencia']);
-        $this->responder(['success' => true, 'AusenciaRechaza' => $resultado]);
+        $this->jsonResponseService->responder(['success' => true, 'AusenciaRechaza' => $resultado]);
     }
 
 

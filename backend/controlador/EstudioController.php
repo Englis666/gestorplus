@@ -1,41 +1,62 @@
 <?php
+declare(strict_types=1);
+
 namespace Controlador;
 
+use Core\Controller\BaseController;
 use Modelo\Estudio;
-use Servicio\jsonResponseService;
 use Servicio\TokenService;
+use PDO;
+use Exception;
 
-class EstudioController{
+class EstudioController extends BaseController
+{
+    private PDO $db;
     private Estudio $estudio;
-    private ?\PDO $db;
-    private JsonResponseService $jsonResponseService;
     private TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct()
+    {
+        parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->estudio = new Estudio($this->db);
-        $this->jsonResponseService = new jsonResponseService();
         $this->tokenService = new TokenService();
     }
 
-    private function responder(array $data , int $httpCode = 200): void{
-        $this->jsonResponseService->responder($data,$httpCode);
-    }
+    public function obtenerEstudio(): void
+    {
+        try {
+            $decoded = $this->tokenService->obtenerPayload();
+            if (!$decoded || !isset($decoded->data->hojadevida_idHojadevida)) {
+                throw new Exception('No se pudo obtener el ID de la hoja de vida del token.', 400);
+            }
 
-    public function obtenerEstudio(){
-        $decoded = $this->tokenService->obtenerPayload();
-        if (!$decoded || !isset($decoded->data->hojadevida_idHojadevida)) {
-            $this->jsonResponseService->responder(['status' => 'error', 'message' => 'No se pudo obtener el ID de la hoja de vida del token.'], 400);
-            return;
+            $resultado = $this->estudio->obtenerEstudio($decoded->data->hojadevida_idHojadevida);
+            $this->jsonResponseService->responder(['status' => 'success', 'message' => 'Se obtuvieron los estudios', 'obtenerEstudio' => $resultado ?: []]);
+
+        } catch (Exception $e) {
+            $this->jsonResponseService->responderError($e->getMessage(), $e->getCode());
         }
-        $resultado = $this->estudio->obtenerEstudio($decoded->data->hojadevida_idHojadevida);
-        $this->jsonResponseService->responder(['status' => 'success', 'message' => 'Se obtuvo los estudios', 'obtenerEstudio' => $resultado ?: []]);
     }
 
-    public function agregarEstudio($data) {
-        $decoded = $this->verificarToken();
-        $resultado = $this->estudio->agregarEstudio($data, $decoded->data->hojadevida_idHojadevida);
-        $this->jsonResponse($resultado ? 'success' : 'error', $resultado ? 'Estudio agregado' : 'No se pudo agregar el estudio');
-    }
+    public function agregarEstudio(array $data): void
+    {
+        try {
+            $decoded = $this->tokenService->verificarToken();
+            if (!$decoded || !isset($decoded->data->hojadevida_idHojadevida)) {
+                throw new Exception('Token inválido o sin acceso al ID de la hoja de vida.', 400);
+            }
 
+            $resultado = $this->estudio->agregarEstudio($data, $decoded->data->hojadevida_idHojadevida);
+
+            if ($resultado) {
+                $this->jsonResponseService->responder(['status' => 'success', 'message' => 'Estudio agregado']);
+            } else {
+                throw new Exception('No se pudo agregar el estudio.', 400);
+            }
+
+        } catch (Exception $e) {
+            $this->jsonResponseService->responderError($e->getMessage(), $e->getCode());
+        }
+    }
 }
