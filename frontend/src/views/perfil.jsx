@@ -213,12 +213,46 @@ const Perfil = () => {
   const toggleModalExperiencia = () => setModalExperiencia(!modalExperiencia);
 
   const agregarEstudio = (nuevoEstudio) => {
-    setEstudios((prevEstudios) => [...prevEstudios, nuevoEstudio]);
+    if (nuevoEstudio) {
+      setEstudios((prevEstudios) => [...prevEstudios, nuevoEstudio]);
+    } else {
+      const token = getCookie("auth_token");
+      if (token) {
+        axios.get("http://localhost/gestorplus/backend/", {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { action: "obtenerEstudio" },
+        })
+        .then(response => {
+          const data = response.data?.obtenerEstudio || [];
+          setEstudios(Array.isArray(data) ? data : []);
+        })
+        .catch(error => {
+          console.error("Error al obtener estudios:", error);
+        });
+      }
+    }
   };
 
   const agregarExperiencia = (nuevaExperiencia) => {
-    setExperiencia((prevExperiencia) => [...prevExperiencia, nuevaExperiencia]);
+    if (nuevaExperiencia) {
+      setExperiencia((prevExperiencia) => [...prevExperiencia, nuevaExperiencia]);
+    } else {
+      const token = getCookie("auth_token");
+      if (token) {
+        axios.get("http://localhost/gestorplus/backend/", {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { action: "obtenerExperiencia" },
+        })
+        .then(response => {
+          const data = response.data?.data || [];
+          setExperiencia(Array.isArray(data) ? data : []);
+        })
+        .catch(error => {
+          console.error("Error al obtener la experiencia laboral:", error);
+        });
+      }
   };
+};
 
   return (
     <div className="container mt-5">
@@ -389,6 +423,8 @@ const Perfil = () => {
       <ModalHojaDeVida modalHojaDeVida={modalHojaDeVida} toggleModalHojaDeVida={toggleModalHojaDeVida} />
       <Estudios modalEstudios={modalEstudios} toggleModalEstudios={toggleModalEstudios} onAgregarEstudio={agregarEstudio} />
       <Experiencia modalExperiencia={modalExperiencia} toggleModalExperiencia={toggleModalExperiencia} onAgregarExperiencia={agregarExperiencia} />
+      {/* <EditarEstudio modalEditarEstudio={modalEditarEstudio} toggleModalEditarEstudio={toggleModalEditarEstudio} onEditarEstudio={editarEstudio}></EditarEstudio>
+      <EditarExperiencia modalEditarExperiencia={modalEditarExperiencia} toggleModalEditarExperiencia={toggleModalEditarExperiencia} onEditarExperiencia={editarExperiencia}></EditarExperiencia> */}
     </div>
   );
 };

@@ -59,33 +59,48 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia, onAgregarExperi
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isSubmitting) return;
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
 
     axios
-      .post("http://localhost/gestorplus/backend/", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        if (response.data.message === "Experiencia agregada") {
-          alert("✅ Experiencia agregada correctamente");
-          onAgregarExperiencia(response.data.nuevaExperiencia);
-        } else {
-          alert("❌ Hubo un error al agregar la experiencia.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error al registrar experiencia:", error);
-        alert("❌ Ocurrió un error al agregar la experiencia.");
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-        toggleModalExperiencia();
-      });
+    .post("http://localhost/gestorplus/backend/", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      alert("✅ Experiencia agregado correctamente.");
+      if (res.data && res.data.data) {
+        onAgregarExperiencia(res.data.data);
+      } else {
+        onAgregarExperiencia(formData);
+      }
+    })
+    .catch((err) => {
+      console.error("Error completo:", err);
+      if (err.response) {
+        // El servidor respondió con un código fuera del rango 2xx
+        console.error("Data del error:", err.response.data);
+        console.error("Status del error:", err.response.status);
+        console.error("Headers del error:", err.response.headers);
+        alert(`❌ Error del servidor: ${err.response.data?.message || "Error al guardar la experiencia."}`);
+      } else if (err.request) {
+        // La solicitud fue hecha pero no hubo respuesta
+        console.error("Error de red o sin respuesta:", err.request);
+        alert("❌ No se recibió respuesta del servidor.");
+      } else {
+        // Algo ocurrió al configurar la solicitud
+        console.error("Error desconocido:", err.message);
+        alert(`❌ Error desconocido: ${err.message}`);
+      }
+    })    
+    .finally(() => {
+      setIsSubmitting(false);
+      toggleModalExperiencia();
+    });
   };
 
   return (
