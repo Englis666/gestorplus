@@ -9,8 +9,7 @@ use Servicio\TokenService;
 use PDO;
 use Exception;
 
-class AusenciaController extends BaseController
-{
+class AusenciaController extends BaseController{
     private PDO $db;
     private Ausencia $ausencia;
     private TokenService $tokenService;
@@ -65,7 +64,7 @@ class AusenciaController extends BaseController
 
     public function asistenciaNoConfirmada(array $data): void
     {
-        if (!$this->requireParams($data, ['identrevista'])) {
+        if (!$this->parametrosRequeridos($data, ['identrevista'])) {
             return;
         }
 
