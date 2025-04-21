@@ -1,63 +1,45 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Controlador;
 
-use Config\DataBase;
+use Core\Controller\BaseController;
 use Modelo\Aspirante;
-use Exception;
-use Servicio\jsonResponseService;
 use Servicio\TokenService;
+use PDO;
+use Exception;
 
-class AspiranteControlador {
-    private Database $db;
+class AspiranteControlador extends BaseController {
+    private PDO $db;
     private Aspirante $aspirante;
-    private JsonResponseService $jsonResponseService;
     private TokenService $tokenService;
 
     public function __construct() {
-        $this->db = new Database();
-        $this->aspirante = new Aspirante($this->db->getConnection());
+        parent::__construct();
+        $this->db = (new \Config\Database())->getConnection();
+        $this->aspirante = new Aspirante($this->db);
         $this->tokenService = new TokenService();
-        $this->jsonResponseService = new JsonResponseService();
     }
-
-    protected function validarToken(): ?string{
-        try {
-            return $this->tokenService->validarToken();
-        } catch (Exception $e) {
-            $this->jsonResponseService->responder(['error' => $e->getMessage()], $e->getCode());
-            return null;
-        }
-    }
-
-    protected function obtenerNumDocDesdeToken(): ?string {
-        $token = $this->validarToken();
-        if($token === null){
-            return null;
-        }
-        return $token;
-    }
-
-
+    
     
     public function aplicacionDeAspirante($data) {
-        $num_doc = $this->obtenerNumDocDesdeToken();
+        $num_doc = $this->tokenService->validarToken();
         if ($num_doc === null) return;
-        $idconvocatoria = $data['idconvocatoria'] ?? null;
 
-        if (!$idconvocatoria) {
-            $this->jsonResponseSerivce->responder(['error' => 'Datos insuficientes'], 400);
+        if(!$this->parametrosRequeridos($data,['idconvocatoria'])){
             return;
         }
-
+        $idconvocatoria = $this->getIntParam($data, 'idconvocatoria');
         try {
             $resultado = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
             if (!$resultado) {
-                $this->jsonResponseService->responder(['error' => 'No se pudo completar la aplicación'], 500);
+                $this->jsonResponseService->responderError(['error' => 'No se pudo completar la aplicación'], 500);
                 return;
             }
             $this->jsonResponseService->responder(['message' => 'success', 'data' => true]);
         } catch (Exception $e) {
-            $this->responder(['error' => $e->getMessage()], $e->getCode());
+            $this->jsonResponseService->responderError(['error' => $e->getMessage()], $e->getCode());
         }
     }
 }
