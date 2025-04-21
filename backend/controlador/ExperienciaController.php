@@ -55,9 +55,21 @@ class ExperienciaController extends BaseController {
     }
 
     public function agregarExp($data) {
-        $decoded = $this->verificarToken();
+        $decoded = $this->tokenService->obtenerPayload();
         $resultado = $this->experiencia->agregarExp($data, $decoded->data->hojadevida_idHojadevida);
-        $this->jsonResponse($resultado ? 'success' : 'error', $resultado ? 'Experiencia agregada' : 'No se pudo agregar la experiencia');
+    
+        if ($resultado) {
+            $this->jsonResponseService->responder([
+                'status' => 'success',
+                'message' => 'Experiencia agregada'
+            ]);
+        } else {
+            $this->jsonResponseService->responderError([
+                'status' => 'error',
+                'message' => 'No se pudo agregar la experiencia'
+            ]);
+        }
     }
+    
 }
 ?>
