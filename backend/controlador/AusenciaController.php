@@ -56,7 +56,6 @@ class AusenciaController extends BaseController{
         if (!$this->parametrosRequeridos($data, ['identrevista'])) {
             return;
         }
-
         $identrevista = $this->getIntParam($data, 'identrevista');
         $resultado = $this->ausencia->asistenciaConfirmada($identrevista);
         $this->jsonResponseService->responder(['AsistenciaConfirmada' => $resultado]);

@@ -1,11 +1,10 @@
 <?php
+declare(strict_types = 1);
 namespace Controlador;
 
 use Core\Controller\BaseController;
 use Modelo\Auth;
-use Config\Database;
 use Servicio\TokenService;
-use Firebase\JWT\JWT;
 use PDO;
 use Eception;
 
@@ -16,7 +15,7 @@ class AuthController extends BaseController{
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new Database())->getConnection();
+        $this->db = (new \Config\Database())->getConnection();
         $this->auth = new Auth($this->db);
         $this->tokenService = new TokenService();
     }
@@ -67,7 +66,6 @@ class AuthController extends BaseController{
     
         $token = JWT::encode($payload, \Config\Clave::SECRET_KEY, \Config\Clave::JWT_ALGO);
     
-        // Enviar el token como parte de la respuesta, asegurando que los headers estén correctos
         header('Content-Type: application/json');
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: POST, GET, OPTIONS');

@@ -34,7 +34,7 @@ class ConvocatoriaController extends BaseController{
             'idcargo'
         ];
 
-        if (!$this->verificarDatosRequeridos($data, $required)) {
+        if (!$this->parametrosRequeridos($data, $required)) {
             return; 
         }
 

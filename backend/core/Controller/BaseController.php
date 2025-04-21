@@ -4,7 +4,7 @@ namespace Core\Controller;
 use Servicio\JsonResponseService;
 use Servicio\ValidationService;
 
-abstract class BaseController{
+abstract class BaseController {
     protected JsonResponseService $jsonResponseService;
     protected ValidationService $validator;
 
@@ -14,21 +14,21 @@ abstract class BaseController{
     }
 
     /**
-     * Esto valida que data contenga todas las claves de camposrequeridos
-     * Si falta alguna responde como error y retorna falso
+     * Valida que $data contenga todas las claves requeridas en $camposRequeridos.
+     * Si falta alguna, responde con error y retorna false.
      */
+    protected function parametrosRequeridos(array $data, array $camposRequeridos): bool {
+        if (!$this->validator->verificarDatosRequeridos($data, $camposRequeridos)) {
+            $this->jsonResponseService->responderError("Faltan datos requeridos", 422);
+            return false;
+        }
+        return true;
+    }
 
-     protected function parametrosRequeridos(array $data, array $camposRequeridos): bool{
-        return $this->validator->verificarDatosRequeridos($data,$camposRequeridos);
-     }
-
-     /**
-      * Extrae y  convierte un parametro a entero.
-      */
-     protected function getIntParam(array $data, string $key): int{
-        return isset($data[$key]) ? (int) $data[$key]: 0;
-     }
-
-     
-
+    /**
+     * Extrae y convierte un parámetro a entero. Retorna 0 si no existe.
+     */
+    protected function getIntParam(array $data, string $key): int {
+        return isset($data[$key]) ? (int) $data[$key] : 0;
+    }
 }

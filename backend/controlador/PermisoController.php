@@ -35,7 +35,7 @@ class PermisoController extends BaseController {
     }
 
     public function permisoAceptado(array $data): void {
-        if (!$this->verificarDatosRequeridos($data, ['data' => ['idpermiso']])) {
+        if (!$this->parametrosRequeridos($data, ['data' => ['idpermiso']])) {
             return;
         }
         $resultado = $this->permiso->permisoAceptado($data['data']['idpermiso']);
@@ -43,7 +43,7 @@ class PermisoController extends BaseController {
     }
 
     public function permisoRechazado(array $data): void {
-        if (!$this->verificarDatosRequeridos($data, ['data' => ['idpermiso']])) {
+        if (!$this->parametrosRequeridos($data, ['data' => ['idpermiso']])) {
             return;
         }
         $resultado = $this->permiso->permisoRechazado($data['data']['idpermiso']);

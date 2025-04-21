@@ -36,9 +36,6 @@ class UsuarioControlador extends BaseController {
     }
     
 
-    
-
-   
 }
 
 ?>

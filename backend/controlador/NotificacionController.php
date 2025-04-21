@@ -47,7 +47,7 @@ class NotificacionController extends BaseController{
     }
 
     public function notificacionAceptada(array $data) {
-        if (!$this->verificarDatosRequeridos($data, ['data' => ['idausencia']])) {
+        if (!$this->parametrosRequeridos($data, ['data' => ['idausencia']])) {
             return;
         }
         $resultado = $this->notificacion->notificacionAceptada($data['data']['idausencia']);
@@ -55,7 +55,7 @@ class NotificacionController extends BaseController{
     }
 
     public function notificacionRechazada(array $data) {
-        if (!$this->verificarDatosRequeridos($data, ['data' => ['idausencia']])) {
+        if (!$this->parametrosRequeridos($data, ['data' => ['idausencia']])) {
             return;
         }
         $resultado = $this->notificacion->notificacionRechazada($data['data']['idausencia']);

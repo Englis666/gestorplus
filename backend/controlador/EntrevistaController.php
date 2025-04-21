@@ -22,7 +22,7 @@ class EntrevistaController{
         $this->jsonResponseService->responder($data, $httpCode);
     }
 
-    private function verificarDatosRequeridos(array $data, array $camposRequeridos): bool{
+    private function parametrosRequeridos(array $data, array $camposRequeridos): bool{
         foreach ($camposRequeridos as $campo){
             if (!isset($data[$campo])){
                 $this->responder(['error' => "Falta el campo requerido: $campo"], 400);
@@ -35,7 +35,7 @@ class EntrevistaController{
     public function asignarEntrevista(array $data)
     {
         $required = ['fecha', 'hora', 'lugarMedio'];
-        if (!$this->verificarDatosRequeridos($data, $required)) {
+        if (!$this->parametrosRequeridos($data, $required)) {
             return;
         }
         $resultado = $this->entrevista->asignarEntrevista($data);
