@@ -1,22 +1,23 @@
 <?php
 namespace Controlador;
 
+use Core\Controller\BaseController;
 use Modelo\Auth;
 use Config\Database;
-use Servicio\JsonResponseService;
 use Servicio\TokenService;
 use Firebase\JWT\JWT;
+use PDO;
+use Eception;
 
-class AuthController {
-    private $db;
+class AuthController extends BaseController{
+    private PDO $db;
     private Auth $auth;
-    private JsonResponseService $jsonResponseService;
     private TokenService $tokenService;
 
     public function __construct() {
+        parent::__construct();
         $this->db = (new Database())->getConnection();
         $this->auth = new Auth($this->db);
-        $this->jsonResponseService = new JsonResponseService();
         $this->tokenService = new TokenService();
     }
 
@@ -44,16 +45,16 @@ class AuthController {
             $this->jsonResponseService->responder(['status' => 'error', 'message' => 'Número de documento y contraseña son requeridos'], 400);
             return;
         }
-
+    
         $usuario = $this->auth->inicioSesion(['num_doc' => trim($data['num_doc']), 'password' => trim($data['password'])]);
         if (!$usuario) {
             $this->jsonResponseService->responder(['status' => 'error', 'message' => 'Credenciales incorrectas'], 401);
             return;
         }
-
+    
         $payload = [
             'iss' => '/',
-            'aud' => 'localhost,192.168.80.28',
+            'aud' => 'localhost,192.168.194.70',
             'iat' => time(),
             'exp' => time() + 3600,
             'data' => [
@@ -63,8 +64,20 @@ class AuthController {
                 'hojadevida_idHojadevida' => $usuario['hojadevida_idHojadevida']
             ]
         ];
-
+    
         $token = JWT::encode($payload, \Config\Clave::SECRET_KEY, \Config\Clave::JWT_ALGO);
-        $this->jsonResponseService->responder(['status' => 'success', 'message' => 'Credenciales correctas', 'data' => ['token' => $token]]);
+    
+        // Enviar el token como parte de la respuesta, asegurando que los headers estén correctos
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+        
+        $this->jsonResponseService->responder([
+            'status' => 'success', 
+            'message' => 'Credenciales correctas', 
+            'data' => ['token' => $token]
+        ]);
     }
+    
 }
