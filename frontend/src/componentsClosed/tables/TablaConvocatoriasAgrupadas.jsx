@@ -1,72 +1,101 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ModalPostulantes from "../modals/ModalPostulacionesAgrupadas";
 
 const TablaConvocatoriasAgrupadas = () => {
-    const [convocatorias, setConvocatorias] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
- 
-    useEffect(() => {
-        axios.get("http://localhost/gestorplus/backend/", {
-            params: { action: "calcularPostulacionesEnConvocatorias" },
-        })
-        .then((response) => {
-            console.log("Convocatorias obtenidas:", response.data);
-            const convocatoriasData = response.data?.convocatorias;
-            setConvocatorias(Array.isArray(convocatoriasData) ? convocatoriasData : []);
-        })
-        .catch((err) => {
-            console.error("Error al obtener convocatorias:", err);
-            setError("Hubo un problema al cargar las Convocatorias");
-        })
-        .finally(() => setLoading(false));
-    }, []);
-    
+  const [convocatorias, setConvocatorias] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    return (
-        <div className="container mt-5">
-            <h2 className="mb-4 text-center text-dark font-weight-bold mt-4">
-                Convocatorias Agrupadas Por Postulaciones
-            </h2>
-            {error && <p className="alert alert-danger">{error}</p>}
-            {loading && <p className="text-center">Cargando datos...</p>}
+  const [showModal, setShowModal] = useState(false);
+  const [selectedConvocatoria, setSelectedConvocatoria] = useState(null);
 
-            {/* Tabla de Convocatorias Agrupadas y conteo de postulaciones */}
-            <div className="row g-4">
-                <div className="col-12 col-md-12">
-                    <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
-                        <div className="card-body">
-                            <b>Lista de Convocatorias Con Aplicaciones de Aspirantes</b>
-                            <table className="table table-striped mt-3">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Descripción</th>
-                                        <th scope="col">Cantidad De Aspirantes Aplicados</th>
-                                        <th scope="col">Salario</th>
-                                        <th scope="col">Cargo</th>
-                                        <th>Agrupacion</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {convocatorias.map((convocatoria) => (
-                                        <tr key={convocatoria.idconvocatoria}>
-                                            <td>{convocatoria.nombreConvocatoria}</td>
-                                            <td>{convocatoria.descripcion}</td>
-                                            <td>{convocatoria.cantidad_postulaciones}</td> 
-                                            <td>{convocatoria.salario}</td>
-                                            <td>{convocatoria.nombreCargo}</td>
-                                            <button class="btn btn-primary btn-block">Postulantes</button>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  useEffect(() => {
+    axios
+      .get("http://localhost/gestorplus/backend/", {
+        params: { action: "calcularPostulacionesEnConvocatorias" },
+      })
+      .then((response) => {
+        const data = response.data?.convocatorias;
+        setConvocatorias(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Error al cargar las convocatorias");
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleOpenModal = (convocatoria) => {
+    setSelectedConvocatoria(convocatoria);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedConvocatoria(null);
+  };
+
+  return (
+    <div className="container mt-5">
+      <h2 className="mb-4 text-center text-dark font-weight-bold">
+        Convocatorias Agrupadas Por Postulaciones
+      </h2>
+      {error && <div className="alert alert-danger">{error}</div>}
+      {loading ? (
+        <p className="text-center">Cargando datos...</p>
+      ) : (
+        <div
+          className="card shadow-sm border-0 mb-5"
+          style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}
+        >
+          <div className="card-body">
+            <b>Lista de Convocatorias</b>
+            <table className="table table-striped mt-3">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th># Aspirantes</th>
+                  <th>Salario</th>
+                  <th>Cargo</th>
+                  <th>Agrupación</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {convocatorias.map((c) => (
+                  <tr key={c.idconvocatoria}>
+                    <td>{c.nombreConvocatoria}</td>
+                    <td>{c.descripcion}</td>
+                    <td>{c.cantidad_postulaciones}</td>
+                    <td>{c.salario}</td>
+                    <td>{c.nombreCargo}</td>
+                    <td>{c.agrupacion}</td>
+                    <td>
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => handleOpenModal(c)}
+                      >
+                        Ver Postulantes
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-    );
+      )}
+
+      {showModal && selectedConvocatoria && (
+        <ModalPostulantes
+          convocatoria={selectedConvocatoria}
+          onClose={handleCloseModal}
+        />
+      )}
+    </div>
+  );
 };
 
 export default TablaConvocatoriasAgrupadas;

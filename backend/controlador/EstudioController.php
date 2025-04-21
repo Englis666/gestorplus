@@ -9,8 +9,7 @@ use Servicio\TokenService;
 use PDO;
 use Exception;
 
-class EstudioController extends BaseController
-{
+class EstudioController extends BaseController{
     private PDO $db;
     private Estudio $estudio;
     private TokenService $tokenService;
@@ -57,29 +56,6 @@ class EstudioController extends BaseController
 
         } catch (Exception $e) {
             $this->jsonResponseService->responderError($e->getMessage(), $e->getCode());
-        }
-    }
-
-    public function eliminarEstudio() {
-        $idestudio = $_SERVER['HTTP_X_ESTUDIO_ID'] ?? null; 
-
-        if (!$idestudio) {
-            http_response_code(400);
-            $this->jsonResponseService->responderError('El id del estudio no fue proporcionado.');
-            return;
-        }
-
-        try {
-            $resultado = $this->estudio->eliminarEstudio($idestudio);
-            if ($resultado) {
-                $this->jsonResponseService->responder(['status' => 'success', 'message' => 'El estudio fue eliminado correctamente.']);
-            } else {
-                http_response_code(500);
-                $this->jsonResponseService->responderError('No se pudo eliminar el estudio');
-            }
-        } catch (\Exception $e) {
-            http_response_code(500);
-            $this->jsonResponseService->responderError('Error al eliminar el estudio: ' . $e->getMessage());
         }
     }
 }

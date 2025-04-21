@@ -26,7 +26,7 @@ class VacacionesController extends BaseController {
     }
 
     public function obtenerMisVacaciones(): void {
-        $num_doc = $this->tokenService->validarToken();
+        $num_doc = (int) $this->tokenService->validarToken();
         $vacaciones = $this->vacaciones->obtenerMisVacaciones($num_doc);
         $this->jsonResponseService->responder(['Vacaciones' => $vacaciones]);
     }

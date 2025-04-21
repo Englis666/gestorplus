@@ -1,20 +1,22 @@
 <?php
-namespace Controlador;
-use Modelo\Evaluacion;
-use Servicio\JsonResponseService;
-use Servicio\TokenService;
+declare(strict_types = 1);
 
-class EvaluacionController{
+namespace Controlador;
+use Core\Controller\BaseController;
+use Modelo\Evaluacion;
+use Servicio\TokenService;
+use PDO;
+use Exception;
+
+class EvaluacionController extends BaseController{
+    private PDO $db;
     private Evaluacion $evaluacion;
-    private ?\PDO $db;
-    private JsonResponseService $jsonResponseService;
     private TokenService $tokenService;
 
     public function __construct(){
         $this->db = (new \Config\Database())->getConnection();
         $this->evaluacion = new Evaluacion($this->db);
         $this->tokenService = new TokenService();
-        $this->jsonResponseService = new jsonResponseService();
     }
 
     public function responder(array $data, int $httpCode = 200):void{
@@ -29,7 +31,7 @@ class EvaluacionController{
     public function guardarResultadosSistemaDeGestion(array $data)
     {
         $required = ['identrevista', 'idpostulacion', 'estado_salud', 'evaluacionRiesgos', 'recomendaciones', 'aptitudLaboral', 'comentarios', 'estadoEvaluacion'];
-        if (!$this->verificarDatosRequeridos($data, $required)) {
+        if (!$this->parametrosRequeridos($data, $required)) {
             return;
         }
         $resultado = $this->evaluacion->guardarResultadosSistemaDeGestion($data);

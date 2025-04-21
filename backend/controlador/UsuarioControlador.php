@@ -33,7 +33,9 @@ class UsuarioControlador extends BaseController {
             'status' => 'success',
             'RRHH' => $resultado ?: []
         ]);
-    } 
+    }
+    
+
 }
 
 ?>

@@ -26,7 +26,15 @@ class Empleado {
     }
 
     
-  
+    public function obtenerEmpleados() {
+        $sql = "SELECT * FROM vinculacion as v
+                INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc
+                INNER JOIN postulacion as p ON u.num_doc = p.usuario_num_doc
+                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo";
+        return $this->ejecutarConsulta($sql);
+    }
+
 
     
    
