@@ -2,8 +2,11 @@
 declare(strict_types = 1);
 
 namespace Controlador;
+use Core\Controller\BaseController;
 use Modelo\Evaluacion;
 use Servicio\TokenService;
+use PDO;
+use Exception;
 
 class EvaluacionController extends BaseController{
     private PDO $db;

@@ -11,12 +11,14 @@ use Exception;
 
 class PublicacionesControlador extends BaseController{
     private PDO $db;
-    private Publicacion $publicaciones;
+    private Publicaciones $publicaciones;
+    private TokenService $tokenService;
 
     public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
+        parent::__construct();
+        $this->db = (new \Config\Database())->getConnection();
         $this->publicaciones = new Publicaciones($this->db);
+        $this->tokenService = new TokenService();
     }
 
 

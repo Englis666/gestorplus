@@ -6,7 +6,8 @@ use Core\Controller\BaseController;
 use Modelo\Auth;
 use Servicio\TokenService;
 use PDO;
-use Eception;
+use Exception;
+use Firebase\JWT\JWT;
 
 class AuthController extends BaseController{
     private PDO $db;
