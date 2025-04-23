@@ -48,12 +48,86 @@ class Ausencia{
     }
 
 
-    public function aceptarAusencia(){
+    public function ausenciaAceptada(int $idausencia): bool {
+            try {
+            // Obtenemos el usuario_num_doc de la ausencia
+            $sql = "SELECT usuario_num_doc FROM ausencia WHERE idausencia = :idausencia";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($resultado) {
+                $usuario_num_doc = $resultado['usuario_num_doc'];
+    
+                // Actualizar el estado de la ausencia a 'Justificada'
+                $updateSql = "UPDATE ausencia SET justificada = 'Justificada' WHERE idausencia = :idausencia";
+                $updateStmt = $this->db->prepare($updateSql);
+                $updateStmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+                $updateStmt->execute();
+    
+                // Insertar la notificación para el usuario
+                $descripcionNotificacion = "Tu solicitud de ausencia ha sido aceptada.";
+                $notificationSql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
+                                    VALUES (?, 'No leída', 'General', ?)";
+                $notificationStmt = $this->db->prepare($notificationSql);
+                $notificationStmt->execute([$descripcionNotificacion, $usuario_num_doc]);
+    
+                return true;
+            }
+    
+            return false;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 
+    public function ausenciaRechazada($idausencia) {
+        try {
+            // Obtenemos el usuario_num_doc de la ausencia
+            $sql = "SELECT usuario_num_doc FROM ausencia WHERE idausencia = :idausencia";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($resultado) {
+                $usuario_num_doc = $resultado['usuario_num_doc'];
+    
+                // Actualizar el estado de la ausencia a 'Rechazada'
+                $updateSql = "UPDATE ausencia SET justificada = 'Rechazada' WHERE idausencia = :idausencia";
+                $updateStmt = $this->db->prepare($updateSql);
+                $updateStmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
+                $updateStmt->execute();
+    
+                // Verificar si la actualización fue exitosa
+                if ($updateStmt->rowCount() > 0) {
+                    // Insertar la notificación para el usuario
+                    $descripcionNotificacion = "Tu solicitud de ausencia ha sido rechazada.";
+                    $notificationSql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
+                                        VALUES (?, 'No leída', 'General', ?)";
+                    $notificationStmt = $this->db->prepare($notificationSql);
+                    $notificationStmt->execute([$descripcionNotificacion, $usuario_num_doc]);
+    
+                    // Verificar si la notificación fue insertada
+                    if ($notificationStmt->rowCount() > 0) {
+                        return true;
+                    } else {
+                        echo "Error al insertar la notificación.";
+                    }
+                } else {
+                    echo "No se actualizó la ausencia.";
+                }
+            }
+    
+            return false;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
     }
-    public function rechazarAusencia(){
-        
-    }
+    
 
 
     public function solicitarAusencia($num_doc, $data) {

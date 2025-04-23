@@ -19,6 +19,8 @@ return[
     'solicitarQueja' => ['empleado', 'solicitarQueja'],
     //AUSENCIA
     'solicitarAusencia' => ['ausencia', 'solicitarAusencia'],
+    'ausenciaRechazada' => ['ausencia', 'ausenciaRechazada'],
+    'ausenciaAceptada' => ['ausencia' , 'ausenciaAceptada'],
     'asistenciaConfirmada' => ['ausencia', 'asistenciaConfirmada'],
     'asistenciaNoConfirmada' => ['ausencia', 'asistenciaNoConfirmada'],
     //VACACIONES

@@ -55,5 +55,26 @@ class EntrevistaController{
         $this->responder(["Entrevistado" => $entrevistado ?: ["error" => "No se encontraron datos para el documento proporcionado"]]);
     }
 
+    public function asistenciaConfirmada(array $data): void
+    {
+        if (!$this->parametrosRequeridos($data, ['identrevista'])) {
+            return;
+        }
+        $identrevista = $this->getIntParam($data, 'identrevista');
+        $resultado = $this->ausencia->asistenciaConfirmada($identrevista);
+        $this->jsonResponseService->responder(['AsistenciaConfirmada' => $resultado]);
+    }
+
+    public function asistenciaNoConfirmada(array $data): void
+    {
+        if (!$this->parametrosRequeridos($data, ['identrevista'])) {
+            return;
+        }
+
+        $identrevista = $this->getIntParam($data, 'identrevista');
+        $resultado = $this->ausencia->asistenciaNoConfirmada($identrevista);
+        $this->jsonResponseService->responder(['AsistenciaNoConfirmada' => $resultado]);
+    }
+
 
 }

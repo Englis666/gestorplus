@@ -109,14 +109,47 @@ const TablaJornadas = () => {
   };
 
   const handleCorroborar = (idJornada) => {
-    // Acción al corroborar
-    console.log("Corroborar", idJornada);
+    axios
+      .post("http://localhost/gestorplus/backend/", {
+        action: "corroborarJornada",
+        idJornada,
+      })
+      .then(() => {
+        alert("Jornada corroborada con éxito.");
+        setJornadas((prev) =>
+          prev.map((j) =>
+            j.idJornada === idJornada
+              ? { ...j, estadoJornada: "Jornada corroborada" }
+              : j
+          )
+        );
+      })
+      .catch(() => {
+        alert("Hubo un problema al corroborar la jornada.");
+      });
   };
-
+  
   const handleNoCorroborar = (idJornada) => {
-    // Acción al no corroborar
-    console.log("No corroborar", idJornada);
+    axios
+      .post("http://localhost/gestorplus/backend/", {
+        action: "noCorroborarJornada",
+        idJornada,
+      })
+      .then(() => {
+        alert("Jornada rechazada con éxito.");
+        setJornadas((prev) =>
+          prev.map((j) =>
+            j.idJornada === idJornada
+              ? { ...j, estadoJornada: "Jornada rechazada" }
+              : j
+          )
+        );
+      })
+      .catch(() => {
+        alert("Hubo un problema al rechazar la jornada.");
+      });
   };
+  
 
   const handleFinalizarJornada = async (idJornada, fecha) => {
     try {

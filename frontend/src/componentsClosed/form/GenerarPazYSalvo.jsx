@@ -108,7 +108,7 @@ const GenerarPazYSalvo = ({ form, empleados, onChange, onSubmit }) => {
                                 </select>
                                 <div className="invalid-feedback">{errores.empleado}</div>
                             </div>
-
+                                <label htmlFor="motivo" className="form-label">Motivo</label>
                             <input
                                 type="text"
                                 id="motivo"

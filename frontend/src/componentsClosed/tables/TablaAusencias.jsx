@@ -4,7 +4,7 @@ import axios from "axios";
 import FormularioAusencia from "../form/FormularioSolicitudAusencia";
 
 const TablaAusencias = () => {
-  const [Ausencias, setAusencias] = useState([]);
+  const [ausencias, setAusencias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rol, setRol] = useState(null);
@@ -14,15 +14,16 @@ const TablaAusencias = () => {
     tipoAusencia: "",
     descripcion: "",
   });
+  const [filtroEstado, setFiltroEstado] = useState("");
+
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  };
 
   useEffect(() => {
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    };
-
     const token = getCookie("auth_token");
 
     if (token) {
@@ -36,26 +37,10 @@ const TablaAusencias = () => {
           return;
         }
 
-        const Rol = decodedToken?.data?.rol;
-        setRol(Rol);
+        const rol = decodedToken?.data?.rol;
+        setRol(rol);
 
-        const action = (() => {
-          switch (Rol) {
-            case "1":
-              return "obtenerTodasLasAusencias";
-            case "2":
-              return "obtenerTodasLasAusencias";
-            case "3":
-              return "obtenerAusencias";
-            default:
-              console.error("Rol no válido");
-              setError("Rol no reconocido.");
-              setLoading(false);
-              return null;
-          }
-        })();
-
-        if (!action) return;
+        const action = rol === "1" || rol === "2" ? "obtenerTodasLasAusencias" : "obtenerAusencias";
 
         axios
           .get("http://localhost/gestorplus/backend/", {
@@ -65,43 +50,36 @@ const TablaAusencias = () => {
             params: { action },
           })
           .then((response) => {
-            const Ausencias = response.data?.Ausencias;
-            if (Array.isArray(Ausencias)) {
-              setAusencias(Ausencias);
+            const ausencias = response.data?.Ausencias;
+            if (Array.isArray(ausencias)) {
+              setAusencias(ausencias);
             } else {
-              console.error("Las Ausencias no son un array.");
               setAusencias([]);
             }
             setLoading(false);
           })
           .catch((err) => {
-            console.error("Error al obtener las Ausencias:", err);
-            setError("Hubo un problema al cargar las Ausencias.", err);
+            setError("Hubo un problema al cargar las Ausencias.");
             setLoading(false);
           });
       } catch (error) {
-        console.error("Error al decodificar el token:", error);
         setError("Token inválido o malformado.");
         setLoading(false);
       }
     } else {
-      console.error("No se encontró el token en las cookies.");
       setError("Token no encontrado.");
       setLoading(false);
     }
   }, []);
 
   const handleAceptar = (idausencia) => {
-    console.log("Datos enviados al backend:", { idausencia });
     axios
       .post("http://localhost/gestorplus/backend/", {
-        action: "jornadaAceptada",
-        data: { idausencia },
-      })
+        action: "ausenciaAceptada",
+        idausencia: idausencia,  
+        })
       .then((response) => {
-        console.log("Respuesta del servidor:", response.data);
         alert("Notificación aceptada con éxito.");
-
         setAusencias((prevAusencias) =>
           prevAusencias.map((ausencia) =>
             ausencia.idausencia === idausencia
@@ -111,51 +89,34 @@ const TablaAusencias = () => {
         );
       })
       .catch((err) => {
-        console.error("Error al corroborar la jornada:", err);
-        alert("Hubo un problema al corroborar la jornada.");
+        alert("Hubo un problema al aceptar la ausencia.");
       });
   };
 
   const handleRechazar = (idausencia) => {
-    console.log("Rechazando ausencia con id:", idausencia);
     axios
       .post("http://localhost/gestorplus/backend/", {
-        action: "notificacionRechazada",
-        data: { idausencia },
+        action: "ausenciaRechazada",
+        idausencia: idausencia,  
       })
       .then((response) => {
-        console.log("Respuesta del servidor al rechazar:", response.data);
-        if (response.data.success) {
-          alert("Notificación rechazada con éxito.");
-
-          // Actualizar la lista de ausencias
-          setAusencias((prevAusencias) =>
-            prevAusencias.map((ausencia) =>
-              ausencia.idausencia === idausencia
-                ? { ...ausencia, justificada: false }
-                : ausencia
-            )
-          );
-        } else {
-          alert("Hubo un problema al rechazar la notificación.",);
-        }
+        console.log(response);
+        alert("Notificación rechazada con éxito.");
+        setAusencias((prevAusencias) =>
+          prevAusencias.map((ausencia) =>
+            ausencia.idausencia === idausencia
+              ? { ...ausencia, justificada: false }
+              : ausencia
+          )
+        );
       })
       .catch((err) => {
-        console.error("Error al rechazar la notificación:", err);
-        alert("Hubo un problema al rechazar la notificación.", err);
+        alert("Hubo un problema al rechazar la notificación.");
       });
   };
 
   const handleSolicitarAusencia = (e) => {
     e.preventDefault();
-
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    };
-
 
     const token = getCookie("auth_token");
     if (!token) {
@@ -168,7 +129,6 @@ const TablaAusencias = () => {
       return;
     }
 
-    // Realizar la solicitud al backend
     axios
       .post(
         "http://localhost/gestorplus/backend/",
@@ -183,7 +143,6 @@ const TablaAusencias = () => {
         }
       )
       .then((response) => {
-        console.log("Respuesta al solicitar ausencia:", response);
         alert("Solicitud de ausencia enviada con éxito.");
         setSolicitud({
           fechaInicio: "",
@@ -193,19 +152,20 @@ const TablaAusencias = () => {
         });
       })
       .catch((err) => {
-        console.error("Error al enviar la solicitud de ausencia:", err);
         alert("Hubo un problema al enviar la solicitud de ausencia.");
       });
   };
 
+  const handleFiltroEstadoChange = (e) => {
+    setFiltroEstado(e.target.value);
+  };
 
-  if (loading) {
-    return <div>Cargando Ausencias...</div>;
-  }
+  if (loading) return <div>Cargando Ausencias...</div>;
+  if (error) return <div>{error}</div>;
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  const ausenciasFiltradas = filtroEstado
+    ? ausencias.filter((ausencia) => ausencia.justificada === (filtroEstado === "aceptada"))
+    : ausencias;
 
   return (
     <div className="container mt-5">
@@ -230,7 +190,11 @@ const TablaAusencias = () => {
                       <th>Tipo de Ausencia</th>
                       <th>Descripción</th>
                       <th>
-                        <select className="form-select form-select-sm">
+                        <select
+                          className="form-select form-select-sm"
+                          value={filtroEstado}
+                          onChange={handleFiltroEstadoChange}
+                        >
                           <option value="">Todos</option>
                           <option value="en proceso">En Proceso</option>
                           <option value="aceptada">Aceptada</option>
@@ -238,13 +202,13 @@ const TablaAusencias = () => {
                         </select>
                       </th>
                       {rol === "1" || rol === "2" ? (
-                        <th>Acciones</th> 
+                        <th>Acciones</th>
                       ) : null}
                     </tr>
                   </thead>
                   <tbody className="text-center">
-                    {Ausencias.length > 0 ? (
-                      Ausencias.map((ausencia) => (
+                    {ausenciasFiltradas.length > 0 ? (
+                      ausenciasFiltradas.map((ausencia) => (
                         <tr key={ausencia.idausencia}>
                           <td>{ausencia.fechaInicio}</td>
                           <td>{ausencia.fechaFin}</td>

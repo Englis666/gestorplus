@@ -9,27 +9,24 @@ use Servicio\TokenService;
 use PDO;
 use Exception;
 
-class AusenciaController extends BaseController{
+class AusenciaController extends BaseController {
     private PDO $db;
     private Ausencia $ausencia;
     private TokenService $tokenService;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->ausencia = new Ausencia($this->db);
         $this->tokenService = new TokenService();
     }
 
-    public function obtenerTodasLasAusencias(): void
-    {
+    public function obtenerTodasLasAusencias(): void {
         $ausencias = $this->ausencia->obtenerTodasLasAusencias();
         $this->jsonResponseService->responder(['Ausencias' => $ausencias]);
     }
 
-    public function obtenerAusencias(): void
-    {
+    public function obtenerAusencias(): void {
         try {
             $num_doc = $this->tokenService->validarToken();
             $ausencias = $this->ausencia->obtenerAusencias($num_doc);
@@ -39,36 +36,35 @@ class AusenciaController extends BaseController{
         }
     }
 
-    public function solicitarAusencia(array $data): void
-    {
+    public function solicitarAusencia(array $data): void {
         try {
             $num_doc = $this->tokenService->validarToken();
             $this->ausencia->solicitarAusencia($num_doc, $data);
             $this->jsonResponseService->responder(['mensaje' => 'Solicitud de ausencia registrada exitosamente']);
-
         } catch (Exception $e) {
             $this->jsonResponseService->responderError($e->getMessage(), $e->getCode() ?: 400);
         }
     }
 
-    public function asistenciaConfirmada(array $data): void
-    {
-        if (!$this->parametrosRequeridos($data, ['identrevista'])) {
-            return;
+    public function ausenciaAceptada($data): void {
+        if (isset($data['idausencia'])) {
+            $idausencia = $data['idausencia'];
+            $resultado = $this->ausencia->ausenciaAceptada($idausencia);
+            $this->jsonResponseService->responder(['success' => $resultado]);
+        } else {
+            $this->jsonResponseService->responderError('ID de ausencia no recibido.');
         }
-        $identrevista = $this->getIntParam($data, 'identrevista');
-        $resultado = $this->ausencia->asistenciaConfirmada($identrevista);
-        $this->jsonResponseService->responder(['AsistenciaConfirmada' => $resultado]);
     }
+    
 
-    public function asistenciaNoConfirmada(array $data): void
-    {
-        if (!$this->parametrosRequeridos($data, ['identrevista'])) {
-            return;
+    
+    public function ausenciaRechazada($data): void {
+        if (isset($data['idausencia'])) {
+            $idausencia = $data['idausencia'];
+            $resultado = $this->ausencia->ausenciaRechazada($idausencia);
+            $this->jsonResponseService->responder(['success' => $resultado]);
+        } else {
+            $this->jsonResponseService->responderError('ID de ausencia no recibido.');
         }
-
-        $identrevista = $this->getIntParam($data, 'identrevista');
-        $resultado = $this->ausencia->asistenciaNoConfirmada($identrevista);
-        $this->jsonResponseService->responder(['AsistenciaNoConfirmada' => $resultado]);
     }
 }
