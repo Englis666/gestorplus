@@ -103,14 +103,14 @@ const Perfil = () => {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerEstudio" },
         });
-        const data = responseEstudios.data?.obtenerEstudio|| [];
+        const data = responseEstudios.data?.obtenerEstudio || [];
         setEstudios(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error al obtener estudios:", error);
         setEstudios([]);
       }
     };
-
+  
     const fetchExperienciaLaboral = async () => {
       try {
         const responseExperiencia = await axios.get("http://localhost/gestorplus/backend/", {
@@ -120,12 +120,23 @@ const Perfil = () => {
         const data = responseExperiencia.data?.obtenerExperiencia || [];
         setExperiencia(Array.isArray(data) ? data : []);
       } catch (error) {
+        console.error("Error al obtener experiencia laboral:", error);
         setExperiencia([]);
       }
     };
-
+  
+    // Llamar las funciones inicialmente
     fetchEstudios();
     fetchExperienciaLaboral();
+  
+    // Configurar el polling cada 10 segundos
+    const intervalId = setInterval(() => {
+      fetchEstudios();
+      fetchExperienciaLaboral();
+    }, 10000); // 10000 ms = 10 segundos
+  
+    // Limpiar el intervalo al desmontar el componente
+    return () => clearInterval(intervalId);
   }, []);
 
   const eliminarEstudioHandler = async (idestudio) => {
