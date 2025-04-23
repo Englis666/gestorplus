@@ -3,7 +3,6 @@ import { View, ActivityIndicator, TouchableOpacity, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
-import { jwtDecode } from "jwt-decode";
 
 // Importación de pantallas
 import LoginScreen from "../screens/LoginScreen";
@@ -69,7 +68,6 @@ const screenOptions = ({ route }) => ({
 const AdminNavigator = ({ navigation }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -77,18 +75,6 @@ const AdminNavigator = ({ navigation }) => {
         const token = await AsyncStorage.getItem("auth_token");
         if (token) {
           setIsAuthenticated(true);
-          try {
-            const decodedToken = jwtDecode(token);
-            //console.log("Decoded Token:", decodedToken);  // <-- Add this line
-            const role = decodedToken?.data?.rol;
-            console.log("el rol es ", role);
-            setUserRole(role);
-          } catch (error) {
-            console.error("Error decoding token:", error);
-            await AsyncStorage.removeItem("auth_token");
-            setIsAuthenticated(false);
-            setUserRole(null);
-          }
         } else {
           setIsAuthenticated(false);
         }
@@ -102,7 +88,6 @@ const AdminNavigator = ({ navigation }) => {
   const handleLogout = async () => {
     await AsyncStorage.removeItem("auth_token");
     setIsAuthenticated(false);
-    setUserRole(null);
   };
 
   if (loading) {
@@ -115,44 +100,25 @@ const AdminNavigator = ({ navigation }) => {
 
   return (
     <Tab.Navigator
-      key={isAuthenticated ? (userRole ? userRole.toString() : 'authenticated') : 'not-authenticated'}
+      key={isAuthenticated ? "authenticated" : "not-authenticated"}
       screenOptions={screenOptions}
     >
-      {isAuthenticated && userRole ? (
+      {isAuthenticated ? (
         <>
-          {userRole === "1" && (
-            <>
-              <Tab.Screen name="Administrador" component={InicioAdministradorScreen} />
-              <Tab.Screen name="Jornadas" component={Jornadas} />
-              <Tab.Screen name="Ausencias" component={Ausencias} />
-              <Tab.Screen name="Convocatorias" component={Convocatorias} />
-              <Tab.Screen name="Empleados" component={Empleados} />
-              <Tab.Screen name="Cargos" component={Cargos} />
-              <Tab.Screen name="Certificados" component={Certificados} />
-              <Tab.Screen name="Horas Extra" component={HorasExtra} />
-              <Tab.Screen name="Perfil" component={Perfil} />
-              <Tab.Screen name="Paz y salvos" component={PazYSalvos} />
-              <Tab.Screen name="Entrevistas" component={EntrevistaScreen} />
-              <Tab.Screen name="Sistema De Gestion" component={SistemaDeGestion} />
-              <Tab.Screen name="Vacaciones" component={Vacaciones} />
-            </>
-          )}
-          {userRole === "3" && (
-            <>
-              <Tab.Screen name="Empleado" component={Empleados} />
-              <Tab.Screen name="Jornadas" component={Jornadas} />
-              <Tab.Screen name="Ausencias" component={Ausencias} />
-              <Tab.Screen name="Perfil" component={Perfil} />
-              <Tab.Screen name="Certificados" component={Certificados} />
-              <Tab.Screen name="Vacaciones" component={Vacaciones} />
-            </>
-          )}
-          {userRole === "4" && (
-            <>
-              <Tab.Screen name="Aspirante" component={InicioAspiranteScreen} />
-            </>
-          )}
-
+          <Tab.Screen name="Administrador" component={InicioAdministradorScreen} />
+          <Tab.Screen name="Jornadas" component={Jornadas} />
+          <Tab.Screen name="Ausencias" component={Ausencias} />
+          <Tab.Screen name="Convocatorias" component={Convocatorias} />
+          <Tab.Screen name="Empleados" component={Empleados} />
+          <Tab.Screen name="Cargos" component={Cargos} />
+          <Tab.Screen name="Certificados" component={Certificados} />
+          <Tab.Screen name="Horas Extra" component={HorasExtra} />
+          <Tab.Screen name="Perfil" component={Perfil} />
+          <Tab.Screen name="Paz y salvos" component={PazYSalvos} />
+          <Tab.Screen name="Entrevistas" component={EntrevistaScreen} />
+          <Tab.Screen name="Sistema De Gestion" component={SistemaDeGestion} />
+          <Tab.Screen name="Vacaciones" component={Vacaciones} />
+          
           <Tab.Screen name="Logout">
             {() => (
               <TouchableOpacity
