@@ -380,7 +380,7 @@ const Perfil = () => {
                     <option value="pasaporte">Pasaporte</option>
                   </select>
                 </div>
-                <div className="mb-3">
+                {/* <div className="mb-3">
                   <label htmlFor="password" className="form-label">Contraseña</label>
                   <input
                     type="password"
@@ -390,7 +390,7 @@ const Perfil = () => {
                     value={formData.password}
                     onChange={handleChange}
                   />
-                </div>
+                </div> */}
                 <button type="submit" className="btn btn-primary w-100 mb-3 shadow-sm">Actualizar datos</button>
               </form>
 
