@@ -112,14 +112,6 @@ const TablaEmpleados = () => {
                           <td className="py px-4">{empleado.num_doc}</td>
                           <td className="py-3 px-4">{empleado.fechaInicio}</td>
                           <td className="py-3 px-4">{empleado.fechaFin}</td>
-                          <td className="py-3 px-4">
-                            <button
-                              className="btn btn-success btn-sm me-2" >
-                              Realizar paz y salvo
-                            </button>
-
-                          </td>
-
                         </tr>
                       ))
                     ) : (
