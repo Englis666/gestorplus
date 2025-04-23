@@ -115,8 +115,7 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia, onAgregarExperi
         <div className="modal-content shadow-lg rounded-4">
           <div className="modal-header bg-primary text-white">
             <h5 className="modal-title d-flex align-items-center gap-2">
-              <span className="material-icons">work</span>
-              Actualizar Experiencia Laboral
+              <span className="material-icons">work</span> Agregar Experiencia Laboral
             </h5>
             <button type="button" className="btn-close" onClick={toggleModalExperiencia} aria-label="Close"></button>
           </div>

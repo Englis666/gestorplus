@@ -115,7 +115,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
         <div className="modal-content shadow-lg rounded-4">
           <div className="modal-header bg-primary text-white">
             <h5 className="modal-title d-flex align-items-center gap-2">
-              <span className="material-icons">school</span> Actualizar Estudios
+              <span className="material-icons">school</span> Agregar Estudios
             </h5>
             <button type="button" className="btn-close" onClick={toggleModalEstudios} />
           </div>
