@@ -95,7 +95,7 @@ const TablaAusencias = () => {
     console.log("Datos enviados al backend:", { idausencia });
     axios
       .post("http://localhost/gestorplus/backend/", {
-        action: "notificacionAceptada",
+        action: "jornadaAceptada",
         data: { idausencia },
       })
       .then((response) => {

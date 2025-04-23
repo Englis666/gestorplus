@@ -60,7 +60,7 @@ class Auth {
                 $horaEntrada = date('H:i:s'); 
                 $estadoJornada = "Pendiente";
     
-                $entrada = new DateTime($horaEntrada);
+                $entrada = new \DateTime("$fecha $horaEntrada");
                 $entrada->modify('+8 hours');
                 $horaSalida = $entrada->format('H:i:s');
             
