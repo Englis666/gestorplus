@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -15,6 +9,7 @@ import API_URL from "../config"; // Importa la URL de la API
 const Grafica = () => {
   const [totalEntradas, setTotalEntradas] = useState(0);
   const [totalAusencias, setTotalAusencias] = useState(0);
+  const [notificacionesGenerales, setNotificacionesGenerales] = useState(0); // Nuevo estado
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,6 +30,7 @@ const Grafica = () => {
 
         setTotalEntradas(response.data.totalEntradas || 0);
         setTotalAusencias(response.data.totalAusencias || 0);
+        setNotificacionesGenerales(response.data.totalGenerales || 0); // Obtener notificaciones
       } catch (err) {
         setError(err.message || "Error al obtener las estadísticas.");
       } finally {
@@ -48,14 +44,16 @@ const Grafica = () => {
   if (loading) return <ActivityIndicator size="large" color="#3498db" style={styles.loading} />;
   if (error) return <Text style={styles.error}>{error}</Text>;
 
+  const chartData = {
+    labels: ["Ausencias", "Entradas", "Notificaciones"], // Añadir "Notificaciones"
+    datasets: [{ data: [totalAusencias, totalEntradas, notificacionesGenerales] }], // Añadir notificacionesGenerales
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Gráfica de Ausencias y Entradas</Text>
+      <Text style={styles.title}>Gráfica de Ausencias, Entradas y Notificaciones</Text> {/* Título actualizado */}
       <BarChart
-        data={{
-          labels: ["Ausencias", "Entradas"],
-          datasets: [{ data: [totalAusencias, totalEntradas] }],
-        }}
+        data={chartData}
         width={Dimensions.get("window").width - 40}
         height={250}
         yAxisLabel=""

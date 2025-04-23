@@ -3,12 +3,14 @@ import { View, ActivityIndicator, TouchableOpacity, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
+import { jwtDecode } from "jwt-decode";
 
 // Importación de pantallas
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import LayoutScreen from "../screens/LayoutScreen";
 import InicioAdministradorScreen from "../screens/administrador/InicioAdmin";
+import InicioAspiranteScreen from "../screens/aspirante/InicioAspiranteScreen";
 import Convocatorias from "../screens/ConvocatoriasScreen";
 import Empleados from "../screens/EmpleadosScreen";
 import Ausencias from "../screens/AusenciasScreen";
@@ -20,7 +22,6 @@ import Perfil from "../screens/PerfilScreen";
 import PazYSalvos from "../screens/PazYSalvos";
 import EntrevistaScreen from "../screens/EntrevistaScreen";
 import Postulaciones from "../screens/PostulacionesScreen";
-import Quejas from "../screens/QuejasScreen";
 import SistemaDeGestion from "../screens/SistemaDeGestion";
 import Vacaciones from "../screens/VacacionesScreen";
 
@@ -39,13 +40,14 @@ const ICONS = {
   "Paz y salvos": ["shield-checkmark", "shield-checkmark-outline"],
   Entrevistas: ["chatbubbles", "chatbubbles-outline"],
   Postulaciones: ["document-attach", "document-attach-outline"],
-  Quejas: ["alert-circle", "alert-circle-outline"],
   "Sistema De Gestion": ["settings", "settings-outline"],
-  Vacaciones: ["airplane", "airplane-outline"],
+  Vacaciones: ["airplane", "airplane-airplane-outline"],
   Logout: ["log-out", "log-out-outline"],
   Layout: ["home", "home-outline"],
   Login: ["log-in", "log-in-outline"],
   Register: ["person-add", "person-add-outline"],
+  Aspirante: ["file-text", "file-text-outline"],
+  Empleado: ["id-card", "id-card-outline"],
 };
 
 const screenOptions = ({ route }) => ({
@@ -67,20 +69,40 @@ const screenOptions = ({ route }) => ({
 const AdminNavigator = ({ navigation }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     const checkToken = async () => {
-      const token = await AsyncStorage.getItem("auth_token");
-      setIsAuthenticated(!!token);
-      setLoading(false);
+      try {
+        const token = await AsyncStorage.getItem("auth_token");
+        if (token) {
+          setIsAuthenticated(true);
+          try {
+            const decodedToken = jwtDecode(token);
+            //console.log("Decoded Token:", decodedToken);  // <-- Add this line
+            const role = decodedToken?.data?.rol;
+            console.log("el rol es ", role);
+            setUserRole(role);
+          } catch (error) {
+            console.error("Error decoding token:", error);
+            await AsyncStorage.removeItem("auth_token");
+            setIsAuthenticated(false);
+            setUserRole(null);
+          }
+        } else {
+          setIsAuthenticated(false);
+        }
+      } finally {
+        setLoading(false);
+      }
     };
-
     checkToken();
   }, []);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("auth_token");
     setIsAuthenticated(false);
+    setUserRole(null);
   };
 
   if (loading) {
@@ -92,24 +114,44 @@ const AdminNavigator = ({ navigation }) => {
   }
 
   return (
-    <Tab.Navigator screenOptions={screenOptions}>
-      {isAuthenticated ? (
+    <Tab.Navigator
+      key={isAuthenticated ? (userRole ? userRole.toString() : 'authenticated') : 'not-authenticated'}
+      screenOptions={screenOptions}
+    >
+      {isAuthenticated && userRole ? (
         <>
-          <Tab.Screen name="Administrador" component={InicioAdministradorScreen} />
-          <Tab.Screen name="Jornadas" component={Jornadas} />
-          <Tab.Screen name="Ausencias" component={Ausencias} />
-          <Tab.Screen name="Convocatorias" component={Convocatorias} />
-          <Tab.Screen name="Entrevistas" component={EntrevistaScreen} />
-          <Tab.Screen name="Empleados" component={Empleados} />
-          <Tab.Screen name="Cargos" component={Cargos} />
-          <Tab.Screen name="Certificados" component={Certificados} />
-          <Tab.Screen name="Paz y salvos" component={PazYSalvos} />
-          <Tab.Screen name="Horas Extra" component={HorasExtra} />
-          <Tab.Screen name="Perfil" component={Perfil} />
-          <Tab.Screen name="Postulaciones" component={Postulaciones} />
-          <Tab.Screen name="Quejas" component={Quejas} />
-          <Tab.Screen name="Sistema De Gestion" component={SistemaDeGestion} />
-          <Tab.Screen name="Vacaciones" component={Vacaciones} />
+          {userRole === "1" && (
+            <>
+              <Tab.Screen name="Administrador" component={InicioAdministradorScreen} />
+              <Tab.Screen name="Jornadas" component={Jornadas} />
+              <Tab.Screen name="Ausencias" component={Ausencias} />
+              <Tab.Screen name="Convocatorias" component={Convocatorias} />
+              <Tab.Screen name="Empleados" component={Empleados} />
+              <Tab.Screen name="Cargos" component={Cargos} />
+              <Tab.Screen name="Certificados" component={Certificados} />
+              <Tab.Screen name="Horas Extra" component={HorasExtra} />
+              <Tab.Screen name="Perfil" component={Perfil} />
+              <Tab.Screen name="Paz y salvos" component={PazYSalvos} />
+              <Tab.Screen name="Entrevistas" component={EntrevistaScreen} />
+              <Tab.Screen name="Sistema De Gestion" component={SistemaDeGestion} />
+              <Tab.Screen name="Vacaciones" component={Vacaciones} />
+            </>
+          )}
+          {userRole === "3" && (
+            <>
+              <Tab.Screen name="Empleado" component={Empleados} />
+              <Tab.Screen name="Jornadas" component={Jornadas} />
+              <Tab.Screen name="Ausencias" component={Ausencias} />
+              <Tab.Screen name="Perfil" component={Perfil} />
+              <Tab.Screen name="Certificados" component={Certificados} />
+              <Tab.Screen name="Vacaciones" component={Vacaciones} />
+            </>
+          )}
+          {userRole === "4" && (
+            <>
+              <Tab.Screen name="Aspirante" component={InicioAspiranteScreen} />
+            </>
+          )}
 
           <Tab.Screen name="Logout">
             {() => (

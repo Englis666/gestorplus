@@ -60,6 +60,10 @@ class Auth {
                 $horaEntrada = date('H:i:s'); 
                 $estadoJornada = "Pendiente";
     
+                $entrada = new DateTime($horaEntrada);
+                $entrada->modify('+8 hours');
+                $horaSalida = $entrada->format('H:i:s');
+            
                 $verificar = $this->db->prepare("SELECT * FROM jornada WHERE usuario_num_doc = ? AND fecha = ? AND horaSalida IS NULL");
                 $verificar->execute([$num_doc, $fecha]);
                 

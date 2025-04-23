@@ -15,6 +15,7 @@ class CalculoControlador extends BaseController {
     private TokenService $tokenService;
 
     public function __construct(){
+        parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->calculo = new Calculo($this->db);
         $this->tokenService = new TokenService();

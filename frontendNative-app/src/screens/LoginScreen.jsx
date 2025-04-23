@@ -11,7 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import API_URL from "../config"; 
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 const LoginScreen = ({ navigation, setIsAuthenticated }) => {
   const [formData, setFormData] = useState({ num_doc: "", password: "" });
@@ -38,19 +38,10 @@ const LoginScreen = ({ navigation, setIsAuthenticated }) => {
       });
 
       if (response.data?.status === "success") {
-        console.log("Respuesta exitosa:", response);
+        console.log("Respuesta exitosa:", response.data);
         const token = response.data.data.token;
         await AsyncStorage.setItem("auth_token", token);
         setIsAuthenticated(true);
-
-        const decoded = jwtDecode(token);
-        const role = decoded?.data?.rol;
-
-        if (role === "1" || role === "2" || role === "3") {
-          navigation.navigate("Administrador");
-        } else if (role === "4") {
-          navigation.navigate("InicioAspirante");
-        }
 
       } else {
         Alert.alert("Error", response.data?.message || "Inicio de sesión fallido.");

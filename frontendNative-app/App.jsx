@@ -1,16 +1,15 @@
+// App.js o donde tengas tu root
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { AuthProvider } from "./src/hook/AuthContext";
 import AdminNavigator from "./src/navigation/AdminNavigator";
-
-const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Navegador" component={AdminNavigator} />
-      </Stack.Navigator>
+      <AuthProvider>
+        <AdminNavigator />
+      </AuthProvider>
     </NavigationContainer>
   );
 }

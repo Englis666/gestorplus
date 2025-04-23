@@ -9,11 +9,9 @@ return[
     'agregarEstudio' => ['estudio', 'agregarEstudio'],
     //EXPERIENCIA
     'agregarExp' => ['experiencia', 'agregarExp'],
-    'consultarExp' => ['experiencia', 'consultarExp'],
     //HORAEXTRA
     'registroHorasExtra' => ['horaExtra', 'registroHorasExtra'],
     //estudio
-    'consultarEstudio' => ['estudio', 'consultarEstudio'],
     //exp
     //jornada
     

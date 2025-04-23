@@ -126,8 +126,8 @@ const TablaEmpleado = ({ action }) => {
           )}
         </View>
       </View>
-      <Grafica />
-    </ScrollView>
+{/*       <Grafica />*/}   
+ </ScrollView>
   );
 };
 

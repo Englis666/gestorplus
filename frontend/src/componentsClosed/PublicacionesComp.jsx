@@ -41,6 +41,7 @@ const PublicacionesComp = () => {
         });
 
         const publicacionesObtenidas = response.data.Publicaciones;
+        console.log(publicacionesObtenidas);
         if (Array.isArray(publicacionesObtenidas)) {
           setPublicaciones(publicacionesObtenidas);
         } else {

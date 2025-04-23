@@ -6,6 +6,7 @@ import axios from "axios";
 import ModalHojaDeVida from "../componentsClosed/ModalHojadevida";
 import Estudios from "../componentsClosed/ModalEstudios";
 import Experiencia from "../componentsClosed/ModalExperiencia";
+import API_URL from "../config";
 
 const Perfil = () => {
   const [formData, setFormData] = useState({
@@ -35,22 +36,22 @@ const Perfil = () => {
         return;
       }
 
-      const response = await axios.get("http://192.168.80.28/gestorplus/backend/", {
+      const response = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "datosPerfil" },
       });
-
       if (response.status === 200) {
+        const mappedData = mapData(response.data.data);
         setFormData((prevFormData) => ({
           ...prevFormData,
-          ...response.data,
-          originalData: { ...response.data },
+          ...mappedData,
+          originalData: { ...mappedData },
         }));
       } else {
-        Alert.alert("Error", "Error al obtener los datos del usuario");
+        alert("Error al obtener los datos del usuario");
       }
     } catch (error) {
-      Alert.alert("Error", "Ocurrió un error al obtener los datos del usuario");
+      alert("Error al obtener los datos del usuario");
     }
   };
 
@@ -71,7 +72,7 @@ const Perfil = () => {
         }
       });
       const token = "auth_token";
-      const response = await axios.patch("http://192.168.43.98/gestorplus/backend/", updatedData, {
+      const response = await axios.patch(API_URL, updatedData, {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "actualizarPerfil" },
       });

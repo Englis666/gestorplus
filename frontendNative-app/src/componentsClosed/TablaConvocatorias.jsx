@@ -1,188 +1,106 @@
 import React, { useState, useEffect } from "react";
-import {
-    View, Text, TextInput, ScrollView, Alert, ActivityIndicator, StyleSheet, TouchableOpacity
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Alert } from "react-native";
+import { TextInput, Card, DataTable, ActivityIndicator, Snackbar, Button } from "react-native-paper";
 import axios from "axios";
-import { API_URL } from "../config"; // Asegúrate de que esté correctamente definido
+import API_URL from "../config";
+import FormularioAgregarConvocatoria from "./form/agregarConvocatoria";
 
 const TablaConvocatorias = () => {
     const [convocatorias, setConvocatorias] = useState([]);
+    const [cargos, setCargos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [agregarVisible, setAgregarVisible] = useState(false);
     const [agregar, setAgregar] = useState({
         nombreConvocatoria: "",
         descripcion: "",
         requisitos: "",
         salario: "",
         cantidadConvocatoria: "",
+        idcargo: "",
     });
-
-    const fetchConvocatorias = async () => {
-        try {
-            const response = await axios.get(API_URL, {
-                params: { action: "obtenerConvocatorias" }
-            });
-
-            console.log("Respuesta cruda:", response);
-            console.log("Respuesta data:", response.data);
-
-            const data = response.data?.convocatorias || [];  // Default a un array vacío si no existe 'convocatorias'
-
-            if (!Array.isArray(data)) {
-                throw new Error("El servidor no devolvió una lista válida de convocatorias.");
-            }
-
-            setConvocatorias(data);
-            setError(null);
-        } catch (err) {
-            console.error("Error al obtener convocatorias:", err.message);
-            console.log("Detalles del error:", err.response?.data || err);
-            setError("Hubo un problema al cargar las Convocatorias.");
-            setConvocatorias([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [selectedCargo, setSelectedCargo] = useState('');
 
     useEffect(() => {
-        fetchConvocatorias();
+        axios.get(API_URL, { params: { action: "obtenerCargos" } })
+            .then(response => {
+                const cargosData = response.data?.cargos;
+                setCargos(Array.isArray(cargosData) ? cargosData : []);
+            })
+            .catch(() => setError("Hubo un problema al cargar los cargos"))
+            .finally(() => setLoading(false));
     }, []);
 
-    const handleAgregar = async () => {
-        if (!agregar.nombreConvocatoria || !agregar.descripcion || !agregar.requisitos || !agregar.salario || !agregar.cantidadConvocatoria) {
-            Alert.alert("Advertencia", "Por favor, complete todos los campos para agregar una convocatoria.");
+    useEffect(() => {
+        axios.get(API_URL, { params: { action: "obtenerConvocatorias" } })
+            .then(response => {
+                const convocatoriasData = response.data?.convocatorias;
+                setConvocatorias(Array.isArray(convocatoriasData) ? convocatoriasData : []);
+            })
+            .catch(() => setError("Hubo un problema al cargar las Convocatorias"))
+            .finally(() => setLoading(false));
+    }, []);
+
+    const handleAgregar = (e) => {
+        e.preventDefault();
+        if (!selectedCargo) {
+            setError("Por favor, seleccione un cargo.");
             return;
         }
-        try {
-            await axios.post(API_URL, { action: "agregarConvocatoria", ...agregar });
+        axios.post("http://localhost/gestorplus/backend/", {
+            action: "agregarConvocatoria",
+            ...agregar,
+            idcargo: selectedCargo,
+        })
+        .then(response => {
+            setConvocatorias(response.data?.convocatorias);
             Alert.alert("Éxito", "Convocatoria agregada correctamente");
-            setAgregar({
-                nombreConvocatoria: "",
-                descripcion: "",
-                requisitos: "",
-                salario: "",
-                cantidadConvocatoria: ""
-            });
-            setAgregarVisible(false);
-            fetchConvocatorias();
-        } catch (err) {
-            console.error("Error al agregar convocatoria:", err.message);
-            Alert.alert("Error", "Hubo un problema al agregar la Convocatoria.");
-        }
+        })
+        .catch(() => setError("Hubo un problema al agregar la convocatoria"))
+        .finally(() => setLoading(false));
     };
-
-    const handleActivar = (id) => {
-        Alert.alert("Confirmación", "¿Deseas activar esta convocatoria?", [
-            { text: "Cancelar", style: "cancel" },
-            { text: "Aceptar", onPress: () => console.log(`Convocatoria ${id} activada`) },
-        ]);
-    };
-
-    const handleDesactivar = (id) => {
-        Alert.alert("Confirmación", "¿Deseas desactivar esta convocatoria?", [
-            { text: "Cancelar", style: "cancel" },
-            { text: "Aceptar", onPress: () => console.log(`Convocatoria ${id} desactivada`) },
-        ]);
-    };
-
-    if (loading) return <ActivityIndicator size="large" color="#007bff" style={styles.loader} />;
-    if (error) return <Text style={styles.errorText}>{error}</Text>;
 
     return (
         <ScrollView style={styles.container}>
-            <Text style={styles.title}>Gestión de Convocatorias</Text>
+            <Text style={styles.title}>Gestión y Control de Convocatorias</Text>
 
-            <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => setAgregarVisible(!agregarVisible)}
-            >
-                <Text style={styles.addButtonText}>
-                    {agregarVisible ? 'Ocultar Formulario' : 'Agregar Nueva Convocatoria'}
-                </Text>
-            </TouchableOpacity>
+            {error && <Snackbar visible={true} onDismiss={() => setError(null)}>{error}</Snackbar>}
 
-            {agregarVisible && (
-                <View style={styles.formContainer}>
-                    <Text style={styles.subTitle}>Nueva Convocatoria</Text>
-                    <TextInput
-                        placeholder="Nombre"
-                        value={agregar.nombreConvocatoria}
-                        onChangeText={(text) => setAgregar({ ...agregar, nombreConvocatoria: text })}
-                        style={styles.input}
-                    />
-                    <TextInput
-                        placeholder="Descripción"
-                        value={agregar.descripcion}
-                        onChangeText={(text) => setAgregar({ ...agregar, descripcion: text })}
-                        style={styles.input}
-                        multiline
-                    />
-                    <TextInput
-                        placeholder="Requisitos"
-                        value={agregar.requisitos}
-                        onChangeText={(text) => setAgregar({ ...agregar, requisitos: text })}
-                        style={styles.input}
-                        multiline
-                    />
-                    <TextInput
-                        placeholder="Salario"
-                        keyboardType="numeric"
-                        value={agregar.salario}
-                        onChangeText={(text) => setAgregar({ ...agregar, salario: text })}
-                        style={styles.input}
-                    />
-                    <TextInput
-                        placeholder="Cupos"
-                        keyboardType="numeric"
-                        value={agregar.cantidadConvocatoria}
-                        onChangeText={(text) => setAgregar({ ...agregar, cantidadConvocatoria: text })}
-                        style={styles.input}
-                    />
-                    <TouchableOpacity style={styles.submitButton} onPress={handleAgregar}>
-                        <Text style={styles.submitButtonText}>Guardar Convocatoria</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
-
-            {convocatorias.length > 0 ? (
-                <ScrollView horizontal style={{ marginTop: 20 }}>
-                    <View style={styles.table}>
-                        <View style={styles.tableHeader}>
-                            <Text style={[styles.headerText, { width: 150 }]}>Nombre</Text>
-                            <Text style={[styles.headerText, { width: 200 }]}>Descripción</Text>
-                            <Text style={[styles.headerText, { width: 200 }]}>Requisitos</Text>
-                            <Text style={[styles.headerText, { width: 100, textAlign: 'right' }]}>Salario</Text>
-                            <Text style={[styles.headerText, { width: 80, textAlign: 'right' }]}>Cupos</Text>
-                            <Text style={[styles.headerText, { width: 120 }]}>Acciones</Text>
-                        </View>
-                        {convocatorias.map((convocatoria) => (
-                            <View key={convocatoria.idconvocatoria} style={styles.tableRow}>
-                                <Text style={[styles.rowText, { width: 150 }]}>{convocatoria.nombreConvocatoria}</Text>
-                                <Text style={[styles.rowText, { width: 200 }]}>{convocatoria.descripcion}</Text>
-                                <Text style={[styles.rowText, { width: 200 }]}>{convocatoria.requisitos}</Text>
-                                <Text style={[styles.rowText, { width: 100, textAlign: 'right' }]}>{convocatoria.salario}</Text>
-                                <Text style={[styles.rowText, { width: 80, textAlign: 'right' }]}>{convocatoria.cantidadConvocatoria}</Text>
-                                <View style={[styles.actionsContainer, { width: 120 }]}>
-                                    <TouchableOpacity
-                                        style={[styles.actionButton, { backgroundColor: 'green' }]}
-                                        onPress={() => handleActivar(convocatoria.idconvocatoria)}
-                                    >
-                                        <Text style={styles.actionButtonText}>Activar</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[styles.actionButton, { backgroundColor: 'red' }]}
-                                        onPress={() => handleDesactivar(convocatoria.idconvocatoria)}
-                                    >
-                                        <Text style={styles.actionButtonText}>Desactivar</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        ))}
-                    </View>
-                </ScrollView>
+            {loading ? (
+                <ActivityIndicator animating={true} size="large" style={styles.loading} />
             ) : (
-                <Text style={styles.noData}>No hay convocatorias disponibles.</Text>
+                <View style={styles.cardContainer}>
+                    <Card style={styles.card}>
+                        <Card.Title title="Lista de Convocatorias" titleStyle={styles.cardTitle} />
+                        <Card.Content>
+                            <ScrollView horizontal={true}>
+                                <DataTable style={styles.table}>
+                                    <DataTable.Header style={styles.tableHeader}>
+                                        <DataTable.Title style={styles.columnHeader}>Nombre</DataTable.Title>
+                                        <DataTable.Title style={styles.columnHeader}>Descripción</DataTable.Title>
+                                        <DataTable.Title style={styles.columnHeader}>Salario</DataTable.Title>
+                                        <DataTable.Title style={styles.columnHeader}>Fecha Apertura</DataTable.Title>
+                                    </DataTable.Header>
+
+                                    {convocatorias.map((convocatoria) => (
+                                        <DataTable.Row key={convocatoria.idconvocatoria} style={styles.tableRow}>
+                                            <DataTable.Cell style={styles.cell}>{convocatoria.nombreConvocatoria}</DataTable.Cell>
+                                            <DataTable.Cell style={styles.cell}>{convocatoria.descripcion}</DataTable.Cell>
+                                            <DataTable.Cell style={styles.cell}>{convocatoria.salario}</DataTable.Cell>
+                                            <DataTable.Cell style={styles.cell}>{convocatoria.fecha_apertura}</DataTable.Cell>
+                                        </DataTable.Row>
+                                    ))}
+                                </DataTable>
+                            </ScrollView>
+                        </Card.Content>
+                    </Card>
+
+                    <FormularioAgregarConvocatoria
+                        agregar={agregar}
+                        setAgregar={setAgregar}
+                        handleAgregar={handleAgregar}
+                        cargos={cargos}
+                    />
+                </View>
             )}
         </ScrollView>
     );
@@ -192,120 +110,73 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: "#f4f6f8",
+        backgroundColor: "#fafafa", // Fondo suave gris claro
     },
     title: {
         fontSize: 24,
-        fontWeight: "bold",
+        fontWeight: "600",
         textAlign: "center",
         marginBottom: 20,
-        color: "#333",
+        color: "#333", // Texto oscuro para mayor contraste
     },
-    addButton: {
-        backgroundColor: "#007bff",
-        padding: 12,
-        borderRadius: 8,
-        marginBottom: 16,
-        alignItems: "center",
-    },
-    addButtonText: {
-        color: "white",
-        fontWeight: "bold",
-        fontSize: 16,
-    },
-    formContainer: {
+    cardContainer: {
+        marginTop: 20,
+        backgroundColor: "#fff", // Fondo blanco
+        borderRadius: 12, // Bordes suaves
+        elevation: 2, // Sombra suave
         padding: 16,
-        borderRadius: 8,
+    },
+    card: {
+        borderRadius: 12,
         backgroundColor: "#fff",
-        marginBottom: 20,
-        elevation: 2,
+        borderColor: "#ddd", // Borde gris claro
         borderWidth: 1,
-        borderColor: "#ddd",
     },
-    subTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 12,
-        color: "#555",
+    cardTitle: {
+        color: "#333", // Título en color gris oscuro
+        fontSize: 20,
     },
-    input: {
-        borderWidth: 1,
-        borderColor: "#ccc",
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 12,
-        backgroundColor: "#f9f9f9",
-    },
-    submitButton: {
-        backgroundColor: "#28a745",
-        padding: 12,
-        borderRadius: 8,
-        alignItems: "center",
-    },
-    submitButtonText: {
-        color: "white",
-        fontWeight: "bold",
-        fontSize: 16,
-    },
-    loader: {
-        flex: 1,
+    loading: {
         justifyContent: "center",
         alignItems: "center",
-    },
-    errorText: {
-        color: "red",
-        textAlign: "center",
         marginTop: 20,
-    },
-    noData: {
-        textAlign: "center",
-        marginTop: 20,
-        fontStyle: "italic",
-        color: "#777",
     },
     table: {
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 5,
-        backgroundColor: "#fff",
+        flex: 1,
+        minHeight: 200,
     },
     tableHeader: {
-        flexDirection: "row",
-        backgroundColor: "#f0f0f0",
-        paddingVertical: 10,
-        paddingHorizontal: 5,
+        backgroundColor: "#f5f5f5", // Fondo gris muy suave para los encabezados
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
     },
-    headerText: {
-        fontWeight: "bold",
+    columnHeader: {
+        color: "#333", // Texto gris oscuro
+        fontWeight: "600",
+        textAlign: "center",
         fontSize: 14,
-        color: "#333",
+        paddingVertical: 12,
     },
     tableRow: {
-        flexDirection: "row",
-        paddingVertical: 10,
-        paddingHorizontal: 5,
+        backgroundColor: "#fff", // Filas con fondo blanco
+        borderBottomColor: "#ddd", // Línea gris suave para separar las filas
         borderBottomWidth: 1,
-        borderBottomColor: "#eee",
-        alignItems: 'center',
     },
-    rowText: {
+    cell: {
+        backgroundColor: "#fff", // Fondo blanco para las celdas
+        color: "#333", // Texto oscuro para las celdas
+        textAlign: "center",
+        paddingVertical: 10,
         fontSize: 14,
-        color: "#555",
     },
-    actionsContainer: {
-        flexDirection: "row",
-        justifyContent: "space-around",
+    input: {
+        marginBottom: 10,
     },
-    actionButton: {
-        paddingVertical: 8,
-        paddingHorizontal: 10,
-        borderRadius: 5,
-        marginHorizontal: 5,
-    },
-    actionButtonText: {
-        color: "white",
-        fontSize: 12,
-        fontWeight: "bold",
+    button: {
+        marginTop: 20,
+        backgroundColor: "#333", // Botón con fondo gris oscuro
+        color: "#fff",
+        borderRadius: 8,
     },
 });
 

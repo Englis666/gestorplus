@@ -66,12 +66,6 @@ const TablaEmpleados = () => {
               <Text style={styles.text}><Text style={styles.bold}>Rol:</Text> {item.nombreRol}</Text>
               <Text style={styles.text}><Text style={styles.bold}>Tipo Documento:</Text> {item.tipoDoc}</Text>
               <Text style={styles.text}><Text style={styles.bold}>Número Documento:</Text> {item.num_doc}</Text>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => Alert.alert("Acción", "Realizar paz y salvo para " + item.nombres)}
-              >
-                <Text style={styles.buttonText}>Realizar paz y salvo</Text>
-              </TouchableOpacity>
             </View>
           )}
           contentContainerStyle={{ paddingBottom: 20 }}

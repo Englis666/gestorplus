@@ -24,8 +24,10 @@ class PublicacionesControlador extends BaseController{
 
     public function obtenerPublicacionPorTipoDeContrato() {
         $num_doc = $this->tokenService->validarToken();
-        $this->jsonResponseService->responder('Publicaciones', $this->publicaciones->obtenerPublicacionPorTipoDeContrato($num_doc));
+        $publicaciones = $this->publicaciones->obtenerPublicacionPorTipoDeContrato($num_doc);
+        $this->jsonResponseService->responder(['Publicaciones' => $publicaciones]);
     }
+    
 
     public function agregarPublicacion($data) {
         $num_doc = $this->validarToken();
