@@ -23,6 +23,7 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
                 action: "asignarEntrevista",
                 ...formData
             });
+            console.log(response.data);
             if (response.data.Entrevista) {
                 alert("✅ Entrevista asignada exitosamente");
                 handleClose();
@@ -85,6 +86,7 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
                                     required
                                 />
                             </div>
+                            
 
                             <div className="d-grid">
                                 <button type="submit" className="btn btn-success btn-lg">

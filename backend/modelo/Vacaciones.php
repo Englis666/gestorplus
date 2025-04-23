@@ -75,4 +75,9 @@ class Vacaciones {
             return false;
         }
     }
+
+    // public function rechazarVacacion(int $idvacacion): bool{
+    //     try{}
+    // }
+
 }

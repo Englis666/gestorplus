@@ -89,6 +89,7 @@ class Postulacion{
                         h.ciudadNacimiento,
                         h.telefono,
                         c.idconvocatoria,
+                        p.idpostulacion,
                         ca.nombreCargo as cargo
                     FROM postulacion p
                     INNER JOIN usuario u ON p.usuario_num_doc = u.num_doc

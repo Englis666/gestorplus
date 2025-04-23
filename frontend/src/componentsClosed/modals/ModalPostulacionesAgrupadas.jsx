@@ -123,7 +123,7 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
                   </thead>
                   <tbody>
                     {postulantes.map((p) => (
-                      <tr key={p.id}>
+                      <tr key={p.idpostulacion}>
                         <td>{p.nombres} {p.apellidos}</td>
                         <td>{p.email}</td>
                         <td>
