@@ -52,7 +52,7 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                 });
         
                 console.log("Respuesta de la API (verificarPostulacion):", response.data);
-                if (response.data && response.data.message === "PostulacionVerificada" && response.data.data.length > 0) {
+                if (response.data && response.data.status === "PostulacionVerificada" && Object.keys(response.data.data).length > 0) {
                     setAplicado(true);
                 } else {
                     setAplicado(false);
