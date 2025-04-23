@@ -20,82 +20,89 @@ const TablaEmpleado = () => {
 
     const token = getCookie("auth_token");
 
-    if (token) {
-      let decodedToken = null;
+    if (!token) {
+      setError("No hay token disponible.");
+      setLoading(false);
+      return;
+    }
 
+    let decodedToken;
+    try {
+      decodedToken = jwtDecode(token);
+    } catch (err) {
+      console.error("Error al decodificar el token:", err);
+      setError("Token inválido.");
+      setLoading(false);
+      return;
+    }
+
+    if (!decodedToken?.data?.rol) {
+      setError("Token inválido o sin rol definido.");
+      setLoading(false);
+      return;
+    }
+
+    const Rol = decodedToken.data.rol;
+    setRol(Rol);
+
+    const isTokenExpired = decodedToken.exp * 1000 < Date.now();
+    if (isTokenExpired) {
+      console.error("El token ha expirado.");
+      setError("El token ha expirado.");
+      setLoading(false);
+      return;
+    }
+
+    const actionMap = {
+      "1": "obtenerTodasLasNotificaciones",
+      "2": "obtenerTodasLasNotificaciones",
+      "3": "obtenerNotificaciones",
+    };
+
+    const actionToSend = actionMap[Rol];
+
+    const fetchNotificaciones = async () => {
       try {
-        decodedToken = jwtDecode(token);
-      } catch (err) {
-        console.error("Error al decodificar el token:", err);
-        setError("Token inválido.");
-        setLoading(false);
-        return;
-      }
-
-      if (!decodedToken || !decodedToken.data || !decodedToken.data.rol) {
-        setError("Token inválido o sin rol definido.");
-        setLoading(false);
-        return;
-      }
-
-      const Rol = decodedToken.data.rol;
-      setRol(Rol);
-      
-      const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
-      if (isTokenExpired) {
-        console.error("El token ha expirado.");
-        setError("El token ha expirado.");
-        setLoading(false);
-        return;
-      }
-
-      const actionMap = {
-        "1": "obtenerTodasLasNotificaciones",
-        "2": "obtenerTodasLasNotificaciones",
-        "3": "obtenerNotificaciones",
-      };
-
-      const actionToSend = actionMap[Rol];
-
-      axios
-        .get("http://localhost/gestorplus/backend/", {
+        const response = await axios.get("http://localhost/gestorplus/backend/", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
           params: { action: actionToSend },
-        })
-        .then((response) => {
-          console.log(response);
-          let notificaciones;
-          if (response.data?.Notificaciones) {
-            notificaciones = response.data.Notificaciones;
-          } else if (
-            response.data?.status === "Notificaciones" &&
-            Array.isArray(response.data?.message)
-          ) {
-            notificaciones = response.data.message;
-          } else {
-            console.error("Formato de notificaciones no reconocido");
-            notificaciones = [];
-          }
-
-          if (Array.isArray(notificaciones)) {
-            setNotificaciones(notificaciones);
-          } else {
-            console.error("Las notificaciones no son un array");
-            setNotificaciones([]);
-          }
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Error al obtener las notificaciones:", err);
-          setError("Hubo un problema al cargar las notificaciones.");
-          setLoading(false);
         });
-    } else {
-      setError("No se encontró el token de autenticación.");
-      setLoading(false);
-    }
+
+        let notificaciones = [];
+        if (response.data?.Notificaciones) {
+          notificaciones = response.data.Notificaciones;
+        } else if (
+          response.data?.status === "Notificaciones" &&
+          Array.isArray(response.data?.message)
+        ) {
+          notificaciones = response.data.message;
+        } else {
+          console.error("Formato de notificaciones no reconocido");
+        }
+
+        if (Array.isArray(notificaciones)) {
+          setNotificaciones(notificaciones);
+        } else {
+          setNotificaciones([]);
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error("Error al obtener las notificaciones:", err);
+        setError("Hubo un problema al cargar las notificaciones.");
+        setLoading(false);
+      }
+    };
+
+    // Fetch inicial
+    fetchNotificaciones();
+
+    // Polling cada 10 segundos
+    const intervalId = setInterval(fetchNotificaciones, 10000);
+
+    // Limpiar al desmontar
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading) return <div>Cargando notificaciones...</div>;

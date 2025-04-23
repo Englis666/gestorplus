@@ -41,7 +41,7 @@ class CalculoControlador extends BaseController {
 
     public function obtenerMinutosTrabajados(): void {
         try {
-            $num_doc = $this->obtenerNumDocDesdeToken(); 
+            $num_doc = $this->tokenService->obtenerToken(); 
             $resultado = $this->calculo->obtenerMinutosTrabajados($num_doc);
             $this->jsonResponseService->responder(['minutosTrabajados' => $resultado]);
         } catch (Exception $e) {

@@ -46,19 +46,4 @@ class NotificacionController extends BaseController{
         }
     }
 
-    public function notificacionAceptada(array $data) {
-        if (!$this->parametrosRequeridos($data, ['data' => ['idausencia']])) {
-            return;
-        }
-        $resultado = $this->notificacion->notificacionAceptada($data['data']['idausencia']);
-        $this->jsonResponseService->responder(['Ausencia' => $resultado]);
-    }
-
-    public function notificacionRechazada(array $data) {
-        if (!$this->parametrosRequeridos($data, ['data' => ['idausencia']])) {
-            return;
-        }
-        $resultado = $this->notificacion->notificacionRechazada($data['data']['idausencia']);
-        $this->jsonResponseService->responder(['success' => true, 'AusenciaRechaza' => $resultado]);
-    }
 }

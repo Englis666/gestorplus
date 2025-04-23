@@ -158,6 +158,7 @@ const NavbarClosed = ({ activeLink }) => {
   };
 
   const menuItems = [
+    { label: "Inicio", icon: "home", path: "/Inicio" },
     {
       label: "Sección de jornadas",
       icon: "event",
@@ -212,7 +213,8 @@ const NavbarClosed = ({ activeLink }) => {
 
       <div style={styles.logoContainer}>
         <img src={logo} alt="GestorPlus Logo" style={styles.logoImage} />
-        <span style={styles.logoText}>Gestorplus</span>
+        <span style={styles.logoText}>
+          Gestorplus</span>
       </div>
 
       <nav>

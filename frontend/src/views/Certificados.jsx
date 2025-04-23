@@ -220,9 +220,10 @@ Este certificado se emite para los fines que el interesado estime convenientes.`
           <button className="btn btn-secondary px-5 py-2" onClick={() => setTipoCertificado("laboral")}>
             Certificado Laboral
           </button>
-          <button className="btn btn-secondary px-5 py-2 ms-3" onClick={() => setTipoCertificado("arl")}>
+          {/* Desabilitado por tiempo (No hubo implementacion en la bd) 
+            <button className="btn btn-secondary px-5 py-2 ms-3" onClick={() => setTipoCertificado("arl")}>
             Certificado ARL
-          </button>
+          </button> */}
           <button className="btn btn-primary px-5 py-2 ms-3" onClick={handleDownload}>
             Descargar {tipoCertificado === "laboral" ? "Laboral" : "ARL"}
           </button>

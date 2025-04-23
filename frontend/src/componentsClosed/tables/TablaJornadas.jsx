@@ -219,7 +219,6 @@ const TablaJornadas = () => {
                   </th>
                   <th>Estado</th>
                   {(rol === "1" || rol === "2") && <th>Acciones</th>}
-                  {rol === "3" && <th>Acciones</th>}
                 </tr>
               </thead>
               <tbody className="text-center">
@@ -245,16 +244,6 @@ const TablaJornadas = () => {
                             disabled={j.estadoJornada === "Jornada rechazada"}
                           >
                             No Corroborar
-                          </button>
-                        </td>
-                      )}
-                      {rol === "3" && j.estadoJornada === "Pendiente" && (
-                        <td>
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => handleFinalizarJornada(j.idJornada, j.fecha)}
-                          >
-                            Finalizar Jornada
                           </button>
                         </td>
                       )}
