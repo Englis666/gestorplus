@@ -62,8 +62,10 @@ class Entrevista{
     
     public function asignarEntrevista($data){
         $estado = "Pendiente";
-        $sql = "INSERT INTO entrevista (fecha,hora,lugarMedio,postulacion_idpostulaciones, estadoEntrevista)
-                                        VALUES(? , ? , ? , ? , ?)";
+    
+        // Insertar entrevista
+        $sql = "INSERT INTO entrevista (fecha, hora, lugarMedio, postulacion_idpostulaciones, estadoEntrevista)
+                VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
             $data['fecha'],
@@ -72,8 +74,38 @@ class Entrevista{
             $data['postulacion_idpostulaciones'],
             $estado
         ]);
-        return;
-   }
+    
+        // Verificar que la entrevista fue insertada
+        if ($stmt->rowCount() > 0) {
+    
+            // Buscar el número de documento del usuario que hizo la postulación
+            $buscarNumDoc = "SELECT usuario_num_doc FROM postulacion WHERE idpostulacion = :postulacion_id";
+            $stmtBuscar = $this->db->prepare($buscarNumDoc);
+            $stmtBuscar->execute([':postulacion_id' => $data['postulacion_idpostulaciones']]);
+            $usuario = $stmtBuscar->fetch(PDO::FETCH_ASSOC);
+    
+            if ($usuario) {
+                $descripcionNotificacion = "Fuiste asignado a una entrevista el día " . $data['fecha'] .
+                                           " a la hora " . $data['hora'] .
+                                           " en " . $data['lugarMedio'];
+    
+                // Insertar notificación
+                $sqlNoti = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, created_at, num_doc)
+                            VALUES (?, ?, ?, ?, ?)";
+                $stmtNoti = $this->db->prepare($sqlNoti);
+                $stmtNoti->execute([
+                    $descripcionNotificacion,
+                    "Pendiente",
+                    "entrevista",
+                    date('Y-m-d H:i:s'),
+                    $usuario['usuario_num_doc']
+                ]);
+            }
+        }
+    
+        return true;
+    }
+    
 
    public function asistenciaConfirmada($identrevista){
     $sql = "UPDATE entrevista SET estadoEntrevista = 'Asistencia' WHERE identrevista = :identrevista";
