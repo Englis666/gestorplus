@@ -74,7 +74,7 @@ class Estudio{
         $stmt->bindParam(3, $data['estadoEstudio'], PDO::PARAM_STR);
         $stmt->bindParam(4, $data['fechaInicioEstudio'], PDO::PARAM_STR);
         $stmt->bindParam(5, $data['fechaFinEstudio'], PDO::PARAM_STR);
-        $stmt->bindParam(6, $data['tituloEStudio'], PDO::PARAM_STR);
+        $stmt->bindParam(6, $data['tituloEstudio'], PDO::PARAM_STR);
         $stmt->bindParam(7, $data['institucionEstudio'], PDO::PARAM_STR);
         $stmt->bindParam(8, $data['ubicacionEstudio'], PDO::PARAM_STR);
         $stmt->bindParam(9, $data['idestudio'], PDO::PARAM_INT);
