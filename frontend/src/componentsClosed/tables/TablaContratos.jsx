@@ -172,7 +172,7 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                       <th>Estado</th>
                       <th>Fecha de firma</th>
                       <th>Acción</th>
-                      <th>Acción</th>
+                      {/* <th>Acción</th> */}
                       <th>Acción</th>
                     </tr>
                   </thead>
@@ -196,11 +196,11 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                               Subir contrato físico
                             </button>
                           </td>
-                          <td>
+                          {/* <td>
                             <button className="btn btn-danger">
                               Desactivar contrato y generar paz y salvo
                             </button>
-                          </td>
+                          </td> */}
                           <td>
                             <button className="btn btn-primary" onClick={(e) => handleSearch(e, vinculacion.usuario_num_doc)}>
                               Revisar Contrato

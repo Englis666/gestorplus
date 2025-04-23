@@ -41,7 +41,7 @@ class PostulacionController extends BaseController{
 
         try {
             $resultados = $this->postulacion->verificarPostulacion($num_doc, $idconvocatoria);
-            $this->jsonResponseService->responder(['message' => 'PostulacionVerificada', 'data' => $resultados ?: []]);
+            $this->jsonResponseService->responder(['status' => 'PostulacionVerificada', 'data' => $resultados]);
         } catch (Exception $e) {
             $this->jsonResponseService->responderError($e->getMessage(), $e->getCode() ?: 400);
         }
