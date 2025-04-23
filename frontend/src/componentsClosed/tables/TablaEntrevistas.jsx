@@ -16,7 +16,6 @@ const TablaEntrevistas = () => {
                 const response = await axios.get("http://localhost/gestorplus/backend/", {
                     params: { action: "obtenerEntrevistas" },
                 });
-                console.log(response);
                 const data = response.data.Entrevista;
                 setEntrevistas(Array.isArray(data) ? data : []);
             } catch (err) {
@@ -31,16 +30,26 @@ const TablaEntrevistas = () => {
 
     const enviarAsistencia = async (asistencia, identrevista) => {
         try {
-            await axios.post("http://localhost/gestorplus/backend/", {
+            const response = await axios.patch("http://localhost/gestorplus/backend/", {
                 action: asistencia ? "asistenciaConfirmada" : "asistenciaNoConfirmada",
-                data: { identrevista }
+                identrevista
             });
+    
+            console.log(response);
+    
+            // Actualizar el estado local si quieres reflejar el cambio sin recargar
+            setEntrevistas(prev =>
+                prev.map(e =>
+                    e.identrevista === identrevista
+                        ? { ...e, estadoEntrevista: asistencia ? "Asistió" : "No asistió" }
+                        : e
+                )
+            );
         } catch (err) {
             console.error("Error al actualizar la asistencia", err);
-            setError("Hubo un problema al corroborar la asistencia");
         }
     };
-
+    
 
     const abrirModalHojadevida = () => {
         setModalOpen(true);
@@ -67,34 +76,20 @@ const TablaEntrevistas = () => {
                                             <th>Nombre empleado</th>
                                             <th>Numero de documento</th>
                                             <th>Estado</th>
-                                            <th>Asistencia</th>
-                                            <th>No asistencia</th>
                                         </tr>
                                     </thead>
                                     <tbody className="text-center">
                                         {entrevistas.map((entrevista) => (
-                                            <tr key={entrevista.identrevista}>
+                                            <tr
+                                                key={entrevista.identrevista}
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => setSelectedInterview(entrevista)}
+                                            >
                                                 <td>{entrevista.fecha}</td>
                                                 <td>{entrevista.hora}</td>
                                                 <td>{entrevista.nombres}</td>
                                                 <td>{entrevista.usuario_num_doc}</td>
                                                 <td>{entrevista.estadoEntrevista}</td>
-                                                <td>
-                                                    <button
-                                                        className="btn btn-primary btn-sm"
-                                                        onClick={() => enviarAsistencia(entrevista.identrevista, true)}
-                                                    >
-                                                        Asistencia
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button
-                                                        className="btn btn-danger btn-sm"
-                                                        onClick={() => enviarAsistencia(entrevista.identrevista, false)}
-                                                    >
-                                                        No asistencia
-                                                    </button>
-                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -112,11 +107,44 @@ const TablaEntrevistas = () => {
                                 <p><strong>Hora:</strong> {selectedInterview.hora}</p>
                                 <p><strong>Lugar:</strong> {selectedInterview.lugarMedio}</p>
                                 <p><strong>Descripción:</strong> {selectedInterview.descripcion}</p>
-                                <button className="btn btn-secondary me-2" onClick={() => setSelectedInterview(null)}>
+                            </div>
+                            <div className="d-flex flex-wrap gap-2 mt-3">
+                                <button
+                                    className="btn btn-outline-secondary d-flex align-items-center"
+                                    onClick={() => setSelectedInterview(null)}
+                                >
+                                    <span className="material-icons me-1">close</span>
                                     Cerrar
                                 </button>
-                                <button className="btn btn-primary" onClick={abrirModalHojadevida}>
+
+                                <button
+                                    className="btn btn-outline-primary d-flex align-items-center"
+                                    onClick={abrirModalHojadevida}
+                                >
+                                    <span className="material-icons me-1">description</span>
                                     Revisar hoja de vida
+                                </button>
+
+                                <button
+                                    className="btn btn-outline-danger d-flex align-items-center"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        enviarAsistencia(false, selectedInterview.identrevista);
+                                    }}
+                                >
+                                    <span className="material-icons me-1">block</span>
+                                    No asistió
+                                </button>
+
+                                <button
+                                    className="btn btn-primary d-flex align-items-center"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        enviarAsistencia(true, selectedInterview.identrevista);
+                                    }}
+                                >
+                                    <span className="material-icons me-1">check_circle</span>
+                                    Asistencia correcta
                                 </button>
                             </div>
                         </div>
@@ -127,14 +155,22 @@ const TablaEntrevistas = () => {
                     <div className="card shadow-sm border-0 mb-4" style={{ borderRadius: "10px" }}>
                         <div className="card-body">
                             <h5 className="mb-3">Calendario de Entrevistas</h5>
-                            <CalendarioDeEntrevistas entrevistas={entrevistas} onSelectInterview={setSelectedInterview} />
+                            <CalendarioDeEntrevistas
+                                entrevistas={entrevistas}
+                                onSelectInterview={setSelectedInterview}
+                            />
                         </div>
                     </div>
                 </div>
             </div>
 
             {modalOpen && selectedInterview && (
-                <ModalHojadeVidaEntrevistado num_doc={selectedInterview.num_doc} identrevista={selectedInterview.identrevista} idpostulacion={selectedInterview.idpostulacion} onClose={() => setModalOpen(false)} />
+                <ModalHojadeVidaEntrevistado
+                    num_doc={selectedInterview.num_doc}
+                    identrevista={selectedInterview.identrevista}
+                    idpostulacion={selectedInterview.idpostulacion}
+                    onClose={() => setModalOpen(false)}
+                />
             )}
         </div>
     );

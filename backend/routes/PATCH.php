@@ -9,6 +9,8 @@ return [
     'activarConvocatoria' => ['convocatoria' , 'activarConvocatoria'],
     'actualizarEstudio' => ['estudio', 'actualizarEstudio'],
     'actualizarExperiencia' => ['experiencia', 'actualizarExperiencia'],
+    'asistenciaConfirmada' => ['entrevista', 'asistenciaConfirmada'],
+    'asistenciaNoConfirmada' => ['entrevista', 'asistenciaNoConfirmada'],
 ];
 
 ?>

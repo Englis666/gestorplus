@@ -59,7 +59,6 @@ const TablaConvocatoriasAgrupadas = () => {
                   <th># Aspirantes</th>
                   <th>Salario</th>
                   <th>Cargo</th>
-                  <th>Agrupación</th>
                   <th>Acción</th>
                 </tr>
               </thead>
@@ -71,11 +70,10 @@ const TablaConvocatoriasAgrupadas = () => {
                     <td>{c.cantidad_postulaciones}</td>
                     <td>{c.salario}</td>
                     <td>{c.nombreCargo}</td>
-                    <td>{c.agrupacion}</td>
                     <td>
                       <button
                         className="btn btn-primary btn-sm"
-                        onClick={() => handleOpenModal(c)}
+                        onClick={() => handleOpenModal(c, c.idpostulacion)}
                       >
                         Ver Postulantes
                       </button>

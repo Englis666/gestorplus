@@ -107,7 +107,7 @@ const TablaSistemaDeGestion = () => {
                               })
                             }
                           >
-                            Asignarle contrato
+                            Asignarle Vinculacion
                         </button>
                       </td>
                     </tr>

@@ -14,6 +14,7 @@ class EvaluacionController extends BaseController{
     private TokenService $tokenService;
 
     public function __construct(){
+        parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->evaluacion = new Evaluacion($this->db);
         $this->tokenService = new TokenService();

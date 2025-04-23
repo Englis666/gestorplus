@@ -1,35 +1,26 @@
 <?php
 namespace Controlador;
 
+use Core\Controller\BaseController;
 use Modelo\Entrevista;
-use Servicio\JsonResponseService;
 use Servicio\TokenService;
+use PDO;
+use Exception;
 
-class EntrevistaController{
+class EntrevistaController extends BaseController{
+    private PDO $db;
     private Entrevista $entrevista; 
-    private ?\PDO $db;
-    private JsonResponseService $jsonResponseService;
     private TokenService $tokenService;
 
     public function __construct(){
+        parent::__construct();
         $this->db = (new \Config\Database())->getConnection();
         $this->entrevista = new Entrevista($this->db);
         $this->tokenService = new TokenService();
-        $this->jsonResponseService = new jsonResponseService();
     }
 
     public function responder(array $data , int $httpCode = 200): void{
         $this->jsonResponseService->responder($data, $httpCode);
-    }
-
-    private function parametrosRequeridos(array $data, array $camposRequeridos): bool{
-        foreach ($camposRequeridos as $campo){
-            if (!isset($data[$campo])){
-                $this->responder(['error' => "Falta el campo requerido: $campo"], 400);
-                return false;
-            }
-        }
-    return true;
     }
 
     public function asignarEntrevista(array $data)
@@ -61,7 +52,7 @@ class EntrevistaController{
             return;
         }
         $identrevista = $this->getIntParam($data, 'identrevista');
-        $resultado = $this->ausencia->asistenciaConfirmada($identrevista);
+        $resultado = $this->entrevista->asistenciaConfirmada($identrevista);
         $this->jsonResponseService->responder(['AsistenciaConfirmada' => $resultado]);
     }
 
@@ -72,7 +63,7 @@ class EntrevistaController{
         }
 
         $identrevista = $this->getIntParam($data, 'identrevista');
-        $resultado = $this->ausencia->asistenciaNoConfirmada($identrevista);
+        $resultado = $this->entrevista->asistenciaNoConfirmada($identrevista);
         $this->jsonResponseService->responder(['AsistenciaNoConfirmada' => $resultado]);
     }
 

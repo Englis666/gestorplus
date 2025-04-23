@@ -8,18 +8,26 @@ const SistemaDeGestion = () => {
     const location = useLocation();
     const { num_doc, nombres, identrevista, idpostulacion } = location.state || {};
 
+    // Check if all required data is available
+    const isFormDataAvailable = num_doc && nombres && identrevista && idpostulacion;
+
     return (
         <div className="bg-light min-vh-100" style={{ transition: "all 3s ease", display: "flex" }}>
             <NavbarClosed />
             <div className="flex-grow-1 p-4" style={{ background: "#ECF0F1" }}>
                 <TablaSistemaDeGestion />
-                <FormularioParaAgregarSistemasDeGestion num_doc={num_doc} nombres={nombres} identrevista={identrevista} idpostulacion={idpostulacion} />
-
+                
+                {isFormDataAvailable && (
+                    <FormularioParaAgregarSistemasDeGestion 
+                        num_doc={num_doc} 
+                        nombres={nombres} 
+                        identrevista={identrevista} 
+                        idpostulacion={idpostulacion} 
+                    />
+                )}
             </div>
-
         </div>
+    );
+};
 
-    )
-
-}
 export default SistemaDeGestion;

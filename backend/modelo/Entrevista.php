@@ -75,18 +75,18 @@ class Entrevista{
         return;
    }
 
-   public function asitenciaConfirmada($data){
+   public function asistenciaConfirmada($identrevista){
     $sql = "UPDATE entrevista SET estadoEntrevista = 'Asistencia' WHERE identrevista = :identrevista";
-    $stmt = $this->db-prepare($sql);
-    $stmt->bindParam(':identrevista', $data['identrevista'] , PDO::PARAM_INT);
-    return;
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':identrevista', $identrevista, PDO::PARAM_INT);
+    $stmt->execute();
 }
 
-public function asistenciaNoConfirmada($data){
-    $sql = "UPDATE entrevista SET estadoEntrevista = 'No asistio' WHERE identrevista = :identrevista";
+public function asistenciaNoConfirmada($identrevista){
+    $sql = "UPDATE entrevista SET estadoEntrevista = 'No asistió' WHERE identrevista = :identrevista";
     $stmt = $this->db->prepare($sql);
-    $stmt->bindParam(":identrevista" , $data['identrevista'], PDO::PARAM_INT);
-    return;
+    $stmt->bindParam(":identrevista", $identrevista, PDO::PARAM_INT);
+    $stmt->execute();
 }
 
 

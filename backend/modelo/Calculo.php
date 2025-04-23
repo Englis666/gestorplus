@@ -129,7 +129,7 @@ class Calculo {
 
     // Método para calcular la cantidad de postulaciones en convocatorias
     public function calcularPostulacionesEnConvocatorias(){
-        $sql = "SELECT c.*, ca.nombreCargo , COUNT(p.idpostulacion) as cantidad_postulaciones
+        $sql = "SELECT c.*, ca.nombreCargo , COUNT(p.idpostulacion) as cantidad_postulaciones, p.idpostulacion
                 FROM convocatoria AS c
                 INNER JOIN postulacion AS p ON c.idconvocatoria = p.convocatoria_idconvocatoria
                 INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo
