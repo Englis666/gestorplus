@@ -59,6 +59,28 @@ class EstudioController extends BaseController{
         }
     }
 
+    public function actualizarEstudio($data) {
+        try{
+            $num_doc = $this->tokenService->validarToken();
+
+            if (empty($data['idestudio'])) {
+                $this->jsonResponseService->responderError(['error' => 'ID de estudio no proporcionado'], 400);
+            }
+
+            if ($this->estudio->actualizarEstudio($data)) {
+                $this->jsonResponseService->responder([
+                    'status' => 'success',
+                    'data' => $data
+                ]);
+            } else {
+                $this->jsonResponseService->responderError(['error' => 'Error al actualizar el estudio'], 500);
+            }
+        } catch (Exception $e) {
+            $this->jsonResponseService->responderError($e->getMessage());
+        }
+    }
+
+
     public function eliminarEstudio() {
         $idestudio = $_SERVER['HTTP_X_ESTUDIO_ID'] ?? null; 
 

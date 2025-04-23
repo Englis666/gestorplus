@@ -75,24 +75,31 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
     setIsSubmitting(true);
 
     axios
-      .post("http://localhost/gestorplus/backend/", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        alert("✅ Estudio agregado correctamente.");
-        onAgregarEstudio?.();
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-        alert("❌ Error al guardar estudio.");
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-        toggleModalEstudios();
-      });
+    .post("http://localhost/gestorplus/backend/", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      alert("✅ Estudio agregado correctamente.");
+      
+      // Here's the change: pass the newly created study data back to the parent
+      if (res.data && res.data.data) {
+        onAgregarEstudio(res.data.data); // Pass the new study data
+      } else {
+        // Fallback if the API doesn't return the created study
+        onAgregarEstudio(formData);
+      }
+    })
+    .catch((err) => {
+      console.error("Error:", err);
+      alert("❌ Error al guardar estudio.");
+    })
+    .finally(() => {
+      setIsSubmitting(false);
+      toggleModalEstudios();
+    });
   };
 
   return (
