@@ -142,6 +142,8 @@ const TablaPazYSalvo = () => {
                 },
             })
             .then((response) => {
+                console.log(response.data);
+
                 if (response.data.success) {
                     alert("Paz y salvo generado con éxito");
                     setSalvos([...Salvos, form]);

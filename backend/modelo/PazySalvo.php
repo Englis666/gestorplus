@@ -65,6 +65,49 @@ class PazySalvo{
         }
     }
     
+    public function crearPazYSalvo(array $data): bool
+    {
+        try {
+            // Verificar si 'empleado' es un array y tiene 'num_doc'
+            if (isset($data['empleado']) && is_array($data['empleado']) && isset($data['empleado']['num_doc'])) {
+                // Buscar idvinculacion del empleado
+                $stmt = $this->db->prepare("SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc");
+                $stmt->execute([':num_doc' => $data['empleado']['num_doc']]);
+                $idVinculacion = $stmt->fetchColumn();
+        
+                if (!$idVinculacion) {
+                    throw new Exception('No se encontró la vinculación del empleado');
+                }
+        
+                // Insertar el Paz y Salvo
+                $sql = "INSERT INTO pazysalvo (motivo, fechaEmision, estado, documentoPazysalvo, vinculacion_idvinculacion)
+                        VALUES (:motivo, :fechaEmision, :estado, :documentoPazysalvo, :vinculacion_idvinculacion)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    ':motivo' => $data['motivo'],
+                    ':fechaEmision' => $data['fechaEmision'],
+                    ':estado' => $data['estado'],
+                    ':documentoPazysalvo' => $data['documentoPazysalvo'] ?? null,
+                    ':vinculacion_idvinculacion' => $idVinculacion
+                ]);
+        
+                // Verificar si se insertó correctamente
+                if ($stmt->rowCount() > 0) {
+                    return true; // Inserción exitosa
+                } else {
+                    // Si no se insertó nada, lanzar una excepción
+                    throw new Exception('No se pudo insertar el Paz y Salvo');
+                }
+            } else {
+                throw new Exception('El empleado no está especificado correctamente');
+            }
+        } catch (Exception $e) {
+            // En caso de error, capturar la excepción y registrar el error
+            error_log('Error al insertar Paz y Salvo: ' . $e->getMessage());
+            return false; // No se pudo insertar el Paz y Salvo
+        }
+    }
+    
 
 
 

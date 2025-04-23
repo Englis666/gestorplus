@@ -58,7 +58,8 @@ return[
     //permiso
     'permisoAceptado' => ['permiso', 'permisoAceptado'],
     'permisoRechazado' => ['permiso' , 'permisoRechazado'],
-    'agregarPublicacion' => ['publicaciones' , 'agregarPublicacion']
+    'agregarPublicacion' => ['publicaciones' , 'agregarPublicacion'],
+    'generarPazYSalvo' => ['pazysalvo' , 'generarPazYSalvo'],
 ];
 
 ?>
