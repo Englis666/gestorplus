@@ -7,7 +7,8 @@ return [
     'desactivarCargo' => ['cargo' , 'desactivarCargo'],
     'desactivarConvocatoria' => ['convocatoria' , 'desactivarConvocatoria'], 
     'activarConvocatoria' => ['convocatoria' , 'activarConvocatoria'],
-    
+    'actualizarEstudio' => ['estudio', 'actualizarEstudio'],
+    'actualizarExperiencia' => ['experiencia', 'actualizarExperiencia'],
 ];
 
 ?>

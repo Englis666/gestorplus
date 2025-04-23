@@ -3,6 +3,8 @@ import { jwtDecode } from "jwt-decode";
 import ModalHojaDeVida from "../componentsClosed/modals/ModalHojadevida";
 import Estudios from "../componentsClosed/modals/ModalEstudios";
 import Experiencia from "../componentsClosed/modals/ModalExperienciaLaboral";
+import EditarEstudio from "../componentsClosed/modals/ModalEditarEstudios";
+import EditarExperiencia from "../componentsClosed/modals/ModalEditarExperiencia";
 import axios from "axios";
 
 const Perfil = () => {
@@ -22,9 +24,13 @@ const Perfil = () => {
   const [modalHojaDeVida, setModalHojaDeVida] = useState(false);
   const [modalEstudios, setModalEstudios] = useState(false);
   const [modalExperiencia, setModalExperiencia] = useState(false);
+  const [modalEditarEstudio, setModalEditarEstudio] = useState(false);
+  const [modalEditarExperiencia, setModalEditarExperiencia] = useState(false);
   const [estudios, setEstudios] = useState([]);
   const [experiencia, setExperiencia] = useState([]);
   const [seleccionado, setSeleccionado] = useState("Estudios");
+  const [estudioSeleccionado, setEstudioSeleccionado] = useState(null);
+  const [experienciaSeleccionada, setExperienciaSeleccionada] = useState(null);
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -98,7 +104,6 @@ const Perfil = () => {
           params: { action: "obtenerEstudio" },
         });
         const data = responseEstudios.data?.obtenerEstudio|| [];
-        console.log(data);
         setEstudios(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error al obtener estudios:", error);
@@ -137,7 +142,7 @@ const Perfil = () => {
       });
 
       if (response.status === 200) {
-        alert("Estudio eliminado")
+        alert("Estudio eliminado");
         setEstudios((prevEstudios) => prevEstudios.filter((estudio) => estudio.idestudio !== idestudio));
       } else {
         alert("Hubo un error al eliminar el estudio.");
@@ -160,7 +165,6 @@ const Perfil = () => {
         params: { action: "eliminarExperiencia" },
       });
 
-      console.log(response);
       if (response.status === 200) {
         setExperiencia((prevExperiencia) => prevExperiencia.filter((exp) => exp.idexperienciaLaboral !== idexperienciaLaboral));
       } else {
@@ -178,39 +182,64 @@ const Perfil = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const updatedData = {};
-    if (formData.email !== formData.originalData.email) updatedData.email = formData.email;
-    if (formData.tipodDoc !== formData.originalData.tipodDoc) updatedData.tipodDoc = formData.tipodDoc;
-    if (formData.password !== formData.originalData.password) updatedData.password = formData.password;
-    if (formData.nombres !== formData.originalData.nombres) updatedData.nombres = formData.nombres;
-    if (formData.apellidos !== formData.originalData.apellidos) updatedData.apellidos = formData.apellidos;
-
+  
+    const updatedData = {
+      nombres: formData.nombres,
+      apellidos: formData.apellidos,
+      email: formData.email,
+      tipodDoc: formData.tipodDoc
+    };
+  
     const token = getCookie("auth_token");
     if (!token) return;
-
+  
     try {
       const decodedToken = jwtDecode(token);
       if (isTokenExpired(decodedToken)) return;
-
+  
       const response = await axios.patch("http://localhost/gestorplus/backend/", updatedData, {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "actualizarPerfil" },
       });
-
       if (response.status === 200) {
         setFormData((prevFormData) => ({ ...prevFormData, originalData: { ...prevFormData } }));
+        alert("Perfil actualizado con éxito");
       } else {
         alert("Hubo un error al actualizar el perfil.");
       }
     } catch (error) {
       alert("Ocurrió un error al actualizar los datos.");
+      console.error("Error al actualizar los datos del perfil:", error.response?.data || error.message);
     }
   };
 
   const toggleModalHojaDeVida = () => setModalHojaDeVida(!modalHojaDeVida);
   const toggleModalEstudios = () => setModalEstudios(!modalEstudios);
   const toggleModalExperiencia = () => setModalExperiencia(!modalExperiencia);
+  
+  const toggleModalEditarEstudio = () => {
+    setModalEditarEstudio(!modalEditarEstudio);
+    if (!modalEditarEstudio) {
+      setEstudioSeleccionado(null);
+    }
+  };
+  
+  const toggleModalEditarExperiencia = () => {
+    setModalEditarExperiencia(!modalEditarExperiencia);
+    if (!modalEditarExperiencia) {
+      setExperienciaSeleccionada(null);
+    }
+  };
+
+  const editarEstudioHandler = (estudio) => {
+    setEstudioSeleccionado(estudio);
+    setModalEditarEstudio(true);
+  };
+
+  const editarExperienciaHandler = (experiencia) => {
+    setExperienciaSeleccionada(experiencia);
+    setModalEditarExperiencia(true);
+  };
 
   const agregarEstudio = (nuevoEstudio) => {
     if (nuevoEstudio) {
@@ -244,15 +273,31 @@ const Perfil = () => {
           params: { action: "obtenerExperiencia" },
         })
         .then(response => {
-          const data = response.data?.data || [];
+          const data = response.data?.obtenerExperiencia || [];
           setExperiencia(Array.isArray(data) ? data : []);
         })
         .catch(error => {
           console.error("Error al obtener la experiencia laboral:", error);
         });
       }
+    }
   };
-};
+
+  const editarEstudio = (estudioActualizado) => {
+    setEstudios((prevEstudios) => 
+      prevEstudios.map((estudio) => 
+        estudio.idestudio === estudioActualizado.idestudio ? estudioActualizado : estudio
+      )
+    );
+  };
+
+  const editarExperiencia = (experienciaActualizada) => {
+    setExperiencia((prevExperiencia) => 
+      prevExperiencia.map((exp) => 
+        exp.idexperienciaLaboral === experienciaActualizada.idexperienciaLaboral ? experienciaActualizada : exp
+      )
+    );
+  };
 
   return (
     <div className="container mt-5">
@@ -385,8 +430,18 @@ const Perfil = () => {
                             <strong>Ubicación:</strong> {estudio.ubicacionEstudio}
                           </p>
                           <div className="d-flex justify-content-end">
-                            <button className="btn btn-sm btn-primary me-2"><i className="material-icons">edit</i></button>
-                            <button className="btn btn-sm btn-danger" onClick={() => eliminarEstudioHandler(estudio.idestudio)}><i className="material-icons">delete</i></button>
+                            <button 
+                              className="btn btn-sm btn-primary me-2"
+                              onClick={() => editarEstudioHandler(estudio)}
+                            >
+                              <i className="material-icons">edit</i>
+                            </button>
+                            <button 
+                              className="btn btn-sm btn-danger" 
+                              onClick={() => eliminarEstudioHandler(estudio.idestudio)}
+                            >
+                              <i className="material-icons">delete</i>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -405,8 +460,18 @@ const Perfil = () => {
                           <strong>Fecha de fin:</strong> {experiencia.fechaFinExp}
                         </p>
                         <div className="d-flex justify-content-end">
-                          <button className="btn btn-sm btn-primary me-2"><i className="material-icons">edit</i></button>
-                          <button className="btn btn-sm btn-danger" onClick={() => eliminarExperienciaHandler(experiencia.idexperienciaLaboral)}><i className="material-icons">delete</i></button>
+                          <button 
+                            className="btn btn-sm btn-primary me-2"
+                            onClick={() => editarExperienciaHandler(experiencia)}
+                          >
+                            <i className="material-icons">edit</i>
+                          </button>
+                          <button 
+                            className="btn btn-sm btn-danger" 
+                            onClick={() => eliminarExperienciaHandler(experiencia.idexperienciaLaboral)}
+                          >
+                            <i className="material-icons">delete</i>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -423,8 +488,18 @@ const Perfil = () => {
       <ModalHojaDeVida modalHojaDeVida={modalHojaDeVida} toggleModalHojaDeVida={toggleModalHojaDeVida} />
       <Estudios modalEstudios={modalEstudios} toggleModalEstudios={toggleModalEstudios} onAgregarEstudio={agregarEstudio} />
       <Experiencia modalExperiencia={modalExperiencia} toggleModalExperiencia={toggleModalExperiencia} onAgregarExperiencia={agregarExperiencia} />
-      {/* <EditarEstudio modalEditarEstudio={modalEditarEstudio} toggleModalEditarEstudio={toggleModalEditarEstudio} onEditarEstudio={editarEstudio}></EditarEstudio>
-      <EditarExperiencia modalEditarExperiencia={modalEditarExperiencia} toggleModalEditarExperiencia={toggleModalEditarExperiencia} onEditarExperiencia={editarExperiencia}></EditarExperiencia> */}
+      <EditarEstudio 
+        modalEditarEstudio={modalEditarEstudio} 
+        toggleModalEditarEstudio={toggleModalEditarEstudio} 
+        onEditarEstudio={editarEstudio} 
+        estudioSeleccionado={estudioSeleccionado}
+      />
+      <EditarExperiencia 
+        modalEditarExperiencia={modalEditarExperiencia} 
+        toggleModalEditarExperiencia={toggleModalEditarExperiencia} 
+        onEditarExperiencia={editarExperiencia}
+        experienciaSeleccionada={experienciaSeleccionada}
+      />
     </div>
   );
 };

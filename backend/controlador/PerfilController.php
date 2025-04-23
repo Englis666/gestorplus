@@ -31,13 +31,13 @@ class PerfilController {
     public function actualizarPerfil($data) {
         try {
             $num_doc = $this->tokenService->validarToken();
-
+    
             if (empty($data['nombres']) || empty($data['apellidos']) || empty($data['email']) || empty($data['tipodDoc'])) {
                 $this->jsonResponseService->responder(['status' => 'error', 'message' => 'Faltan datos requeridos para actualizar el perfil'], 400);
                 return;
             }
-
-            $resultado = $this->perfil->actualizarPerfil($data, $num_doc);
+    
+            $resultado = $this->perfil->actualizarPerfil($num_doc, $data);
             $this->jsonResponseService->responder(['status' => $resultado ? 'success' : 'error', 'message' => $resultado ? 'Perfil actualizado correctamente' : 'No se pudo actualizar el perfil']);
         } catch (\Exception $e) {
             $this->jsonResponseService->responder(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());

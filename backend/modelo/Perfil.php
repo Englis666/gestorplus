@@ -43,15 +43,19 @@ class Perfil{
     return [];
     }
 
-
-    //Realizar
-    //public function actualizarPerfil(){
-
-
-    //}
-
+    public function actualizarPerfil($num_doc, $data) {
+        $sql = 'UPDATE usuario SET nombres = ?, apellidos = ?, email = ?, tipodDoc = ? WHERE num_doc = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(1, $data['nombres'], PDO::PARAM_STR);
+        $stmt->bindParam(2, $data['apellidos'], PDO::PARAM_STR);
+        $stmt->bindParam(3, $data['email'], PDO::PARAM_STR);
+        $stmt->bindParam(4, $data['tipodDoc'], PDO::PARAM_STR);
+        $stmt->bindParam(5, $num_doc, PDO::PARAM_INT);
     
-
-
-
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

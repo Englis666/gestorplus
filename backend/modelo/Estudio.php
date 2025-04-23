@@ -61,7 +61,30 @@ class Estudio{
         return json_encode(['message' => 'Estudio agregado']);
     }
 
-      
+    public function actualizarEstudio($data) {
+        $sql = "
+            UPDATE estudio
+            SET nivelEstudio = ?, areaEstudio = ?, estadoEstudio = ?, fechaInicioEstudio = ?, fechaFinEstudio = ?, tituloEstudio = ?, institucionEstudio = ?, ubicacionEstudio = ? WHERE idestudio = ?
+        ";
+    
+        $stmt = $this->db->prepare($sql);
+    
+        $stmt->bindParam(1, $data['nivelEstudio'], PDO::PARAM_STR);
+        $stmt->bindParam(2, $data['areaEstudio'], PDO::PARAM_STR);
+        $stmt->bindParam(3, $data['estadoEstudio'], PDO::PARAM_STR);
+        $stmt->bindParam(4, $data['fechaInicioEstudio'], PDO::PARAM_STR);
+        $stmt->bindParam(5, $data['fechaFinEstudio'], PDO::PARAM_STR);
+        $stmt->bindParam(6, $data['tituloEStudio'], PDO::PARAM_STR);
+        $stmt->bindParam(7, $data['institucionEstudio'], PDO::PARAM_STR);
+        $stmt->bindParam(8, $data['ubicacionEstudio'], PDO::PARAM_STR);
+        $stmt->bindParam(9, $data['idestudio'], PDO::PARAM_INT);
+        
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     public function eliminarEstudio($idestudio) {
         $sql = "DELETE FROM estudio WHERE idestudio = :idestudio";
         $stmt = $this->db->prepare($sql);

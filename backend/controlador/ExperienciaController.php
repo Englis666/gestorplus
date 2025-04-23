@@ -70,6 +70,27 @@ class ExperienciaController extends BaseController {
             ]);
         }
     }
+
+    public function actualizarExperiencia($data) {
+        try{
+            $num_doc = $this->tokenService->validarToken();
+
+            if (empty($data['idexperienciaLaboral'])) {
+                $this->jsonResponseService->responderError(['error' => 'ID de experiencia no proporcionado'], 400);
+            }
+
+            if ($this->experiencia->actualizarExperiencia($data)) {
+                $this->jsonResponseService->responder([
+                    'status' => 'success',
+                    'data' => $data
+                ]);
+            } else {
+                $this->jsonResponseService->responderError(['error' => 'Error al actualizar la experiencia'], 500);
+            }
+        } catch (Exception $e) {
+            $this->jsonResponseService->responderError($e->getMessage());
+        }
+    }
     
 }
 ?>

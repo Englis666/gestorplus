@@ -41,7 +41,7 @@ class Experiencia{
     public function eliminarExperiencia($idexperiencialaboral) {
         $sql = "DELETE FROM experiencialaboral WHERE idexperienciaLaboral = :idexperienciaLaboral";
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':idexperienciaLaboral', $idexperiencia, PDO::PARAM_INT);
+        $stmt->bindParam(':idexperienciaLaboral', $idexperiencialaboral, PDO::PARAM_INT);
 
         return $stmt->execute();
     }
@@ -64,7 +64,23 @@ class Experiencia{
         return json_encode(['message' => 'Experiencia agregada']);
     }
 
+    public function actualizarExperiencia($data) {
+        $sql = 'UPDATE experiencialaboral SET profesion = ?, descripcionPerfil = ?, fechaInicioExp = ?, fechaFinExp = ? WHERE idexperienciaLaboral = ?';
 
+        $stmt = $this->db->prepare($sql);
+
+        $stmt->bindParam(1, $data['profesion'], PDO::PARAM_STR);
+        $stmt->bindParam(2, $data['descripcionPerfil'], PDO::PARAM_STR);
+        $stmt->bindParam(3, $data['fechaInicioExp'], PDO::PARAM_STR);
+        $stmt->bindParam(4, $data['fechaFinExp'], PDO::PARAM_STR);
+        $stmt->bindParam(5, $data['idexperienciaLaboral'], PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
 }
