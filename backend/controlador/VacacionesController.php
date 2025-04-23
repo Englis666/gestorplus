@@ -38,4 +38,15 @@ class VacacionesController extends BaseController {
             : 'Error al solicitar las vacaciones';
         $this->jsonResponseService->responder(['message' => $mensaje]);
     }
+
+    public function aceptarVacacion(array $data): void{
+        $vacaciones = $this->vacaciones->aceptarVacacion($idvacacion);
+        $this->jsonResponseService->responder(['vacacionAceptada' => $vacaciones]);
+    }
+
+    public function rechazarVacacion(array $data): void{
+        $vacaciones = $this->vacaciones->rechazarVacacion($idvacacion);
+        $this->jsonResponseService->responder(['vacacionRechazada' => $vacaciones]);
+    }
+
 }

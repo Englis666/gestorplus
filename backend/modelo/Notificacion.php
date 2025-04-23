@@ -51,7 +51,7 @@ class Notificacion{
 
     public function obtenerNotificacionesAspirante($num_doc){
         try{
-          $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc AND tipo = 'PostulacionAspirantes'";
+          $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc AND tipo = 'PostulacionAspirantes' OR tipo = 'entrevista'";
           $stmt = $this->db->prepare($sql);
           $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
           $stmt->execute();
