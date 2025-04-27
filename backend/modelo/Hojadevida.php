@@ -32,7 +32,11 @@ class Hojadevida{
                     ciudadNacimiento = ?,
                     telefono = ?,
                     telefonoFijo = ?,
-                    estadohojadevida = ?
+                    estadohojadevida = ?,
+                    estadoCivil = ?,
+                    genero = ?,
+                    skills = ?,
+                    portafolio ?
                   WHERE idHojadevida = ?";  
     
         $stmt = $this->db->prepare($query);
@@ -45,6 +49,10 @@ class Hojadevida{
             $data['telefono'],
             $data['telefonoFijo'],
             'Activa',
+            $data['estadoCivil'],
+            $data['genero'],
+            $data['skills'],
+            $data['portafolio'],
             $hojadevida_idHojadevida
         ]);
     

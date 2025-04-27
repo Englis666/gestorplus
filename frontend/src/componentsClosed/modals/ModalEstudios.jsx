@@ -12,6 +12,10 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
     tituloEstudio: "",
     institucionEstudio: "",
     ubicacionEstudio: "",
+    modalidad: "",
+    paisInstitucion: "",
+    duracionEstudio: "",
+    materialDestacadas: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -45,6 +49,10 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
       "tituloEstudio",
       "institucionEstudio",
       "ubicacionEstudio",
+      "modalidad",
+      "paisInstitucion",
+      "duracionEstudio",
+      "materiasDestacadas",
     ];
 
     requiredFields.forEach(field => {
@@ -84,11 +92,9 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
       console.log(res);
       alert("✅ Estudio agregado correctamente.");
       
-      // Here's the change: pass the newly created study data back to the parent
       if (res.data && res.data.data) {
         onAgregarEstudio(res.data.data); // Pass the new study data
       } else {
-        // Fallback if the API doesn't return the created study
         onAgregarEstudio(formData);
       }
     })
@@ -131,6 +137,9 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
                 { label: "Título obtenido", name: "tituloEstudio" },
                 { label: "Institución educativa", name: "institucionEstudio" },
                 { label: "Ubicación", name: "ubicacionEstudio" },
+                { label: "Modalidad del estudio", name: "modalidad"},
+                { label: "Pais Institucion", name: "duracionEstudio"},
+                { label: "Materias Destacadas", name: "materiasDestacadas"},
               ].map(({ label, name, type = "text" }) => (
                 <div className="col-md-6" key={name}>
                   <label htmlFor={name} className="form-label fw-semibold">

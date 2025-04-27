@@ -88,9 +88,74 @@ class Permiso{
             return false;
         }
     }
-    //realizar PermisoAceptado 
 
-    //Realizar PermisoRechazado
+    public function permisoAceptado($idPermisos) {
+       
+        // Si idPermisos no es un arreglo, lo convertimos en uno
+        if (!is_array($idPermisos)) {
+            $idPermisos = [$idPermisos];
+        }
+        
+        foreach ($idPermisos as $idPermiso) {
+            // Actualizar el estado del permiso
+            $sql = "UPDATE permiso SET estadoNotificacion = 'Aceptada' WHERE idPermisos = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$idPermiso]);
+    
+            $buscar = "SELECT fechaInicio, fechaFin, usuario_num_doc FROM permiso WHERE idPermisos = ?";
+            $stmt = $this->db->prepare($buscar);
+            $stmt->execute([$idPermiso]);
+            $permiso = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($permiso) {
+                $fechaInicio = $permiso['fechaInicio'];
+                $fechaFin = $permiso['fechaFin'];
+                $num_doc = $permiso['usuario_num_doc'];
+    
+                $descripcionNotificacion = "Tu permiso fue aprobado para el día $fechaInicio hasta $fechaFin";
+                $sql = "INSERT INTO notificacion (descripcionNotificacion,estadoNotificacion, tipo, num_doc) VALUES (?, ?, ?, ?)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$descripcionNotificacion, 'Activa','general', $num_doc]);
+            }
+        }
+    }
+    
+    public function permisoRechazado($idPermisos) {
+        
+        // Si idPermisos no es un arreglo, lo convertimos en uno
+        if (!is_array($idPermisos)) {
+            $idPermisos = [$idPermisos];
+        }
+        
+        // Procesar cada idPermisos
+        foreach ($idPermisos as $idPermiso) {
+            // Actualizar el estado del permiso
+            $sql = "UPDATE permiso SET estadoNotificacion = 'No aceptada' WHERE idPermisos = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$idPermiso]);
+    
+            // Obtener la información del permiso
+            $buscar = "SELECT fechaInicio, fechaFin, usuario_num_doc FROM permiso WHERE idPermisos = ?";
+            $stmt = $this->db->prepare($buscar);
+            $stmt->execute([$idPermiso]);
+            $permiso = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($permiso) {
+                $fechaInicio = $permiso['fechaInicio'];
+                $fechaFin = $permiso['fechaFin'];
+                $num_doc = $permiso['usuario_num_doc'];
+    
+                // Crear la notificación
+                $descripcionNotificacion = "Tu permiso fue rechazado para el día $fechaInicio hasta $fechaFin";
+                $sql = "INSERT INTO notificacion (descripcionNotificacion,estadoNotificacion, tipo, num_doc) VALUES (?, ?, ?, ?)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$descripcionNotificacion,'Activa','general', $num_doc]);
+            }
+        }
+    }
+    
+    
 
+    
 
 }

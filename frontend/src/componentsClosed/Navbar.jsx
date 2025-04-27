@@ -203,6 +203,13 @@ const NavbarClosed = ({ activeLink }) => {
         { label: "Cargos", icon: "work", path: "/Cargos" },
       ],
     });
+    menuItems.push({
+      label: "GESTORPLUS IA",
+      icon: "people",
+      subMenu: [
+        { label: "Analizador IA hojas de vida de postulantes", icon: "people", path: "/AnalizadorDeHojasDeVida" },
+      ],
+    });
   }
 
   return (

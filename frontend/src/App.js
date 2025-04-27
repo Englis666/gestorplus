@@ -1,3 +1,4 @@
+import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'material-design-icons/iconfont/material-icons.css';
 import 'animate.css';
@@ -7,7 +8,6 @@ import './App.css';
 import React, { useEffect } from 'react'; 
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate, Outlet } from 'react-router-dom'; 
 import { UserProvider } from './context/userContext';
-import './utils/handleAlerts';
 
 import Login from './views/Login';
 import Registro from './views/Registro';
@@ -92,7 +92,7 @@ function App() {
     return (
         <UserProvider>
             <BrowserRouter>
-                <AuthCheck /> {/* Componente para verificar la autenticación */}
+                <AuthCheck /> 
                 <div className="App">
                     <Routes>
                         <Route path="/" element={<Layout />} />

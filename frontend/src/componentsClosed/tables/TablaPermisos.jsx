@@ -64,7 +64,6 @@ const TablaPermisos = () => {
             params: { action },
           })
           .then((response) => {
-            console.log(response);
             const permisos = response.data?.permisos;
             if (Array.isArray(permisos)) {
               setPermisos(permisos);
@@ -91,17 +90,19 @@ const TablaPermisos = () => {
     }
   }, []);
 
-  const handleAceptar = (idpermiso) => {
+  const handleAceptar = (idPermisos) => {
     axios
       .post("http://localhost/gestorplus/backend/", {
         action: "permisoAceptado",
-        data: { idpermiso },
+        idPermisos,
       })
       .then((response) => {
+        console.log(idPermisos);
+        console.log(response);
         alert("Permiso aceptado con éxito.");
         setPermisos((prev) =>
           prev.map((permiso) =>
-            permiso.idpermiso === idpermiso
+            permiso.idpermiso === idPermisos
               ? { ...permiso, aprobado: true }
               : permiso
           )
@@ -113,18 +114,18 @@ const TablaPermisos = () => {
       });
   };
 
-  const handleRechazar = (idpermiso) => {
+  const handleRechazar = (idPermisos) => {
     axios
       .post("http://localhost/gestorplus/backend/", {
         action: "permisoRechazado",
-        data: { idpermiso },
+        idPermisos,
       })
       .then((response) => {
         if (response.data.success) {
           alert("Permiso rechazado con éxito.");
           setPermisos((prev) =>
             prev.map((permiso) =>
-              permiso.idpermiso === idpermiso
+              permiso.idPermisos === idPermisos
                 ? { ...permiso, aprobado: false }
                 : permiso
             )
@@ -213,30 +214,30 @@ const TablaPermisos = () => {
                       <th>Fecha de inicio</th>
                       <th>Fecha de fin</th>
                       <th>Tipo de Permiso</th>
-                      <th>Aprobado</th>
+                      <th>Estado</th>
                       {(rol === "1" || rol === "2") && <th>Acciones</th>}
                     </tr>
                   </thead>
                   <tbody className="text-center">
                     {permisos.length > 0 ? (
                       permisos.map((permiso) => (
-                        <tr key={permiso.idpermiso}>
+                        <tr key={permiso.idPermisos}>
                           <td>{permiso.nombres}, {permiso.apellidos}</td>
                           <td>{permiso.fechaInicio}</td>
                           <td>{permiso.fechaFin}</td>
                           <td>{permiso.tipo}</td>
-                          <td>{permiso.aprobado ? "Sí" : "No"}</td>
+                          <td>{permiso.estadoNotificacion}</td>
                           {(rol === "1" || rol === "2") && (
                             <td>
                               <button
                                 className="btn btn-success btn-sm me-2"
-                                onClick={() => handleAceptar(permiso.idpermiso)}
+                                onClick={() => handleAceptar(permiso.idPermisos)}
                               >
                                 Aceptar
                               </button>
                               <button
                                 className="btn btn-danger btn-sm"
-                                onClick={() => handleRechazar(permiso.idpermiso)}
+                                onClick={() => handleRechazar(permiso.idPermisos)}
                               >
                                 Rechazar
                               </button>

@@ -54,7 +54,6 @@ const TablaJornadas = () => {
             setFiltrado(jornadas);
             const nombres = [...new Set(jornadas.map((j) => j.nombres))];
             setEmpleados(nombres);
-            cargarMinutos(jornadas);
             setLoading(false);
           })
           .catch(() => {
@@ -89,24 +88,6 @@ const TablaJornadas = () => {
     setFiltrado(resultado);
   };
 
-  const cargarMinutos = async (jornadas) => {
-    const minutos = {};
-    for (const jornada of jornadas) {
-      try {
-        const { data } = await axios.get("http://localhost/gestorplus/backend/", {
-          params: {
-            action: "obtenerMinutosTrabajados",
-            num_doc: jornada.usuario_num_doc,
-            fecha: jornada.fecha,
-          },
-        });
-        minutos[jornada.idJornada] = data;
-      } catch {
-        minutos[jornada.idJornada] = { minutos_trabajados: "-", minutos_extra: "-" };
-      }
-    }
-    setMinutosTrabajados(minutos);
-  };
 
   const handleCorroborar = (idJornada) => {
     axios

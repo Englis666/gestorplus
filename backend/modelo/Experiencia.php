@@ -48,7 +48,7 @@ class Experiencia{
     
     public function agregarExp($data, $hojadevida_idHojadevida) {
         $sql = "INSERT INTO experiencialaboral 
-                (profesion, descripcionPerfil, fechaInicioExp, fechaFinExp, hojadevida_idHojadevida) 
+                (profesion, descripcionPerfil, fechaInicioExp, fechaFinExp, cargo,empresa, ubicacionEmpresa, tipoContrato, salario,logros,referenciasLaborales, fechaIngreso,fechaSalida,hojadevida_idHojadevida) 
                 VALUES (?, ?, ?, ?, ?)";
         
         $stmtUsuario = $this->db->prepare($sql);    
@@ -58,6 +58,15 @@ class Experiencia{
             $data['descripcionPerfil'],
             $data['fechaInicioExp'],
             $data['fechaFinExp'],
+            $data['cargo'],
+            $data['empresa'],
+            $data['ubicacionEmpresa'],
+            $data['tipoContrato'],
+            $data['salario'],
+            $data['logros'],
+            $data['referenciasLaborales'],
+            $data['fechaIngreso'],
+            $data['fechaSalida'],
             $hojadevida_idHojadevida
         ]);    
     

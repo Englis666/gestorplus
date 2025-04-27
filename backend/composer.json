@@ -27,7 +27,8 @@
             "Modelo\\": "modelo/",
             "Servicio\\": "servicio/",
             "Core\\": "core/",
-            "Routes\\": "routes/"
+            "Routes\\": "routes/",
+            "Utils\\": "utils/"
         }
     }
 }

@@ -31,6 +31,10 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
             'Workerman\\Coroutine\\' => 20,
             'Workerman\\' => 10,
         ),
+        'U' => 
+        array (
+            'Utils\\' => 6,
+        ),
         'T' => 
         array (
             'Twig\\' => 5,
@@ -119,6 +123,10 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         array (
             0 => __DIR__ . '/..' . '/workerman/workerman/src',
             1 => __DIR__ . '/..' . '/workerman/coroutine/src',
+        ),
+        'Utils\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/utils',
         ),
         'Twig\\' => 
         array (

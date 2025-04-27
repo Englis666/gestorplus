@@ -59,6 +59,7 @@ const Perfil = () => {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "datosPerfil" },
       });
+      console.log(response);
       if (response.status === 200) {
         const mappedData = mapData(response.data.data);
         setFormData((prevFormData) => ({

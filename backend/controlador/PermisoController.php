@@ -7,6 +7,7 @@ use Core\Controller\BaseController;
 use Modelo\Permiso;
 use Servicio\TokenService;
 use PDO;
+use Exception;
 
 class PermisoController extends BaseController {
     private Permiso $permiso;
@@ -35,20 +36,36 @@ class PermisoController extends BaseController {
     }
 
     public function permisoAceptado(array $data): void {
-        if (!$this->parametrosRequeridos($data, ['data' => ['idpermiso']])) {
+        if (!$this->parametrosRequeridos($data, ['idPermisos'])) {
             return;
         }
-        $resultado = $this->permiso->permisoAceptado($data['data']['idpermiso']);
+    
+        $idPermisos = $data['idPermisos'];
+    
+        // Verificar si $idPermisos es un arreglo, si no lo es, convertirlo en un arreglo
+        if (!is_array($idPermisos)) {
+            $idPermisos = [$idPermisos]; // Convertirlo en un arreglo con un solo valor
+        }
+    
+        $resultado = $this->permiso->permisoAceptado($idPermisos);
         $this->jsonResponseService->responder(['permisoAceptado' => $resultado]);
     }
-
+    
     public function permisoRechazado(array $data): void {
-        if (!$this->parametrosRequeridos($data, ['data' => ['idpermiso']])) {
+        if (!$this->parametrosRequeridos($data, ['idPermisos'])) {
             return;
         }
-        $resultado = $this->permiso->permisoRechazado($data['data']['idpermiso']);
+    
+        $idPermisos = $data['idPermisos'];
+    
+        if (!is_array($idPermisos)) {
+            $idPermisos = [$idPermisos]; 
+        }
+    
+        $resultado = $this->permiso->permisoRechazado($idPermisos);
         $this->jsonResponseService->responder(['permisoRechazado' => $resultado]);
     }
+    
 
     public function obtenerTodosLosPermisos(): void {
         $permisos = $this->permiso->obtenerTodosLosPermisos();

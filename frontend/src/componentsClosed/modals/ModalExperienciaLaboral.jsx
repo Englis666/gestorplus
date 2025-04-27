@@ -1,162 +1,175 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React from 'react';
+import axios from 'axios';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { toast, ToastContainer } from 'react-toastify';
 
+
+// Util para obtener cookies
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+};
 
 const Experiencia = ({ modalExperiencia, toggleModalExperiencia, onAgregarExperiencia }) => {
-  const [formData, setFormData] = useState({
-    action: 'agregarExp',
-    profesion: "",
-    descripcionPerfil: "",
-    fechaInicioExp: "",
-    fechaFinExp: "",
-    cargo: "",
-    empresa: "",
-    fechaIngreso: "",
-    fechaSalida: "",
+  const token = getCookie('auth_token');
+
+  const formik = useFormik({
+    initialValues: {
+      profesion: '',
+      descripcionPerfil: '',
+      fechaInicioExp: '',
+      fechaFinExp: '',
+      cargo: '',
+      empresa: '',
+      ubicacionEmpresa: '',
+      tipoContrato: '',
+      salario: '',
+      logros: '',
+      referenciasLaborales: '',
+      fechaIngreso: '',
+      fechaSalida: '',
+    },
+    validationSchema: Yup.object({
+      profesion: Yup.string().required('Requerido'),
+      descripcionPerfil: Yup.string().required('Requerido'),
+      fechaInicioExp: Yup.date().required('Requerido'),
+      fechaFinExp: Yup.date()
+        .min(Yup.ref('fechaInicioExp'), 'Debe ser posterior a la fecha de inicio')
+        .required('Requerido'),
+      cargo: Yup.string().required('Requerido'),
+      empresa: Yup.string().required('Requerido'),
+      fechaIngreso: Yup.date().required('Requerido'),
+      fechaSalida: Yup.date()
+        .min(Yup.ref('fechaIngreso'), 'Debe ser posterior a la fecha de ingreso')
+        .required('Requerido'),
+    }),
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      if (!token) {
+        toast.error('❌ No se encontró el token de autenticación.');
+        return;
+      }
+      try {
+        const payload = { action: 'agregarExp', ...values };
+        const res = await axios.post(
+          `${process.env.REACT_APP_API_URL}/experiencia`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const nuevaExp = res.data?.data || values;
+        onAgregarExperiencia(nuevaExp);
+        resetForm();
+        toggleModalExperiencia();
+        toast.success('✅ Experiencia agregada correctamente.');
+      } catch (error) {
+        console.error(error);
+        const msg = error.response?.data?.message || 'Error al guardar la experiencia.';
+        toast.error(`❌ ${msg}`);
+      } finally {
+        setSubmitting(false);
+      }
+    },
   });
 
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  };
-
-  const token = getCookie("auth_token");
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    if (value.trim() !== "") {
-      setErrors(prev => ({
-        ...prev,
-        [name]: null,
-      }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    const requiredFields = ["profesion", "descripcionPerfil", "fechaInicioExp", "fechaFinExp", "cargo", "empresa", "fechaIngreso", "fechaSalida"];
-
-    requiredFields.forEach((field) => {
-      if (!formData[field]) {
-        newErrors[field] = "Este campo es obligatorio";
-      }
-    });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-
-    if (!validateForm()) return;
-
-    setIsSubmitting(true);
-
-    axios
-    .post("http://localhost/gestorplus/backend/", formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => {
-      console.log(res);
-      alert("✅ Experiencia agregado correctamente.");
-      if (res.data && res.data.data) {
-        onAgregarExperiencia(res.data.data);
-      } else {
-        onAgregarExperiencia(formData);
-      }
-    })
-    .catch((err) => {
-      console.error("Error completo:", err);
-      if (err.response) {
-        // El servidor respondió con un código fuera del rango 2xx
-        console.error("Data del error:", err.response.data);
-        console.error("Status del error:", err.response.status);
-        console.error("Headers del error:", err.response.headers);
-        alert(`❌ Error del servidor: ${err.response.data?.message || "Error al guardar la experiencia."}`);
-      } else if (err.request) {
-        // La solicitud fue hecha pero no hubo respuesta
-        console.error("Error de red o sin respuesta:", err.request);
-        alert("❌ No se recibió respuesta del servidor.");
-      } else {
-        // Algo ocurrió al configurar la solicitud
-        console.error("Error desconocido:", err.message);
-        alert(`❌ Error desconocido: ${err.message}`);
-      }
-    })    
-    .finally(() => {
-      setIsSubmitting(false);
-      toggleModalExperiencia();
-    });
-  };
+  const fields = [
+    { name: 'profesion', label: 'Profesión', type: 'text', col: 'col-12 col-md-6' },
+    { name: 'descripcionPerfil', label: 'Perfil profesional', type: 'text', col: 'col-12 col-md-6' },
+    { name: 'fechaInicioExp', label: 'Inicio cargo', type: 'date', col: 'col-6 col-md-3' },
+    { name: 'fechaFinExp', label: 'Fin cargo', type: 'date', col: 'col-6 col-md-3' },
+    { name: 'cargo', label: 'Cargo', type: 'text', col: 'col-12 col-md-6' },
+    { name: 'empresa', label: 'Empresa', type: 'text', col: 'col-12 col-md-6' },
+    { name: 'ubicacionEmpresa', label: 'Ubicación', type: 'text', col: 'col-12 col-md-6' },
+    { name: 'tipoContrato', label: 'Tipo contrato', type: 'text', col: 'col-6 col-md-3' },
+    { name: 'salario', label: 'Salario', type: 'number', col: 'col-6 col-md-3' },
+    { name: 'logros', label: 'Logros', type: 'text', col: 'col-12 col-md-6' },
+    { name: 'referenciasLaborales', label: 'Referencias', type: 'text', col: 'col-12 col-md-6' },
+    { name: 'fechaIngreso', label: 'Ingreso empresa', type: 'date', col: 'col-6 col-md-3' },
+    { name: 'fechaSalida', label: 'Salida empresa', type: 'date', col: 'col-6 col-md-3' },
+  ];
 
   return (
-    <div
-      className={`modal fade ${modalExperiencia ? "show animate__animated animate__fadeInDown" : ""}`}
-      style={{ display: modalExperiencia ? "block" : "none", backgroundColor: "rgba(0,0,0,0.5)" }}
-      tabIndex="-1"
-      aria-labelledby="modalExperienciaLabel"
-      aria-hidden={!modalExperiencia}
-    >
-      <div className="modal-dialog">
-        <div className="modal-content shadow-lg rounded-4">
-          <div className="modal-header bg-primary text-white">
-            <h5 className="modal-title d-flex align-items-center gap-2">
-              <span className="material-icons">work</span> Agregar Experiencia Laboral
-            </h5>
-            <button type="button" className="btn-close" onClick={toggleModalExperiencia} aria-label="Close"></button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="modal-body">
-            {[
-              { name: "profesion", label: "Profesión", type: "text" },
-              { name: "descripcionPerfil", label: "Descripción del perfil", type: "text" },
-              { name: "fechaInicioExp", label: "Fecha de inicio", type: "date" },
-              { name: "fechaFinExp", label: "Fecha de fin", type: "date" },
-              { name: "cargo", label: "Cargo", type: "text" },
-              { name: "empresa", label: "Empresa", type: "text" },
-              { name: "fechaIngreso", label: "Fecha de ingreso", type: "date" },
-              { name: "fechaSalida", label: "Fecha de salida", type: "date" },
-            ].map(({ name, label, type }) => (
-              <div className="form-floating mb-3" key={name}>
-                <input
-                  type={type}
-                  className={`form-control ${errors[name] ? "is-invalid" : ""}`}
-                  id={name}
-                  name={name}
-                  value={formData[name]}
-                  onChange={handleChange}
-                  placeholder={label}
-                />
-                <label htmlFor={name}>{label}</label>
-                {errors[name] && <div className="invalid-feedback">{errors[name]}</div>}
+    <>
+      <ToastContainer />
+      <div
+        className={`modal fade ${modalExperiencia ? 'show animate__animated animate__fadeInDown' : ''}`}
+        style={{ display: modalExperiencia ? 'block' : 'none', backgroundColor: 'rgba(0,0,0,0.5)' }}
+        tabIndex="-1"
+        aria-labelledby="modalExperienciaLabel"
+        aria-hidden={!modalExperiencia}
+      >
+        <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+          <div className="modal-content shadow-lg rounded-4">
+            <div className="modal-header bg-primary text-white">
+              <h5 className="modal-title d-flex align-items-center gap-2">
+                <span className="material-icons">work</span> Agregar Experiencia Laboral
+              </h5>
+              <button type="button" className="btn-close" onClick={toggleModalExperiencia} aria-label="Close"></button>
+            </div>
+            <form onSubmit={formik.handleSubmit} className="modal-body">
+              <div className="row g-3">
+                {fields.map(({ name, label, type, col }) => (
+                  <div className={col} key={name}>
+                    <div className="form-floating">
+                      <input
+                        {...formik.getFieldProps(name)}
+                        type={type}
+                        className={`form-control ${formik.touched[name] && formik.errors[name] ? 'is-invalid' : ''}`}
+                        id={name}
+                        placeholder={label}
+                      />
+                      <label htmlFor={name}>
+                        {label}{' '}
+                        {formik.validationSchema?.fields[name] ? (
+                          <span className="text-danger">*</span>
+                        ) : null}
+                      </label>
+                      {formik.touched[name] && formik.errors[name] && (
+                        <div className="invalid-feedback">{formik.errors[name]}</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </form>
             <div className="modal-footer">
-              <button type="button" className="btn btn-outline-secondary" onClick={toggleModalExperiencia}>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={toggleModalExperiencia}
+                disabled={formik.isSubmitting}
+              >
                 <span className="material-icons">close</span> Cerrar
               </button>
-              <button type="submit" className="btn btn-success" disabled={isSubmitting}>
-                <span className="material-icons">save</span> Guardar cambios
+              <button
+                type="button"
+                className="btn btn-warning"
+                onClick={formik.handleReset}
+                disabled={formik.isSubmitting}
+              >
+                <span className="material-icons">restart_alt</span> Limpiar
+              </button>
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={formik.handleSubmit}
+                disabled={formik.isSubmitting}
+              >
+                {formik.isSubmitting && (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                )}
+                <span className="material-icons align-middle">save</span> Guardar cambios
               </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

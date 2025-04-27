@@ -44,7 +44,8 @@ class HojadevidaController extends BaseController{
         try {
             if (!$this->parametrosRequeridos($data, [
                 'fechaNacimiento', 'direccion', 'ciudad', 'ciudadNacimiento', 
-                'telefono', 'telefonoFijo', 'estadohojadevida'
+                'telefono', 'telefonoFijo', 'estadohojadevida', 'estadoCivil',
+                'genero', 'nivelEducativo', 'skills', 'portafolio'
             ])) {
                 return;
             }

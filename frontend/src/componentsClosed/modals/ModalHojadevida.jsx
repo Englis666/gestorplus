@@ -11,6 +11,10 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
     telefono: "",
     telefonoFijo: "",
     estadohojadevida: "Activa",
+    estadoCivil: "",
+    genero: "",
+    skills: "",
+    portafolio: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -140,6 +144,11 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
                   { label: "Ciudad de nacimiento", name: "ciudadNacimiento" },
                   { label: "Teléfono móvil", name: "telefono" },
                   { label: "Teléfono fijo", name: "telefonoFijo" },
+                  { label: "Estado civil", name: "estadoCivil"},
+                  { label: "Genero" , name: "genero"},
+                  { label: "Habilidades", name: "skills"},
+                  { label: "Portafolio" , name: "portafolio"},
+
                 ].map(({ label, name, type = "text" }) => (
                   <div className="col-md-6" key={name}>
                     <label htmlFor={name} className="form-label fw-semibold">

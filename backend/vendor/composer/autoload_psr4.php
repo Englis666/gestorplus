@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Workerman\\Coroutine\\' => array($vendorDir . '/workerman/coroutine/src'),
     'Workerman\\' => array($vendorDir . '/workerman/workerman/src', $vendorDir . '/workerman/coroutine/src'),
+    'Utils\\' => array($baseDir . '/utils'),
     'Twig\\' => array($vendorDir . '/twig/twig/src'),
     'Symfony\\Runtime\\Symfony\\Component\\' => array($vendorDir . '/symfony/symfony/src/Symfony/Component/Runtime/Internal'),
     'Symfony\\Polyfill\\Uuid\\' => array($vendorDir . '/symfony/polyfill-uuid'),
