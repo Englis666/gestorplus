@@ -31,7 +31,7 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
         },
       })
       .then(({ data }) => {
-        console.log(data);
+        console.log("Datos recibidos:", data);
         if (data.status === "error") {
           throw new Error(data.message);
         }

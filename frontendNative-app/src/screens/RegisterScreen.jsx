@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import API_URL from "../config";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ const Register = () => {
         setIsSubmitting(true);
 
         try {
-            const response = await axios.post("http://192.168.68.219/gestorplus/backend/", {
+            const response = await axios.post(API_URL, {
                 action: 'register',
                 ...formData
             });
