@@ -2,18 +2,72 @@ version: '3.8'
 
 services:
   php:
-    image: php:8.4.2-fpm
-    container_name: gerstorplus-php
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    container_name: gestorplus-php
     volumes:
       - ./backend:/var/www/html
     ports:
       - "9000:9000"
+    networks:
+      - gestorplus-network
+    depends_on:
+      - db
+    command: ["sh", "-c", "until nc -z gestorplus-db 3306; do sleep 1; done; php-fpm"]
 
   nginx:
     image: nginx:latest
-    container_name: gerstorplus-nginx
+    container_name: gestorplus-nginx
     volumes:
       - ./backend:/var/www/html
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "8080:80"
+      - "80:80"
+    networks:
+      - gestorplus-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: gestorplus-frontend
+    command: ["sh", "-c", "until nc -z php 9000; do sleep 1; done; npm start"]
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    networks:
+      - gestorplus-network
+    depends_on:
+      - php
+
+    Movil:
+    build:
+      context: ./frontendNative-app
+    container_name: gestorplus-frontend
+    command: ["sh", "-c", "until nc -z php 9000; do sleep 1; done; npm start"]
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    networks:
+      - gestorplus-network
+    depends_on:
+      - php
+
+  db:
+    image: mariadb:latest
+    container_name: gestorplus-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "gestorplustfu"
+      MYSQL_DATABSE: "gestorplus"
+    volumes:
+      - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - gestorplus-network
+
+networks:
+  gestorplus-network:
+    driver: bridge

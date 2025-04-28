@@ -18,8 +18,8 @@ class Convocatoria{
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (PDOException $e) {
-            echo json_encode(['error' => 'Ocurrió un error en la base de datos']);
             http_response_code(500);
+            echo json_encode(['error' => 'Ocurrió un error en la base de datos']);
             return [];
         }
     }

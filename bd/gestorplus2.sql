@@ -15,6 +15,11 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*M!100616 SET @OLD_NOTE_VERBOSITY=@@NOTE_VERBOSITY, NOTE_VERBOSITY=0 */;
+-- Crear la base de datos si no existe
+CREATE DATABASE IF NOT EXISTS gestorplus;
+
+-- Usar la base de datos creada
+USE gestorplus;
 
 --
 -- Table structure for table `ausencia`
