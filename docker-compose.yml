@@ -46,7 +46,7 @@ services:
     container_name: gestorplus-db
     environment:
       MYSQL_ROOT_PASSWORD: "gestorplustfu"
-      MYSQL_DATABASE: "gestorplus"  # Corrected variable name
+      MYSQL_DATABASE: "gestorplus"  
     volumes:
       - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql
     ports:

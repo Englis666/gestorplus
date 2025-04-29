@@ -10,6 +10,7 @@ return array(
     'Workerman\\' => array($vendorDir . '/workerman/workerman/src', $vendorDir . '/workerman/coroutine/src'),
     'Utils\\' => array($baseDir . '/utils'),
     'Twig\\' => array($vendorDir . '/twig/twig/src'),
+    'Tests\\' => array($baseDir . '/test'),
     'Symfony\\Runtime\\Symfony\\Component\\' => array($vendorDir . '/symfony/symfony/src/Symfony/Component/Runtime/Internal'),
     'Symfony\\Polyfill\\Uuid\\' => array($vendorDir . '/symfony/polyfill-uuid'),
     'Symfony\\Polyfill\\Php83\\' => array($vendorDir . '/symfony/polyfill-php83'),

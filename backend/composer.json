@@ -30,5 +30,10 @@
             "Routes\\": "routes/",
             "Utils\\": "utils/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "test/"
+        }
     }
 }
