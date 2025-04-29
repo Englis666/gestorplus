@@ -17,7 +17,6 @@ class Hojadevida{
         }
     
         try {
-            // Obtener el ID de la hoja de vida
             $sql = "SELECT hojadevida_idHojadevida FROM usuario WHERE num_doc = :num_doc";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
@@ -26,10 +25,9 @@ class Hojadevida{
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
             if (!$result || !isset($result['hojadevida_idHojadevida'])) {
-                return null; // Si no se encuentra la hoja de vida asociada al usuario
+                return null; 
             }
     
-            // Obtener los detalles de la hoja de vida
             $idHojadevida = $result['hojadevida_idHojadevida'];
     
             $sql = "SELECT h.*, e.*, exp.*, u.*
@@ -45,9 +43,8 @@ class Hojadevida{
         
             $datos = $stmt->fetch(PDO::FETCH_ASSOC);
         
-            return $datos ?: null; // Devuelve null si no hay resultados
+            return $datos ?: null;
         } catch (PDOException $e) {
-            // Manejo de errores de la base de datos
             throw new Exception('Error al obtener los datos de la hoja de vida: ' . $e->getMessage(), 500);
         }
     }
