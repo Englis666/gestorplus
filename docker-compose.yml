@@ -41,26 +41,12 @@ services:
     depends_on:
       - php
 
-    Movil:
-    build:
-      context: ./frontendNative-app
-    container_name: gestorplus-frontend
-    command: ["sh", "-c", "until nc -z php 9000; do sleep 1; done; npm start"]
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-    networks:
-      - gestorplus-network
-    depends_on:
-      - php
-
   db:
     image: mariadb:latest
     container_name: gestorplus-db
     environment:
       MYSQL_ROOT_PASSWORD: "gestorplustfu"
-      MYSQL_DATABSE: "gestorplus"
+      MYSQL_DATABASE: "gestorplus"  # Corrected variable name
     volumes:
       - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql
     ports:

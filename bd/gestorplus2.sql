@@ -288,11 +288,16 @@ CREATE TABLE `estudio` (
   `tituloEstudio` varchar(45) DEFAULT NULL,
   `institucionEstudio` varchar(45) DEFAULT NULL,
   `ubicacionEstudio` varchar(45) DEFAULT NULL,
+  `modalidad` varchar(45) DEFAULT NULL,
+  `paisInstitucion` varchar(45) DEFAULT NULL,
+  `duracionEstudio` varchar(45) DEFAULT NULL,
+  `materiasDestacadas` text DEFAULT NULL,  
   `hojadevida_idHojadevida` int(11) NOT NULL,
   PRIMARY KEY (`idestudio`),
   KEY `hojadevida_idHojadevida` (`hojadevida_idHojadevida`),
   CONSTRAINT `estudio_ibfk_1` FOREIGN KEY (`hojadevida_idHojadevida`) REFERENCES `hojadevida` (`idHojadevida`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -395,8 +400,22 @@ CREATE TABLE `hojadevida` (
   `telefono` varchar(45) DEFAULT NULL,
   `telefonoFijo` bigint(20) DEFAULT NULL,
   `estadohojadevida` enum('Activa','Inactiva') DEFAULT 'Activa',
+  `nivelEstudio` varchar(45) DEFAULT NULL,
+  `areaEstudio` varchar(45) DEFAULT NULL,
+  `estadoEstudio` varchar(45) DEFAULT NULL,
+  `fechaInicioEstudio` date DEFAULT NULL,
+  `fechaFinEstudio` date DEFAULT NULL,
+  `tituloEstudio` varchar(45) DEFAULT NULL,
+  `institucionEstudio` varchar(45) DEFAULT NULL,
+  `ubicacionEstudio` varchar(45) DEFAULT NULL,
+  `modalidad` varchar(45) DEFAULT NULL,
+  `paisInstitucion` varchar(45) DEFAULT NULL,
+  `duracionEstudio` varchar(45) DEFAULT NULL,
+  `materiasDestacadas` text DEFAULT NULL,
+
   PRIMARY KEY (`idHojadevida`)
 ) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

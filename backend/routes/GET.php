@@ -47,6 +47,7 @@ return [
     'obtenerSistemaDeGestion'    => ['evaluacion', 'obtenerSistemaDeGestion'],
     'buscarIdEvaluacion'         => ['evaluacion', 'buscarIdEvaluacion'],
     'obtenerTodosLosPermisos'    => ['permiso', 'obtenerTodosLosPermisos'],
+    'obtenerHojadevidaPorNumDoc' => ['hojadevida', 'obtenerHojadevidaPorNumDoc'],
 
     // ─── Cálculo ────────────────────────────────────────
     'calcularPostulacionesEnConvocatorias' => ['calculo', 'calcularPostulacionesEnConvocatorias'],

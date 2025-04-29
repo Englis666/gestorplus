@@ -4,14 +4,11 @@ import PropTypes from "prop-types";
 import AsignarEntrevistaModal from "../form/AsignarEntrevistaModal";
 
 const ModalPostulantes = ({ convocatoria, onClose }) => {
-  // Lista de postulantes con IA ya calculada (puntaje + rendimiento)
   const [postulantes, setPostulantes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Modal Hoja de Vida
   const [modalHoja, setModalHoja] = useState(false);
-  const [numDoc, setNumDoc] = useState(null);
   const [hojaData, setHojaData] = useState(null);
   const [loadingHoja, setLoadingHoja] = useState(false);
 
@@ -31,62 +28,51 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
         },
       })
       .then(({ data }) => {
-        console.log("Datos recibidos:", data);
         if (data.status === "error") {
           throw new Error(data.message);
         }
         setPostulantes(Array.isArray(data.data) ? data.data : []);
       })
       .catch((err) => {
-        console.error(err);
         setError(err.message || "Error al cargar los postulantes");
       })
       .finally(() => setLoading(false));
   }, [convocatoria]);
 
-  // 2) Abrir modal de Hoja de Vida
   const handleVerHoja = (p) => {
-    setNumDoc(p.num_doc);
-    setModalHoja(true);
-  };
-  const toggleModalHoja = () => {
-    setModalHoja(false);
-    setHojaData(null);
-    setNumDoc(null);
-  };
-
-  // 3) Cargar datos de Hoja de Vida al abrir el modal
-  useEffect(() => {
-    if (!modalHoja || !numDoc) return;
     setLoadingHoja(true);
-    setError(null);
+    setHojaData(null);
+    setModalHoja(true);
 
     axios
       .get("http://localhost/gestorplus/backend/", {
         params: {
-          action: "datosPerfil",
-          num_doc: numDoc,
+          action: "obtenerHojadevidaPorNumDoc",
+          num_doc: p.num_doc,
         },
       })
       .then(({ data }) => {
-        if (data.status === "success" && data.data) {
-          setHojaData(data.data);
-        } else {
-          throw new Error("No se encontraron datos de la hoja de vida");
+        if (data.status === "error") {
+          throw new Error(data.message);
         }
+        setHojaData(data.data);
       })
       .catch((err) => {
-        console.error(err);
         setError(err.message || "Error al cargar la hoja de vida");
       })
       .finally(() => setLoadingHoja(false));
-  }, [modalHoja, numDoc]);
+  };
 
-  // 4) Abrir/Cerrar modal Asignar Entrevista
+  const toggleModalHoja = () => {
+    setModalHoja(false);
+    setHojaData(null);
+  };
+
   const handleShowAsignar = (p) => {
     setSelectedPostulacion(p);
     setShowAsignar(true);
   };
+
   const handleCloseAsignar = () => {
     setShowAsignar(false);
     setSelectedPostulacion(null);
@@ -94,7 +80,6 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
 
   return (
     <>
-      {/* Modal de Postulantes */}
       <div className="modal fade show d-block" tabIndex={-1} role="dialog">
         <div className="modal-dialog modal-xl" role="document">
           <div className="modal-content">
@@ -171,7 +156,6 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
       </div>
       <div className="modal-backdrop fade show" />
 
-      {/* Modal de Hoja de Vida */}
       {modalHoja && (
         <>
           <div
@@ -246,7 +230,6 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
         </>
       )}
 
-      {/* Modal de Asignar Entrevista */}
       {showAsignar && selectedPostulacion && (
         <AsignarEntrevistaModal
           show={showAsignar}
@@ -259,14 +242,8 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
 };
 
 ModalPostulantes.propTypes = {
-  convocatoria: PropTypes.shape({
-    idconvocatoria: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number
-    ]).isRequired,
-    nombreConvocatoria: PropTypes.string.isRequired
-  }).isRequired,
-  onClose: PropTypes.func.isRequired
+  convocatoria: PropTypes.object,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default ModalPostulantes;

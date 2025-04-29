@@ -74,7 +74,6 @@ class Postulacion {
             return null;
         }
     }
-
     public function obtenerPostulacionesAgrupadasPorConvocatoria(int $idconvocatoria): array {
         try {
             $sql = "
@@ -83,9 +82,11 @@ class Postulacion {
                     u.nombres,
                     u.email,
                     p.idpostulacion,
-                    ca.nombreCargo AS cargo
+                    ca.nombreCargo AS cargo,
+                    h.*
                 FROM postulacion p
                 INNER JOIN usuario u ON p.usuario_num_doc = u.num_doc
+                INNER JOIN hojadevida h ON u.hojadevida_idHojadevida = h.idHojadevida
                 INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria
                 INNER JOIN cargo ca ON c.cargo_idcargo = ca.idcargo
                 WHERE c.idconvocatoria = :idconvocatoria
@@ -93,47 +94,19 @@ class Postulacion {
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':idconvocatoria', $idconvocatoria, PDO::PARAM_INT);
             $stmt->execute();
+    
+            // Retornar los resultados o un array vacío si no hay resultados
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
+            // Loguear el error (esto depende de tu configuración de logging)
+            error_log('Error en la consulta: ' . $e->getMessage());
+    
+            // Enviar una respuesta de error
+            echo json_encode(['error' => 'Error en la consulta, por favor intente nuevamente más tarde.']);
             http_response_code(500);
-            return [];
+            return [];  // Retorna un array vacío en caso de error
         }
     }
-
-    /**
-     * Obtiene la hoja de vida completa (hojadevida + estudios + experiencia)
-     */
-    public function obtenerHojaDeVidaCompleta(string $num_doc): array {
-        try {
-            $sql = "
-                SELECT 
-                    h.idHojadevida,
-                    h.fechaNacimiento, h.direccion, h.ciudad, h.ciudadNacimiento,
-                    h.telefono, h.telefonoFijo, h.estadohojadevida,
-                    h.estadoCivil, h.genero, h.nivelEducativo, h.fotoPerfil,
-                    h.skills, h.portafolio,
-                    e.idestudio, e.nivelEstudio, e.areaEstudio, e.estadoEstudio,
-                    e.fechaInicioEstudio, e.fechaFinEstudio, e.tituloEstudio,
-                    e.institucionEstudio, e.ubicacionEstudio, e.modalidad,
-                    e.paisInstitucion, e.duracionEstudio, e.materiasDestacadas,
-                    ex.idexperienciaLaboral, ex.profesion, ex.descripcionPerfil,
-                    ex.fechaInicioExp, ex.fechaFinExp, ex.empresa, ex.ubicacionEmpresa,
-                    ex.tipoContrato, ex.salario, ex.logros, ex.referenciasLaborales
-                FROM usuario u
-                INNER JOIN hojadevida h ON u.hojadevida_idHojadevida = h.idHojadevida
-                LEFT JOIN estudio e ON h.idHojadevida = e.hojadevida_idHojadevida
-                LEFT JOIN experiencialaboral ex ON h.idHojadevida = ex.hojadevida_idHojadevida
-                WHERE u.num_doc = :numDoc
-            ";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':numDoc', $num_doc, PDO::PARAM_STR);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
-            return [];
-        }
-    }
+    
+    
 }

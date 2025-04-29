@@ -26,9 +26,11 @@ class PerfilController extends BaseController {
             $resultado = $this->perfil->datosPerfil($num_doc);
             $this->jsonResponseService->responder(['status' => 'success', 'message' => '', 'data' => $resultado]);
         } catch (\Exception $e) {
-            $this->jsonResponseService->responderError(['status' => 'error', 'message' => $e->getMessage()], $e->getCode());
+            $errorData = json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+            $this->jsonResponseService->responderError($errorData, $e->getCode());
         }
     }
+    
 
     public function actualizarPerfil($data) {
         try {

@@ -65,7 +65,7 @@ class PostulacionController extends BaseController{
     }
 
     /**
-     * Obtiene postulaciones agrupadas por convocatoria y llama a la IA en Python
+     * Obtiene postulaciones agrupadas por convocatoria 
      */
     public function obtenerPostulacionesAgrupadasPorConvocatoria() {
         $idconvocatoria = $_GET['idconvocatoria'] ?? null;
@@ -75,94 +75,12 @@ class PostulacionController extends BaseController{
         }
     
         try {
-            $postulantes = $this->postulacion
-                               ->obtenerPostulacionesAgrupadasPorConvocatoria((int)$idconvocatoria);
-    
+            $postulantes = $this->postulacion->obtenerPostulacionesAgrupadasPorConvocatoria((int)$idconvocatoria);   
             if (empty($postulantes)) {
                 $this->jsonResponseService->responderError('No hay postulantes para esta convocatoria', 404);
                 return;
             }
-    
-            $datos = [];
-            foreach ($postulantes as $p) {
-                $num_doc = (string) $p['num_doc'];
-                $filas  = $this->postulacion->obtenerHojaDeVidaCompleta($num_doc);
-    
-                if (empty($filas)) {
-                    $estructura = ['hojadevida' => null, 'estudios' => [], 'experiencias' => []];
-                } else {
-                    $h = $filas[0];
-                    $base = [
-                        'fechaNacimiento'  => $h['fechaNacimiento'],
-                        'direccion'        => $h['direccion'],
-                        'ciudad'           => $h['ciudad'],
-                        'ciudadNacimiento' => $h['ciudadNacimiento'],
-                        'telefono'         => $h['telefono'],
-                        'telefonoFijo'     => $h['telefonoFijo'],
-                        'estadohojadevida' => $h['estadohojadevida'],
-                        'estadoCivil'      => $h['estadoCivil'],
-                        'genero'           => $h['genero'],
-                        'nivelEducativo'   => $h['nivelEducativo'],
-                        'fotoPerfil'       => $h['fotoPerfil'],
-                        'skills'           => $h['skills'],
-                        'portafolio'       => $h['portafolio'],
-                    ];
-                    $estudios = [];
-                    $experiencias = [];
-                    foreach ($filas as $row) {
-                        if (!empty($row['idestudio'])) {
-                            $estudios[$row['idestudio']] = [
-                                'nivelEstudio'       => $row['nivelEstudio'],
-                                'areaEstudio'        => $row['areaEstudio'],
-                                'estadoEstudio'      => $row['estadoEstudio'],
-                                'fechaInicioEstudio' => $row['fechaInicioEstudio'],
-                                'fechaFinEstudio'    => $row['fechaFinEstudio'],
-                                'tituloEstudio'      => $row['tituloEstudio'],
-                                'institucionEstudio' => $row['institucionEstudio'],
-                                'ubicacionEstudio'   => $row['ubicacionEstudio'],
-                                'modalidad'          => $row['modalidad'],
-                                'paisInstitucion'    => $row['paisInstitucion'],
-                                'duracionEstudio'    => $row['duracionEstudio'],
-                                'materiasDestacadas' => $row['materiasDestacadas'],
-                            ];
-                        }
-                        if (!empty($row['idexperienciaLaboral'])) {
-                            $experiencias[$row['idexperienciaLaboral']] = [
-                                'profesion'            => $row['profesion'],
-                                'descripcionPerfil'    => $row['descripcionPerfil'],
-                                'fechaInicioExp'       => $row['fechaInicioExp'],
-                                'fechaFinExp'          => $row['fechaFinExp'],
-                                'empresa'              => $row['empresa'],
-                                'ubicacionEmpresa'     => $row['ubicacionEmpresa'],
-                                'tipoContrato'         => $row['tipoContrato'],
-                                'salario'              => $row['salario'],
-                                'logros'               => $row['logros'],
-                                'referenciasLaborales' => $row['referenciasLaborales'],
-                            ];
-                        }
-                    }
-                    $estructura = [
-                        'hojadevida'   => $base,
-                        'estudios'     => array_values($estudios),
-                        'experiencias' => array_values($experiencias),
-                    ];
-                }
-    
-                $hojasParaAnalisis[] = [
-                    'num_doc'    => $num_doc,       
-                    'nombres'    => $p['nombres'],
-                    'email'      => $p['email'],
-                    'cargo'      => $p['cargo'],
-                    'hojadevida' => $estructura,
-                ];
-            }
-    
-            $resultadoIA = PythonExecutor::ejecutar('/../IA/service/Hojadevida/analizarHojasDeVida.py' , $datos);
-    
-            $this->jsonResponseService->responder([
-                'message' => 'Postulaciones con análisis IA',
-                'data'    => $resultadoIA
-            ]);
+            $this->jsonResponseService->responder(['data' => $postulantes]);
     
         } catch (Exception $e) {
             $this->jsonResponseService->responderError($e->getMessage(), $e->getCode() ?: 500);

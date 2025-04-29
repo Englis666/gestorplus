@@ -5,10 +5,10 @@ use Config\Database;
 use PDO;
 use PDOException;
 
-class Estudio{
+class Estudio {
     private $db;
 
-    public function __construct($db){
+    public function __construct($db) {
         $this->db = $db;
     }
 
@@ -39,26 +39,50 @@ class Estudio{
             return false;
         }
     }
+
     public function agregarEstudio($data, $hojadevida_idHojadevida) {
-        $sql = "INSERT INTO estudio 
-                (nivelEstudio, areaEstudio, estadoEstudio, fechaInicioEstudio, 
-                fechaFinEstudio, tituloEstudio, institucionEstudio, ubicacionEstudio, hojadevida_idHojadevida) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        $stmtUsuario = $this->db->prepare($sql);    
-        $stmtUsuario->execute([
-                    $data['nivelEstudio'],
-                    $data['areaEstudio'],
-                    $data['estadoEstudio'],
-                    $data['fechaInicioEstudio'],
-                    $data['fechaFinEstudio'],
-                    $data['tituloEstudio'],
-                    $data['institucionEstudio'],
-                    $data['ubicacionEstudio'],
-                    $hojadevida_idHojadevida
-        ]);    
+        try {
+
+            $sql = "INSERT INTO estudio 
+                    (nivelEstudio, areaEstudio, estadoEstudio, fechaInicioEstudio, 
+                    fechaFinEstudio, tituloEstudio, institucionEstudio, ubicacionEstudio, modalidad, 
+                    paisInstitucion, duracionEstudio, materiasDestacadas, hojadevida_idHojadevida) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
-        return json_encode(['message' => 'Estudio agregado']);
+            // Preparar la consulta
+            $stmtUsuario = $this->db->prepare($sql);
+    
+            // Ejecutar la consulta
+            $stmtUsuario->execute([
+                $data['nivelEstudio'],
+                $data['areaEstudio'],
+                $data['estadoEstudio'],
+                $data['fechaInicioEstudio'],
+                $data['fechaFinEstudio'],
+                $data['tituloEstudio'],
+                $data['institucionEstudio'],
+                $data['ubicacionEstudio'],
+                $data['modalidad'],
+                $data['paisInstitucion'],
+                $data['duracionEstudio'],
+                $data['materiasDestacadas'],
+                $hojadevida_idHojadevida
+            ]);
+    
+            // Verificar si se insertó correctamente
+            if ($stmtUsuario->rowCount() > 0) {
+                return true;
+            } else {
+                throw new \Exception('No se pudo agregar el estudio.', 500); // Usando la clase estándar de PHP
+            }
+    
+        } catch (PDOException $e) {
+            // Manejo de errores de la base de datos
+            throw new \Exception('Error en la base de datos: ' . $e->getMessage(), 500); // Usando la clase estándar de PHP
+        } catch (\Exception $e) {
+            // Manejo de otros errores
+            throw new \Exception($e->getMessage(), $e->getCode()); // Usando la clase estándar de PHP
+        }
     }
 
     public function actualizarEstudio($data) {
@@ -85,6 +109,7 @@ class Estudio{
             return false;
         }
     }
+
     public function eliminarEstudio($idestudio) {
         $sql = "DELETE FROM estudio WHERE idestudio = :idestudio";
         $stmt = $this->db->prepare($sql);
@@ -92,5 +117,4 @@ class Estudio{
 
         return $stmt->execute();
     }
-
 }

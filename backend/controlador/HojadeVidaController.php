@@ -40,12 +40,43 @@ class HojadevidaController extends BaseController{
         }
     }
 
+    public function obtenerHojadevidaPorNumDoc(): void {
+        try {
+            // Validar parámetro num_doc
+            if (!isset($_GET['num_doc']) || !is_numeric($_GET['num_doc'])) {
+                $this->jsonResponseService->responderError("El número de documento es inválido", 400);
+                return;
+            }
+        
+            $num_doc = $_GET['num_doc'];
+        
+            // Obtener la hoja de vida por número de documento
+            $hojadevida = $this->hojadevida->obtenerHojadevidaPorNumDoc((int)$num_doc);
+        
+            // Verificar si se encontró la hoja de vida
+            if (!$hojadevida) {
+                $this->jsonResponseService->responderError("No se encontró la hoja de vida", 404);
+                return;
+            }
+        
+            // Responder con éxito
+            $this->jsonResponseService->responder([
+                'status' => 'success',
+                'data' => $hojadevida
+            ]);            
+        } catch (Exception $e) {
+            // Responder con error
+            $this->jsonResponseService->responderError(['error' => $e->getMessage()], $e->getCode());
+        }
+    }
+    
+    
     public function actualizacionHojaDevida($data): void {
         try {
             if (!$this->parametrosRequeridos($data, [
                 'fechaNacimiento', 'direccion', 'ciudad', 'ciudadNacimiento', 
                 'telefono', 'telefonoFijo', 'estadohojadevida', 'estadoCivil',
-                'genero', 'nivelEducativo', 'skills', 'portafolio'
+                'genero', 'habilidades', 'portafolio'
             ])) {
                 return;
             }
@@ -69,9 +100,7 @@ class HojadevidaController extends BaseController{
             ]);
     
         } catch (Exception $e) {
-            $this->jsonResponseService->responderError([
-                'error' => $e->getMessage()
-            ], $e->getCode() ?: 500);
+            $this->jsonResponseService->responderError($e->getMessage());
         }
     }
     

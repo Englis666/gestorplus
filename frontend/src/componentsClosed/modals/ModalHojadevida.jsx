@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-
 const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) => {
   const [formData, setFormData] = useState({
     fechaNacimiento: "",
@@ -13,18 +12,33 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
     estadohojadevida: "Activa",
     estadoCivil: "",
     genero: "",
-    skills: "",
+    habilidades: "",
     portafolio: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Reseteamos el formulario cuando el modal se abre
   useEffect(() => {
     if (modalHojaDeVida) {
+      setFormData({
+        fechaNacimiento: "",
+        direccion: "",
+        ciudad: "",
+        ciudadNacimiento: "",
+        telefono: "",
+        telefonoFijo: "",
+        estadohojadevida: "Activa",
+        estadoCivil: "",
+        genero: "",
+        habilidades: "",
+        portafolio: "",
+      });
       fetchHojaDeVida();
     }
   }, [modalHojaDeVida]);
 
+  // Obtener el token de la cookie
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -32,6 +46,7 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
     return null;
   };
 
+  // Cargar los datos de la hoja de vida
   const fetchHojaDeVida = async () => {
     try {
       const token = getCookie("auth_token");
@@ -50,7 +65,11 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
           ciudadNacimiento: data.data.ciudadNacimiento ?? "",
           telefono: data.data.telefono ?? "",
           telefonoFijo: data.data.telefonoFijo ?? "",
-          estadohojadevida: "Activa",
+          estadohojadevida: "Activa", // Asegúrate de que este valor también lo recibas de la API si es necesario
+          estadoCivil: data.data.estadoCivil ?? "",
+          genero: data.data.genero ?? "",
+          habilidades: data.data.habilidades ?? "",
+          portafolio: data.data.portafolio ?? "",
         });
       } else {
         alert("No se encontraron datos.");
@@ -61,11 +80,13 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
     }
   };
   
+  // Manejo de los cambios en los inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Validar el formulario
   const validateForm = () => {
     const requiredFields = ["fechaNacimiento", "direccion", "ciudad", "ciudadNacimiento", "telefono"];
     for (let field of requiredFields) {
@@ -77,6 +98,7 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
     return true;
   };
 
+  // Enviar el formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -145,10 +167,9 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
                   { label: "Teléfono móvil", name: "telefono" },
                   { label: "Teléfono fijo", name: "telefonoFijo" },
                   { label: "Estado civil", name: "estadoCivil"},
-                  { label: "Genero" , name: "genero"},
-                  { label: "Habilidades", name: "skills"},
+                  { label: "Género" , name: "genero"},
+                  { label: "Habilidades", name: "habilidades"},
                   { label: "Portafolio" , name: "portafolio"},
-
                 ].map(({ label, name, type = "text" }) => (
                   <div className="col-md-6" key={name}>
                     <label htmlFor={name} className="form-label fw-semibold">
@@ -156,7 +177,7 @@ const ModalHojaDeVida = ({ modalHojaDeVida, toggleModalHojaDeVida, num_doc }) =>
                     </label>
                     <input
                       type={type}
-                      className="form-control"
+                      className="form-control form-control-sm"
                       id={name}
                       name={name}
                       value={formData[name]}

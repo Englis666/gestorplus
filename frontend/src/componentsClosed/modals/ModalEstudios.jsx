@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
@@ -15,11 +15,33 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
     modalidad: "",
     paisInstitucion: "",
     duracionEstudio: "",
-    materialDestacadas: "",
+    materiasDestacadas: "",
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    // Limpiar errores cuando el modal se cierra
+    if (!modalEstudios) {
+      setErrors({});
+      setFormData({
+        action: "agregarEstudio",
+        nivelEstudio: "",
+        areaEstudio: "",
+        estadoEstudio: "",
+        fechaInicioEstudio: "",
+        fechaFinEstudio: "",
+        tituloEstudio: "",
+        institucionEstudio: "",
+        ubicacionEstudio: "",
+        modalidad: "",
+        paisInstitucion: "",
+        duracionEstudio: "",
+        materiasDestacadas: "",
+      });
+    }
+  }, [modalEstudios]);
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -27,14 +49,15 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
     if (parts.length === 2) return parts.pop().split(";").shift();
     return null;
   };
+
   const token = getCookie("auth_token");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (value.trim() !== "") {
-      setErrors(prev => ({ ...prev, [name]: null }));
+      setErrors((prev) => ({ ...prev, [name]: null }));
     }
   };
 
@@ -55,18 +78,18 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
       "materiasDestacadas",
     ];
 
-    requiredFields.forEach(field => {
+    requiredFields.forEach((field) => {
       if (!formData[field]) {
         newErrors[field] = "Este campo es obligatorio.";
       }
     });
 
-    // Validación de fecha
+    // Validación de fechas
     if (formData.fechaInicioEstudio && formData.fechaFinEstudio) {
       const inicio = new Date(formData.fechaInicioEstudio);
       const fin = new Date(formData.fechaFinEstudio);
       if (inicio > fin) {
-        newErrors.fechaFinEstudio = "La fecha de fin no puede ser anterior a la de inicio.";
+        newErrors.fechaFinEstudio = "La fecha de fin no puede ser anterior a la fecha de inicio.";
       }
     }
 
@@ -83,29 +106,29 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
     setIsSubmitting(true);
 
     axios
-    .post("http://localhost/gestorplus/backend/", formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => {
-      console.log(res);
-      alert("✅ Estudio agregado correctamente.");
-      
-      if (res.data && res.data.data) {
-        onAgregarEstudio(res.data.data); // Pass the new study data
-      } else {
-        onAgregarEstudio(formData);
-      }
-    })
-    .catch((err) => {
-      console.error("Error:", err);
-      alert("❌ Error al guardar estudio.");
-    })
-    .finally(() => {
-      setIsSubmitting(false);
-      toggleModalEstudios();
-    });
+      .post("http://localhost/gestorplus/backend/", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log("Respuesta del servidor:", res);
+        alert("✅ Estudio agregado correctamente.");
+
+        if (res.data && res.data.data) {
+          onAgregarEstudio(res.data.data); // Si backend responde con data
+        } else {
+          onAgregarEstudio(formData); // Si no responde con data
+        }
+      })
+      .catch((err) => {
+        console.error("Error response:", err.response?.data || err.message);
+        alert("❌ Error al guardar estudio.");
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+        toggleModalEstudios();
+      });
   };
 
   return (
@@ -137,9 +160,10 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
                 { label: "Título obtenido", name: "tituloEstudio" },
                 { label: "Institución educativa", name: "institucionEstudio" },
                 { label: "Ubicación", name: "ubicacionEstudio" },
-                { label: "Modalidad del estudio", name: "modalidad"},
-                { label: "Pais Institucion", name: "duracionEstudio"},
-                { label: "Materias Destacadas", name: "materiasDestacadas"},
+                { label: "Modalidad del estudio", name: "modalidad" },
+                { label: "País de la Institución", name: "paisInstitucion" },
+                { label: "Duración del estudio", name: "duracionEstudio" },
+                { label: "Materias Destacadas", name: "materiasDestacadas" },
               ].map(({ label, name, type = "text" }) => (
                 <div className="col-md-6" key={name}>
                   <label htmlFor={name} className="form-label fw-semibold">

@@ -8,8 +8,9 @@ use Modelo\Estudio;
 use Servicio\TokenService;
 use PDO;
 use Exception;
+use PDOException;
 
-class EstudioController extends BaseController{
+class EstudioController extends BaseController {
     private PDO $db;
     private Estudio $estudio;
     private TokenService $tokenService;
@@ -26,15 +27,21 @@ class EstudioController extends BaseController{
     {
         try {
             $decoded = $this->tokenService->obtenerPayload();
+
             if (!$decoded || !isset($decoded->data->hojadevida_idHojadevida)) {
                 throw new Exception('No se pudo obtener el ID de la hoja de vida del token.', 400);
             }
 
             $resultado = $this->estudio->obtenerEstudio($decoded->data->hojadevida_idHojadevida);
-            $this->jsonResponseService->responder(['status' => 'success', 'message' => 'Se obtuvieron los estudios', 'obtenerEstudio' => $resultado ?: []]);
+
+            $this->jsonResponseService->responder([
+                'status' => 'success',
+                'message' => 'Se obtuvieron los estudios',
+                'obtenerEstudio' => $resultado ?: []
+            ]);
 
         } catch (Exception $e) {
-            $this->jsonResponseService->responderError($e->getMessage(), $e->getCode());
+            $this->jsonResponseService->responderError($e->getMessage(), $this->getValidStatusCode($e));
         }
     }
 
@@ -42,6 +49,7 @@ class EstudioController extends BaseController{
     {
         try {
             $decoded = $this->tokenService->obtenerPayload();
+
             if (!$decoded || !isset($decoded->data->hojadevida_idHojadevida)) {
                 throw new Exception('Token inválido o sin acceso al ID de la hoja de vida.', 400);
             }
@@ -49,22 +57,26 @@ class EstudioController extends BaseController{
             $resultado = $this->estudio->agregarEstudio($data, $decoded->data->hojadevida_idHojadevida);
 
             if ($resultado) {
-                $this->jsonResponseService->responder(['status' => 'success', 'message' => 'Estudio agregado']);
+                $this->jsonResponseService->responder([
+                    'status' => 'success',
+                    'message' => 'Estudio agregado'
+                ]);
             } else {
                 throw new Exception('No se pudo agregar el estudio.', 400);
             }
 
         } catch (Exception $e) {
-            $this->jsonResponseService->responderError($e->getMessage(), $e->getCode());
+            $this->jsonResponseService->responderError($e->getMessage(), $this->getValidStatusCode($e));
         }
     }
 
-    public function actualizarEstudio($data) {
-        try{
+    public function actualizarEstudio(array $data): void
+    {
+        try {
             $num_doc = $this->tokenService->validarToken();
 
             if (empty($data['idestudio'])) {
-                $this->jsonResponseService->responderError(['error' => 'ID de estudio no proporcionado'], 400);
+                throw new Exception('ID de estudio no proporcionado.', 400);
             }
 
             if ($this->estudio->actualizarEstudio($data)) {
@@ -73,34 +85,43 @@ class EstudioController extends BaseController{
                     'data' => $data
                 ]);
             } else {
-                $this->jsonResponseService->responderError(['error' => 'Error al actualizar el estudio'], 500);
+                throw new Exception('Error al actualizar el estudio.', 500);
             }
         } catch (Exception $e) {
-            $this->jsonResponseService->responderError($e->getMessage());
+            $this->jsonResponseService->responderError($e->getMessage(), $this->getValidStatusCode($e));
         }
     }
 
-
-    public function eliminarEstudio() {
-        $idestudio = $_SERVER['HTTP_X_ESTUDIO_ID'] ?? null; 
-
-        if (!$idestudio) {
-            http_response_code(400);
-            $this->jsonResponseService->responderError('El id del estudio no fue proporcionado.');
-            return;
-        }
-
+    public function eliminarEstudio(): void
+    {
         try {
-            $resultado = $this->estudio->eliminarEstudio($idestudio);
-            if ($resultado) {
-                $this->jsonResponseService->responder(['status' => 'success', 'message' => 'El estudio fue eliminado correctamente.']);
-            } else {
-                http_response_code(500);
-                $this->jsonResponseService->responderError('No se pudo eliminar el estudio.');
+            $idestudio = $_SERVER['HTTP_X_ESTUDIO_ID'] ?? null; 
+
+            if (!$idestudio) {
+                throw new Exception('El id del estudio no fue proporcionado.', 400);
             }
-        } catch (\Exception $e) {
-            http_response_code(500);
-            $this->jsonResponseService->responderError('Error al eliminar el estudio: ' . $e->getMessage());
+
+            $resultado = $this->estudio->eliminarEstudio($idestudio);
+
+            if ($resultado) {
+                $this->jsonResponseService->responder([
+                    'status' => 'success',
+                    'message' => 'El estudio fue eliminado correctamente.'
+                ]);
+            } else {
+                throw new Exception('No se pudo eliminar el estudio.', 500);
+            }
+        } catch (Exception $e) {
+            $this->jsonResponseService->responderError($e->getMessage(), $this->getValidStatusCode($e));
         }
+    }
+
+    /**
+     * Método privado para asegurar que el código de error sea un int válido
+     */
+    private function getValidStatusCode(Exception $e): int
+    {
+        $code = $e->getCode();
+        return (is_int($code) && $code >= 100 && $code < 600) ? $code : 500;
     }
 }
