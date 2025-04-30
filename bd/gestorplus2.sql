@@ -1219,7 +1219,18 @@ INSERT INTO `publicacion` VALUES
 (27,'Nueva herramienta para control de asistencia','Los empleados de obra laboral empezarán a registrar su asistencia mediante código QR desde la próxima semana.',NULL,'2025-04-15 13:24:02',1014736,'Obra laboral','activo'),
 (28,'Revisión de contratos fijos','Invitamos a los empleados con contrato fijo a revisar la cláusula de renovación automática antes del 15 de mayo.',NULL,'2025-04-15 13:24:02',1014736,'Fijo','activo'),
 (29,'Asignación de bonos trimestrales','A partir de este trimestre, los bonos por productividad se asignarán a empleados con contrato indefinido que superen sus KPIs.',NULL,'2025-04-15 13:24:02',1014736,'Indefinido','activo'),
-(30,'Cierre contable mensual','Se recuerda a todos los empleados enviar sus reportes de gastos antes del día 30 para el cierre contable mensual.',NULL,'2025-04-15 13:24:02',1014736,'todos','activo');
+(30,'Cierre contable mensual','Se recuerda a todos los empleados enviar sus reportes de gastos antes del día 30 para el cierre contable mensual.',NULL,'2025-04-15 13:24:02',1014736,'todos','activo'),
+(31, 'Revisión de políticas de vacaciones', 'Recordamos a todos los empleados que las políticas de vacaciones fueron actualizadas, por lo que deben revisarlas y ajustarse a los nuevos lineamientos.', NULL, '2025-04-16 08:30:45', 1014736, 'todos', 'activo'),
+(32, 'Nueva política de trabajo remoto', 'A partir del próximo mes, todos los empleados deberán solicitar autorización para trabajar desde casa, excepto los de áreas operativas.', NULL, '2025-04-16 09:10:12', 1014736, 'todos', 'activo'),
+(33, 'Actualización en beneficios de salud', 'Los beneficios de salud se actualizaron para incluir consultas odontológicas gratuitas para todos los empleados con contrato indefinido.', NULL, '2025-04-16 09:45:23', 1014736, 'Indefinido', 'activo'),
+(34, 'Convocatoria de empleo para nuevos proyectos', 'Se abre una nueva convocatoria de empleo para el área de marketing y ventas. Los interesados deben enviar su CV antes del 20 de abril.', NULL, '2025-04-16 10:00:00', 1014736, 'todos', 'activo'),
+(35, 'Capacitación sobre nuevas herramientas digitales', 'La capacitación sobre las nuevas herramientas digitales será impartida la próxima semana. Todos los empleados deben asistir según su grupo asignado.', NULL, '2025-04-16 11:20:30', 1014736, 'todos', 'activo'),
+(36, 'Modificación de horario para departamento de ventas', 'El departamento de ventas tendrá un nuevo horario desde el lunes: de 9:00 a 18:00, para adaptarse a las necesidades del mercado.', NULL, '2025-04-16 12:30:15', 1014736, 'todos', 'activo'),
+(37, 'Cambio en proceso de entrega de nómina', 'A partir del próximo mes, la entrega de nómina será digital. Todos los empleados deberán registrarse en la plataforma para acceder a su comprobante.', NULL, '2025-04-16 13:00:50', 1014736, 'todos', 'activo'),
+(38, 'Entrega de premios por rendimiento', 'Los empleados con mejor rendimiento del trimestre recibirán premios el próximo viernes durante la reunión mensual.', NULL, '2025-04-16 14:00:30', 1014736, 'todos', 'activo'),
+(39, 'Nuevo convenio con gimnasio para empleados', 'Todos los empleados con contrato indefinido podrán acceder a descuentos exclusivos en un gimnasio local. Ver detalles en el portal interno.', NULL, '2025-04-16 15:30:00', 1014736, 'Indefinido', 'activo'),
+(40, 'Recordatorio de uso de equipo de seguridad', 'Se recuerda a todos los empleados que deben usar el equipo de seguridad asignado cuando estén en áreas de trabajo de alto riesgo. Verifica tu equipo.', NULL, '2025-04-16 16:45:00', 1014736, 'todos', 'activo');
+
 /*!40000 ALTER TABLE `publicacion` ENABLE KEYS */;
 UNLOCK TABLES;
 
