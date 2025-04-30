@@ -307,11 +307,10 @@ CREATE TABLE `estudio` (
 LOCK TABLES `estudio` WRITE;
 /*!40000 ALTER TABLE `estudio` DISABLE KEYS */;
 INSERT INTO `estudio` VALUES
-(2, 'Tecnologa', 'Tecnologia', 'Activa', '0007-01-26', '2025-12-09', 'Desarrollador de Software', 'SENA', 'Cra 30 Con Primera de Mayo', 'Presencial', 'Colombia', '3 años', 'Algoritmos, Bases de Datos, Programación Orientada a Objetos', 45),
-(7, 'Profesional', 'Director Comercial', 'Activo', '2025-04-09', '2025-04-24', 'Director Comercial', 'UNAD', 'BOGOTA , CHAPINERO', 'Virtual', 'Colombia', '4 años', 'Administración, Marketing, Finanzas', 39),
-(18, 'Tecnologo', 'Sistemas', 'Activo', '2022-06-12', '2025-05-09', 'Desarrollador de Software', 'SENA', 'Cra 30 Con Primera de Mayo', 'Presencial', 'Colombia', '3 años', 'Programación Web, Redes, Seguridad Informática', 38),
-(19, 'Tecnico', 'Sistemas', 'Finalizado', '2025-03-30', '2025-04-17', 'Programacion en software', 'SENA', 'Quirigua, Engativa , Bogota', 'Presencial', 'Colombia', '1 año', 'Lógica de Programación, Fundamentos de Software', 38);
-
+(2,'Tecnóloga','Tecnología','Activa','2022-01-15','2025-12-09','Desarrollador de Software','SENA','Cra 30 Con Primera de Mayo','Presencial','Colombia','3 años','PHP, JavaScript, HTML',45),
+(7,'Profesional','Director Comercial','Activo','2025-04-09','2025-04-24','Director Comercial','UNAD','Bogotá, Chapinero','Virtual','Colombia','15 días','Gestión Comercial, Ventas Estratégicas',39),
+(18,'Tecnólogo','Sistemas','Activo','2022-06-12','2025-05-09','Desarrollador de Software','SENA','Cra 30 Con Primera de Mayo','Virtual','Colombia','3 años','Laravel, React, PostgreSQL',38),
+(19,'Técnico','Sistemas','Finalizado','2023-03-30','2025-04-17','Programación en software','SENA','Quirigua, Engativá, Bogotá','Presencial','Colombia','2 años','Soporte técnico, Redes, Algoritmos',38);
 /*!40000 ALTER TABLE `estudio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -401,19 +400,10 @@ CREATE TABLE `hojadevida` (
   `telefono` varchar(45) DEFAULT NULL,
   `telefonoFijo` bigint(20) DEFAULT NULL,
   `estadohojadevida` enum('Activa','Inactiva') DEFAULT 'Activa',
-  `nivelEstudio` varchar(45) DEFAULT NULL,
-  `areaEstudio` varchar(45) DEFAULT NULL,
-  `estadoEstudio` varchar(45) DEFAULT NULL,
-  `fechaInicioEstudio` date DEFAULT NULL,
-  `fechaFinEstudio` date DEFAULT NULL,
-  `tituloEstudio` varchar(45) DEFAULT NULL,
-  `institucionEstudio` varchar(45) DEFAULT NULL,
-  `ubicacionEstudio` varchar(45) DEFAULT NULL,
-  `modalidad` varchar(45) DEFAULT NULL,
-  `paisInstitucion` varchar(45) DEFAULT NULL,
-  `duracionEstudio` varchar(45) DEFAULT NULL,
-  `materiasDestacadas` text DEFAULT NULL,
-
+  `estadoCivil` varchar(45) DEFAULT NULL,
+  `genero` varchar(20) DEFAULT NULL,
+  `habilidades` varchar(80) DEFAULT NULL,
+  `portafolio` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`idHojadevida`)
 ) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
@@ -426,71 +416,44 @@ CREATE TABLE `hojadevida` (
 LOCK TABLES `hojadevida` WRITE;
 /*!40000 ALTER TABLE `hojadevida` DISABLE KEYS */;
 INSERT INTO `hojadevida` VALUES
-
-(38,'2006-01-02','Call Sur 99','Bogota','Bogota','312312',3123123123,'Activa',
-'Tecnico','Sistemas','Finalizado','2025-03-30','2025-04-17',
-'Programación en Software','SENA','Quirigua, Engativá, Bogotá',
-'Presencial','Colombia','1 mes','Algoritmos, Lógica de Programación'),
+(38,'2006-01-02','Call Sur 99','Bogotá','Bogotá','312312',3123123123,'Activa',
+'Soltero','Masculino','PHP, JS, MySQL','https://github.com/user38'),
 
 (39,'2005-10-10','Calle 100B #10-50','Bogotá','Bogotá','1541345112',4133413,'Activa',
-'Profesional','Director Comercial','Activo','2025-04-09','2025-04-24',
-'Director Comercial','UNAD','Bogotá, Chapinero',
-'Virtual','Colombia','2 semanas','Administración, Liderazgo, Estrategia'),
+'Casado','Femenino','Ventas, CRM, Comunicación','https://linkedin.com/in/user39'),
 
 (40,'2004-07-21','Calle 45 #32-16','Medellín','Medellín','3001234567',6041234567,'Activa',
-'Tecnólogo','Sistemas','Activo','2023-02-01','2025-12-01',
-'Análisis y Desarrollo de Sistemas','Politécnico Jaime Isaza','Medellín, Antioquia',
-'Presencial','Colombia','3 años','Bases de datos, Redes, Programación'),
+'Soltero','Masculino','Java, Redes, PostgreSQL','https://github.com/user40'),
 
 (41,'2003-03-15','Carrera 12 #5-40','Cali','Cali','3207654321',6028765432,'Activa',
-'Técnico','Contabilidad','Finalizado','2021-01-15','2022-06-15',
-'Técnico en Contabilidad','SENA','Cali, Valle',
-'Presencial','Colombia','1.5 años','Contabilidad General, Finanzas'),
+'Unión libre','Femenino','Contabilidad, Excel','https://user41.com/portfolio'),
 
 (42,'2002-12-03','Transversal 23 #12-67','Barranquilla','Barranquilla','3109876543',6052345678,'Activa',
-'Bachillerato','Académico','Finalizado','2019-01-01','2020-12-01',
-'Bachiller Académico','IED Simón Bolívar','Barranquilla',
-'Presencial','Colombia','2 años','Matemáticas, Lenguaje, Ciencias'),
+'Casado','Masculino','Redacción, Inglés','https://github.com/user42'),
 
 (43,'1999-11-30','Diagonal 45 #21-30','Cúcuta','Cúcuta','3007651234',5777654321,'Activa',
-'Técnico','Electricidad','Finalizado','2017-03-15','2019-08-20',
-'Técnico Electricista','SENA','Cúcuta, Norte de Santander',
-'Presencial','Colombia','2 años','Circuitos, Electrónica, Seguridad'),
+'Soltero','Masculino','Electricidad, Normas RETIE','https://portafoliosena.com/user43'),
 
 (44,'2000-05-20','Av. 1E #5-90','Pereira','Pereira','3111112222',6068889999,'Activa',
-'Tecnólogo','Administración','Finalizado','2020-07-01','2022-11-30',
-'Administración de Empresas','UTP','Pereira, Risaralda',
-'Virtual','Colombia','2.5 años','Gestión Empresarial, Finanzas, RRHH'),
+'Divorciado','Femenino','Administración, Logística','https://linkedin.com/in/user44'),
 
-(45,'2006-10-16','Kr 80J #66-58','Bogota','Bogota','3213675466',NULL,'Activa',
-'Tecnologo','Sistemas','Activo','2022-06-12','2025-05-09',
-'Desarrollador de Software','SENA','Cra 30 Con Primera de Mayo',
-'Presencial','Colombia','3 años','PHP, JavaScript, SQL'),
+(45,'2006-10-16','Kr 80J #66-58','Bogotá','Bogotá','3213675466',NULL,'Activa',
+'Soltero','Masculino','React, Laravel, MySQL','https://github.com/shell-ninja'),
 
 (46,'2005-09-05','Cra 70 #48-20','Bucaramanga','Bucaramanga','3005551212',6071234567,'Activa',
-'Profesional','Psicología','Activo','2023-01-10','2026-12-15',
-'Psicólogo','UIS','Bucaramanga',
-'Presencial','Colombia','4 años','Psicología Clínica, Cognitiva'),
+'Soltero','Femenino','Psicología, Escucha activa','https://user46.netlify.app'),
 
 (47,'2001-06-18','Calle 80 #21-22','Cartagena','Cartagena','3126543210',6059876543,'Activa',
-'Técnico','Turismo','Finalizado','2019-02-01','2020-12-01',
-'Guía Turístico','SENA','Cartagena',
-'Presencial','Colombia','1.5 años','Cultura, Geografía, Inglés'),
+'Casado','Masculino','Guianza, Inglés turístico','https://github.com/user47'),
 
 (48,'1998-04-01','Calle 55 #12-34','Manizales','Manizales','3112223344',6083344556,'Activa',
-'Tecnólogo','Logística','Finalizado','2016-03-10','2018-07-30',
-'Tecnólogo en Logística','SENA','Manizales',
-'Presencial','Colombia','2 años','Cadena de Suministro, Inventario'),
+'Unión libre','Masculino','Logística, Excel','https://user48.dev'),
 
 (49,'2003-11-08','Av 30 #45-10','Neiva','Neiva','3201239999',6081234321,'Activa',
-'Técnico','Sistemas','Activo','2023-05-01','2024-12-01',
-'Mantenimiento de Computadores','SENA','Neiva, Huila',
-'Presencial','Colombia','1.5 años','Hardware, Redes, Windows'),
+'Soltero','Masculino','Soporte, Redes, Windows','https://github.com/user49'),
 
 (50,'2002-08-25','Calle 10 #20-15','Tunja','Tunja','3123214567',6087896543,'Activa',
-'Profesional','Enfermería','Activo','2021-01-15','2025-06-30',
-'Enfermero','UPTC','Tunja',
-'Presencial','Colombia','4 años','Salud Pública, Farmacología, Urgencias');
+'Soltero','Femenino','Enfermería, Atención al paciente','https://portafoliosalud.com/user50');
 /*!40000 ALTER TABLE `hojadevida` ENABLE KEYS */;
 UNLOCK TABLES;
 
