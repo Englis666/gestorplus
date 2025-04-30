@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Test Documentation</title>
+        <style>
+            body {
+                text-rendering: optimizeLegibility;
+                font-family: Source SansSerif Pro, Arial, sans-serif;
+                font-variant-ligatures: common-ligatures;
+                font-kerning: normal;
+                margin-left: 2rem;
+                background-color: #fff;
+                color: #000;
+            }
+
+            body > ul > li {
+                font-size: larger;
+            }
+
+            h2 {
+                font-size: larger;
+                text-decoration-line: underline;
+                text-decoration-thickness: 2px;
+                margin: 0;
+                padding: 0.5rem 0;
+            }
+
+            ul {
+                list-style: none;
+                margin: 0 0 2rem;
+                padding: 0 0 0 1rem;
+                text-indent: -1rem;
+            }
+
+            .success:before {
+                color: #4e9a06;
+                content: '✓';
+                padding-right: 0.5rem;
+            }
+
+            .defect {
+                color: #a40000;
+            }
+
+            .defect:before {
+                color: #a40000;
+                content: '✗';
+                padding-right: 0.5rem;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Archivos Controller</h2>
+        <ul>
+            <li class="success">Subir contrato</li>
+            <li class="defect">Obtener contrato existente</li>
+            <li class="success">Obtener contrato no existente</li>
+        </ul>
+        <h2>Auth Controller</h2>
+        <ul>
+            <li class="success">Registrar</li>
+            <li class="success">Iniciar con credenciales correctas</li>
+            <li class="success">Iniciar con credenciales incorrectas</li>
+        </ul>
+        <h2>Chat Controller (Test\Controller\ChatController)</h2>
+        <ul>
+            <li class="success">Enviar mensaje missing params</li>
+            <li class="success">Enviar mensaje success</li>
+            <li class="success">Enviar mensaje fail</li>
+            <li class="success">Obtener id chat invalid token</li>
+            <li class="success">Obtener o crear chat missing params</li>
+            <li class="success">Obtener o crear chat error</li>
+            <li class="success">Obtener o crear chat success</li>
+            <li class="success">Obtener mensajes invalid token</li>
+            <li class="success">Obtener mensajes missing id chat</li>
+            <li class="success">Obtener mensajes success</li>
+            <li class="success">Obtener mensajes error</li>
+        </ul>
+        <h2>Convocatoria Controller (Test\Controller\ConvocatoriaController)</h2>
+        <ul>
+            <li class="success">Agregar convocatoria missing params</li>
+            <li class="success">Agregar convocatoria success</li>
+            <li class="success">Obtener convocatorias</li>
+            <li class="success">Obtener detalle missing id</li>
+            <li class="success">Obtener detalle not found</li>
+            <li class="success">Obtener detalle success</li>
+        </ul>
+        <h2>Entrevista Controller (Test\Controller\EntrevistaController)</h2>
+        <ul>
+            <li class="success">Responder uses json service</li>
+            <li class="success">Asignar entrevista missing params</li>
+            <li class="success">Asignar entrevista success</li>
+            <li class="success">Obtener entrevistas</li>
+            <li class="success">Obtener datos del entrevistado with param</li>
+            <li class="success">Obtener datos del entrevistado not found</li>
+            <li class="success">Asistencia confirmada</li>
+            <li class="success">Asistencia no confirmada</li>
+        </ul>
+        <h2>Estudio Controller (Test\Controller\EstudioController)</h2>
+        <ul>
+            <li class="success">Obtener estudio success</li>
+            <li class="success">Obtener estudio token error</li>
+        </ul>
+        <h2>Jornada Controller (Test\Controller\JornadaController)</h2>
+        <ul>
+            <li class="success">Obtener todas las jornadas</li>
+            <li class="success">Obtener jornadas</li>
+            <li class="defect">Finalizar jornada</li>
+            <li class="success">Corroborar jornada missing params</li>
+            <li class="success">Corroborar jornada success</li>
+            <li class="success">No corroborar jornada missing params</li>
+            <li class="success">No corroborar jornada success</li>
+        </ul>
+        <h2>Notificacion Controller (Test\Controller\NotificacionController)</h2>
+        <ul>
+            <li class="success">Obtener notificaciones</li>
+            <li class="success">Obtener todas las notificaciones</li>
+            <li class="success">Obtener notificaciones aspirante no token</li>
+            <li class="success">Obtener notificaciones aspirante not found</li>
+            <li class="success">Obtener notificaciones aspirante success</li>
+        </ul>
+        <h2>Postulacion Controller</h2>
+        <ul>
+            <li class="success">Obtener postulaciones</li>
+            <li class="success">Verificar postulacion falta id convocatoria</li>
+            <li class="success">Obtener postulaciones aspirante sin datos</li>
+        </ul>
+        <h2>Usuario Controller (Test\Controller\UsuarioController)</h2>
+        <ul>
+            <li class="success">Obtener r r h h con datos</li>
+            <li class="success">Obtener r r h h sin datos</li>
+            <li class="success">Obtener usuarios con datos</li>
+            <li class="success">Obtener usuarios sin datos</li>
+        </ul>
+    </body>
+</html>

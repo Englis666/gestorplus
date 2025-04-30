@@ -4,14 +4,14 @@
          colors="true">
     
     <testsuites>
-        <testsuite name="Controllers">
+        <testsuite name="Controladores">
             <directory>test/controllers</directory>
         </testsuite>
     </testsuites>
 
     <coverage processUncoveredFiles="true">
         <include>
-            <directory suffix=".php">Controllers</directory>
+            <directory suffix=".php">controlador</directory>
         </include>
         <exclude>
             <directory suffix=".php">tests</directory>

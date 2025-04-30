@@ -8,3 +8,5 @@ docker exec -it gestorplus-php vendor/bin/phpunit
   
   docker exec gestorplus-php -it ./vendor/bin/phpunit --testdox
 
+# Ejecutar para generar el reporte
+   docker exec -ti gestorplus-php ./vendor/bin/phpunit --testdox-html=test/html/report.html
