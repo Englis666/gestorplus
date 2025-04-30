@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Controller;
 
-use Core\Controller\BaseController;
+use Core\Controllers\BaseController;
 use Model\Permiso;
 use Service\TokenService;
 use PDO;

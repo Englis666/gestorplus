@@ -5,13 +5,13 @@
     
     <testsuites>
         <testsuite name="Controllers">
-            <directory>test/controller</directory>
+            <directory>test/controllers</directory>
         </testsuite>
     </testsuites>
 
     <coverage processUncoveredFiles="true">
         <include>
-            <directory suffix=".php">Controllersr</directory>
+            <directory suffix=".php">Controllers</directory>
         </include>
         <exclude>
             <directory suffix=".php">tests</directory>

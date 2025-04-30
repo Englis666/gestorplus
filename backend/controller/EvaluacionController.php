@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Controler;
+namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Evaluacion;
 use Service\TokenService;

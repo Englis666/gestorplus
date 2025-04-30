@@ -1,5 +1,5 @@
 <?php
-namespace Controlador;
+namespace Controller;
 
 use Core\Controllers\BaseController;
 use Service\HoraExtraService;

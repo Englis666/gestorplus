@@ -9,7 +9,7 @@ use Service\TokenService;
 use PDO;
 use Exception;
 
-class CalculoControler extends BaseController {
+class CalculoController extends BaseController {
     private PDO $db;
     private Calculo $calculo;
     private TokenService $tokenService;

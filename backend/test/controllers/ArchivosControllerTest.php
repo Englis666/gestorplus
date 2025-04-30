@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Controlador\ArchivosControlador;
-use Servicio\ServicioArchivos;
+use Controller\ArchivosController;
+use Service\ServicioArchivos;
 use Config\Database;
 
 class ArchivosControllerTest extends TestCase
@@ -31,7 +31,7 @@ class ArchivosControllerTest extends TestCase
             ->willReturn(['status' => 'success', 'message' => 'Contrato subido correctamente.']);
 
         // Crear instancia del controlador
-        $controller = new ArchivosControlador();
+        $controller = new ArchivosController();
 
         // Reemplazamos la propiedad privada $servicioArchivos usando Reflection
         $reflected = new \ReflectionClass($controller);
@@ -57,12 +57,12 @@ class ArchivosControllerTest extends TestCase
     $_GET = ['num_doc' => '987654'];
 
     // Mock de ServicioArchivos
-    $mockServicioArchivos = $this->createMock(Servicio\ServicioArchivos::class);
+    $mockServicioArchivos = $this->createMock(Service\ServicioArchivos::class);
     $mockServicioArchivos->method('obtenerContrato')
         ->willReturn(['documentoContrato' => '/uploads/contratos/987654.pdf']);
 
     // Crear el controlador y establecer el mock
-    $controller = new Controlador\ArchivosControlador();
+    $controller = new Controller\ArchivosController();
     $reflection = new \ReflectionClass($controller);
     $property = $reflection->getProperty('servicioArchivos');
     $property->setAccessible(true);
@@ -99,7 +99,7 @@ class ArchivosControllerTest extends TestCase
             ->willReturn(['documentoContrato' => '/uploads/contratos/987654.pdf']);
 
         // Crear instancia del controlador
-        $controller = new ArchivosControlador();
+        $controller = new ArchivosController();
 
         // Reemplazamos la propiedad privada $servicioArchivos usando Reflection
         $reflected = new \ReflectionClass($controller);

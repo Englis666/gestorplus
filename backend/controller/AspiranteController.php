@@ -27,19 +27,20 @@ class AspiranteController extends BaseController {
         $num_doc = $this->tokenService->validarToken();
         if ($num_doc === null) return;
 
-        if(!$this->parametrosRequeridos($data,['idconvocatoria'])){
+        if(!$this->parametrosRequeridos($data, ['idconvocatoria'])){
             return;
         }
         $idconvocatoria = $this->getIntParam($data, 'idconvocatoria');
         try {
             $resultado = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
             if (!$resultado) {
-                $this->jsonResponseService->responderError(['error' => 'No se pudo completar la aplicación'], 500);
+                // Cambio aquí para pasar un string como mensaje
+                $this->jsonResponseService->responderError('No se pudo completar la aplicación', 500);
                 return;
             }
             $this->jsonResponseService->responder(['message' => 'success', 'data' => true]);
         } catch (Exception $e) {
-            $this->jsonResponseService->responderError(['error' => $e->getMessage()], $e->getCode());
+            $this->jsonResponseService->responderError('Error: ' . $e->getMessage(), $e->getCode());
         }
     }
 }

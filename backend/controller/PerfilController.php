@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-namespace Controlador;
+namespace Controller;
 
 use Core\Controllers\BaseController;
 use Model\Perfil;

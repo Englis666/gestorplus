@@ -1,11 +1,11 @@
 <?php
-namespace Test\Controlador;
+namespace Test\Controller;
 
-use Controlador\UsuarioControlador;
+use Controller\UsuarioController;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Modelo\Usuario;
-use Servicio\JsonResponseService;
+use Model\Usuario;
+use Service\JsonResponseService;
 
 class UsuarioControllerTest extends TestCase
 {
@@ -27,8 +27,8 @@ class UsuarioControllerTest extends TestCase
         $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
 
         // Creamos la instancia del controlador pasando los mocks
-        $this->ctrl = new UsuarioControlador();
-        $reflection = new \ReflectionClass(UsuarioControlador::class);
+        $this->ctrl = new UsuarioController();
+        $reflection = new \ReflectionClass(UsuarioController::class);
 
         // Inyectamos el mock de Usuario en el controlador
         $usuarioProperty = $reflection->getProperty('usuario');

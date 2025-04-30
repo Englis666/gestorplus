@@ -58,7 +58,7 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
             'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
             'Symfony\\Bridge\\Monolog\\' => 23,
             'Symfony\\Bridge\\Doctrine\\' => 24,
-            'Servicio\\' => 9,
+            'Service\\' => 8,
         ),
         'R' => 
         array (
@@ -82,7 +82,7 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         ),
         'M' => 
         array (
-            'Modelo\\' => 7,
+            'Model\\' => 6,
         ),
         'F' => 
         array (
@@ -105,7 +105,7 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         'C' => 
         array (
             'Core\\' => 5,
-            'Controlador\\' => 12,
+            'Controller\\' => 11,
             'Config\\' => 7,
             'Composer\\Semver\\' => 16,
         ),
@@ -201,9 +201,9 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         array (
             0 => __DIR__ . '/..' . '/symfony/symfony/src/Symfony/Bridge/Doctrine',
         ),
-        'Servicio\\' => 
+        'Service\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/servicio',
+            0 => __DIR__ . '/../..' . '/service',
         ),
         'Routes\\' => 
         array (
@@ -249,9 +249,9 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         array (
             0 => __DIR__ . '/..' . '/zircote/swagger-php/src',
         ),
-        'Modelo\\' => 
+        'Model\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/modelo',
+            0 => __DIR__ . '/../..' . '/model',
         ),
         'Firebase\\JWT\\' => 
         array (
@@ -305,9 +305,9 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         array (
             0 => __DIR__ . '/../..' . '/core',
         ),
-        'Controlador\\' => 
+        'Controller\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/controlador',
+            0 => __DIR__ . '/../..' . '/controller',
         ),
         'Config\\' => 
         array (

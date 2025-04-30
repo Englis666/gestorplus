@@ -1,8 +1,8 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use Controlador\AuthController;
-use Modelo\Auth;
-use Servicio\JsonResponseService;
+use Controller\AuthController;
+use Model\Auth;
+use Service\JsonResponseService;
 
 class AuthControllerTest extends TestCase
 {

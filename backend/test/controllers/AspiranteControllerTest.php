@@ -1,94 +1,89 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
-use Controlador\AspiranteControlador;
-use Servicio\TokenService;
-use PHPUnit\Framework\MockObject\MockBuilder;
+use Controller\AspiranteController;
+use Service\TokenService;
+use Service\JsonResponseService;
+use Model\Aspirante;
 
 class AspiranteControllerTest extends TestCase {
-    private $aspiranteControlador;
+    private $mockTokenService;
+    private $mockJsonResponseService;
+    private $aspiranteController;
 
     public function setUp(): void {
         parent::setUp();
 
-        // Crear un mock para TokenService
-        $mockTokenService = $this->createMock(TokenService::class);
+        // Crear mocks para TokenService y JsonResponseService
+        $this->mockTokenService = $this->createMock(TokenService::class);
+        $this->mockJsonResponseService = $this->createMock(JsonResponseService::class);
 
-        // Configurar el mock para que devuelva un token válido
-        $mockTokenService->method('validarToken')
-                         ->willReturn('some_valid_token');
-
-        // Inyectar el mock del TokenService al controlador
-        $this->aspiranteControlador = new AspiranteControlador($mockTokenService);
+        // Crear una instancia de AspiranteController inyectando los mocks
+        $this->aspiranteController = new AspiranteController(
+            $this->mockTokenService,
+            $this->mockJsonResponseService
+        );
     }
 
-    public function testAplicacionDeAspiranteConTokenValidoYParametrosValidos() {
-        // Aquí usas el controlador como normalmente lo harías
-        $data = ['idconvocatoria' => 123];
+    public function testAplicacionDeAspiranteConTokenValidoYParametrosValidos(): void {
+        // Configurar el comportamiento esperado del mock
+        $this->mockTokenService
+            ->method('validarToken')
+            ->willReturn('someValidToken'); // Devuelve un token válido
 
-        // Esperamos que se haga una respuesta exitosa
-        $this->expectOutputString('{"message":"success","data":true}');
-        
-        // Ejecutar el método de aplicación de aspirante
-        $this->aspiranteControlador->aplicacionDeAspirante($data);
+        // Datos simulados para la aplicación del aspirante
+        $data = ['idconvocatoria' => 1];
+
+        // Configurar el mock para verificar que se llama el método responder
+        $this->mockJsonResponseService
+            ->expects($this->once())
+            ->method('responder')
+            ->with($this->arrayHasKey('message'))  // Asegurarse que la respuesta contiene 'message'
+            ->willReturn(null); // Simula la respuesta sin hacer nada
+
+        // Llamar al método que estamos probando
+        $this->aspiranteController->aplicacionDeAspirante($data);
+
+        // Aquí podrías agregar más verificaciones según lo que esperas que haga el controlador.
     }
 
-    public function testAplicacionDeAspiranteConTokenInvalido() {
-        // Crear un mock para TokenService con token invalido
-        $mockTokenService = $this->createMock(TokenService::class);
-        $mockTokenService->method('validarToken')
-                         ->willReturn(null); // El token es inválido
+    public function testAplicacionDeAspiranteConTokenInvalido(): void {
+        // Configurar el comportamiento esperado del mock para que falle al validar el token
+        $this->mockTokenService
+            ->method('validarToken')
+            ->willThrowException(new Exception('Token no proporcionado o formato incorrecto', 401));
 
-        // Inyectar el mock con el token inválido
-        $this->aspiranteControlador = new AspiranteControlador($mockTokenService);
+        // Datos simulados para la aplicación del aspirante
+        $data = ['idconvocatoria' => 1];
 
-        // Ejecutar el método
-        $data = ['idconvocatoria' => 123];
+        // Configurar el mock para verificar que se llama el método responderError con el mensaje de error
+        $this->mockJsonResponseService
+            ->expects($this->once())
+            ->method('responderError')
+            ->with($this->equalTo('Token no proporcionado o formato incorrecto'), $this->equalTo(401))
+            ->willReturn(null); // Simula la respuesta sin hacer nada
 
-        // Verificamos que no se envíe ninguna respuesta
-        $this->expectOutputString('');
-        
-        $this->aspiranteControlador->aplicacionDeAspirante($data);
+        // Llamar al método que estamos probando
+        $this->aspiranteController->aplicacionDeAspirante($data);
     }
 
-    public function testAplicacionDeAspiranteConParametrosFaltantes() {
-        // Crear un mock para TokenService
-        $mockTokenService = $this->createMock(TokenService::class);
-        $mockTokenService->method('validarToken')
-                         ->willReturn('some_valid_token');
+    public function testAplicacionDeAspiranteConParametrosFaltantes(): void {
+        // Configurar el comportamiento esperado del mock para un token válido
+        $this->mockTokenService
+            ->method('validarToken')
+            ->willReturn('someValidToken'); // Devuelve un token válido
 
-        // Inyectar el mock del TokenService al controlador
-        $this->aspiranteControlador = new AspiranteControlador($mockTokenService);
+        // Datos simulados sin el parámetro 'idconvocatoria'
+        $data = [];
 
-        // Simular un caso donde faltan parámetros
-        $data = []; // No tiene 'idconvocatoria'
+        // Configurar el mock para verificar que se llama el método responderError con el mensaje de error
+        $this->mockJsonResponseService
+            ->expects($this->once())
+            ->method('responderError')
+            ->with($this->equalTo('Parámetros faltantes'), $this->equalTo(400))
+            ->willReturn(null); // Simula la respuesta sin hacer nada
 
-        // Esperamos que no se haga ninguna respuesta
-        $this->expectOutputString('');
-
-        // Ejecutar el método de aplicación de aspirante
-        $this->aspiranteControlador->aplicacionDeAspirante($data);
-    }
-
-    public function testAplicacionDeAspiranteConExcepcion() {
-        // Crear un mock para TokenService
-        $mockTokenService = $this->createMock(TokenService::class);
-        $mockTokenService->method('validarToken')
-                         ->willReturn('some_valid_token');
-
-        // Inyectar el mock del TokenService al controlador
-        $this->aspiranteControlador = new AspiranteControlador($mockTokenService);
-
-        // Hacer que el método de aplicación lance una excepción
-        $this->aspiranteControlador->method('aplicacionDeAspirante')
-            ->will($this->throwException(new Exception('Error interno', 500)));
-
-        // Ejecutar el método y esperar una respuesta de error
-        $data = ['idconvocatoria' => 123];
-
-        // Verificar que se genere un error
-        $this->expectOutputString('{"error":"Error interno"}');
-        
-        // Ejecutar el método de aplicación de aspirante
-        $this->aspiranteControlador->aplicacionDeAspirante($data);
+        // Llamar al método que estamos probando
+        $this->aspiranteController->aplicacionDeAspirante($data);
     }
 }

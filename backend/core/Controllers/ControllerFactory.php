@@ -5,33 +5,33 @@ class ControllerFactory {
     private static $instances = [];
 
     private static $map = [
-        'auth' => \Controlador\AuthController::class,
-        'archivos' => \Controlador\ArchivosControlador::class,
-        'ausencia' => \Controlador\AusenciaController::class,
-        'perfil' => \Controlador\PerfilController::class,
-        'experiencia' => \Controlador\ExperienciaController::class,
-        'estadistica' => \Controlador\EstadisticaController::class,
-        'estudio' => \Controlador\EstudioController::class,
-        'entrevista' => \Controlador\EntrevistaController::class,
-        'evaluacion' => \Controlador\EvaluacionController::class,
-        'cargo' => \Controlador\CargoController::class,
-        'convocatoria' => \Controlador\ConvocatoriaController::class,
-        'vinculacion' => \Controlador\VinculacionController::class,
-        'notificacion' => \Controlador\NotificacionController::class,
-        'jornada' => \Controlador\JornadaController::class,
-        'horaExtra' => \Controlador\HorasExtraController::class,
-        'hojadevida' => \Controlador\HojadeVidaController::class,
-        'permiso' => \Controlador\PermisoController::class,
-        'pazysalvo' => \Controlador\PazySalvoController::class,
-        'vacaciones' => \Controlador\VacacionesController::class,
-        'postulacion' => \Controlador\PostulacionController::class,
-        'usuario' => \Controlador\UsuarioControlador::class,
-        'empleado' => \Controlador\EmpleadoControlador::class,
-        'aspirante' => \Controlador\AspiranteControlador::class,
-        'chat' => \Controlador\ChatController::class,
-        'calculo' => \Controlador\CalculoControlador::class,
-        'publicaciones' => \Controlador\PublicacionesControlador::class,
-        'certificado' => \Controlador\CertificadoController::class
+        'auth' => \Controller\AuthController::class,
+        'archivos' => \Controller\ArchivosController::class,
+        'ausencia' => \Controller\AusenciaController::class,
+        'perfil' => \Controller\PerfilController::class,
+        'experiencia' => \Controller\ExperienciaController::class,
+        'estadistica' => \Controller\EstadisticaController::class,
+        'estudio' => \Controller\EstudioController::class,
+        'entrevista' => \Controller\EntrevistaController::class,
+        'evaluacion' => \Controller\EvaluacionController::class,
+        'cargo' => \Controller\CargoController::class,
+        'convocatoria' => \Controller\ConvocatoriaController::class,
+        'vinculacion' => \Controller\VinculacionController::class,
+        'notificacion' => \Controller\NotificacionController::class,
+        'jornada' => \Controller\JornadaController::class,
+        'horaExtra' => \Controller\HorasExtraController::class,
+        'hojadevida' => \Controller\HojadeVidaController::class,
+        'permiso' => \Controller\PermisoController::class,
+        'pazysalvo' => \Controller\PazySalvoController::class,
+        'vacaciones' => \Controller\VacacionesController::class,
+        'postulacion' => \Controller\PostulacionController::class,
+        'usuario' => \Controller\UsuarioController::class,
+        'empleado' => \Controller\EmpleadoController::class,
+        'aspirante' => \Controller\AspiranteController::class,
+        'chat' => \Controller\ChatController::class,
+        'calculo' => \Controller\CalculoController::class,
+        'publicaciones' => \Controller\PublicacionesController::class,
+        'certificado' => \Controller\CertificadoController::class
     ];
 
     public static function createControllers($controllerNames = null) {
@@ -40,7 +40,7 @@ class ControllerFactory {
         foreach ($controllers as $name) {
             if (!isset(self::$instances[$name])) {
                 if (!isset(self::$map[$name])) {
-                    throw new \Exception("Controlador “{$name}” no registrado.");
+                    throw new \Exception("Controller “{$name}” no registrado.");
                 }
                 self::$instances[$name] = new self::$map[$name]();
             }
@@ -52,7 +52,7 @@ class ControllerFactory {
 
     public static function get($name) {
         if (!isset(self::$map[$name])) {
-            throw new \Exception("Controlador “{$name}” no registrado.");
+            throw new \Exception("Controller “{$name}” no registrado.");
         }
 
         if (!isset(self::$instances[$name])) {
