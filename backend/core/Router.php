@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use Core\Controller\ControllerFactory; 
+use Core\Controllers\ControllerFactory; 
 
 class Router
 {

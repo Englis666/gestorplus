@@ -1,0 +1,10 @@
+# Para ejecutar pruebas con php UNIT es con 
+docker exec -it gestorplus-php vendor/bin/phpunit
+    Ya que el proyecto se esta trabajando con docker desde el docker se ejecuta el phpunit
+
+  dentro del docker 
+  ./vendor/bin/phpunit --testdox
+  o 
+  
+  docker exec gestorplus-php -it ./vendor/bin/phpunit --testdox
+

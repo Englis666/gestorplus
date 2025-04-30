@@ -60,7 +60,7 @@ final class Text
 
     public function process(CodeCoverage $coverage, bool $showColors = false): string
     {
-        $hasBranchCoverage = !empty($coverage->getData(true)->functionCoverage());
+        $hasBranchCoverage = $coverage->getData(true)->functionCoverage() !== [];
 
         $output = PHP_EOL . PHP_EOL;
         $report = $coverage->getReport();
@@ -210,6 +210,7 @@ final class Text
                 $classMethods            = 0;
 
                 foreach ($class['methods'] as $method) {
+                    /** @phpstan-ignore equal.notAllowed */
                     if ($method['executableLines'] == 0) {
                         continue;
                     }
@@ -222,6 +223,7 @@ final class Text
                     $classExecutablePaths    += $method['executablePaths'];
                     $classExecutedPaths      += $method['executedPaths'];
 
+                    /** @phpstan-ignore equal.notAllowed */
                     if ($method['coverage'] == 100) {
                         $coveredMethods++;
                     }
@@ -251,6 +253,7 @@ final class Text
         $resetColor    = '';
 
         foreach ($classCoverage as $fullQualifiedPath => $classInfo) {
+            /** @phpstan-ignore notEqual.notAllowed */
             if ($this->showUncoveredFiles || $classInfo['statementsCovered'] != 0) {
                 if ($showColors) {
                     $methodColor   = $this->coverageColor($classInfo['methodsCovered'], $classInfo['methodCount']);

@@ -332,7 +332,7 @@ final class File extends Renderer
     {
         $buffer = '';
 
-        if (empty($items)) {
+        if ($items === []) {
             return $buffer;
         }
 
@@ -437,7 +437,7 @@ final class File extends Renderer
      */
     private function renderFunctionItems(array $functions, Template $template): string
     {
-        if (empty($functions)) {
+        if ($functions === []) {
             return '';
         }
 
@@ -537,7 +537,7 @@ final class File extends Renderer
             $popoverTitle   = '';
 
             if (array_key_exists($i, $coverageData)) {
-                $numTests = ($coverageData[$i] ? count($coverageData[$i]) : 0);
+                $numTests = ($coverageData[$i] !== null ? count($coverageData[$i]) : 0);
 
                 if ($coverageData[$i] === null) {
                     $trClass = 'warning';
@@ -570,7 +570,7 @@ final class File extends Renderer
 
             $popover = '';
 
-            if (!empty($popoverTitle)) {
+            if ($popoverTitle !== '') {
                 $popover = sprintf(
                     ' data-bs-title="%s" data-bs-content="%s" data-bs-placement="top" data-bs-html="true"',
                     $popoverTitle,
@@ -599,7 +599,6 @@ final class File extends Renderer
 
         $lineData = [];
 
-        /** @var int $line */
         foreach (array_keys($codeLines) as $line) {
             $lineData[$line + 1] = [
                 'includedInBranches'    => 0,
@@ -686,7 +685,6 @@ final class File extends Renderer
 
         $lineData = [];
 
-        /** @var int $line */
         foreach (array_keys($codeLines) as $line) {
             $lineData[$line + 1] = [
                 'includedInPaths'    => [],
@@ -848,7 +846,7 @@ final class File extends Renderer
 
             $popover = '';
 
-            if (!empty($popoverTitle)) {
+            if ($popoverTitle !== '') {
                 $popover = sprintf(
                     ' data-bs-title="%s" data-bs-content="%s" data-bs-placement="top" data-bs-html="true"',
                     $popoverTitle,
@@ -966,7 +964,7 @@ final class File extends Renderer
 
                 $popover = '';
 
-                if (!empty($popoverTitle)) {
+                if ($popoverTitle !== '') {
                     $popover = sprintf(
                         ' data-bs-title="%s" data-bs-content="%s" data-bs-placement="top" data-bs-html="true"',
                         $popoverTitle,
