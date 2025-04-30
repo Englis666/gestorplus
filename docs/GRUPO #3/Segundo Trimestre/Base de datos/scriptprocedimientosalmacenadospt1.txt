@@ -1,0 +1,567 @@
+Ausencias
+
+Insertar Nueva Ausencias
+DELIMITER $$
+CREATE PROCEDURE sp_insertar_ausencia(
+    IN p_numero_de_ausencia VARCHAR(50),
+    IN p_motivo_de_ausencia MEDIUMTEXT,
+    IN p_fecha_ausencia DATE,
+    IN p_nombre VARCHAR(50)
+)
+BEGIN
+    INSERT INTO ausencias (numero_de_ausencia, motivo_de_ausencia, fecha_ausencia, nombre)
+    VALUES (p_numero_de_ausencia, p_motivo_de_ausencia, p_fecha_ausencia, p_nombre);
+END $$
+DELIMITER ;
+
+Consultar Todas Las Ausencias
+DELIMITER $$
+CREATE PROCEDURE sp_consultar_ausencias()
+BEGIN
+    SELECT * FROM ausencias;
+END $$
+DELIMITER ;
+
+Consultar Ausencias Por ID
+DELIMITER $$
+CREATE PROCEDURE sp_consultar_ausencia_por_id(
+    IN p_id_ausencia INT
+)
+BEGIN
+    SELECT * FROM ausencias WHERE id_ausencia = p_id_ausencia;
+END $$
+DELIMITER ;
+
+Actualizar Una Ausencia
+
+DELIMITER $$
+CREATE PROCEDURE sp_actualizar_ausencia(
+    IN p_id_ausencia INT,
+    IN p_numero_de_ausencia VARCHAR(50),
+    IN p_motivo_de_ausencia MEDIUMTEXT,
+    IN p_fecha_ausencia DATE,
+    IN p_nombre VARCHAR(50)
+)
+BEGIN
+    UPDATE ausencias
+    SET numero_de_ausencia = p_numero_de_ausencia,
+        motivo_de_ausencia = p_motivo_de_ausencia,
+        fecha_ausencia = p_fecha_ausencia,
+        nombre = p_nombre
+    WHERE id_ausencia = p_id_ausencia;
+END $$
+DELIMITER ;
+
+Eliminar Ausencia
+
+DELIMITER $$
+CREATE PROCEDURE sp_eliminar_ausencia(
+    IN p_id_ausencia INT
+)
+BEGIN
+    DELETE FROM ausencias WHERE id_ausencia = p_id_ausencia;
+END $$
+DELIMITER ;
+
+CARGOS
+
+Insertar
+DELIMITER $$
+CREATE PROCEDURE sp_insertar_cargo(
+    p_cargo varchar(50),
+    p_descripcion_cargo mediumtext
+)
+BEGIN
+    INSERT INTO cargos (cargo, descripcion_cargo)
+    VALUES (p_cargo, p_descripcion_cargo);
+END$$
+DELIMITER ;
+
+CONSULTA 1
+DELIMITER $$
+CREATE PROCEDURE sp_consultar_todos_los_cargos()
+BEGIN
+    SELECT * FROM cargos;
+END $$
+DELIMITER ;
+
+CONSULTA 2
+DELIMITER $$
+CREATE PROCEDURE sp_consultar_cargo_por_id(
+    IN p_id_cargo INT
+)
+BEGIN
+    SELECT * FROM cargos WHERE id_cargo = p_id_cargo;
+END$$
+DELIMITER $$
+
+ACTUALIZAR
+CREATE OR REPLACE PROCEDURE actualizar_cargo(
+    IN p_id_cargo INT,
+    IN p_cargo VARCHAR(50),
+    IN p_descripcion_cargo MEDIUMTEXT
+)
+BEGIN
+    UPDATE cargos
+    SET cargo = p_cargo, descripcion_cargo = p_descripcion_cargo
+    WHERE id_cargo = p_id_cargo;
+END$$
+DELIMITER ;
+
+ELIMINAR
+CREATE OR REPLACE PROCEDURE eliminar_cargo(
+    IN p_id_cargo INT
+)
+BEGIN
+    DELETE FROM cargos WHERE id_cargo = p_id_cargo;
+END$$
+DELIMITER ;
+
+CATEGORIA
+
+DELIMITER $$
+CREATE PROCEDURE insertar_categoria(IN p_nombre_categoria VARCHAR(50), IN p_descripcion_categoria VARCHAR(50))
+BEGIN
+    INSERT INTO categorias (nombre_categoria, descripcion_categoria)
+    VALUES (p_nombre_categoria, p_descripcion_categoria);
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_consultar_ausencias()
+BEGIN
+    SELECT * FROM ausencias;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_consultar_ausencia_por_id(
+    IN p_id_ausencia INT
+)
+BEGIN
+    SELECT * FROM ausencias WHERE id_ausencia = p_id_ausencia;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_actualizar_ausencia(
+    IN p_id_ausencia INT,
+    IN p_numero_de_ausencia VARCHAR(50),
+    IN p_motivo_de_ausencia MEDIUMTEXT,
+    IN p_fecha_ausencia DATE,
+    IN p_nombre VARCHAR(50)
+)
+BEGIN
+    UPDATE ausencias
+    SET numero_de_ausencia = p_numero_de_ausencia,
+        motivo_de_ausencia = p_motivo_de_ausencia,
+        fecha_ausencia = p_fecha_ausencia,
+        nombre = p_nombre
+    WHERE id_ausencia = p_id_ausencia;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_eliminar_ausencia(
+    IN p_id_ausencia INT
+)
+BEGIN
+    DELETE FROM ausencias WHERE id_ausencia = p_id_ausencia;
+END $$
+DELIMITER ;
+
+-- Insertar una nueva categoría
+CALL insertar_categoria('Tecnología', 'Productos electrónicos');
+
+-- Consultar todas las categorías
+CALL consultar_todas_las_categorias();
+
+-- Consultar una categoría por ID
+CALL consultar_categoria_por_id(1);
+
+-- Actualizar una categoría
+CALL actualizar_categoria(1, 'Electrónica', 'Televisores, celulares, computadoras');
+
+-- Eliminar una categoría
+CALL eliminar_categoria(2);
+
+
+
+CITA
+
+
+
+DELIMITER $$
+CREATE PROCEDURE insertar_cita(IN p_fecha_cita DATE, IN p_tipo_de_cita VARCHAR(50), IN p_descripcion_cita MEDIUMTEXT)
+BEGIN
+    INSERT INTO citas (fecha_cita, tipo_de_cita, descripcion_cita)
+    VALUES (p_fecha_cita, p_tipo_de_cita, p_descripcion_cita);
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_todas_las_citas()
+BEGIN
+    SELECT * FROM citas;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_cita_por_id(IN p_id_cita INT)
+BEGIN
+    SELECT * FROM citas WHERE id_cita = p_id_cita;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE actualizar_cita(IN p_id_cita INT, IN p_fecha_cita DATE, IN p_tipo_de_cita VARCHAR(50), IN p_descripcion_cita MEDIUMTEXT)
+BEGIN
+    UPDATE citas
+    SET fecha_cita = p_fecha_cita, tipo_de_cita = p_tipo_de_cita, descripcion_cita = p_descripcion_cita
+    WHERE id_cita = p_id_cita;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE eliminar_cita(IN p_id_cita INT)
+BEGIN
+    DELETE FROM citas WHERE id_cita = p_id_cita;
+END $$
+DELIMITER ;
+
+
+-- Insertar una nueva cita
+CALL insertar_cita('2023-11-28', 'Consulta', 'Revisar síntomas');
+
+-- Consultar todas las citas
+CALL consultar_todas_las_citas();
+
+-- Consultar una cita por ID
+CALL consultar_cita_por_id(1);
+
+-- Actualizar una cita
+CALL actualizar_cita(1, '2023-12-01', 'Revisión', 'Revisar resultados de exámenes');
+
+-- Eliminar una cita
+CALL eliminar_cita(2);
+
+
+
+contratos
+
+DELIMITER $$
+CREATE PROCEDURE insertar_contrato(
+    IN p_contrato_doc BLOB,
+    IN p_fechaInicial DATE,
+    IN p_fechaFin DATE,
+    IN p_estadoCont VARCHAR(45),
+    IN p_tipoCont VARCHAR(45)
+)
+BEGIN
+    INSERT INTO contratos (contrato_doc, fechaInicial, fechaFin, estadoCont, tipoCont)
+    VALUES (p_contrato_doc, p_fechaInicial, p_fechaFin, p_estadoCont, p_tipoCont);
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_todos_los_contratos()
+BEGIN
+    SELECT * FROM contratos;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_contrato_por_id(IN p_idContrato INT)
+BEGIN
+    SELECT * FROM contratos WHERE idContrato = p_idContrato;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE actualizar_contrato(
+    IN p_idContrato INT,
+    IN p_contrato_doc BLOB,
+    IN p_fechaInicial DATE,
+    IN p_fechaFin DATE,
+    IN p_estadoCont VARCHAR(45),
+    IN p_tipoCont VARCHAR(45)
+)
+BEGIN
+    UPDATE contratos
+    SET contrato_doc = p_contrato_doc, fechaInicial = p_fechaInicial, fechaFin = p_fechaFin, estadoCont = p_estadoCont, tipoCont = p_tipoCont
+    WHERE idContrato = p_idContrato;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE eliminar_contrato(IN p_idContrato INT)
+BEGIN
+    DELETE FROM contratos WHERE idContrato = p_idContrato;
+END $$
+DELIMITER ;
+
+CALL insertar_contrato(
+    @contrato_doc,  -- Aquí reemplazarías @contrato_doc con el valor real del documento
+    '2023-11-28',
+    '2024-11-27',
+    'Activo',
+    'Indefinido'
+);
+-- Consultar todos los contratos
+CALL consultar_todos_los_contratos();
+
+-- Consultar un contrato por ID
+CALL consultar_contrato_por_id(1);
+
+-- Actualizar un contrato
+CALL actualizar_contrato(
+    1,  -- ID del contrato a actualizar
+    @nuevo_contrato_doc,
+    '2024-01-01',
+    NULL,
+    'Inactivo',
+    'Indefinido'
+);
+
+-- Eliminar un contrato
+CALL eliminar_contrato(2);
+
+
+DELIMITER $$
+CREATE PROCEDURE insertar_estudio(
+    IN p_nombre_estudio VARCHAR(80),
+    IN p_institucion VARCHAR(80),
+    IN p_nivel_estudio VARCHAR(50),
+    IN p_fecha_final VARCHAR(60),
+    IN p_certificado_estudio LONGTEXT
+)
+BEGIN
+    INSERT INTO estudios (nombre_estudio, institucion, nivel_estudio, fecha_final, certificado_estudio)
+    VALUES (p_nombre_estudio, p_institucion, p_nivel_estudio, p_fecha_final, p_certificado_estudio);
+END $$
+DELIMITER ;
+
+CALL insertar_estudio('Ingeniería en Software', 'Universidad XYZ', 'Licenciatura', '2023-12-31', 'Este es el certificado en formato de texto');
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_todos_los_estudios()
+BEGIN
+    SELECT * FROM estudios;
+END $$
+DELIMITER ;
+
+CALL consultar_todos_los_estudios();
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_estudio_por_id(IN p_id_estudio INT)
+BEGIN
+    SELECT * FROM estudios WHERE id_estudio = p_id_estudio;
+END $$
+DELIMITER ;
+
+CALL consultar_estudio_por_id(1);
+
+
+DELIMITER $$
+CREATE PROCEDURE actualizar_estudio(
+    IN p_id_estudio INT,
+    IN p_nombre_estudio VARCHAR(80),
+    IN p_institucion VARCHAR(80),
+    IN p_nivel_estudio VARCHAR(50),
+    IN p_fecha_final VARCHAR(60),
+    IN p_certificado_estudio LONGTEXT
+)
+BEGIN
+    UPDATE estudios
+    SET nombre_estudio = p_nombre_estudio, institucion = p_institucion, nivel_estudio = p_nivel_estudio, fecha_final = p_fecha_final, certificado_estudio = p_certificado_estudio
+    WHERE id_estudio = p_id_estudio;
+END $$
+DELIMITER ;
+
+CALL actualizar_estudio(1, 'Ingeniería en Computación', 'Universidad ABC', 'Licenciatura', '2024-01-31', 'Nuevo certificado actualizado');
+
+
+DELIMITER $$
+CREATE PROCEDURE eliminar_estudio(IN p_id_estudio INT)
+BEGIN
+    DELETE FROM estudios WHERE id_estudio = p_id_estudio;
+END $$
+DELIMITER ;
+
+CALL eliminar_estudio(2);
+
+
+
+EXPERIENCIA
+
+
+DELIMITER $$
+CREATE PROCEDURE insertar_experiencia(
+    IN p_empresa VARCHAR(50),
+    IN p_puesto VARCHAR(50),
+    IN p_descripcion_experiencia VARCHAR(50),
+    IN p_fecha_inicio_experiencia DATE,
+    IN p_fecha_fin_experiencia DATE,
+    IN p_certificado_experiencia LONGTEXT
+)
+BEGIN
+    INSERT INTO experiencias (empresa, puesto, descripcion_experiencia, fecha_inicio_experiencia, fecha_fin_experiencia, certificado_experiencia)
+    VALUES (p_empresa, p_puesto, p_descripcion_experiencia, p_fecha_inicio_experiencia, p_fecha_fin_experiencia, p_certificado_experiencia);
+END $$
+DELIMITER ;
+
+CALL insertar_experiencia('Empresa XYZ', 'Desarrollador', 'Desarrollo de software', '2022-01-01', '2023-12-31', 'Certificado de experiencia en desarrollo');
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_todas_las_experiencias()
+BEGIN
+    SELECT * FROM experiencias;
+END $$
+DELIMITER ;
+
+CALL insertar_experiencia('Empresa XYZ', 'Desarrollador', 'Desarrollo de software', '2022-01-01', '2023-12-31', 'Certificado de experiencia en desarrollo');
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_todas_las_experiencias()
+BEGIN
+    SELECT * FROM experiencias;
+END $$
+DELIMITER ;
+
+CALL consultar_todas_las_experiencias();
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_experiencia_por_id(IN p_id_experiencia INT)
+BEGIN
+    SELECT * FROM experiencias WHERE id_experiencia = p_id_experiencia;
+END $$
+DELIMITER ;
+
+CALL consultar_experiencia_por_id(1);
+
+
+DELIMITER $$
+CREATE PROCEDURE actualizar_experiencia(
+    IN p_id_experiencia INT,
+    IN p_empresa VARCHAR(50),
+    IN p_puesto VARCHAR(50),
+    IN p_descripcion_experiencia VARCHAR(50),
+    IN p_fecha_inicio_experiencia DATE,
+    IN p_fecha_fin_experiencia DATE,
+    IN p_certificado_experiencia LONGTEXT
+)
+BEGIN
+    UPDATE experiencias
+    SET empresa = p_empresa, puesto = p_puesto, descripcion_experiencia = p_descripcion_experiencia, 
+        fecha_inicio_experiencia = p_fecha_inicio_experiencia, fecha_fin_experiencia = p_fecha_fin_experiencia, 
+        certificado_experiencia = p_certificado_experiencia
+    WHERE id_experiencia = p_id_experiencia;
+END $$
+DELIMITER ;
+
+CALL actualizar_experiencia(1, 'Empresa ABC', 'Analista', 'Análisis de datos', '2021-01-01', '2023-12-31', 'Nuevo certificado actualizado');
+
+
+DELIMITER $$
+CREATE PROCEDURE eliminar_experiencia(IN p_id_experiencia INT)
+BEGIN
+    DELETE FROM experiencias WHERE id_experiencia = p_id_experiencia;
+END $$
+DELIMITER ;
+
+CALL eliminar_experiencia(2);
+
+
+
+HOJA DE VIDA
+
+DELIMITER $$
+CREATE PROCEDURE insertar_hojavida(
+    IN p_hoja_de_vida LONGTEXT,
+    IN p_fotografia LONGTEXT,
+    IN p_num_doc VARCHAR(45),
+    IN p_nombre VARCHAR(45),
+    IN p_f_nacimiento DATE,
+    IN p_direccion VARCHAR(80),
+    IN p_telefono VARCHAR(50),
+    IN p_email VARCHAR(50),
+    IN p_estado_civil VARCHAR(50),
+    IN p_genero VARCHAR(50),
+    IN p_tipo_rh VARCHAR(4)
+)
+BEGIN
+    INSERT INTO hojas_de_vida (hoja_de_vida, fotografia, num_doc, nombre, f_nacimiento, direccion, telefono, email, estado_civil, genero, tipo_rh)
+    VALUES (p_hoja_de_vida, p_fotografia, p_num_doc, p_nombre, p_f_nacimiento, p_direccion, p_telefono, p_email, p_estado_civil, p_genero, p_tipo_rh);
+END $$
+DELIMITER ;
+
+CALL insertar_hojavida('Contenido de la hoja de vida', 'Datos de la fotografía', '123456789', 'Juan Pérez', '1990-01-01', 'Calle Falsa 123', '1234567890', 'juanperez@email.com', 'Soltero', 'Masculino', 'A+');
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_todas_las_hojas_de_vida()
+BEGIN
+    SELECT * FROM hojas_de_vida;
+END $$
+DELIMITER ;
+ 
+CALL consultar_todas_las_hojas_de_vida();
+
+
+DELIMITER $$
+CREATE PROCEDURE consultar_hojavida_por_id(IN p_id_hojavida INT)
+BEGIN
+    SELECT * FROM hojas_de_vida WHERE id_hojavida = p_id_hojavida;
+END $$
+DELIMITER ;
+
+CALL consultar_hojavida_por_id(1);
+
+
+DELIMITER $$
+CREATE PROCEDURE actualizar_hojavida(
+    IN p_id_hojavida INT,
+    IN p_hoja_de_vida LONGTEXT,
+    IN p_fotografia LONGTEXT,
+    IN p_num_doc VARCHAR(45),
+    IN p_nombre VARCHAR(45),
+    IN p_f_nacimiento DATE,
+    IN p_direccion VARCHAR(80),
+    IN p_telefono VARCHAR(50),
+    IN p_email VARCHAR(50),
+    IN p_estado_civil VARCHAR(50),
+    IN p_genero VARCHAR(50),
+    IN p_tipo_rh VARCHAR(4)
+)
+BEGIN
+    UPDATE hojas_de_vida
+    SET hoja_de_vida = p_hoja_de_vida, fotografia = p_fotografia, num_doc = p_num_doc, nombre = p_nombre, f_nacimiento = p_f_nacimiento,
+        direccion = p_direccion, telefono = p_telefono, email = p_email, estado_civil = p_estado_civil, genero = p_genero, tipo_rh = p_tipo_rh
+    WHERE id_hojavida = p_id_hojavida;
+END $$
+DELIMITER ;
+
+CALL actualizar_hojavida(1, 'Nuevo contenido de la hoja de vida', 'Nueva fotografía', '123456789', 'Juan Pérez', '1990-01-01', 'Calle Nueva 456', '9876543210', 'juanperez@nuevoemail.com', 'Casado', 'Masculino', 'B+');
+
+DELIMITER $$
+CREATE PROCEDURE eliminar_hojavida(IN p_id_hojavida INT)
+BEGIN
+    DELETE FROM hojas_de_vida WHERE id_hojavida = p_id_hojavida;
+END $$
+DELIMITER ;
+
+CALL eliminar_hojavida(2);
+

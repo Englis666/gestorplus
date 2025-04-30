@@ -1,0 +1,156 @@
+#SE AGREGA el numero de documento del empleado
+ALTER TABLE ausencias ADD COLUMN num_doc VARCHAR(45) NOT NULL;
+ALTER TABLE estudio ADD COLUMN num_doc VARCHAR(45) NOT NULL;
+ALTER TABLE experiencia ADD COLUMN num_doc VARCHAR(45) NOT NULL;
+ALTER TABLE horas_extra ADD COLUMN num_doc VARCHAR(45) NOT NULL;
+ALTER TABLE jornada ADD COLUMN num_doc VARCHAR(45) NOT NULL;
+ALTER TABLE paz_salvo ADD COLUMN num_doc VARCHAR(45) NOT NULL;
+ALTER TABLE postulacion ADD COLUMN vacante_id VARCHAR(45) NOT NULL;
+ALTER TABLE quejas_reclamos ADD COLUMN num_doc VARCHAR(45) NOT NULL;
+ALTER TABLE vacantes ADD COLUMN categoria_id INT NOT NULL;
+ALTER TABLE vacaciones ADD COLUMN num_doc VARCHAR(45) NOT NULL;
+
+#SE ELIMINA TODOS LOS DATOS DE LAS TABLAS
+
+DELETE FROM ausencias WHERE num_doc NOT IN (SELECT num_doc FROM hoja_de_vida);
+DELETE FROM estudio WHERE num_doc NOT IN (SELECT num_doc FROM hoja_de_vida);
+DELETE FROM experiencia WHERE num_doc NOT IN (SELECT num_doc FROM hoja_de_vida);
+DELETE FROM horas_extra WHERE num_doc NOT IN (SELECT num_doc FROM hoja_de_vida);
+DELETE FROM jornada WHERE num_doc NOT IN (SELECT num_doc FROM hoja_de_vida);
+DELETE FROM paz_salvo WHERE num_doc NOT IN (SELECT num_doc FROM hoja_de_vida);
+DELETE FROM postulacion WHERE num_doc NOT IN (SELECT num_doc FROM hoja_de_vida);
+DELETE FROM postulacion WHERE vacante_id NOT IN (SELECT id_vacantes FROM vacantes);
+DELETE FROM quejas_reclamos WHERE num_doc NOT IN (SELECT num_doc FROM hoja_de_vida);
+DELETE FROM vacantes WHERE categoria_id NOT IN (SELECT id_categoria FROM categoria);
+DELETE FROM vacaciones WHERE num_doc NOT IN (SELECT num_doc FROM hoja_de_vida);
+
+La relacion de cargo y experiencia no van, horas extra y hoja de vida tampoco, jornada y hoja de vida no, paz y salvo va conlos contratos no con hoja de vida
+#RELACIONES
+ALTER TABLE ausencias
+ADD CONSTRAINT fk_ausencias_hoja_de_vida
+FOREIGN KEY (num_doc) REFERENCES hoja_de_vida(num_doc);
+
+ALTER TABLE estudio
+ADD CONSTRAINT fk_estudio_hoja_de_vida
+FOREIGN KEY (num_doc) REFERENCES hoja_de_vida(num_doc);
+
+ALTER TABLE experiencia
+ADD CONSTRAINT fk_experiencia_hoja_de_vida
+FOREIGN KEY (num_doc) REFERENCES hoja_de_vida(num_doc);
+
+ALTER TABLE paz_salvo
+ADD CONSTRAINT fk_paz_salvo_contratos
+FOREIGN KEY (num_doc) REFERENCES hoja_de_vida(num_doc);
+
+ALTER TABLE postulacion
+ADD CONSTRAINT fk_postulacion_hoja_de_vida
+FOREIGN KEY (num_doc) REFERENCES hoja_de_vida(num_doc);
+
+ALTER TABLE postulacion
+ADD CONSTRAINT fk_postulacion_vacantes
+FOREIGN KEY (vacante_id) REFERENCES vacantes(id_vacantes);
+
+ALTER TABLE quejas_reclamos
+ADD CONSTRAINT fk_quejas_reclamos_hoja_de_vida
+FOREIGN KEY (num_doc) REFERENCES hoja_de_vida(num_doc);
+
+ALTER TABLE vacantes
+ADD CONSTRAINT fk_vacantes_categoria
+FOREIGN KEY (categoria_id) REFERENCES categoria(id_categoria);
+
+ALTER TABLE vacaciones
+ADD CONSTRAINT fk_vacaciones_hoja_de_vida
+FOREIGN KEY (num_doc) REFERENCES hoja_de_vida(num_doc);
+
+
+ALTER TABLE horas_extra
+ADD CONSTRAINT fk_horas_extra_jornada
+FOREIGN KEY (num_doc) REFERENCES jornada(num_doc);
+
+ALTER TABLE vacaciones
+ADD CONSTRAINT fk_vacaciones_jornada
+FOREIGN KEY (num_doc) REFERENCES jornada(num_doc);
+
+
+ Agregar columna para la relación con la tabla categoria
+ALTER TABLE cargo
+ADD COLUMN categoria_id INT;
+
+Agregar columna para la relación con la tabla jornada
+ALTER TABLE cargo
+ADD COLUMN jornada_id INT;
+
+ALTER TABLE ausencias
+ADD COLUMN num_doc VARCHAR(45);
+
+ Agregar columna para la relación con la tabla quejas_reclamos
+ALTER TABLE cargo
+ADD COLUMN queja_id INT;
+
+ Agregar columna para la relación con la tabla vacantes
+ALTER TABLE cargo
+ADD COLUMN vacante_id INT;
+
+ Relación entre cargo y categorias
+ALTER TABLE cargo
+ADD CONSTRAINT fk_cargo_categoria
+FOREIGN KEY (categoria_id) REFERENCES categoria(id_categoria);
+
+ Relación entre cargo y jornada
+ALTER TABLE cargo
+ADD CONSTRAINT fk_cargo_jornada
+FOREIGN KEY (jornada_id) REFERENCES jornada(id_jornada);
+
+ Relación entre cargo y quejas_reclamos
+ALTER TABLE cargo
+ADD CONSTRAINT fk_cargo_quejas_reclamos
+FOREIGN KEY (queja_id) REFERENCES quejas_reclamos(id_queja);
+
+ Relación entre cargo y vacantes
+ALTER TABLE cargo
+ADD CONSTRAINT fk_cargo_vacantes
+FOREIGN KEY (vacante_id) REFERENCES vacantes(id_vacante);
+
+
+ALTER TABLE ausencias
+ADD CONSTRAINT fk_ausencias_jornada
+FOREIGN KEY (num_doc) REFERENCES jornada(num_doc);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#VISTAS
+create view Jornadas_y_ausencias as select j.id_jornada, a.numero_de_ausencia, a.nombre FROM ausencias a
+JOIN jornada j;
+
+create view categoria-cargo as select c.nombre_categoria, c.descripcion_categoria, ca.cargo, ca.descripcion_cargo FROM categoria c
+JOIN cargo ca;
+ create view categoria_y_cargo as select c.nombre_categoria, c.descripcion_categoria, ca.cargo, ca.descripcion_cargo FROM cargo ca
+    -> JOIN categoria c;
+
+
+

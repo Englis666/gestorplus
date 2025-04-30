@@ -1,0 +1,26 @@
+PROCEDIMIENTOS USUARIOS ------------------------------------------------------------------
+DELIMITER $$
+CREATE PROCEDURE sp_insertar_usuario (IN _num_doc int(11),IN _nombres varchar(50), IN _apellidos varchar(50), IN _email varchar(45),IN  _tipoDoc varchar(5), IN _password varchar(250))
+BEGIN
+DECLARE idhv int;
+INSERT INTO hojadevida (fechaNacimiento, direccion, ciudad, ciudadNacimiento, telefono, telefonoFijo, estadohojadevida) values(null, null, null, null, null, null, 1);
+set idhv = last_insert_id();
+INSERT INTO usuario (num_doc, nombres, apellidos, email, tipodDoc, password, estado, hojadevida_idHojadevida, rol_idrol) values (_num_doc, _nombres, _apellidos, _email, _tipoDoc, _password, 1, idhv, 4);
+END $$
+DELIMITER;
+
+DELIMITER $$
+CREATE PROCEDURE sp_actualizar_usuario (IN _num_doc INT, IN _nombres VARCHAR(50), IN _apellidos VARCHAR(50), IN _email VARCHAR(45))
+BEGIN
+UPDATE usuario SET nombres = _nombres, apellidos = _apellidos, email = _email 
+WHERE num_doc = _num_doc;
+END$$
+DELIMITER ; 
+
+DELIMITER $$ 
+CREATE PROCEDURE sp_eliminar_usuario(IN _num_doc INT)
+BEGIN
+UPDATE usuario u, hojadevida hv SET u.estado = 0, hv.estadohojadevida = 0
+WHERE u.num_doc = _num_doc AND hv.idHojadevida = u.hojadevida_idHojadevida;
+END$$
+DELIMITER ;

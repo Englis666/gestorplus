@@ -1,0 +1,31 @@
+DELIMITER //
+CREATE PROCEDURE actualizarAusenciaYNotificacion(
+    IN p_idausencia INT,
+    IN p_idnotificacion INT
+)
+BEGIN
+    -- Iniciar transacción
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Actualizar la tabla de ausencias
+    UPDATE ausencia 
+    SET justificada = 1 
+    WHERE idausencia = p_idausencia;
+
+    -- Actualizar la tabla de notificaciones
+    UPDATE notificacion 
+    SET estadoNotificacion = 0 
+    WHERE idnotificacion = p_idnotificacion;
+
+    -- Crear una nueva notificación
+    INSERT INTO notificacion (descripcionNotificacion, tipo, estadoNotificacion) 
+    VALUES ('Recursos humanos ha aprobado tu ausencia', 'aceptada', 1);
+
+    COMMIT;
+END //
+DELIMITER ;

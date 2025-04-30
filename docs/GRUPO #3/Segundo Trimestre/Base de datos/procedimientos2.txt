@@ -1,0 +1,407 @@
+TABLA JORNADA
+
+create procedure registrarJornada (IN registro_de_hora_inicial time, registro_de_hora_final time, hora_de_descanso_inicial time, hora_de_descanso_fin time)
+    begin
+    insert into jornada (registro_de_hora_inicial, registro_de_hora_final, hora_de_descanso_inicial, hora_de_descanso_fin)
+    values
+    (registro_de_hora_inicial, registro_de_hora_final, hora_de_descanso_inicial, hora_de_descanso_fin);
+    end//
+call registrarJornada(080000, 050000, 120000 - 130000);//
+
+CREATE PROCEDURE eliminarJornada (IN p_id_jornada INT)
+BEGIN
+    DELETE FROM jornada WHERE id_jornada = p_id_jornada;
+END //
+call eliminarJornada()//
+
+consulta por id
+CREATE PROCEDURE consultarJornada ()
+BEGIN
+    SELECT * FROM jornada WHERE id_jornada = p_id_jornada;
+END //
+call consultarJornada()//
+
+consulta general
+CREATE PROCEDURE consultarJornadaG (IN id_jornada INT)
+BEGIN
+    SELECT * FROM jornada WHERE id_jornada = id_jornada;
+END //
+call consultarJornadaG()//
+
+CREATE PROCEDURE actualizarJornada (
+    IN p_id_jornada INT,
+    IN nuevo_registro_de_hora_inicial TIME,
+    IN nuevo_registro_de_hora_final TIME,
+    IN nueva_hora_de_descanso_inicial TIME,
+    IN nueva_hora_de_descanso_fin TIME
+)
+BEGIN
+    UPDATE jornada
+    SET
+        registro_de_hora_inicial = nuevo_registro_de_hora_inicial,
+        registro_de_hora_final = nuevo_registro_de_hora_final,
+        hora_de_descanso_inicial = nueva_hora_de_descanso_inicial,
+        hora_de_descanso_fin = nueva_hora_de_descanso_fin
+    WHERE id_jornada = p_id_jornada;
+END //
+
+call
+
+
+ALTER TABLE jornada CHANGE COLUMN hora_de_descanso hora_de_descanso_inicial time not null;//
+
+ALTER TABLE jornada ADD COLUMN hora_de_descanso_fin time not null;//
+
+
+----------------------------------------------------------------------------------------------
+TABLA HORAS_EXTRA
+
+CREATE PROCEDURE registrarHorasExtra (
+    IN inicio_hora_extra TIME,
+    IN fin_hora_extra TIME,
+    IN fecha_del_dia DATE
+)
+BEGIN
+    INSERT INTO horas_extra (inicio_hora_extra, fin_hora_extra, fecha_del_dia)
+    VALUES (inicio_hora_extra, fin_hora_extra, fecha_del_dia);
+END //
+CALL registrarHorasExtra('08:00:00', '10:00:00', '2024-08-14');
+
+CREATE PROCEDURE eliminarHorasExtra (IN p_id_horas_extra INT)
+BEGIN
+    DELETE FROM horas_extra WHERE id_horas_extra = p_id_horas_extra;
+END //
+CALL eliminarHorasExtra(1);
+
+CREATE PROCEDURE consultarHorasExtra ()
+BEGIN
+    SELECT * FROM horas_extra;
+END //
+CALL consultarHorasExtra();
+
+CREATE PROCEDURE consultarHorasExtraPorId (IN p_id_horas_extra INT)
+BEGIN
+    SELECT * FROM horas_extra WHERE id_horas_extra = p_id_horas_extra;
+END //
+CALL consultarHorasExtraPorId(1);
+
+CREATE PROCEDURE actualizarHorasExtra (
+    IN p_id_horas_extra INT,
+    IN nuevo_inicio_hora_extra TIME,
+    IN nuevo_fin_hora_extra TIME,
+    IN nueva_fecha_del_dia DATE
+)
+BEGIN
+    UPDATE horas_extra
+    SET 
+        inicio_hora_extra = nuevo_inicio_hora_extra,
+        fin_hora_extra = nuevo_fin_hora_extra,
+        fecha_del_dia = nueva_fecha_del_dia
+    WHERE id_horas_extra = p_id_horas_extra;
+END //
+CALL actualizarHorasExtra(1, '09:00:00', '11:00:00', '2024-08-15');
+
+
+
+----------------------------------------------------------------------------------------------
+TABLA PAZ_SALVO
+
+CREATE PROCEDURE registrarPazSalvo (
+    IN paz_salvo LONGTEXT,
+    IN fecha_de_emision DATE,
+    IN estado_paz_y_salvo VARCHAR(30)
+)
+BEGIN
+    INSERT INTO paz_salvo (paz_salvo, fecha_de_emision, estado_paz_y_salvo)
+    VALUES (paz_salvo, fecha_de_emision, estado_paz_y_salvo);
+END //
+CALL registrarPazSalvo(TRUE, '2024-08-14', 'Activo');
+
+CREATE PROCEDURE eliminarPazSalvo (IN p_id_pys INT)
+BEGIN
+    DELETE FROM paz_salvo WHERE id_pys = p_id_pys;
+END //
+CALL eliminarPazSalvo(1);
+
+CREATE PROCEDURE consultarPazSalvo ()
+BEGIN
+    SELECT * FROM paz_salvo;
+END //
+CALL consultarPazSalvo();
+
+CREATE PROCEDURE consultarPazSalvoPorId (IN p_id_pys INT)
+BEGIN
+    SELECT * FROM paz_salvo WHERE id_pys = p_id_pys;
+END //
+CALL consultarPazSalvoPorId(1);
+
+CREATE PROCEDURE actualizarPazSalvo (
+    IN p_id_pys INT,
+    IN nuevo_paz_salvo LONGTEXT,
+    IN nueva_fecha_de_emision DATE,
+    IN nuevo_estado_paz_y_salvo VARCHAR(30)
+)
+BEGIN
+    UPDATE paz_salvo
+    SET 
+        paz_salvo = nuevo_paz_salvo,
+        fecha_de_emision = nueva_fecha_de_emision,
+        estado_paz_y_salvo = nuevo_estado_paz_y_salvo
+    WHERE id_pys = p_id_pys;
+END //
+CALL actualizarPazSalvo(1, FALSE, '2024-08-15', 'Inactivo');
+
+
+----------------------------------------------------------------------------------------------
+TABLA POSTULACION
+
+CREATE PROCEDURE registrarPostulacion (
+    IN fecha_postulacion DATE,
+    IN estado_vacante VARCHAR(15)
+)
+BEGIN
+    INSERT INTO postulacion (fecha_postulacion, estado_vacante)
+    VALUES (fecha_postulacion, estado_vacante);
+END //
+CALL registrarPostulacion('2024-08-14', 'En proceso');
+
+CREATE PROCEDURE eliminarPostulacion (IN p_id_postulacion INT)
+BEGIN
+    DELETE FROM postulacion WHERE id_postulacion = p_id_postulacion;
+END //
+CALL eliminarPostulacion(1);
+
+CREATE PROCEDURE consultarPostulacion ()
+BEGIN
+    SELECT * FROM postulacion;
+END //
+CALL consultarPostulacion();
+
+CREATE PROCEDURE consultarPostulacionPorId (IN p_id_postulacion INT)
+BEGIN
+    SELECT * FROM postulacion WHERE id_postulacion = p_id_postulacion;
+END //
+CALL consultarPostulacionPorId(1);
+
+CREATE PROCEDURE actualizarPostulacion (
+    IN p_id_postulacion INT,
+    IN nueva_fecha_postulacion DATE,
+    IN nuevo_estado_vacante VARCHAR(15)
+)
+BEGIN
+    UPDATE postulacion
+    SET 
+        fecha_postulacion = nueva_fecha_postulacion,
+        estado_vacante = nuevo_estado_vacante
+    WHERE id_postulacion = p_id_postulacion;
+END //
+CALL actualizarPostulacion(1, '2024-08-15', 'Finalizado');
+
+----------------------------------------------------------------------------------------------
+TABLA QUEJAS_RECLAMOS
+
+CREATE PROCEDURE registrarQuejasReclamos (
+    IN tipo_de_queja VARCHAR(50),
+    IN fecha_publicacion DATE,
+    IN estado VARCHAR(15),
+    IN respuesta LONGTEX45,
+    IN fecha_respuesta DATE
+)
+BEGIN
+    INSERT INTO quejas_y_reclamos (tipo_de_queja, fecha_publicacion, estado, Respuesta, fecha_respuesta)
+    VALUES (tipo_de_queja, fecha_publicacion, estado, respuesta, fecha_respuesta);
+END //
+CALL registrarQuejasReclamos('Servicio', '2024-08-14', 'Pendiente', 'En proceso', '2024-08-16');
+
+CREATE PROCEDURE eliminarQuejasReclamos (IN p_id_quejas_y_reclamos INT)
+BEGIN
+    DELETE FROM quejas_y_reclamos WHERE id_quejas_y_reclamos = p_id_quejas_y_reclamos;
+END //
+CALL eliminarQuejasReclamos(1);
+
+CREATE PROCEDURE consultarQuejasReclamos ()
+BEGIN
+    SELECT * FROM quejas_y_reclamos;
+END //
+CALL consultarQuejasReclamos();
+
+CREATE PROCEDURE consultarQuejasReclamosPorId (IN p_id_quejas_y_reclamos INT)
+BEGIN
+    SELECT * FROM quejas_y_reclamos WHERE id_quejas_y_reclamos = p_id_quejas_y_reclamos;
+END //
+CALL consultarQuejasReclamosPorId(1);
+
+
+CREATE PROCEDURE actualizarQuejasReclamos (
+    IN p_id_quejas_y_reclamos INT,
+    IN nuevo_tipo_de_queja VARCHAR(50),
+    IN nueva_fecha_publicacion DATE,
+    IN nuevo_estado VARCHAR(15),
+    IN nueva_respuesta LONGTEX45,
+    IN nueva_fecha_respuesta DATE
+)
+BEGIN
+    UPDATE quejas_y_reclamos
+    SET 
+        tipo_de_queja = nuevo_tipo_de_queja,
+        fecha_publicacion = nueva_fecha_publicacion,
+        estado = nuevo_estado,
+        Respuesta = nueva_respuesta,
+        fecha_respuesta = nueva_fecha_respuesta
+    WHERE id_quejas_y_reclamos = p_id_quejas_y_reclamos;
+END //
+CALL actualizarQuejasReclamos(1, 'Atención al cliente', '2024-08-14', 'Resuelto', 'Respuesta proporcionada', '2024-08-17');
+
+----------------------------------------------------------------------------------------------
+TABLA REGISTRO
+CREATE PROCEDURE registrarRegistro (
+    IN num_doc int(11),
+    IN tipo_doc VARCHAR(45),
+    IN nombre VARCHAR(45),
+    IN apellido VARCHAR(45),
+    IN f_nacimiento DATE,
+    IN correo VARCHAR(45),
+    IN num_telefono VARCHAR(45),
+    IN pass VARCHAR(45)
+)
+BEGIN
+    INSERT INTO registro (num_doc, tipo_doc, nombre, apellido, f_nacimiento, correo, num_telefono, pass)
+    VALUES (num_doc, tipo_doc, nombre, apellido, f_nacimiento, correo, num_telefono, pass);
+END //
+CALL registrarRegistro('1234567890', 'Cédula', 'Juan', 'Pérez', '1990-01-01', 'juan.perez@example.com', '123456789', 'securepassword');
+
+CREATE PROCEDURE eliminarRegistro (IN p_num_doc VARCHAR(20))
+BEGIN
+    DELETE FROM registro WHERE num_doc = p_num_doc;
+END //
+CALL eliminarRegistro('1234567890');
+
+CREATE PROCEDURE consultarRegistro ()
+BEGIN
+    SELECT * FROM registro;
+END //
+CALL consultarRegistro();
+
+CREATE PROCEDURE consultarRegistroPorId (IN p_num_doc int(11))
+BEGIN
+    SELECT * FROM registro WHERE num_doc = p_num_doc;
+END //
+CALL consultarRegistroPorId('12');
+
+CREATE PROCEDURE actualizarRegistro (
+    IN p_num_doc int(11),
+    IN nuevo_tipo_doc VARCHAR(45),
+    IN nuevo_nombre VARCHAR(45),
+    IN nuevo_apellido VARCHAR(45),
+    IN nueva_f_nacimiento DATE,
+    IN nuevo_correo VARCHAR(45),
+    IN nuevo_num_telefono VARCHAR(45),
+    IN nueva_pass VARCHAR(45)
+)
+BEGIN
+    UPDATE registro
+    SET 
+        tipo_doc = nuevo_tipo_doc,
+        nombre = nuevo_nombre,
+        apellido = nuevo_apellido,
+        f_nacimiento = nueva_f_nacimiento,
+        correo = nuevo_correo,
+        num_telefono = nuevo_num_telefono,
+        pass = nueva_pass
+    WHERE num_doc = p_num_doc;
+END //
+CALL actualizarRegistro('1234567890', 'Pasaporte', 'Juan Carlos', 'Pérez López', '1990-01-01', 'juan.perez@newmail.com', '987654321', 'newsecurepassword');
+
+----------------------------------------------------------------------------------------------
+TABLA VACACIONES
+CREATE PROCEDURE registrarVacaciones (
+    IN fecha_inicio DATE,
+    IN fecha_fin DATE
+)
+BEGIN
+    INSERT INTO vacaciones (fecha_inicio, fecha_fin)
+    VALUES (fecha_inicio, fecha_fin);
+END //
+CALL registrarVacaciones('2024-12-01', '2024-12-15');
+
+CREATE PROCEDURE eliminarVacaciones (IN p_id_vacaciones INT)
+BEGIN
+    DELETE FROM vacaciones WHERE id_vacaciones = p_id_vacaciones;
+END //
+CALL eliminarVacaciones(1);
+
+CREATE PROCEDURE consultarVacaciones ()
+BEGIN
+    SELECT * FROM vacaciones;
+END //
+CALL consultarVacaciones();
+
+CREATE PROCEDURE consultarVacacionesPorId (IN p_id_vacaciones INT)
+BEGIN
+    SELECT * FROM vacaciones WHERE id_vacaciones = p_id_vacaciones;
+END //
+CALL consultarVacacionesPorId(1);
+
+CREATE PROCEDURE actualizarVacaciones (
+    IN p_id_vacaciones INT,
+    IN nueva_fecha_inicio DATE,
+    IN nueva_fecha_fin DATE
+)
+BEGIN
+    UPDATE vacaciones
+    SET 
+        fecha_inicio = nueva_fecha_inicio,
+        fecha_fin = nueva_fecha_fin
+    WHERE id_vacaciones = p_id_vacaciones;
+END //
+CALL actualizarVacaciones(1, '2024-12-01', '2024-12-20');
+
+
+----------------------------------------------------------------------------------------------
+TABLA VACANTES
+
+CREATE PROCEDURE registrarVacantes (
+    IN estado_vacante VARCHAR(10),
+    IN descripcion_vacante TEXT,
+    IN numero_puestos VARCHAR 30
+)
+BEGIN
+    INSERT INTO vacantes (estado_vacante, descripcion_vacante, numero_puestos)
+    VALUES (estado_vacante, descripcion_vacante, numero_puestos);
+END //
+CALL registrarVacantes('Abierta', 'Desarrollador de software', 3);
+
+CREATE PROCEDURE eliminarVacantes (IN p_id_vacantes INT)
+BEGIN
+    DELETE FROM vacantes WHERE id_vacantes = p_id_vacantes;
+END //
+CALL eliminarVacantes(1);
+
+CREATE PROCEDURE consultarVacantes ()
+BEGIN
+    SELECT * FROM vacantes;
+END //
+CALL consultarVacantes();
+
+CREATE PROCEDURE consultarVacantesPorId (IN p_id_vacantes INT)
+BEGIN
+    SELECT * FROM vacantes WHERE id_vacantes = p_id_vacantes;
+END //
+CALL consultarVacantesPorId(1);
+
+CREATE PROCEDURE actualizarVacantes (
+    IN p_id_vacantes INT,
+    IN nuevo_estado_vacante VARCHAR(10),
+    IN nueva_descripcion_vacante TEXT,
+    IN nuevo_numero_puestos VARCHAR 30
+)
+BEGIN
+    UPDATE vacantes
+    SET 
+        estado_vacante = nuevo_estado_vacante,
+        descripcion_vacante = nueva_descripcion_vacante,
+        numero_puestos = nuevo_numero_puestos
+    WHERE id_vacantes = p_id_vacantes;
+END //
+CALL actualizarVacantes(1, 'Cerrada', 'Desarrollador de software senior', 2);
+

@@ -1,0 +1,298 @@
+| ausencias            |----
+| cargos               |----
+| contratos            |
+| estudios             |----
+| experiencialaboral   |----
+| hojadevida           |----
+| horasextra           |----
+| jornada              |----
+| notificaciones       |----
+| pazysalvo            |
+| postulaciones        |----
+| quejasreclamos       |----
+| roles                |----
+| usuarios             |----
+| vacaciones           |----
+| vacantes             |----
+
+
+
+USUAIOS HOJADEVIDA ----------------------------------------------------------------------------------------------------------------------------------------
+
+CALL sp_insertar_usuario_hojadevida(
+  12345,
+  'Juan',
+  'Pérez',
+  'juan.perez@example.com',
+  'CC',
+  'password123',
+  1,
+  4,
+  '1990-01-01',
+  'Calle 123',
+  1,
+  'Bogotá',
+  'Bogotá',
+  '1234567890',
+  '123456'
+);
+
+CALL sp_actualizar_usuario(
+  12345,
+  'Juan',
+  'Pérez',
+  'juan.perez@example.com',
+  'CC',
+  'password123',
+  1,
+  4,
+  '1990-01-01',
+  'Calle 123',
+  1,
+  'Bogotá',
+  'Bogotá',
+  '1234567890',
+  '123456'
+);
+
+CALL sp_eliminar_usuario(12345);
+
+CALL sp_leer_usuario(12345);
+
+CALL sp_leer_usuarios();
+
+AUSENCIAS NOTIFICACIONES ----------------------------------------------------------------------------------------------------------------------------------------
+
+CALL sp_actualizar_ausencia(
+  1,
+  '2022-01-01',
+  '2022-01-15',
+  'Enfermedad',
+  'El usuario está enfermo',
+  0,
+  '2022-01-01',
+  12345
+);
+
+CALL sp_eliminar_ausencia(1);
+
+CALL sp_leer_ausencia(1);
+
+CALL sp_consultar_ausencias();
+
+CARGOS ----------------------------------------------------------------------------------------------------------------------------------------
+
+CALL sp_crear_cargo('Desarrollador de software', 1);
+
+CALL sp_actualizar_cargo(1, 'Ingeniero de software', 1);
+
+CALL sp_eliminar_cargo(1);
+
+CALL sp_leer_cargo(1);
+
+CALL sp_consultar_cargos();
+
+VACANTES ----------------------------------------------------------------------------------------------------------------------------------------
+
+CALL sp_crear_vacante('Desarrollador de software', 'Desarrollar software', 'Conocimientos en Java y Spring', 50000.00, 1, 'Java, Spring', 2);
+
+CALL sp_actualizar_vacante(1, 'Desarrollador de software', 'Desarrollar software', 'Conocimientos en Java y Spring', 55000.00, 1, 'Java, Spring', 2);
+
+CALL sp_eliminar_vacante(1);
+
+CALL sp_leer_vacante(1);
+
+call sp_consultar_vacantes();
+
+ROLES ----------------------------------------------------------------------------------------------------------------------------------------
+
+CALL sp_crear_rol('Administrador', 1);
+
+CALL sp_actualizar_rol(1, 'Administrador', 1);
+
+CALL sp_eliminar_rol(1);
+
+CALL sp_leer_rol(1);
+
+SELECT idrol, nombreRol
+FROM roles
+WHERE estadoRol = 1;
+
+ESTUDIOS EXPERIENCIALABORAL ----------------------------------------------------------------------------------------------------------------------------------------
+
+CALL sp_estudio_experiencia(
+  7,
+  'Ingeniero de software',
+  'Desarrollador de software',
+  '2020-01-01',
+  '2022-12-31',
+  'Licenciatura',
+  'Ingeniería',
+  'Titulado',
+  '2015-01-01',
+  '2020-12-31',
+  'Ingeniero en sistemas',
+  'Ciudad de México',
+  'Universidad Nacional Autónoma de México'
+);
+
+CALL sp_estudio_experiencia(
+  7,
+  'Ingeniero de redes',
+  'Administrador de redes',
+  '2018-01-01',
+  '2020-12-31',
+  'Maestría',
+  'Ingeniería en redes',
+  'Titulado',
+  '2012-01-01',
+  '2015-12-31',
+  'Ingeniero en redes',
+  'Ciudad de México',
+  'Universidad Nacional Autónoma de México'
+);
+
+CALL sp_eliminar_estudio_experiencia(1);
+
+CALL sp_actualizar_estudio_experiencia(
+  7,
+  'Ingeniero de software',
+  'Desarrollador de software',
+  '2020-01-01',
+  '2022-12-31',
+  'Licenciatura',
+  'Ingeniería',
+  'Titulado',
+  '2015-01-01',
+  '2020-12-31',
+  'Ingeniero en sistemas',
+  'Ciudad de México',
+  'Universidad Nacional Autónoma de México'
+);
+
+CALL sp_leer_estudio_experiencia(1);
+
+VACACIONES ----------------------------------------------------------------------------------------------------------------------------------------
+
+
+CALL sp_crear_vacaciones(
+  '2022-01-01',
+  '2022-01-31',
+  'Jefe de Recursos Humanos',
+  1,
+  12345
+);
+
+
+CALL sp_eliminar_vacaciones(
+  1
+);
+
+
+CALL sp_actualizar_vacaciones(
+  1,
+  '2022-02-01',
+  '2022-02-28',
+  'Jefe de Recursos Humanos',
+  1,
+  12345
+);
+
+CALL sp_leer_vacaciones(
+  1
+);
+
+QUEJASRECLAMOS
+
+CALL sp_crear_queja_reclamo(
+  'Reclamo por servicio',
+  'El servicio fue muy malo',
+  0,
+  12345
+);
+
+
+CALL sp_eliminar_queja_reclamo(
+  1
+);
+
+
+CALL sp_actualizar_queja_reclamo(
+  1,
+  'Reclamo por servicio',
+  'El servicio fue muy malo',
+  1,
+  12345
+);
+
+
+CALL sp_leer_queja_reclamo(
+  3
+);
+
+POSTULACIONES
+
+CALL sp_crear_postulacion(
+  1,
+  1,
+  12345,
+  1
+);
+
+CALL sp_eliminar_postulacion(
+  1
+);
+
+call sp_leer_postulacion(
+  1
+);
+
+HORASEXTRA
+
+CALL sp_crear_horasextra(
+  '2022-01-01',
+  '08:00:00',
+  12345
+);
+
+CALL sp_eliminar_horasextra(
+  1
+);
+
+CALL sp_actualizar_horasextra(
+  1,
+  '2022-01-02',
+  '09:00:00',
+  12345
+);
+
+CALL sp_leer_horasextra(
+  1
+);
+
+JORNADA
+
+CALL sp_crear_jornada(
+  '2022-01-01',
+  '08:00:00',
+  '17:00:00',
+  1,
+  12345
+);
+
+CALL sp_actualizar_jornada(
+  5,
+  '2022-01-02',
+  '09:00:00',
+  '18:00:00',
+  2,
+  12345
+);
+
+CALL sp_eliminar_jornada(
+  6
+);
+
+CALL sp_leer_jornada(
+  5
+);
