@@ -2,14 +2,14 @@
 declare(strict_types = 1);
 
 namespace Controller;
+
 use Core\Controllers\BaseController;
 use Model\Publicaciones;
 use Service\TokenService;
 use PDO;
 use Exception;
 
-
-class PublicacionesController extends BaseController{
+class PublicacionesController extends BaseController {
     private PDO $db;
     private Publicaciones $publicaciones;
     private TokenService $tokenService;
@@ -21,17 +21,15 @@ class PublicacionesController extends BaseController{
         $this->tokenService = new TokenService();
     }
 
-
     public function obtenerPublicacionPorTipoDeContrato() {
         $num_doc = $this->tokenService->validarToken();
         $publicaciones = $this->publicaciones->obtenerPublicacionPorTipoDeContrato($num_doc);
         $this->jsonResponseService->responder(['Publicaciones' => $publicaciones]);
     }
-    
 
     public function agregarPublicacion($data) {
-        $num_doc = $this->validarToken();
-        
+        $num_doc = $this->tokenService->validarToken(); // Corregido
+
         if ($this->publicaciones->agregarPublicacion($data, $num_doc)) {
             $this->jsonResponseService->responder(['mensaje' => 'Publicación agregada exitosamente'], 201);
         } else {
@@ -44,6 +42,7 @@ class PublicacionesController extends BaseController{
 
         if (empty($data['idPublicacion'])) {
             $this->jsonResponseService->responderError(['error' => 'ID de publicación no proporcionado'], 400);
+            return; 
         }
 
         if ($this->publicaciones->actualizarPublicacion($data)) {
@@ -54,11 +53,13 @@ class PublicacionesController extends BaseController{
     }
 
     public function eliminarPublicacion($data) {
-        $num_doc = $this->validarToken();
+        $num_doc = $this->tokenService->validarToken(); 
 
         if (empty($data['idPublicacion'])) {
             $this->jsonResponseService->responderError(['error' => 'ID de publicación no proporcionado'], 400);
+            return; 
         }
+
         if ($this->publicaciones->eliminarPublicacion($data['idPublicacion'])) {
             $this->jsonResponseService->responder(['mensaje' => 'Publicación eliminada exitosamente'], 200);
         } else {
