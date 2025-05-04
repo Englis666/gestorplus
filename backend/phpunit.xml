@@ -7,11 +7,15 @@
         <testsuite name="Controladores">
             <directory>test/controllers</directory>
         </testsuite>
+        <testsuite name="Modelos">
+            <directory>test/models</directory>
+        </testsuite>
     </testsuites>
 
     <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">controlador</directory>
+            <directory suffix=".php">modelo</directory>
         </include>
         <exclude>
             <directory suffix=".php">tests</directory>
