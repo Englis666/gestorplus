@@ -57,6 +57,29 @@
             <li class="defect">Obtener contrato existente</li>
             <li class="success">Obtener contrato no existente</li>
         </ul>
+        <h2>Aspirante Controller (Test\Controller\AspiranteController)</h2>
+        <ul>
+            <li class="success">Aplicacion de aspirante con parametros validos</li>
+            <li class="success">Aplicacion de aspirante falla</li>
+            <li class="success">Aplicacion de aspirante parametros faltantes</li>
+            <li class="success">Aplicacion de aspirante token invalido</li>
+        </ul>
+        <h2>Aspirante Model (Test\Model\AspiranteModel)</h2>
+        <ul>
+            <li class="defect">Obtener detalle convocatoria devuelve resultado</li>
+            <li class="defect">Obtener detalle convocatoria devuelve null cuando no existe</li>
+            <li class="defect">Obtener notificaciones aspirante devuelve solo tipo correcto</li>
+            <li class="defect">Obtener notificaciones aspirante devuelve vacío cuando no hay</li>
+            <li class="defect">Verificar postulacion existe y no existe</li>
+            <li class="defect">Aplicacion de aspirante inserta las tres filas</li>
+        </ul>
+        <h2>Ausencia Controller (Test\Controller\AusenciaController)</h2>
+        <ul>
+            <li class="success">Obtener ausencias</li>
+            <li class="success">Solicitar ausencia</li>
+            <li class="success">Ausencia aceptada</li>
+            <li class="success">Ausencia rechazada</li>
+        </ul>
         <h2>Auth Controller</h2>
         <ul>
             <li class="success">Registrar</li>
@@ -69,6 +92,22 @@
             <li class="success">Calcular horas extra</li>
             <li class="success">Obtener minutos trabajados</li>
             <li class="success">Obtener minutos trabajados del empleado</li>
+        </ul>
+        <h2>Cargo Controller (Test\Controller\CargoController)</h2>
+        <ul>
+            <li class="success">Obtener cargos responde correctamente</li>
+            <li class="success">Agregar cargo responde correctamente</li>
+            <li class="success">Activar cargo responde correctamente</li>
+            <li class="success">Desactivar cargo responde correctamente</li>
+            <li class="success">Desactivar cargo lanza excepcion</li>
+        </ul>
+        <h2>Cargo Model</h2>
+        <ul>
+            <li class="defect">Activar cargo</li>
+            <li class="defect">Desactivar cargo sin relaciones</li>
+            <li class="defect">Desactivar cargo con relaciones</li>
+            <li class="defect">Obtener cargos</li>
+            <li class="defect">Agregar cargo</li>
         </ul>
         <h2>Certificado Controller</h2>
         <ul>
@@ -109,6 +148,12 @@
             <li class="success">Asistencia confirmada</li>
             <li class="success">Asistencia no confirmada</li>
         </ul>
+        <h2>Estadistica Controller (Test\Controller\EstadisticaController)</h2>
+        <ul>
+            <li class="defect">Obtener total estadisticas con payload invalido</li>
+            <li class="defect">Obtener total estadisticas con payload sin num doc</li>
+            <li class="defect">Obtener total estadisticas responde correctamente</li>
+        </ul>
         <h2>Estudio Controller (Test\Controller\EstudioController)</h2>
         <ul>
             <li class="success">Obtener estudio success</li>
@@ -142,10 +187,19 @@
             <li class="success">Obtener notificaciones aspirante not found</li>
             <li class="success">Obtener notificaciones aspirante success</li>
         </ul>
+        <h2>Pazy Salvo Controller (Test\Controller\PazySalvoController)</h2>
+        <ul>
+            <li class="success">Obtener paz y salvos</li>
+            <li class="success">Obtener mipaz y salvo</li>
+            <li class="success">Generar paz y salvo correctamente</li>
+            <li class="success">Generar paz y salvo falla por empleado faltante</li>
+            <li class="success">Obtener paz y salvos error</li>
+            <li class="success">Obtener mipaz y salvo error</li>
+        </ul>
         <h2>Perfil Controller</h2>
         <ul>
             <li class="success">Datos perfil success</li>
-            <li class="success">Actualizar perfil con datos faltantes</li>
+            <li class="defect">Actualizar perfil con datos faltantes</li>
             <li class="success">Actualizar perfil success</li>
         </ul>
         <h2>Permiso Controller (Tests\Controller\PermisoController)</h2>
@@ -177,6 +231,12 @@
             <li class="success">Obtener r r h h sin datos</li>
             <li class="success">Obtener usuarios con datos</li>
             <li class="success">Obtener usuarios sin datos</li>
+        </ul>
+        <h2>Vinculacion Controller (Test\Controller\VinculacionController)</h2>
+        <ul>
+            <li class="defect">Asignar vinculacion con datos validos</li>
+            <li class="defect">Asignar vinculacion con datos incompletos</li>
+            <li class="success">Obtener vinculaciones</li>
         </ul>
     </body>
 </html>
