@@ -5,13 +5,13 @@ use PDO;
 use PDOException;
 
 class DataBase {
-    private $host = "gestorplus-db";  // Por uso de docker ahora es obligatorio usarlo
+    private $host = "gestorplus-db"; //Usando Docker
     private $db_name = "gestorplus"; 
     private $username = "root"; 
-    private $password = "gestorplustfu";  // Usar la contraseña correcta definida en docker-compose.yml
+    private $password = "gestorplustfu";  // Contraseña definida en docker-compose.yml  
     private $conn;
 
-    public function getConnection() {
+    public function getConnection(): ?PDO {
         $this->conn = null;
 
         try {
