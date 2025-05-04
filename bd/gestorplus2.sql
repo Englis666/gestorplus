@@ -108,7 +108,7 @@ DROP TABLE IF EXISTS `cargo`;
 CREATE TABLE `cargo` (
   `idcargo` int(11) NOT NULL AUTO_INCREMENT,
   `nombreCargo` varchar(45) DEFAULT NULL,
-  `estadoCargo` int(11) NOT NULL,
+  `estadoCargo` varchar(21) NOT NULL,
   PRIMARY KEY (`idcargo`),
   UNIQUE KEY `nombreCargo` (`nombreCargo`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
@@ -121,18 +121,18 @@ CREATE TABLE `cargo` (
 LOCK TABLES `cargo` WRITE;
 /*!40000 ALTER TABLE `cargo` DISABLE KEYS */;
 INSERT INTO `cargo` VALUES
-(1,'Desarollador de software',1),
-(2,'Gerente de Sistemas',1),
-(3,'Administrador de Base De Datos',1),
-(4,'Analista de Soporte Tenico',1),
-(5,'Director Comercial',1),
-(6,'Ejecutivo de Cuenta',1),
-(7,'Vendedor Punto de Venta',1),
-(8,'Coordinador de Mercado',1),
-(10,'Supervisor de Produccion',1),
-(11,'Dibujante Textil',1),
-(12,'Jefe de Tienda',1),
-(13,'Operario de Produccion',1);
+(1,'Desarollador de software','Activo'),
+(2,'Gerente de Sistemas','Activo'),
+(3,'Administrador de Base De Datos','Activo'),
+(4,'Analista de Soporte Tenico','Activo'),
+(5,'Director Comercial', 'Activo'),
+(6,'Ejecutivo de Cuenta', 'Activo'),
+(7,'Vendedor Punto de Venta', 'Activo'),
+(8,'Coordinador de Mercado', 'Activo'),
+(10,'Supervisor de Produccion','Activo'),
+(11,'Dibujante Textil','Activo'),
+(12,'Jefe de Tienda','Activo'),
+(13,'Operario de Produccion','Activo');
 /*!40000 ALTER TABLE `cargo` ENABLE KEYS */;
 UNLOCK TABLES;
 
