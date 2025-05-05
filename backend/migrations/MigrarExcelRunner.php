@@ -9,6 +9,6 @@ if ($argc < 2) {
     exit(1);
 }
 
-$archivo = $argv[1];
+$filename = $argv[1];
 $migrador = new MigrarExcel();
-$migrador->importarExcel($archivo);
+$migrador->importarExcel($filename);
