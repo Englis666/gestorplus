@@ -38,5 +38,11 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 # Verificar si PHP y Xdebug están habilitados
 RUN php -m | grep xdebug
 
+#Libreria para que reconozca iconv
+RUN docker-php-ext-install iconv
+
+#Libreria para la migracion de datos desde un excel
+RUN composer require phpoffice/phpspreadsheet
+
 # Limpiar apt-get
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
