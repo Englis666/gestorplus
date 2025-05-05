@@ -1,18 +1,18 @@
 set -e 
 
 echo " Instalando Gestorplus ... "
-
-if [ -f /etc/lsb-release ]; then
-    echo " Detectado Ubuntu ... "
+# Comprobar si estamos en Ubuntu o Arch usando /etc/os-release
+if grep -q "Ubuntu" /etc/os-release; then
+    echo "Detectado Ubuntu ... "
     sudo apt update
     sudo apt install -y docker.io docker-compose git
-elif [ -f /etc/arch-release ]; then
-    echo " Detectado Arch Linux ... "
+elif grep -q "Arch" /etc/os-release; then
+    echo "Detectado Arch Linux ... "
     sudo pacman -Syu --noconfirm
     sudo pacman -S --noconfirm docker docker-compose git
-else 
-    echo " Sistema Operativo no compatible"
-    exit 1 
+else
+    echo "Sistema Operativo no compatible"
+    exit 1
 fi
 
 sudo systemctl enable docker
