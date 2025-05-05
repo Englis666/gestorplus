@@ -18,9 +18,8 @@ fi
 sudo systemctl enable docker
 sudo systemctl start docker
 
-if [ ! -d "gestorplus" ]; then
+if [ -d "gestorplus" ]; then
     echo  "La carpeta 'gestorplus' ya existe. Usando carpeta existente..."
-    cd gestorplus
 else 
     echo "Clonando GestorPlus..."
     git clone https://github.com/Englis666/gestorplus.git
@@ -40,9 +39,10 @@ if [ -z "$filename" ]; then
     exit 1
 fi
 
-php MigrarExcel.php "$filename"
+echo "Ejecutando migracion de archivo : $filename"
+php backend/migrations/MigrarExcelRunner.php "$filename"
+echo "Migracion completa"
 
-# Crear Usuario Administrador
 echo "Creando usuario administrador..."
 sudo docker exec -it gestorplus-php php backend/migrations/CrearAdministrador.php
 
