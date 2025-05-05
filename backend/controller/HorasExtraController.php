@@ -2,21 +2,17 @@
 namespace Controller;
 
 use Core\Controllers\BaseController;
-use Service\HoraExtraService;
 use Model\HorasExtra;
 use Service\TokenService;
-use PDO;
 use Exception;
 
 class HorasExtraController extends BaseController{
-    private PDO $db;
     private HorasExtra $horasExtra;
     private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->horasExtra = new HorasExtra($this->db);
+        $this->horasExtra = new HorasExtra($this->dbService);
         $this->tokenService = new TokenService();
     }
 

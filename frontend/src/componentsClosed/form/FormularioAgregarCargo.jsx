@@ -22,6 +22,7 @@ const FormularioCargo = ({ onCargoAgregado }) => {
                 nombreCargo: nombreCargo,
             })
             .then((response) => {
+                console.log(response);
                 if (response.data.success) {
                     onCargoAgregado({ nombreCargo, estadoCargo: "Activo" });
                     setNombreCargo("");

@@ -6,20 +6,18 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\PazySalvo;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
 
 class PazySalvoController extends BaseController
 {
     private PazySalvo $pazysalvo;
-    private PDO $db;
     private TokenService $tokenService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->pazysalvo = new PazySalvo($this->db);
+        $this->pazysalvo = new PazySalvo($this->dbService);
         $this->tokenService = new TokenService();
     }
 

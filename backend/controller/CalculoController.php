@@ -6,18 +6,15 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Calculo;
 use Service\TokenService;
-use PDO;
 use Exception;
 
 class CalculoController extends BaseController {
-    private PDO $db;
     private Calculo $calculo;
     private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->calculo = new Calculo($this->db);
+        $this->calculo = new Calculo($this->dbService);
         $this->tokenService = new TokenService();
     }
 

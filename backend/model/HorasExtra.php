@@ -1,31 +1,20 @@
 <?php
+declare(strict_types = 1);
 namespace Model;
 
-use Config\Database;
+use Service\DatabaseService;
 use PDO;
 use PDOException;
 
 class HorasExtra {
-    private $db;
+    private DatabaseService $dbService;
 
-    public function __construct($db) {
-        $this->db = $db;
-    }
-
-    private function ejecutarConsulta($sql, $params = []) {
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Ocurrió un error en la base de datos']);
-            http_response_code(500);
-            return [];
-        }
+    public function __construct(DatabaseService $dbService) {
+        $this->dbService = $dbService;
     }
 
     public function obtenerTodasLasHorasExtra() {
         $sql = "SELECT * FROM horaextra";
-        return $this->ejecutarConsulta($sql);
+        return $this->dbService->ejecutarConsulta($sql);
     }
 }

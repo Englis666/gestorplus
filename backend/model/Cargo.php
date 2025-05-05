@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Model;
 
-use PDO;
-use PDOException;
+use Service\DatabaseService;
 use Exception;
 
 class Cargo
 {
-    private PDO $db;
+    private DatabaseService $dbService;
 
-    public function __construct(PDO $db)
+    public function __construct(DatabaseService $dbService)
     {
-        $this->db = $db;
+        $this->dbService = $dbService;
     }
 
     /**
@@ -28,9 +27,9 @@ class Cargo
     {
         try {
             $sql = "UPDATE cargo SET estadoCargo = 'Activo' WHERE idCargo = ?";
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$idCargo]);
-        } catch (PDOException $e) {
+            $params = [$idCargo];
+            return $this->dbService->ejecutarUpdate($sql, $params);
+        } catch (Exception $e) {
             throw new Exception('Error al activar el cargo: ' . $e->getMessage(), 500);
         }
     }
@@ -54,9 +53,9 @@ class Cargo
 
         try {
             $sql = "UPDATE cargo SET estadoCargo = 'Inactiva' WHERE idCargo = ?";
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$idCargo]);
-        } catch (PDOException $e) {
+            $params = [$idCargo];
+            return $this->dbService->ejecutarUpdate($sql, $params);
+        } catch (Exception $e) {
             throw new Exception('Error al desactivar el cargo: ' . $e->getMessage(), 500);
         }
     }
@@ -72,12 +71,10 @@ class Cargo
     {
         try {
             $sql = "SELECT COUNT(*) AS total FROM convocatoria WHERE cargo_idCargo = ?";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$idCargo]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            return isset($row['total']) ? (int) $row['total'] : 0;
-        } catch (PDOException $e) {
+            $params = [$idCargo];
+            $result = $this->dbService->ejecutarConsulta($sql, $params);
+            return isset($result[0]['total']) ? (int)$result[0]['total'] : 0;
+        } catch (Exception $e) {
             throw new Exception('Error al verificar relaciones de convocatorias: ' . $e->getMessage(), 500);
         }
     }
@@ -91,9 +88,9 @@ class Cargo
     {
         try {
             $sql = "SELECT * FROM cargo";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
+            $result = $this->dbService->ejecutarConsulta($sql);
+            return $result ?: [];
+        } catch (Exception $e) {
             throw new Exception('Error al obtener cargos: ' . $e->getMessage(), 500);
         }
     }
@@ -109,12 +106,9 @@ class Cargo
     {
         try {
             $sql = "INSERT INTO cargo (nombreCargo, estadoCargo) VALUES (?, 'Activo')";
-            $stmt = $this->db->prepare($sql);
-            if ($stmt->execute([$nombreCargo])) {
-                return (int)$this->db->lastInsertId();
-            }
-            return null;
-        } catch (PDOException $e) {
+            $params = [$nombreCargo];
+            $this->dbService->ejecutarInsert($sql, $params);
+        } catch (Exception $e) {
             throw new Exception('Error al agregar el cargo: ' . $e->getMessage(), 500);
         }
     }

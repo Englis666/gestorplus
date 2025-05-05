@@ -5,19 +5,16 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Empleado;
 use Service\TokenService;
-use PDO;
 use Exception;
 
 
 class EmpleadoController extends BaseController{
-    private PDO $db;
     private Empleado $empleado;
     private TokenService $tokenService;
     
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->empleado = new Empleado($this->db);
+        $this->empleado = new Empleado($this->dbService);
         $this->tokenService = new TokenService();
     }
 

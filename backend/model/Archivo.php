@@ -1,51 +1,41 @@
 <?php
 namespace Model;
 
-use PDO;
-use PDOException;
+use Service\DatabaseService;
 
 class Archivo {
-    private $db;
+    private DatabaseService $dbService;
 
-    public function __construct($db) {
-        $this->db = $db;
+    public function __construct(DatabaseService $dbService) {
+        $this->dbService = $dbService;
     }
 
     public function subirContrato($idVinculacion, $rutaArchivo, $num_doc) {
+        $this->dbService->iniciarTransaccion();
         try {
-            $this->db->beginTransaction();
-
             $query = "UPDATE vinculacion SET documentoContrato = :ruta WHERE idvinculacion = :idVinculacion";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(":ruta", $rutaArchivo, PDO::PARAM_STR);
-            $stmt->bindParam(":idVinculacion", $idVinculacion, PDO::PARAM_INT);
-            $stmt->execute();
-
+            $params = [':ruta' => $rutaArchivo, ':idVinculacion' => $idVinculacion];
+            if (!$this->dbService->ejecutarUpdate($query, $params)) {
+                throw new \Exception("No se pudo actualizar el contrato");
+            }
             $updateRolQuery = "UPDATE usuario SET rol_idrol = :nuevoRol WHERE num_doc = :num_doc";
-            $stmt = $this->db->prepare($updateRolQuery);
-            $nuevoRol = 3;
-            $stmt->bindParam(":nuevoRol", $nuevoRol, PDO::PARAM_INT);
-            $stmt->bindParam(":num_doc", $num_doc, PDO::PARAM_INT);
-            $stmt->execute();
-
-            $this->db->commit();
+            $params = [':nuevoRol' => 3, ':num_doc' => $num_doc];
+            if (!$this->dbService->ejecutarUpdate($updateRolQuery, $params)) {
+                throw new \Exception("No se pudo actualizar el rol del usuario");
+            }
+            $this->dbService->confirmarTransaccion();
             return true;
-        } catch (PDOException $e) {
-            $this->db->rollBack();
+        } catch (\Exception $e) {
+            $this->dbService->revertirTransaccion();
             return false;
         }
     }
 
     public function obtenerContrato($num_doc) {
-        try {
-            $stmt = $this->db->prepare("SELECT documentoContrato FROM vinculacion WHERE usuario_num_doc = :num_doc");
-            $stmt->bindParam(":num_doc", $num_doc, PDO::PARAM_INT);
-            $stmt->execute();
-
-            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (PDOException $e) {
-            return null;
-        }
+        $query = "SELECT documentoContrato FROM vinculacion WHERE usuario_num_doc = :num_doc";
+        $params = [':num_doc' => $num_doc];
+        $result = $this->dbService->ejecutarConsulta($query, $params);
+        
+        return $result ? $result[0] : null;
     }
 }
-?>

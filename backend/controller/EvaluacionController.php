@@ -5,18 +5,15 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Evaluacion;
 use Service\TokenService;
-use PDO;
 use Exception;
 
 class EvaluacionController extends BaseController{
-    private PDO $db;
     private Evaluacion $evaluacion;
     private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->evaluacion = new Evaluacion($this->db);
+        $this->evaluacion = new Evaluacion($this->dbService);
         $this->tokenService = new TokenService();
     }
 

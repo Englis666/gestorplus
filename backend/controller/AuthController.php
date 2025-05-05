@@ -5,19 +5,16 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Auth;
 use Service\TokenService;
-use PDO;
 use Exception;
 use Firebase\JWT\JWT;
 
 class AuthController extends BaseController{
-    private PDO $db;
     private Auth $auth;
     private TokenService $tokenService;
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->auth = new Auth($this->db);
+        $this->auth = new Auth($this->dbService);
         $this->tokenService = new TokenService();
     }
 

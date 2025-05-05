@@ -7,26 +7,24 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Aspirante;
 use Service\TokenService;
-use PDO;
 use Exception;
 
 class AspiranteController extends BaseController {
-    private PDO $db;
     private Aspirante $aspirante;
     private TokenService $tokenService;
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->aspirante = new Aspirante($this->db);
+        $this->aspirante = new Aspirante($this->dbService);
         $this->tokenService = new TokenService();
     }
     
-    
     public function aplicacionDeAspirante($data) {
         $num_doc = $this->tokenService->validarToken();
-        if ($num_doc === null) return;
-
+        if ($num_doc === null){
+            $this->jsonResponseService->responderError('Token Invalido', 401);
+            return;
+        }
         if(!$this->parametrosRequeridos($data, ['idconvocatoria'])){
             return;
         }

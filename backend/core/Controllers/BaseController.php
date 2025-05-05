@@ -3,14 +3,20 @@ namespace Core\Controllers;
 
 use Service\JsonResponseService;
 use Service\ValidationService;
+use Service\DatabaseService;
+use PDO;
 
 abstract class BaseController {
     protected JsonResponseService $jsonResponseService;
     protected ValidationService $validator;
+    protected DatabaseService $dbService;
+    protected PDO $db;
 
-    public function __construct(){
+    public function __construct() {
         $this->jsonResponseService = new JsonResponseService();
         $this->validator = new ValidationService();
+        $this->db = (new \Config\Database())->getConnection();
+        $this->dbService = new DatabaseService($this->db);
     }
 
     /**

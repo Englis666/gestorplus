@@ -1,40 +1,45 @@
 <?php
+declare(strict_types = 1);
+
 namespace Model;
-use PDO;
+
+use Service\DatabaseService;
 use PDOException;
-use Config\Database;
 
-class Certificado{
-    private $db;
+class Certificado {
+    private DatabaseService $dbService;
 
-    public function __construct($db){
-        $this->db = $db;
+    public function __construct(DatabaseService $dbService) {
+        $this->dbService = $dbService;
     }
 
-
-    public function obtenerDatosParaCertificado($num_doc){
-        $sql = "SELECT * FROM vinculacion as v
-                INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc
-                INNER JOIN rol as r ON u.rol_idrol = r.idrol
-                INNER JOIN evaluacionessg as e ON v.evaluacionesSg_idevaluacion = e.idevaluacion
-                INNER JOIN entrevista as ent ON e.entrevista_identrevista = ent.identrevista
-                INNER JOIN postulacion as p ON ent.postulacion_idpostulaciones = p.idpostulacion
-                INNER JOIN convocatoria as c ON convocatoria_idconvocatoria = c.idconvocatoria
-                INNER JOIN cargo as car ON 
-                c.cargo_idcargo = car.idcargo
+    public function obtenerDatosParaCertificado($num_doc) {
+        try {
+            $sql = "
+                SELECT * FROM vinculacion AS v
+                INNER JOIN usuario AS u ON v.usuario_num_doc = u.num_doc
+                INNER JOIN rol AS r ON u.rol_idrol = r.idrol
+                INNER JOIN evaluacionessg AS e ON v.evaluacionesSg_idevaluacion = e.idevaluacion
+                INNER JOIN entrevista AS ent ON e.entrevista_identrevista = ent.identrevista
+                INNER JOIN postulacion AS p ON ent.postulacion_idpostulaciones = p.idpostulacion
+                INNER JOIN convocatoria AS c ON convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN cargo AS car ON c.cargo_idcargo = car.idcargo
                 WHERE u.num_doc = :num_doc
-                ";
-       $stmt = $this->db->prepare($sql);
-       $stmt->bindPAram(':num_doc' , $num_doc, PDO::PARAM_INT);
-       $stmt->execute();
+            ";
 
-       $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-       if($resultado){
-           return $resultado;
-       }
-       return[];
-   }
+            $params = [':num_doc' => $num_doc];
 
+            $resultado = $this->dbService->ejecutarConsulta($sql, $params);
 
+            if ($resultado) {
+                return $resultado;
+            }
 
+            return [];
+
+        } catch (PDOException $e) {
+            error_log("Error al obtener los datos para el certificado: " . $e->getMessage());
+            return [];
+        }
+    }
 }

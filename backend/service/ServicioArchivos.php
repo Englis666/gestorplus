@@ -3,19 +3,18 @@ namespace Service;
 
 use Core\Controllers\BaseController;
 use Model\Archivo;
+use Service\DatabaseService;
 use PDO;
-use Exception;
 
 class ServicioArchivos extends BaseController {
    
-    private PDO $db;
+    protected DatabaseService $dbService; 
     private Archivo $archivo;
-
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->archivo = new Archivo($this->db);
+        $this->dbService = new DatabaseService($this->db); 
+        $this->archivo = new Archivo($this->dbService); 
     }
 
     public function subirContrato($pdfFile, $idvinculacion, $num_doc) {
@@ -64,4 +63,3 @@ class ServicioArchivos extends BaseController {
         return $contrato;
     }
 }
-?>

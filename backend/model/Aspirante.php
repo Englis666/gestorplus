@@ -1,29 +1,25 @@
 <?php
+declare(strict_types = 1);
+
 namespace Model;
 
-use Config\Database;
+use Service\DatabaseService;
 use PDO;
 use PDOException;
 
 class Aspirante {
-    private $db;
 
-    public function __construct($db) {
-        $this->db = $db;
+    private DatabaseService $dbService;
+
+    public function __construct(DatabaseService $dbService){
+        $this->dbService = $dbService;
     }
 
     public function obtenerDetalleConvocatoria($idconvocatoria) {
         try {
             $sql = "SELECT * FROM convocatoria WHERE idconvocatoria = :idconvocatoria LIMIT 1";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':idconvocatoria', $idconvocatoria, PDO::PARAM_INT);
-            $stmt->execute();
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($resultado) {
-                return $resultado;
-            }
-            return null;
+            $params = [':idconvocatoria' => $idconvocatoria];
+            return $this->dbService->ejecutarConsulta($sql, $params, true);
         } catch (PDOException $e) {
             echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
             http_response_code(500);
@@ -31,41 +27,24 @@ class Aspirante {
         }
     }
 
-    public function obtenerNotificacionesAspirante($num_doc){
-          try{
+    public function obtenerNotificacionesAspirante($num_doc) {
+        try {
             $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc AND tipo = 'PostulacionAspirantes'";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-            $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            if($resultado){
-                return $resultado;
-            }
-            return [];
-        }catch (PDOException $e) {
+            $params = [':num_doc' => $num_doc];
+            return $this->dbService->ejecutarConsulta($sql, $params);
+        } catch (PDOException $e) {
             echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
             http_response_code(500);
             return [];
         }
     }
 
-   
-
     public function verificarPostulacion($num_doc, $idconvocatoria) {
         try {
             $sql = 'SELECT * FROM postulacion WHERE usuario_num_doc = :num_doc AND convocatoria_idconvocatoria = :idconvocatoria';
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-            $stmt->bindParam(':idconvocatoria', $idconvocatoria, PDO::PARAM_INT);
-            $stmt->execute();
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($resultado) {
-                return $resultado;
-            }
-            return null;
-        } catch(PDOException $e) {
+            $params = [':num_doc' => $num_doc, ':idconvocatoria' => $idconvocatoria];
+            return $this->dbService->ejecutarConsulta($sql, $params, true);
+        } catch (PDOException $e) {
             echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
             http_response_code(500);
             return null;
@@ -75,31 +54,26 @@ class Aspirante {
     public function aplicacionDeAspirante($num_doc, $idconvocatoria) {
         try {
             $sql = "INSERT INTO postulacion (usuario_num_doc, convocatoria_idconvocatoria, estadoPostulacion) VALUES (?, ?, ?)";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$num_doc, $idconvocatoria, "En proceso"]);
-    
-            // Si la inserción es correcta se notifica al aspirante y a RRHH
-            if ($stmt->rowCount() > 0) {
-                // Notificación para el aspirante
+            $params = [$num_doc, $idconvocatoria, "En proceso"];
+            if ($this->dbService->ejecutarInsert($sql, $params)) {
+                
                 $descripcionNotificacion = 'Has aplicado a una convocatoria';
                 $estadoNotificacion = 'No leida';
                 $tipo = 'PostulacionAspirantes';
-
-
-                $insert = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc)
-                            VALUES  (? , ? , ? , ?)";
-                $stmt = $this->db->prepare($insert);
-                if (!$stmt->execute([$descripcionNotificacion, $estadoNotificacion, $tipo, $num_doc])) {
-                    throw new PDOException("Error al insertar la notificación para el aspirante: " . implode(", ", $stmt->errorInfo()));
+                $insert = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
+                           VALUES (?, ?, ?, ?)";
+                $paramsNotif = [$descripcionNotificacion, $estadoNotificacion, $tipo, $num_doc];
+                if (!$this->dbService->ejecutarInsert($insert, $paramsNotif)) {
+                    throw new PDOException("Error al insertar la notificación para el aspirante");
                 }
 
                 $descripcionNotificacion2 = "El aspirante con número de documento $num_doc ha aplicado a una convocatoria";
                 $tipo2 = 'Postulacion';
-                $insert2 = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc)
-                            VALUES (? , ? , ? , ?)";
-                $stmt = $this->db->prepare($insert2);
-                if (!$stmt->execute([$descripcionNotificacion2, $estadoNotificacion, $tipo2, $num_doc])) {
-                    throw new PDOException("Error al insertar la notificación para RRHH: " . implode(", ", $stmt->errorInfo()));
+                $insert2 = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
+                            VALUES (?, ?, ?, ?)";
+                $paramsNotif2 = [$descripcionNotificacion2, $estadoNotificacion, $tipo2, $num_doc];
+                if (!$this->dbService->ejecutarInsert($insert2, $paramsNotif2)) {
+                    throw new PDOException("Error al insertar la notificación para RRHH");
                 }
 
                 return true;
@@ -114,4 +88,3 @@ class Aspirante {
         }
     }
 }
-?>

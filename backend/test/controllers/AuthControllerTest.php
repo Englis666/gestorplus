@@ -59,15 +59,15 @@ class AuthControllerTest extends TestCase
     {
         // Datos de prueba
         $datosLogin = [
-            'num_doc' => '7891011',
-            'password' => 'passwordSegura'
+            'num_doc' => '1014736',
+            'password' => '123'
         ];
 
         // Usuario simulado
         $usuarioSimulado = [
-            'num_doc' => '123456',
-            'nombres' => 'Juan Pérez',
-            'rol' => '4',
+            'num_doc' => '1014736',
+            'nombres' => 'Englis Barros',
+            'rol' => '1',
             'hojadevida_idHojadevida' => 10
         ];
 

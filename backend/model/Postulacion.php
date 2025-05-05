@@ -1,79 +1,67 @@
 <?php
+declare(strict_types = 1);
+
 namespace Model;
 
-use Config\Database;
-use PDO;
-use PDOException;
+use Service\DatabaseService;
+use Exception;
 
 class Postulacion {
-    private $db;
+    private DatabaseService $dbService;
 
-    public function __construct($db) {
-        $this->db = $db;
+    public function __construct(DatabaseService $dbService) {
+        $this->dbService = $dbService;
     }
 
-    public function obtenerPostulacionesAspirante($num_doc) {
+    public function obtenerPostulacionesAspirante(int $num_doc): ?array {
         try {
-            $sql = "SELECT * FROM postulacion p 
-                    INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria
-                    INNER JOIN cargo as ca ON c.cargo_idCargo = ca.idCargo
-                    WHERE p.usuario_num_doc = :num_doc";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-            $stmt->execute();
-            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            if ($resultados) {
-                return $resultados;
-            }
-            return null;
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
+            $sql = "
+                SELECT * FROM postulacion p 
+                INNER JOIN convocatoria c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN cargo as ca ON c.cargo_idCargo = ca.idCargo
+                WHERE p.usuario_num_doc = :num_doc
+            ";
+            $params = [':num_doc' => $num_doc];
+            return $this->dbService->ejecutarConsulta($sql, $params) ?? null;
+        } catch (Exception $e) {
+            error_log("Error al obtener postulaciones del aspirante: " . $e->getMessage());
             return null;
         }
     }
 
-    public function obtenerPostulaciones() {
+    public function obtenerPostulaciones(): array {
         try {
-            $sql = "SELECT * FROM postulacion as p
-                    INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc
-                    INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
-                    INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if ($resultado) {
-                return $resultado;
-            }
-            return [];
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
+            $sql = "
+                SELECT * FROM postulacion as p
+                INNER JOIN usuario as u ON p.usuario_num_doc = u.num_doc
+                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+                INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo
+            ";
+            return $this->dbService->ejecutarConsulta($sql) ?? [];
+        } catch (Exception $e) {
+            error_log("Error al obtener todas las postulaciones: " . $e->getMessage());
             return [];
         }
     }
 
-    public function verificarPostulacion($num_doc, $idconvocatoria) {
+    public function verificarPostulacion(int $num_doc, int $idconvocatoria): ?array {
         try {
-            $sql = 'SELECT * FROM postulacion WHERE usuario_num_doc = :num_doc AND convocatoria_idconvocatoria = :idconvocatoria';
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-            $stmt->bindParam(':idconvocatoria', $idconvocatoria, PDO::PARAM_INT);
-            $stmt->execute();
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($resultado) {
-                return $resultado;
-            }
-            return null;
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
+            $sql = "
+                SELECT * FROM postulacion 
+                WHERE usuario_num_doc = :num_doc 
+                AND convocatoria_idconvocatoria = :idconvocatoria
+            ";
+            $params = [
+                ':num_doc' => $num_doc,
+                ':idconvocatoria' => $idconvocatoria
+            ];
+            return $this->dbService->ejecutarConsulta($sql, $params, true) ?? null;
+        } catch (Exception $e) {
+            error_log("Error al verificar postulaciones: " . $e->getMessage());
             return null;
         }
     }
+
     public function obtenerPostulacionesAgrupadasPorConvocatoria(int $idconvocatoria): array {
         try {
             $sql = "
@@ -91,22 +79,11 @@ class Postulacion {
                 INNER JOIN cargo ca ON c.cargo_idcargo = ca.idcargo
                 WHERE c.idconvocatoria = :idconvocatoria
             ";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':idconvocatoria', $idconvocatoria, PDO::PARAM_INT);
-            $stmt->execute();
-    
-            // Retornar los resultados o un array vacío si no hay resultados
-            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (PDOException $e) {
-            // Loguear el error (esto depende de tu configuración de logging)
-            error_log('Error en la consulta: ' . $e->getMessage());
-    
-            // Enviar una respuesta de error
-            echo json_encode(['error' => 'Error en la consulta, por favor intente nuevamente más tarde.']);
-            http_response_code(500);
-            return [];  // Retorna un array vacío en caso de error
+            $params = [':idconvocatoria' => $idconvocatoria];
+            return $this->dbService->ejecutarConsulta($sql, $params) ?? [];
+        } catch (Exception $e) {
+            error_log("Error al obtener postulaciones agrupadas: " . $e->getMessage());
+            return [];
         }
     }
-    
-    
 }

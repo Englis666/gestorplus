@@ -6,24 +6,21 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Perfil;
 use Service\TokenService;
-use PDO;
 use Exception;
 
 class PerfilController extends BaseController {
-    private PDO $db;
     private Perfil $perfil;
     private TokenService $tokenService;
 
     public function __construct() {
         parent::__construct();
-        $this->db           = (new \Config\Database())->getConnection();
-        $this->perfil       = new Perfil($this->db);
+        $this->perfil = new Perfil($this->dbService);
         $this->tokenService = new TokenService();
     }
 
     public function datosPerfil(): void {
         try {
-            $num_doc   = $this->tokenService->validarToken();
+            $num_doc = $this->tokenService->validarToken();
             $resultado = $this->perfil->datosPerfil($num_doc);
 
             $this->jsonResponseService->responder([
@@ -39,16 +36,11 @@ class PerfilController extends BaseController {
         }
     }
 
-    public function actualizarPerfil($data): void {
+    public function actualizarPerfil(array $data): void {
         try {
-            $num_doc = $this->tokenService->validarToken();
-
-            // 1) Validar campos requeridos
+            $num_doc = (int) $this->tokenService->validarToken();
             if (
-                empty($data['nombres']) ||
-                empty($data['apellidos']) ||
-                empty($data['email']) ||
-                empty($data['tipodDoc'])
+                !isset($data['nombres'], $data['apellidos'], $data['email'], $data['tipodDoc'])
             ) {
                 $this->jsonResponseService->responderError(
                     ['status' => 'error', 'message' => 'Faltan datos requeridos para actualizar el perfil'],
@@ -56,11 +48,15 @@ class PerfilController extends BaseController {
                 );
                 return;
             }
-
-            // 2) Intentar actualizar
+            if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $this->jsonResponseService->responderError(
+                    ['status' => 'error', 'message' => 'El formato del email no es válido'],
+                    400
+                );
+                return;
+            }
             $resultado = $this->perfil->actualizarPerfil($num_doc, $data);
 
-            // 3) Responder según resultado
             if ($resultado) {
                 $this->jsonResponseService->responder([
                     'status'  => 'success',

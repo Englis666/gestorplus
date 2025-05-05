@@ -6,19 +6,16 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Jornada;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
 
 class JornadaController extends BaseController {
-
-    private PDO $db;
     private Jornada $jornada;
     private TokenService $tokenService;
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->jornada = new Jornada($this->db);
+        $this->jornada = new Jornada($this->dbService);
         $this->tokenService = new TokenService();
     }
 

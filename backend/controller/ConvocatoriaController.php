@@ -7,19 +7,17 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Convocatoria;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
 
 class ConvocatoriaController extends BaseController{
-    private PDO $db;
     private Convocatoria $convocatoria;
     private TokenService $tokenService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->convocatoria = new Convocatoria($this->db);
+        $this->convocatoria = new Convocatoria($this->dbService);
         $this->tokenService = new TokenService();
     }
 

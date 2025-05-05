@@ -6,18 +6,16 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Notificacion;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
 
 class NotificacionController extends BaseController {
-    private PDO $db;
     private Notificacion $notificacion;
     private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->notificacion = new Notificacion($this->db);
+        $this->notificacion = new Notificacion($this->dbService);
         $this->tokenService = new TokenService();
     }
 

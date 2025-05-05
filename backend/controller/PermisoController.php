@@ -6,18 +6,16 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Permiso;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
 
 class PermisoController extends BaseController {
     private Permiso $permiso;
-    private PDO $db;
     private TokenService $tokenService;
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->permiso = new Permiso($this->db);
+        $this->permiso = new Permiso($this->dbService);
         $this->tokenService = new TokenService();
     }
 

@@ -4,20 +4,17 @@ declare(strict_types = 1);
 namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Estadistica;
-use PDO;
-use Exception;
 use Service\TokenService;
+use Service\DatabaseService;
+use Exception;
 
  class EstadisticaController extends BaseController{
-
-    private PDO $db;
     private Estadistica $estadistica;
     private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->estadistica = new Estadistica($this->db);
+        $this->estadistica = new Estadistica($this->dbService);
         $this->tokenService = new TokenService();
     }
 

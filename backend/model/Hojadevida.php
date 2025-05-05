@@ -1,14 +1,16 @@
 <?php
+declare(strict_types = 1);
 namespace Model;
-use Config\Database;
+
+use Service\DatabaseService;
 use PDO;
 use PDOException;
 
 class Hojadevida{
-    private $db;
+    private DatabaseService $dbService;
 
-    public function __construct($db){
-        $this->db = $db;
+    public function __construct(DatabaseService $dbService){
+        $this->dbService = $dbService;
     }
 
     public function obtenerHojadevidaPorNumDoc(int $num_doc): ?array {

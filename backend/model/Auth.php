@@ -1,29 +1,32 @@
 <?php
 namespace Model;
 
-use PDO;
+use Service\DatabaseService;
 use PDOException;
-use Config\Database;
 
 class Auth {
-    private $db;
-    
-    public function __construct($db){
-        $this->db = $db;
+    private DatabaseService $dbService;
+
+    public function __construct(DatabaseService $dbService){
+        $this->dbService = $dbService;
     }
 
     public function registrar($data) {
         try {
-            $this->db->beginTransaction();
-            $sqlHojaDeVida = "INSERT INTO hojadevida () VALUES ()"; 
-            $stmtHojaDeVida = $this->db->prepare($sqlHojaDeVida);
-            $stmtHojaDeVida->execute();
+            $this->dbService->iniciarTransaccion();
 
-            $idHojadevida = $this->db->lastInsertId();
+            $sqlHojaDeVida = "INSERT INTO hojadevida () VALUES ()"; 
+            $idHojadevida = $this->dbService->ejecutarInsert($sqlHojaDeVida);
+
+            if (!$idHojadevida) {
+                $this->dbService->revertirTransaccion();
+                return json_encode(['message' => 'No se pudo registrar la hoja de vida.']);
+            }
+
             $sqlUsuario = "INSERT INTO usuario (num_doc, nombres, apellidos, email, tipodDoc, password, estado, rol_idrol, hojadevida_idHojadevida) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmtUsuario = $this->db->prepare($sqlUsuario);    
-            $stmtUsuario->execute([
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            $usuarioInsertado = $this->dbService->ejecutarAccion($sqlUsuario, [
                 $data['num_doc'],
                 $data['nombres'],
                 $data['apellidos'],
@@ -34,51 +37,55 @@ class Auth {
                 $data['rol_idrol'],
                 $idHojadevida 
             ]);
-            $this->db->commit();
-            return json_encode(['message' => 'Usuario registrado Correctamente']);
+
+            if (!$usuarioInsertado) {
+                $this->dbService->reveritrTransaccion();
+                return json_encode(['message' => 'Error al registrar el usuario.']);
+            }
+
+            $this->dbService->confirmarTransaccion();
+            return json_encode(['message' => 'Usuario registrado correctamente']);
+
         } catch (PDOException $e) {
-            $this->db->rollBack();
+            $this->dbService->reveritrTransaccion();
             return json_encode(['message' => 'Error al registrar: ' . $e->getMessage()]);
         }
     }
 
-
     public function inicioSesion($data){
         date_default_timezone_set('America/Bogota');
-    
+
         $sql = "SELECT * FROM usuario WHERE num_doc = ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$data['num_doc']]);
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+        $usuario = $this->dbService->ejecutarConsulta($sql, [$data['num_doc']], true);
+
         if ($usuario && password_verify($data['password'], $usuario['password'])) {
-    
+
             if ($usuario['rol_idrol'] != 4) {
                 $num_doc = $usuario['num_doc'];
                 $nombres = $usuario['nombres'];
                 $fecha = date('Y-m-d'); 
                 $horaEntrada = date('H:i:s'); 
                 $estadoJornada = "Pendiente";
-    
+
                 $entrada = new \DateTime("$fecha $horaEntrada");
                 $entrada->modify('+8 hours');
                 $horaSalida = $entrada->format('H:i:s');
-            
-                $verificar = $this->db->prepare("SELECT * FROM jornada WHERE usuario_num_doc = ? AND fecha = ? AND horaSalida IS NULL");
-                $verificar->execute([$num_doc, $fecha]);
-                
-                if ($verificar->rowCount() === 0) {
-                    $insertarMiJornada = $this->db->prepare("INSERT INTO jornada (fecha, horaEntrada, usuario_num_doc, estadoJornada) 
-                                                             VALUES (?, ?, ?, ?)");
-                    if ($insertarMiJornada->execute([$fecha, $horaEntrada, $num_doc, $estadoJornada])) {
-                        $descripcion = "Nueva jornada registrada por inicio de sesión para el usuario con documento: $num_doc y con el nombre $nombres";
-                        
-                        $insertarNotificacion = $this->db->prepare("INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
-                                                                     VALUES (?, ?, ?, ?)");
-                        $insertarNotificacion->execute([$descripcion, 'Jornada Registrada', 'Jornada', $num_doc]);
-                    }
+
+                $sqlVerificar = "SELECT * FROM jornada WHERE usuario_num_doc = ? AND fecha = ? AND horaSalida IS NULL";
+                $jornadaExistente = $this->dbService->ejecutarConsulta($sqlVerificar, [$num_doc, $fecha]);
+
+                if (empty($jornadaExistente)) {
+                    $sqlInsertarJornada = "INSERT INTO jornada (fecha, horaEntrada, usuario_num_doc, estadoJornada) 
+                                           VALUES (?, ?, ?, ?)";
+                    $this->dbService->ejecutarAccion($sqlInsertarJornada, [$fecha, $horaEntrada, $num_doc, $estadoJornada]);
+
+                    $descripcion = "Nueva jornada registrada por inicio de sesión para el usuario con documento: $num_doc y con el nombre $nombres";
+
+                    $sqlInsertarNotificacion = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
+                                                VALUES (?, ?, ?, ?)";
+                    $this->dbService->ejecutarAccion($sqlInsertarNotificacion, [$descripcion, 'Jornada Registrada', 'Jornada', $num_doc]);
                 }
-    
+
                 return [
                     'num_doc' => $usuario['num_doc'],
                     'nombres' => $usuario['nombres'],
@@ -94,10 +101,7 @@ class Auth {
                 ];
             }
         } else {
-            return false; 
+            return false;
         }
     }
-    
-
-
 }

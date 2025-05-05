@@ -1,62 +1,58 @@
 <?php
+declare(strict_types = 1);
 namespace Model;
 
-use Config\Database;
-use PDO;
+use Service\DatabaseService;
 use PDOException;
 
-class Convocatoria{
-    private $db;
+class Convocatoria {
+    private DatabaseService $dbService;
     
-    public function __construct($db){
-        $this->db = $db;
+    public function __construct(DatabaseService $dbService) {
+        $this->dbService = $dbService;
     }
 
-    private function ejecutarConsulta($sql, $params = []) {
+    public function obtenerConvocatorias() {
+        $sql = "SELECT * FROM convocatoria as c 
+                INNER JOIN cargo as ca ON c.cargo_idCargo = ca.idCargo";
+        
+        return $this->dbService->ejecutarConsulta($sql);
+    }
+
+    public function agregarConvocatoria($data) {
         try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            $sql = "INSERT INTO convocatoria (nombreConvocatoria, descripcion, requisitos, salario,
+                        cantidadConvocatoria, cargo_idcargo)
+                    VALUES (:nombreConvocatoria, :descripcion, :requisitos, :salario, :cantidadConvocatoria, :cargo_idcargo)";
+            
+            $params = [
+                ':nombreConvocatoria' => $data['nombreConvocatoria'],
+                ':descripcion' => $data['descripcion'],
+                ':requisitos' => $data['requisitos'],
+                ':salario' => $data['salario'],
+                ':cantidadConvocatoria' => $data['cantidadConvocatoria'],
+                ':cargo_idcargo' => $data['idcargo']
+            ];
+            
+            $this->dbService->ejecutarConsulta($sql, $params);
+
+            return true;
         } catch (PDOException $e) {
+            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
             http_response_code(500);
-            echo json_encode(['error' => 'Ocurrió un error en la base de datos']);
-            return [];
+            return false;
         }
     }
-
-    public function obtenerConvocatorias(){
-        $sql = "SELECT * FROM convocatoria as c INNER JOIN cargo as ca 
-                ON c.cargo_idCargo = ca.idCargo";
-        return $this->ejecutarConsulta($sql);
-    }
-
-    public function agregarConvocatoria($data){
-        $sql = "INSERT INTO convocatoria (nombreConvocatoria,descripcion,requisitos, salario,
-                        cantidadConvocatoria, cargo_idcargo)
-                                             VALUES ( ? , ? , ? , ? , ? , ?)";
-         $stmt = $this->db->prepare($sql);
-         $stmt->execute([
-             $data['nombreConvocatoria'],
-             $data['descripcion'],
-             $data['requisitos'],
-             $data['salario'],
-             $data['cantidadConvocatoria'],
-             $data['idcargo'],
-         ]);
-        return;
-    }
-
 
     public function obtenerDetalleConvocatoria($idconvocatoria) {
         try {
             $sql = "SELECT * FROM convocatoria WHERE idconvocatoria = :idconvocatoria LIMIT 1";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':idconvocatoria', $idconvocatoria, PDO::PARAM_INT);
-            $stmt->execute();
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             
+            $params = [':idconvocatoria' => $idconvocatoria];
+            $resultado = $this->dbService->ejecutarConsulta($sql, $params);
+
             if ($resultado) {
-                return $resultado;
+                return $resultado[0];
             }
             return null;
         } catch (PDOException $e) {
@@ -65,5 +61,5 @@ class Convocatoria{
             return null;
         }
     }
-
 }
+?>

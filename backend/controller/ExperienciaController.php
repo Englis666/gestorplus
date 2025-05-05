@@ -5,18 +5,16 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Experiencia;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
 
 class ExperienciaController extends BaseController {
-    private PDO $db;
     private Experiencia $experiencia;
     private TokenService $tokenService;
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->experiencia = new Experiencia($this->db);
+        $this->experiencia = new Experiencia($this->dbService);
         $this->tokenService = new TokenService();
     }
     

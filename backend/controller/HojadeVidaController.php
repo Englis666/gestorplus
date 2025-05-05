@@ -7,18 +7,16 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Hojadevida;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
 
 class HojadevidaController extends BaseController{
-    private PDO $db;
     private Hojadevida $hojadevida;
     private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->hojadevida = new Hojadevida($this->db);
+        $this->hojadevida = new Hojadevida($this->dbService);
         $this->tokenService = new TokenService();
     }
 

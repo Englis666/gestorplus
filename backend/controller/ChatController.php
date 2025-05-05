@@ -4,18 +4,15 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Chat;
 use Service\TokenService;
-use PDO;
 use Exception;
 
 class ChatController extends BaseController {
-    private PDO $db;
     private Chat $chat;
     private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();    
-        $this->chat = new Chat($this->db);
+        $this->chat = new Chat($this->dbService);
         $this->tokenService = new TokenService();
     }
 

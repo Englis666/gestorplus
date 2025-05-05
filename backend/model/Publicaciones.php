@@ -1,20 +1,19 @@
 <?php
+declare(strict_types=1);
 namespace Model;
+
+use Service\DatabaseService;
 use PDO;
 use PDOException;
 
 class Publicaciones {
-    private $db;
+    private DatabaseService $dbService;
 
-    public function __construct($db){
-        $this->db = $db;
+    public function __construct(DatabaseService $dbService){
+        $this->dbService = $dbService;
     }
 
-    public function obtenerPublicacionPorTipoDeContrato($num_doc) {
-        // Construimos la consulta que:
-        // 1. Selecciona solo las publicaciones activas.
-        // 2. Devuelve aquellas publicaciones que sean generales (tipo_contrato = 'todos')
-        //    o cuyo tipo de contrato coincida con el registrado en vinculacion para el usuario.
+    public function obtenerPublicacionPorTipoDeContrato(int $num_doc): array {
         $sql = "
             SELECT p.*
             FROM publicacion p
@@ -29,84 +28,53 @@ class Publicaciones {
               )
             ORDER BY p.fechaPublicacion DESC
         ";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->dbService->ejecutarConsulta($sql, [':num_doc' => $num_doc]);
     }
 
-    public function agregarPublicacion($data, $num_doc) {
+    public function agregarPublicacion(array $data, int $num_doc): bool {
         $sql = "
-            INSERT INTO publicacion (titulo, descripcion, imagen, fechaPublicacion, usuario_num_doc, tipo_contrato, estado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
-    
-        // Preparamos la consulta
-        $stmt = $this->db->prepare($sql);
-    
-        // Vinculamos los parámetros
-        $stmt->bindParam(1, $data['titulo'], PDO::PARAM_STR);
-        $stmt->bindParam(2, $data['descripcion'], PDO::PARAM_STR);
-        $stmt->bindParam(3, $data['imagen'], PDO::PARAM_STR);
-        $stmt->bindParam(4, $data['fechaPublicacion'], PDO::PARAM_STR); 
-        $stmt->bindParam(5, $data['usuario_num_doc'], PDO::PARAM_INT);
-        $stmt->bindParam(6, $data['tipo_contrato'], PDO::PARAM_STR);
-        $stmt->bindParam(7, $data['estado'], PDO::PARAM_STR); 
-    
-        // Ejecutamos la consulta
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
-        }
+            INSERT INTO publicacion 
+            (titulo, descripcion, imagen, fechaPublicacion, usuario_num_doc, tipo_contrato, estado) 
+            VALUES 
+            (:titulo, :descripcion, :imagen, :fecha, :usuario_num_doc, :tipo_contrato, :estado)
+        ";
+
+        return $this->dbService->ejecutarAccion($sql, [
+            ':titulo'          => $data['titulo'],
+            ':descripcion'     => $data['descripcion'],
+            ':imagen'          => $data['imagen'],
+            ':fecha'           => $data['fechaPublicacion'],
+            ':usuario_num_doc' => $num_doc,
+            ':tipo_contrato'   => $data['tipo_contrato'],
+            ':estado'          => $data['estado'],
+        ]);
     }
-    
-    public function actualizarPublicacion($data) {
+
+    public function actualizarPublicacion(array $data): bool {
         $sql = "
             UPDATE publicacion
-            SET titulo = ?, descripcion = ?, imagen = ?, fechaPublicacion = ?, tipo_contrato = ?, estado = ?
-            WHERE idPublicacion = ?
+            SET titulo = :titulo, 
+                descripcion = :descripcion, 
+                imagen = :imagen, 
+                fechaPublicacion = :fecha, 
+                tipo_contrato = :tipo_contrato, 
+                estado = :estado
+            WHERE idPublicacion = :id
         ";
-    
-        $stmt = $this->db->prepare($sql);
-    
-        $stmt->bindParam(1, $data['titulo'], PDO::PARAM_STR);
-        $stmt->bindParam(2, $data['descripcion'], PDO::PARAM_STR);
-        $stmt->bindParam(3, $data['imagen'], PDO::PARAM_STR);
-        $stmt->bindParam(4, $data['fechaPublicacion'], PDO::PARAM_STR); 
-        $stmt->bindParam(5, $data['tipo_contrato'], PDO::PARAM_STR);
-        $stmt->bindParam(6, $data['estado'], PDO::PARAM_STR);
-        $stmt->bindParam(7, $data['idPublicacion'], PDO::PARAM_INT); 
-    
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    public function eliminarPublicacion($idPublicacion) {
-        if (empty($idPublicacion) || !is_numeric($idPublicacion)) {
-            return false;
-        }
 
-        $sql = "DELETE FROM publicacion WHERE idPublicacion = :idPublicacion";
-
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':idPublicacion', $idPublicacion, PDO::PARAM_INT);
-            if ($stmt->execute()) {
-                if ($stmt->rowCount() > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } catch (PDOException $e) {
-            error_log("Error al eliminar la publicación: " . $e->getMessage());
-            return false;
-        }
+        return $this->dbService->ejecutarAccion($sql, [
+            ':titulo'        => $data['titulo'],
+            ':descripcion'   => $data['descripcion'],
+            ':imagen'        => $data['imagen'],
+            ':fecha'         => $data['fechaPublicacion'],
+            ':tipo_contrato' => $data['tipo_contrato'],
+            ':estado'        => $data['estado'],
+            ':id'            => $data['idPublicacion'],
+        ]);
     }
 
+    public function eliminarPublicacion(int $idPublicacion): bool {
+        $sql = "DELETE FROM publicacion WHERE idPublicacion = :id";
+        return $this->dbService->ejecutarAccion($sql, [':id' => $idPublicacion]);
+    }
 }

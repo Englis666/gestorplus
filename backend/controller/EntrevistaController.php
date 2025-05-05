@@ -4,18 +4,16 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Entrevista;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
 
 class EntrevistaController extends BaseController{
-    private PDO $db;
     private Entrevista $entrevista; 
     private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->entrevista = new Entrevista($this->db);
+        $this->entrevista = new Entrevista($this->dbService);
         $this->tokenService = new TokenService();
     }
 

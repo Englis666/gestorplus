@@ -1,33 +1,22 @@
 <?php
+declare(strict_types = 1);
 namespace Model;
 
-use Config\Database;
+use Service\DatabaseService;
 use PDO;
 use PDOException;
+use Exception;
 
 class PazySalvo{
+    private DatabaseService $dbService;
 
-    private $db;
-
-    public function __construct($db){
-        $this->db = $db;
+    public function __construct(DatabaseService $dbService){
+        $this->dbService = $dbService;
     }    
-
-    private function ejectuarConsulta($sql, $params = []){
-        try{
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (PDOException $e){
-            echo json_encode(['error' => 'Ocurrio un error en la base de datos']);
-            http_response_code(500);
-            return [];
-        }
-    }  
 
     public function obtenerPazYSalvos(){
         $sql = "SELECT * FROM pazysalvo";
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->dbService->prepare($sql);
         $stmt->execute();
         
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -40,7 +29,7 @@ class PazySalvo{
     public function obtenerMiPazYSalvo($num_doc) {
         try {
             $sql = "SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc";
-            $stmtVinculacion = $this->db->prepare($sql);
+            $stmtVinculacion = $this->dbService->prepare($sql);
             $stmtVinculacion->bindParam(':num_doc', $num_doc, PDO::PARAM_STR); 
             $stmtVinculacion->execute();
     
@@ -48,8 +37,8 @@ class PazySalvo{
     
             if ($vinculacion) {
                 $sql = "SELECT * FROM pazysalvo WHERE vinculacion_idvinculacion = :vinculacion_idvinculacion";
-                $stmt = $this->db->prepare($sql);
-                $stmt->bindParam(':vinculacion_idvinculacion', $vinculacion_idvinculacion, PDO::PARAM_INT);
+                $stmt = $this->dbService->prepare($sql);
+                $stmt->bindParam(':vinculacion_idvinculacion', $vinculacion['idvinculacion'], PDO::PARAM_INT);
                 $stmt->execute();
                 $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -68,10 +57,8 @@ class PazySalvo{
     public function crearPazYSalvo(array $data): bool
     {
         try {
-            // Verificar si 'empleado' es un array y tiene 'num_doc'
             if (isset($data['empleado']) && is_array($data['empleado']) && isset($data['empleado']['num_doc'])) {
-                // Buscar idvinculacion del empleado
-                $stmt = $this->db->prepare("SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc");
+                $stmt = $this->dbService->prepare("SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc");
                 $stmt->execute([':num_doc' => $data['empleado']['num_doc']]);
                 $idVinculacion = $stmt->fetchColumn();
         
@@ -79,10 +66,9 @@ class PazySalvo{
                     throw new Exception('No se encontró la vinculación del empleado');
                 }
         
-                // Insertar el Paz y Salvo
                 $sql = "INSERT INTO pazysalvo (motivo, fechaEmision, estado, documentoPazysalvo, vinculacion_idvinculacion)
                         VALUES (:motivo, :fechaEmision, :estado, :documentoPazysalvo, :vinculacion_idvinculacion)";
-                $stmt = $this->db->prepare($sql);
+                $stmt = $this->dbService->prepare($sql);
                 $stmt->execute([
                     ':motivo' => $data['motivo'],
                     ':fechaEmision' => $data['fechaEmision'],
@@ -91,27 +77,17 @@ class PazySalvo{
                     ':vinculacion_idvinculacion' => $idVinculacion
                 ]);
         
-                // Verificar si se insertó correctamente
                 if ($stmt->rowCount() > 0) {
-                    return true; // Inserción exitosa
+                    return true;
                 } else {
-                    // Si no se insertó nada, lanzar una excepción
                     throw new Exception('No se pudo insertar el Paz y Salvo');
                 }
             } else {
                 throw new Exception('El empleado no está especificado correctamente');
             }
         } catch (Exception $e) {
-            // En caso de error, capturar la excepción y registrar el error
             error_log('Error al insertar Paz y Salvo: ' . $e->getMessage());
-            return false; // No se pudo insertar el Paz y Salvo
+            return false;
         }
     }
-    
-
-
-
-
-
-
 }

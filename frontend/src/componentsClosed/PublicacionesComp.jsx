@@ -29,7 +29,7 @@ const PublicacionesComp = () => {
       return;
     }
 
-    const Rol = Number(decodedToken?.data?.rol); // 👈 Conversión a número
+    const Rol = Number(decodedToken?.data?.rol);
     setRol(Rol);
     console.log("ROL:", Rol);
 
@@ -40,12 +40,13 @@ const PublicacionesComp = () => {
           params: { action: "obtenerPublicacionPorTipoDeContrato" },
         });
 
+        console.log("Respuesta completa:", response.data);
+
         const publicacionesObtenidas = response.data.Publicaciones;
-        console.log(publicacionesObtenidas);
         if (Array.isArray(publicacionesObtenidas)) {
           setPublicaciones(publicacionesObtenidas);
         } else {
-          console.warn("Publicaciones no es un array:", publicacionesObtenidas);
+          console.warn("publicaciones no es un array:", publicacionesObtenidas);
         }
       } catch (error) {
         console.error("Error al obtener publicaciones:", error);
@@ -135,7 +136,6 @@ const PublicacionesComp = () => {
         </div>
       </div>
 
-      {/* Botón flotante */}
       {(rol === 1 || rol === 2) && (
         <div className="fab-container">
           <button
@@ -149,7 +149,6 @@ const PublicacionesComp = () => {
         </div>
       )}
 
-      {/* Modal Agregar (solo para roles 1 y 2) */}
       {(rol === 1 || rol === 2) && (
         <div className="modal fade" id="modalPublicacion" tabIndex="-1" aria-labelledby="modalPublicacionLabel" aria-hidden="true">
           <div className="modal-dialog modal-lg modal-dialog-centered">

@@ -1,26 +1,15 @@
 <?php
-namespace Model;
+declare(strict_types = 1);
 
-use PDO;
-use PDOException;
+namespace Model;
+use Service\DatabaseService;
 use Exception;
 
 class Vacaciones {
-    private PDO $db;
+    private DatabaseService $dbService;
 
-    public function __construct(PDO $db) {
-        $this->db = $db;
-    }
-
-    private function ejecutarConsulta(string $sql, array $params = []): array {
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (PDOException $e) {
-            error_log("Error en la base de datos: " . $e->getMessage());
-            return [];
-        }
+    public function __construct(DatabaseService $dbService) {
+        $this->dbService = $dbService;
     }
 
     public function obtenerTodasLasVacaciones(): array {
@@ -28,7 +17,7 @@ class Vacaciones {
             SELECT * FROM vacacion AS v 
             INNER JOIN usuario AS u ON v.usuario_num_doc = u.num_doc
         ";
-        return $this->ejecutarConsulta($sql);
+        return $this->dbService->ejecutarConsulta($sql) ?? [];
     }
 
     public function obtenerMisVacaciones(int $num_doc): array {
@@ -37,36 +26,41 @@ class Vacaciones {
             INNER JOIN usuario AS u ON v.usuario_num_doc = u.num_doc
             WHERE usuario_num_doc = :num_doc
         ";
-        return $this->ejecutarConsulta($sql, [':num_doc' => $num_doc]);
+        return $this->dbService->ejecutarConsulta($sql, [':num_doc' => $num_doc]) ?? [];
     }
 
     public function solicitarVacaciones(int $num_doc, array $data): bool {
         try {
             $estado = 'Pendiente';
-            $sql = "
+
+            $sqlVacacion = "
                 INSERT INTO vacacion (fechaInicio, fechaFin, estadoVacacion, usuario_num_doc)
                 VALUES (:fechaInicio, :fechaFin, :estado, :num_doc)
             ";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
+
+            $paramsVacacion = [
                 ':fechaInicio' => $data['fechaInicio'],
                 ':fechaFin'    => $data['fechaFin'],
                 ':estado'      => $estado,
                 ':num_doc'     => $num_doc,
-            ]);
+            ];
 
-            if ($stmt->rowCount() > 0) {
+            $insertado = $this->dbService->ejecutarAccion($sqlVacacion, $paramsVacacion);
+
+            if ($insertado) {
                 $descripcion = "El empleado identificado con la cédula $num_doc ha solicitado una vacación";
+
                 $sqlNoti = "
                     INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc)
                     VALUES (:descripcion, 'Pendiente', 'General', :num_doc)
                 ";
-                $stmtNoti = $this->db->prepare($sqlNoti);
-                $stmtNoti->execute([
+
+                $paramsNoti = [
                     ':descripcion' => $descripcion,
                     ':num_doc'     => $num_doc
-                ]);
-                return true;
+                ];
+
+                return $this->dbService->ejecutarAccion($sqlNoti, $paramsNoti);
             }
 
             return false;
@@ -75,9 +69,4 @@ class Vacaciones {
             return false;
         }
     }
-
-    // public function rechazarVacacion(int $idvacacion): bool{
-    //     try{}
-    // }
-
 }

@@ -1,21 +1,17 @@
 <?php
+declare(strict_types = 1);
 namespace Controller;
-
-
-use Core\Controllers\BaseController;
 use Model\Usuario;
-use PDO;
+use Core\Controllers\BaseController;
+use Service\DatabaseService;
 use Exception;
 
 class UsuarioController extends BaseController {
-
-    private PDO $db;
     private Usuario $usuario;
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->usuario = new Usuario($this->db);
+        $this->usuario = new Usuario($this->dbService);
     }
 
     //chat

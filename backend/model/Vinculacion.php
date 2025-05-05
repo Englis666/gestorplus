@@ -1,57 +1,53 @@
 <?php
+declare(strict_types = 1);
+
 namespace Model;
 
-use Config\Database;
-use PDO;
-use PDOException;
+use Service\DatabaseService;
+use Exception;
 
-class Vinculacion{
-    private $db;
+class Vinculacion {
+    private DatabaseService $dbService;
 
-    public function __construct($db){
-        $this->db = $db;
+    public function __construct(DatabaseService $dbService) {
+        $this->dbService = $dbService;
     }
-    
-    private function ejecutarConsulta($sql, $params = []) {
+
+    public function asignarVinculacion(array $data): bool {
         try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Ocurrió un error en la base de datos']);
-            http_response_code(500);
-            return [];
+            $sql = "
+                INSERT INTO vinculacion (
+                    fechaInicio, fechaFin, tipoContrato, salario, 
+                    estadoContrato, fechaFirma, evaluacionesSg_idevaluacion, usuario_num_doc
+                ) VALUES (
+                    :fechaInicio, :fechaFin, :tipoContrato, :salario,
+                    :estadoContrato, :fechaFirma, :idevaluacion, :num_doc
+                )
+            ";
+
+            $params = [
+                ':fechaInicio'   => $data['fechaInicio'],
+                ':fechaFin'      => $data['fechaFin'],
+                ':tipoContrato'  => $data['tipoContrato'],
+                ':salario'       => $data['salario'],
+                ':estadoContrato'=> $data['estadoContrato'],
+                ':fechaFirma'    => $data['fechaFirma'],
+                ':idevaluacion'  => $data['idevaluacion'] ?? null,
+                ':num_doc'       => $data['num_doc'],
+            ];
+
+            return $this->dbService->ejecutarAccion($sql, $params);
+        } catch (Exception $e) {
+            error_log("Error al asignar vinculación: " . $e->getMessage());
+            return false;
         }
     }
 
-
-    public function asignarVinculacion($data){
-        $sql = "INSERT INTO vinculacion (fechaInicio, fechaFin, tipoContrato, salario, estadoContrato, fechaFirma, evaluacionesSg_idevaluacion, usuario_num_doc)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            $data['fechaInicio'],
-            $data['fechaFin'],
-            $data['tipoContrato'],
-            $data['salario'],
-            $data['estadoContrato'], 
-            $data['fechaFirma'], 
-            $data['idevaluacion'] ?? null, 
-            $data['num_doc']
-        ]);
-    
-        return $stmt->rowCount() > 0; 
+    public function obtenerVinculaciones(): array {
+        $sql = "
+            SELECT * FROM vinculacion AS v
+            INNER JOIN usuario AS u ON v.usuario_num_doc = u.num_doc
+        ";
+        return $this->dbService->ejecutarConsulta($sql) ?? [];
     }
-    
-
-    public function obtenerVinculaciones() {
-        $sql = "SELECT * FROM vinculacion as v 
-                INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc";
-        return $this->ejecutarConsulta($sql);
-    }
-
-  
-
-
-
 }

@@ -1,22 +1,17 @@
 <?php
 declare(strict_types=1);
-
 namespace Controller;
-
 use Core\Controllers\BaseController;
-use Model\Vacaciones;
 use Service\TokenService;
-use PDO;
+use Model\Vacaciones;
 
 class VacacionesController extends BaseController {
-    private PDO $db;
     private Vacaciones $vacaciones;
     private TokenService $tokenService;
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->vacaciones = new Vacaciones($this->db);
+        $this->vacaciones = new Vacaciones($this->dbService);
         $this->tokenService = new TokenService();
     }
 

@@ -6,20 +6,17 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Estudio;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
-use PDOException;
 
 class EstudioController extends BaseController {
-    private PDO $db;
     private Estudio $estudio;
     private TokenService $tokenService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->estudio = new Estudio($this->db);
+        $this->estudio = new Estudio($this->dbService);
         $this->tokenService = new TokenService();
     }
 

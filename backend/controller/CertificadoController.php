@@ -7,19 +7,16 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Certificado;
 use Service\TokenService;
-use PDO;
 use Exception;
 
 class CertificadoController extends BaseController{
-    private PDO $db;
     private Certificado $certificado;
     private TokenService $tokenService;
 
    public function __construct()
     {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->certificado = New certificado($this->db);
+        $this->certificado = New certificado($this->dbService);
         $this->tokenService = new TokenService();
     }
 

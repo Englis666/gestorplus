@@ -6,18 +6,15 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Ausencia;
 use Service\TokenService;
-use PDO;
 use Exception;
 
 class AusenciaController extends BaseController {
-    private PDO $db;
     private Ausencia $ausencia;
     private TokenService $tokenService;
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->ausencia = new Ausencia($this->db);
+        $this->ausencia = new Ausencia($this->dbService);
         $this->tokenService = new TokenService();
     }
 

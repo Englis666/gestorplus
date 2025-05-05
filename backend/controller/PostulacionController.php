@@ -1,24 +1,19 @@
 <?php
-declare(strict_types=1);
-
+declare(strict_types = 1);
 namespace Controller;
 
-use Utils\PythonExecutor;
 use Core\Controllers\BaseController;
 use Model\Postulacion;
-use service\TokenService;
-use PDO;
+use Service\TokenService;
 use Exception;
 
 class PostulacionController extends BaseController{
-    private PDO $db;
     private Postulacion $postulacion;
     private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->postulacion = new Postulacion($this->db);
+        $this->postulacion = new Postulacion($this->dbService);
         $this->tokenService = new TokenService();
     }
 
@@ -49,7 +44,7 @@ class PostulacionController extends BaseController{
     }
 
     public function obtenerPostulacionesAspirante() {
-        $num_doc = $this->tokenService->validarToken();
+        $num_doc = (int) $this->tokenService->validarToken();
         if ($num_doc === null) return;
 
         try {

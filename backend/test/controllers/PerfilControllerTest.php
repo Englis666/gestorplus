@@ -1,109 +1,134 @@
 <?php
-declare(strict_types = 1);
-
 use PHPUnit\Framework\TestCase;
 use Controller\PerfilController;
-use Model\Perfil;
 use Service\TokenService;
 use Service\JsonResponseService;
+use Model\Perfil;
+use Exception;
 
-class PerfilControllerTest extends TestCase
-{
-    private $perfilMock;
-    private $tokenServiceMock;
-    private $jsonResponseServiceMock;
-    private $controller;
+class PerfilControllerTest extends TestCase {
+    private $perfilController;
+    private $mockTokenService;
+    private $mockJsonResponseService;
+    private $mockPerfil;
 
-    protected function setUp(): void
-    {
-        $this->perfilMock = $this->createMock(Perfil::class);
-        $this->tokenServiceMock = $this->createMock(TokenService::class);
-        $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
+    protected function setUp(): void {
+        // Crear mocks de las dependencias
+        $this->mockTokenService = $this->createMock(TokenService::class);
+        $this->mockJsonResponseService = $this->createMock(JsonResponseService::class);
+        $this->mockPerfil = $this->createMock(Perfil::class);
 
-        $refClass = new ReflectionClass(PerfilController::class);
-        $this->controller = $refClass->newInstanceWithoutConstructor();
+        // Crear la instancia del controlador y pasar los mocks
+        $this->perfilController = new PerfilController();
 
-        $this->setPrivateProperty($this->controller, 'perfil', $this->perfilMock);
-        $this->setPrivateProperty($this->controller, 'tokenService', $this->tokenServiceMock);
-        $this->setPrivateProperty($this->controller, 'jsonResponseService', $this->jsonResponseServiceMock);
-        $this->setPrivateProperty($this->controller, 'db', $this->createMock(PDO::class)); 
+        // Establecer los mocks
+        $this->perfilController->jsonResponseService = $this->mockJsonResponseService;
+        $this->perfilController->tokenService = $this->mockTokenService;
+        $this->perfilController->perfil = $this->mockPerfil;
     }
 
-    private function setPrivateProperty(object $object, string $property, $value): void
-    {
-        $reflection = new ReflectionObject($object);
-        $prop = $reflection->getProperty($property);
-        $prop->setAccessible(true);
-        $prop->setValue($object, $value);
-    }
+    public function testDatosPerfil(): void {
+        // Configurar el mock del TokenService para devolver un num_doc simulado
+        $this->mockTokenService->method('validarToken')->willReturn('12345');
+        
+        // Configurar el mock de Perfil para devolver datos simulados
+        $this->mockPerfil->method('datosPerfil')->willReturn([
+            'nombres' => 'Juan',
+            'apellidos' => 'Perez',
+            'email' => 'juan.perez@example.com',
+            'tipodDoc' => 'CC',
+        ]);
 
-    public function testDatosPerfilSuccess()
-    {
-        $this->tokenServiceMock
-            ->method('validarToken')
-            ->willReturn('123456');
-
-        $this->perfilMock
-            ->method('datosPerfil')
-            ->with('123456')
-            ->willReturn(['nombres' => 'Juan']);
-
-        $this->jsonResponseServiceMock
-            ->expects($this->once())
+        // Configurar el mock de JsonResponseService para verificar que responde correctamente
+        $this->mockJsonResponseService->expects($this->once())
             ->method('responder')
             ->with([
                 'status' => 'success',
                 'message' => '',
-                'data' => ['nombres' => 'Juan']
+                'data' => [
+                    'nombres' => 'Juan',
+                    'apellidos' => 'Perez',
+                    'email' => 'juan.perez@example.com',
+                    'tipodDoc' => 'CC',
+                ]
             ]);
 
-        $this->controller->datosPerfil();
+        // Ejecutar el método test
+        $this->perfilController->datosPerfil();
     }
 
-    public function testActualizarPerfilConDatosFaltantes()
-    {
-        $this->jsonResponseServiceMock
-            ->expects($this->once())
-            ->method('responderError')
-            ->with([
-                'status' => 'error',
-                'message' => 'Faltan datos requeridos para actualizar el perfil'
-            ], 400);
-
-        $this->controller->actualizarPerfil([
-            'nombres' => '',
-            'apellidos' => 'Pérez',
-            'email' => '',
-            'tipodDoc' => ''
-        ]);
-    }
-
-    public function testActualizarPerfilSuccess()
-    {
-        $this->tokenServiceMock
-            ->method('validarToken')
-            ->willReturn('123456');
-
+    public function testActualizarPerfilConDatosValidos(): void {
+        // Simulando un token válido
+        $this->mockTokenService->method('validarToken')->willReturn('12345');
+        
+        // Datos de entrada válidos para actualizar
         $data = [
-            'nombres' => 'Carlos',
-            'apellidos' => 'López',
-            'email' => 'carlos@example.com',
-            'tipodDoc' => 'CC'
+            'nombres' => 'Juan',
+            'apellidos' => 'Perez',
+            'email' => 'juan.perez@example.com',
+            'tipodDoc' => 'CC',
         ];
 
-        $this->perfilMock
-            ->method('actualizarPerfil')
-            ->with('123456', $data)
-            ->willReturn(true);
+        // Configurar el mock de Perfil para que retorne true al intentar actualizar el perfil
+        $this->mockPerfil->method('actualizarPerfil')->willReturn(true);
 
-        $this->jsonResponseServiceMock
-            ->expects($this->once())
+        // Configurar el mock de JsonResponseService para verificar que responde correctamente
+        $this->mockJsonResponseService->expects($this->once())
             ->method('responder')
             ->with([
                 'status' => 'success',
-                'message' => 'Perfil actualizado correctamente'
+                'message' => 'Perfil actualizado correctamente',
             ]);
 
-        $this->controller->actualizarPerfil($data);
+        // Ejecutar el método test
+        $this->perfilController->actualizarPerfil($data);
+    }
+
+    public function testActualizarPerfilConDatosFaltantes(): void {
+        // Simulando un token válido
+        $this->mockTokenService->method('validarToken')->willReturn('12345');
+
+        // Datos faltantes para el perfil (por ejemplo, sin email)
+        $data = [
+            'nombres' => 'Juan',
+            'apellidos' => 'Perez',
+            // 'email' => 'juan.perez@example.com',  // Falta el email
+            'tipodDoc' => 'CC',
+        ];
+
+        // Configurar el mock de JsonResponseService para verificar que se responde con error
+        $this->mockJsonResponseService->expects($this->once())
+            ->method('responderError')
+            ->with([
+                'status' => 'error',
+                'message' => 'Faltan datos requeridos para actualizar el perfil',
+            ], 400);
+
+        // Ejecutar el método test
+        $this->perfilController->actualizarPerfil($data);
+    }
+
+    public function testActualizarPerfilConEmailInvalido(): void {
+        // Simulando un token válido
+        $this->mockTokenService->method('validarToken')->willReturn('12345');
+
+        // Datos con un email inválido
+        $data = [
+            'nombres' => 'Juan',
+            'apellidos' => 'Perez',
+            'email' => 'juan.perez@com', // Email inválido
+            'tipodDoc' => 'CC',
+        ];
+
+        // Configurar el mock de JsonResponseService para verificar que se responde con error
+        $this->mockJsonResponseService->expects($this->once())
+            ->method('responderError')
+            ->with([
+                'status' => 'error',
+                'message' => 'El formato del email no es válido',
+            ], 400);
+
+        // Ejecutar el método test
+        $this->perfilController->actualizarPerfil($data);
     }
 }

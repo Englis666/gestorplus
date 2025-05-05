@@ -1,157 +1,69 @@
 <?php
+declare(strict_types=1);
 namespace Model;
-use Config\Database;
-use PDO;
-use PDOException;
 
-class Notificacion{
-    private $db;
+use Service\DatabaseService;
 
-    public function __construct($db){
-        $this->db = $db;
+class Notificacion {
+    private DatabaseService $dbService;
+
+    public function __construct(DatabaseService $dbService) {
+        $this->dbService = $dbService;
     }
-
-    private function ejecutarConsulta($sql, $params = []) {
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (PDOException $e) {
-            echo json_encode(['error' => 'Ocurrió un error en la base de datos']);
-            http_response_code(500);
-            return [];
-        }
-    }
-
-
 
     public function obtenerTodasLasNotificaciones() {
         $sql = "SELECT * FROM notificacion";
-        return $this->ejecutarConsulta($sql);
+        return $this->dbService->ejecutarConsulta($sql);
     }
 
-    public function obtenerNotificaciones($num_doc){
-        try{
-            $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-            $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            if($resultado){
-                return $resultado;
-            }
-            return [];
-        }catch (PDOException $e) {
-            echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-            http_response_code(500);
-            return [];
-        }
+    public function obtenerNotificaciones(int $num_doc) {
+        $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc";
+        return $this->dbService->ejecutarConsulta($sql, ['num_doc' => $num_doc]);
     }
 
-    public function obtenerNotificacionesAspirante($num_doc){
-        try{
-          $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc AND tipo = 'PostulacionAspirantes' OR tipo = 'entrevista'";
-          $stmt = $this->db->prepare($sql);
-          $stmt->bindParam(':num_doc', $num_doc, PDO::PARAM_INT);
-          $stmt->execute();
-          $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-          
-          if($resultado){
-              return $resultado;
-          }
-          return [];
-      }catch (PDOException $e) {
-          echo json_encode(['error' => 'Error en la consulta: ' . $e->getMessage()]);
-          http_response_code(500);
-          return [];
-      }
-  }
-
-
-    public function notificacionAceptada($idausencia) {
-        // Actualizar ausencia
-        $sql = "UPDATE ausencia SET justificada = 'Justificada' WHERE idausencia = :idausencia";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
-        $stmt->execute();
-    
-        // Obtener el num_doc del usuario
-        $sqlObtenerNumDoc = "SELECT usuario_num_doc FROM ausencia WHERE idausencia = :idausencia";
-        $stmtNumDoc = $this->db->prepare($sqlObtenerNumDoc);
-        $stmtNumDoc->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
-        $stmtNumDoc->execute();
-        $numDoc = $stmtNumDoc->fetchColumn(); // Extraer el valor
-    
-        if ($stmt->execute()) {
-            $descripcionNotificacion = "Ausencia aceptada";
-            $tipo = "Aceptacion";
-    
-            // Insertar la notificación con num_doc
-            $insertarNotificacion = "INSERT INTO notificacion (descripcionNotificacion, tipo, num_doc) VALUES (?, ?, ?)";
-            $stmtNotificacion = $this->db->prepare($insertarNotificacion);
-            $stmtNotificacion->bindParam(1, $descripcionNotificacion, PDO::PARAM_STR);
-            $stmtNotificacion->bindParam(2, $tipo, PDO::PARAM_STR);
-            $stmtNotificacion->bindParam(3, $numDoc, PDO::PARAM_STR); // Agregar num_doc
-            $stmtNotificacion->execute();
-    
-            if ($stmtNotificacion->execute()){ 
-                $lastId = $this->db->lastInsertId();
-                $insertarTablaRelacional = "INSERT INTO ausencia_has_notificacion (notificacion_idnotificacion, ausencia_idausencia) VALUES (?, ?)";
-                $stmtRelacional = $this->db->prepare($insertarTablaRelacional);
-                $stmtRelacional->bindParam(1, $lastId, PDO::PARAM_INT);
-                $stmtRelacional->bindParam(2, $idausencia, PDO::PARAM_INT);
-                $stmtRelacional->execute();
-                return true;
-            }
-        } else {
-            return false;
-        }
+    public function obtenerNotificacionesAspirante(int $num_doc) {
+        $sql = "SELECT * FROM notificacion 
+                WHERE num_doc = :num_doc 
+                AND (tipo = 'PostulacionAspirantes' OR tipo = 'entrevista')";
+        return $this->dbService->ejecutarConsulta($sql, ['num_doc' => $num_doc]);
     }
 
-    public function notificacionRechazada($idausencia) {
-        // Actualizar ausencia
-        $sql = "UPDATE ausencia SET justificada = 'Rechazada' WHERE idausencia = :idausencia";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
-        $stmt->execute();
+    public function notificacionAceptada(int $idausencia): bool {
+        $sqlUpdate = "UPDATE ausencia SET justificada = 'Justificada' WHERE idausencia = :idausencia";
+        $actualizado = $this->dbService->ejecutarAccion($sqlUpdate, ['idausencia' => $idausencia]);
 
-        // Obtener el num_doc del usuario
-        $sqlObtenerNumDoc = "SELECT usuario_num_doc FROM ausencia WHERE idausencia = :idausencia";
-        $stmtNumDoc = $this->db->prepare($sqlObtenerNumDoc);
-        $stmtNumDoc->bindParam(':idausencia', $idausencia, PDO::PARAM_INT);
-        $stmtNumDoc->execute();
-        $numDoc = $stmtNumDoc->fetchColumn(); // Extraer el valor
+        if (!$actualizado) return false;
 
-        if ($stmt->execute()) {
-            $descripcionNotificacion = "Ausencia rechazada";
-            $tipo = "Rechazo";
+        // Obtener num_doc
+        $sqlNumDoc = "SELECT usuario_num_doc FROM ausencia WHERE idausencia = :idausencia";
+        $resultado = $this->dbService->ejecutarConsulta($sqlNumDoc, ['idausencia' => $idausencia], true);
+        if (!$resultado || !isset($resultado['usuario_num_doc'])) return false;
+        $numDoc = $resultado['usuario_num_doc'];
 
-            // Insertar la notificación con num_doc
-            $insertarNotificacion = "INSERT INTO notificacion (descripcionNotificacion, tipo, num_doc) VALUES (?, ?, ?)";
-            $stmtNotificacion = $this->db->prepare($insertarNotificacion);
-            $stmtNotificacion->bindParam(1, $descripcionNotificacion, PDO::PARAM_STR);
-            $stmtNotificacion->bindParam(2, $tipo, PDO::PARAM_STR);
-            $stmtNotificacion->bindParam(3, $numDoc, PDO::PARAM_STR); // Agregar num_doc
-            $stmtNotificacion->execute();
+        $sqlInsertNoti = "INSERT INTO notificacion (descripcionNotificacion, tipo, num_doc) VALUES (?, ?, ?)";
+        $idNotificacion = $this->dbService->ejecutarInsert($sqlInsertNoti, ['Ausencia aceptada', 'Aceptacion', $numDoc]);
+        if ($idNotificacion === null) return false;
 
-            if ($stmtNotificacion->execute()){ 
-                $lastId = $this->db->lastInsertId();
-                $insertarTablaRelacional = "INSERT INTO ausencia_has_notificacion (notificacion_idnotificacion, ausencia_idausencia) VALUES (?, ?)";
-                $stmtRelacional = $this->db->prepare($insertarTablaRelacional);
-                $stmtRelacional->bindParam(1, $lastId, PDO::PARAM_INT);
-                $stmtRelacional->bindParam(2, $idausencia, PDO::PARAM_INT);
-                $stmtRelacional->execute();
-                return true;
-            }
-
-        } else {
-            return false;
-        }
+        $sqlRelacional = "INSERT INTO ausencia_has_notificacion (notificacion_idnotificacion, ausencia_idausencia) VALUES (?, ?)";
+        return $this->dbService->ejecutarAccion($sqlRelacional, [$idNotificacion, $idausencia]);
     }
 
+    public function notificacionRechazada(int $idausencia): bool {
+        $sqlUpdate = "UPDATE ausencia SET justificada = 'Rechazada' WHERE idausencia = :idausencia";
+        $actualizado = $this->dbService->ejecutarAccion($sqlUpdate, ['idausencia' => $idausencia]);
 
+        if (!$actualizado) return false;
 
+        $sqlNumDoc = "SELECT usuario_num_doc FROM ausencia WHERE idausencia = :idausencia";
+        $resultado = $this->dbService->ejecutarConsulta($sqlNumDoc, ['idausencia' => $idausencia], true);
+        if (!$resultado || !isset($resultado['usuario_num_doc'])) return false;
+        $numDoc = $resultado['usuario_num_doc'];
 
+        $sqlInsertNoti = "INSERT INTO notificacion (descripcionNotificacion, tipo, num_doc) VALUES (?, ?, ?)";
+        $idNotificacion = $this->dbService->ejecutarInsert($sqlInsertNoti, ['Ausencia rechazada', 'Rechazo', $numDoc]);
+        if ($idNotificacion === null) return false;
 
+        $sqlRelacional = "INSERT INTO ausencia_has_notificacion (notificacion_idnotificacion, ausencia_idausencia) VALUES (?, ?)";
+        return $this->dbService->ejecutarAccion($sqlRelacional, [$idNotificacion, $idausencia]);
+    }
 }

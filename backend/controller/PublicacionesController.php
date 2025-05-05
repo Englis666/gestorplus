@@ -6,29 +6,27 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Publicaciones;
 use Service\TokenService;
-use PDO;
+use Service\DatabaseService;
 use Exception;
 
 class PublicacionesController extends BaseController {
-    private PDO $db;
     private Publicaciones $publicaciones;
     private TokenService $tokenService;
 
     public function __construct() {
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->publicaciones = new Publicaciones($this->db);
+        $this->publicaciones = new Publicaciones($this->dbService);
         $this->tokenService = new TokenService();
     }
 
     public function obtenerPublicacionPorTipoDeContrato() {
-        $num_doc = $this->tokenService->validarToken();
+        $num_doc = (int) $this->tokenService->validarToken();
         $publicaciones = $this->publicaciones->obtenerPublicacionPorTipoDeContrato($num_doc);
         $this->jsonResponseService->responder(['Publicaciones' => $publicaciones]);
     }
 
     public function agregarPublicacion($data) {
-        $num_doc = $this->tokenService->validarToken(); // Corregido
+        $num_doc = (int) $this->tokenService->validarToken();
 
         if ($this->publicaciones->agregarPublicacion($data, $num_doc)) {
             $this->jsonResponseService->responder(['mensaje' => 'Publicación agregada exitosamente'], 201);
@@ -38,7 +36,7 @@ class PublicacionesController extends BaseController {
     }
 
     public function actualizarPublicacion($data) {
-        $num_doc = $this->tokenService->validarToken();
+        $num_doc = (int) $this->tokenService->validarToken();
 
         if (empty($data['idPublicacion'])) {
             $this->jsonResponseService->responderError(['error' => 'ID de publicación no proporcionado'], 400);
@@ -53,7 +51,7 @@ class PublicacionesController extends BaseController {
     }
 
     public function eliminarPublicacion($data) {
-        $num_doc = $this->tokenService->validarToken(); 
+        $num_doc = (int) $this->tokenService->validarToken(); 
 
         if (empty($data['idPublicacion'])) {
             $this->jsonResponseService->responderError(['error' => 'ID de publicación no proporcionado'], 400);

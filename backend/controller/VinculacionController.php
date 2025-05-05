@@ -1,24 +1,16 @@
 <?php
 declare(strict_types = 1);
-
 namespace Controller;
-
 use Core\Controllers\BaseController;
 use Model\Vinculacion;
-use Service\TokenService;
-use PDO;
 use Exception;
 
 class VinculacionController extends BaseController {
-    private PDO $db;
     private Vinculacion $vinculacion;
-    private TokenService $tokenService;
 
     public function __construct(){
         parent::__construct();
-        $this->db = (new \Config\Database())->getConnection();
-        $this->vinculacion = new Vinculacion($this->db);
-        $this->tokenService = new TokenService();
+        $this->vinculacion = new Vinculacion($this->dbService);
     }
 
     public function asignarVinculacion(array $data): void {
