@@ -26,6 +26,10 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
     );
 
     public static $prefixLengthsPsr4 = array (
+        'Z' => 
+        array (
+            'ZipStream\\' => 10,
+        ),
         'W' => 
         array (
             'Workerman\\Coroutine\\' => 20,
@@ -70,11 +74,13 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
             'Psr\\Log\\' => 8,
             'Psr\\Link\\' => 9,
             'Psr\\Http\\Message\\' => 17,
+            'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
             'Psr\\Clock\\' => 10,
             'Psr\\Cache\\' => 10,
             'PhpParser\\' => 10,
+            'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
         'O' => 
         array (
@@ -83,6 +89,8 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         'M' => 
         array (
             'Model\\' => 6,
+            'Migrations\\' => 11,
+            'Matrix\\' => 7,
         ),
         'F' => 
         array (
@@ -108,6 +116,8 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
             'Controller\\' => 11,
             'Config\\' => 7,
             'Composer\\Semver\\' => 16,
+            'Composer\\Pcre\\' => 14,
+            'Complex\\' => 8,
         ),
         'A' => 
         array (
@@ -116,6 +126,10 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
     );
 
     public static $prefixDirsPsr4 = array (
+        'ZipStream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
+        ),
         'Workerman\\Coroutine\\' => 
         array (
             0 => __DIR__ . '/..' . '/workerman/coroutine/src',
@@ -223,7 +237,12 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
         'Psr\\EventDispatcher\\' => 
         array (
@@ -245,6 +264,10 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
+        'PhpOffice\\PhpSpreadsheet\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
         'OpenApi\\' => 
         array (
             0 => __DIR__ . '/..' . '/zircote/swagger-php/src',
@@ -252,6 +275,14 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         'Model\\' => 
         array (
             0 => __DIR__ . '/../..' . '/model',
+        ),
+        'Migrations\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/migrations',
+        ),
+        'Matrix\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
         ),
         'Firebase\\JWT\\' => 
         array (
@@ -316,6 +347,14 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         'Composer\\Semver\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/semver/src',
+        ),
+        'Composer\\Pcre\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/pcre/src',
+        ),
+        'Complex\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
         ),
         'App\\' => 
         array (
