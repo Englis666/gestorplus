@@ -10,15 +10,14 @@ use Service\TokenService;
 use Service\JsonResponseService;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class ChatControllerTest extends TestCase
-{
+class ChatControllerTest extends TestCase{
+
     private ChatController $controller;
     private MockObject $mockChat;
     private MockObject $mockTokenService;
     private MockObject $mockJsonResponseService;
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void{
         // Crear mocks para dependencias
         $this->mockChat = $this->createMock(Chat::class);
         $this->mockTokenService = $this->createMock(TokenService::class);

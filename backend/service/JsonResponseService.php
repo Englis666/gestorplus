@@ -1,13 +1,18 @@
 <?php
 namespace Service;
 
-class jsonResponseService{
-    public function responder(array $data, int $statusCode = 200):void{
+class jsonResponseService {
+    public function responder(array $data, int $statusCode = 200): void {
         http_response_code($statusCode);
         echo json_encode($data);
         exit;
     }
-    public function responderError(string $mensaje, int $statusCode = 400): void{
-        $this->responder(['error' => $mensaje], $statusCode);
+
+    public function responderError($mensaje, int $statusCode = 400): void {
+        if (is_array($mensaje)) {
+            $this->responder($mensaje, $statusCode);
+        } else {
+            $this->responder(['error' => $mensaje], $statusCode);
+        }
     }
-}  
+}
