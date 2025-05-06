@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '../vendor/autoload.php';
-require_once __DIR__ . '/MigrarExcel.php';
+require_once '../vendor/autoload.php';
+require_once '/MigrarExcel.php';
 
 use Migrations\MigrarExcel;
 
