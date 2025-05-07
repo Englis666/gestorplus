@@ -8,7 +8,6 @@ if grep -q "Ubuntu" /etc/os-release; then
     sudo apt install -y docker.io docker-compose git
 elif grep -q "Arch" /etc/os-release; then
     echo "Detectado Arch Linux ... "
-    sudo pacman -Syu --noconfirm
     sudo pacman -S --noconfirm docker docker-compose git
 else
     echo "Sistema Operativo no compatible"
