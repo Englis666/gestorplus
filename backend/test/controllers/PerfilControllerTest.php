@@ -1,120 +1,131 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 use Controller\PerfilController;
-use Service\TokenService;
 use Service\JsonResponseService;
 use Model\Perfil;
-use Exception;
+use Service\TokenService;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class PerfilControllerTest extends TestCase {
+    
+    /** @var MockObject|Perfil */
+    private $perfilMock;
+
+    /** @var MockObject|TokenService */
+    private $tokenServiceMock;
+
+    /** @var MockObject|JsonResponseService */
+    private $jsonResponseServiceMock;
+
+    /** @var PerfilController */
     private $perfilController;
-    private $mockTokenService;
-    private $mockJsonResponseService;
-    private $mockPerfil;
 
     protected function setUp(): void {
-        $this->mockTokenService = $this->createMock(TokenService::class);
-        $this->mockJsonResponseService = $this->createMock(JsonResponseService::class);
-        $this->mockPerfil = $this->createMock(Perfil::class);
+        $this->perfilMock = $this->createMock(Perfil::class);
+        $this->tokenServiceMock = $this->createMock(TokenService::class);
+        $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
 
-        $this->perfilController = new PerfilController();
+        $this->perfilController = new PerfilController(
+            $this->perfilMock, 
+            $this->tokenServiceMock
+        );
 
-        $this->perfilController->jsonResponseService = $this->mockJsonResponseService;
-        $this->perfilController->tokenService = $this->mockTokenService;
-        $this->perfilController->perfil = $this->mockPerfil;
+        $this->perfilController->setJsonResponseService($this->jsonResponseServiceMock);
     }
 
     public function testDatosPerfil(): void {
-        $this->mockTokenService->method('validarToken')->willReturn('12345');
-        
-        $this->mockPerfil->method('datosPerfil')->willReturn([
-            'nombres' => 'Juan',
-            'apellidos' => 'Perez',
-            'email' => 'juan.perez@example.com',
-            'tipodDoc' => 'CC',
-        ]);
+        $num_doc = '12345';
+        $expectedResult = ['email' => 'user@domain.com'];
 
-        $this->mockJsonResponseService->expects($this->once())
+        $this->tokenServiceMock->expects($this->once())
+            ->method('validarToken')
+            ->willReturn($num_doc);
+
+        $this->perfilMock->expects($this->once())
+            ->method('datosPerfil')
+            ->with($num_doc)
+            ->willReturn($expectedResult);
+
+        $this->jsonResponseServiceMock->expects($this->once())
             ->method('responder')
             ->with([
                 'status' => 'success',
                 'message' => '',
-                'data' => [
-                    'nombres' => 'Juan',
-                    'apellidos' => 'Perez',
-                    'email' => 'juan.perez@example.com',
-                    'tipodDoc' => 'CC',
-                ]
+                'data' => $expectedResult
             ]);
 
         $this->perfilController->datosPerfil();
     }
 
     public function testActualizarPerfilConDatosValidos(): void {
-        $this->mockTokenService->method('validarToken')->willReturn('12345');
-        
         $data = [
             'nombres' => 'Juan',
             'apellidos' => 'Perez',
             'email' => 'juan.perez@example.com',
-            'tipodDoc' => 'CC',
+            'tipodDoc' => 'CC'
         ];
 
-        $this->mockPerfil->method('actualizarPerfil')->willReturn(true);
+        $num_doc = '12345';
 
-        $this->mockJsonResponseService->expects($this->once())
+        $this->tokenServiceMock->expects($this->once())
+            ->method('validarToken')
+            ->willReturn($num_doc);
+
+        $this->perfilMock->expects($this->once())
+            ->method('actualizarPerfil')
+            ->with($num_doc, $data)
+            ->willReturn(true);
+
+        $this->jsonResponseServiceMock->expects($this->once())
             ->method('responder')
             ->with([
                 'status' => 'success',
                 'message' => 'Perfil actualizado correctamente',
             ]);
-     
 
         $this->perfilController->actualizarPerfil($data);
     }
 
     public function testActualizarPerfilConDatosFaltantes(): void {
-        $this->mockTokenService->method('validarToken')->willReturn('12345');
-
         $data = [
-            'nombres' => 'Juan',
-            'apellidos' => 'Perez',
-            'tipodDoc' => 'CC',
+            'nombres' => 'Juan', 
+            'apellidos' => 'Perez'
         ];
 
-        // Configurar el mock de JsonResponseService para verificar que se responde con error
-        $this->mockJsonResponseService->expects($this->once())
+        $this->tokenServiceMock->expects($this->once())
+            ->method('validarToken')
+            ->willReturn('12345');
+
+        $this->jsonResponseServiceMock->expects($this->once())
             ->method('responderError')
             ->with([
                 'status' => 'error',
-                'message' => 'Faltan datos requeridos para actualizar el perfil',
+                'message' => 'Faltan datos requeridos para actualizar el perfil'
             ], 400);
 
-        // Ejecutar el método test
         $this->perfilController->actualizarPerfil($data);
     }
 
     public function testActualizarPerfilConEmailInvalido(): void {
-        // Simulando un token válido
-        $this->mockTokenService->method('validarToken')->willReturn('12345');
-
-        // Datos con un email inválido
         $data = [
             'nombres' => 'Juan',
             'apellidos' => 'Perez',
-            'email' => 'juan.perez@com', // Email inválido
-            'tipodDoc' => 'CC',
+            'email' => 'invalid-email',
+            'tipodDoc' => 'CC'
         ];
 
-        // Configurar el mock de JsonResponseService para verificar que se responde con error
-        $this->mockJsonResponseService->expects($this->once())
+        $this->tokenServiceMock->expects($this->once())
+            ->method('validarToken')
+            ->willReturn('12345');
+
+        $this->jsonResponseServiceMock->expects($this->once())
             ->method('responderError')
             ->with([
                 'status' => 'error',
-                'message' => 'El formato del email no es válido',
+                'message' => 'El formato del email no es válido'
             ], 400);
 
-        // Ejecutar el método test
         $this->perfilController->actualizarPerfil($data);
     }
 }

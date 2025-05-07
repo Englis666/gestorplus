@@ -79,7 +79,7 @@ const TablaAusencias = () => {
         idausencia: idausencia,  
         })
       .then((response) => {
-        alert("Notificación aceptada con éxito.");
+        alert("Ausencia aceptada con éxito.");
         setAusencias((prevAusencias) =>
           prevAusencias.map((ausencia) =>
             ausencia.idausencia === idausencia
@@ -101,7 +101,7 @@ const TablaAusencias = () => {
       })
       .then((response) => {
         console.log(response);
-        alert("Notificación rechazada con éxito.");
+        alert("Ausencia rechazada con éxito.");
         setAusencias((prevAusencias) =>
           prevAusencias.map((ausencia) =>
             ausencia.idausencia === idausencia

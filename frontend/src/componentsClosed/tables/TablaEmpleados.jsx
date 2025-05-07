@@ -98,7 +98,6 @@ const TablaEmpleados = () => {
                       <th>Numero de documento</th>
                       <th>Inicio de contrato</th>
                       <th>Fin de contrato</th>
-                      <th>Accion</th>
                     </tr>
                   </thead>
                   <tbody className="text-center">

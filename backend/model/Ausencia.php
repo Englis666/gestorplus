@@ -25,7 +25,7 @@ class Ausencia {
     }
 
     public function obtenerTodasLasAusencias(): array {
-        $sql = "SELECT * FROM ausencia WHERE NOT justificada = 'Justificada'";
+        $sql = "SELECT * FROM ausencia";
         return $this->dbService->ejecutarConsulta($sql);
     }
 

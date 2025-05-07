@@ -1091,7 +1091,7 @@ CREATE TABLE `permiso` (
   `tipo` varchar(255) NOT NULL,
   `fechaInicio` date NOT NULL,
   `fechaFin` date NOT NULL,
-  `estado` varchar(50) DEFAULT 'Pendiente',
+  `estadoPermiso` varchar(50) DEFAULT 'Pendiente',
   `usuario_num_doc` int(11) NOT NULL,
   `fechaSolicitud` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`idPermisos`),

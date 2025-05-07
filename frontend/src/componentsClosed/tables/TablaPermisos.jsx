@@ -121,6 +121,7 @@ const TablaPermisos = () => {
         idPermisos,
       })
       .then((response) => {
+        console.log(response);
         if (response.data.success) {
           alert("Permiso rechazado con éxito.");
           setPermisos((prev) =>
@@ -226,7 +227,7 @@ const TablaPermisos = () => {
                           <td>{permiso.fechaInicio}</td>
                           <td>{permiso.fechaFin}</td>
                           <td>{permiso.tipo}</td>
-                          <td>{permiso.estadoNotificacion}</td>
+                          <td>{permiso.estadoPermiso}</td>
                           {(rol === "1" || rol === "2") && (
                             <td>
                               <button

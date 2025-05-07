@@ -37,4 +37,11 @@ abstract class BaseController {
     protected function getIntParam(array $data, string $key): int {
         return isset($data[$key]) ? (int) $data[$key] : 0;
     }
+
+     // 👇 Agrega este método para pruebas unitarias
+     public function setJsonResponseService(JsonResponseService $service): void
+     {
+         $this->jsonResponseService = $service;
+     }
+
 }

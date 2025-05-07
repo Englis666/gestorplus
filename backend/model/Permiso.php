@@ -38,7 +38,7 @@ class Permiso {
 
             $this->dbService->iniciarTransaccion();
 
-            $sql = "INSERT INTO permiso (tipo, fechaInicio, fechaFin, estado, usuario_num_doc) 
+            $sql = "INSERT INTO permiso (tipo, fechaInicio, fechaFin, estadoPermiso, usuario_num_doc) 
                     VALUES (?, ?, ?, ?, ?)";
             $params = [
                 $data['tipo'],
@@ -82,8 +82,7 @@ class Permiso {
         }
 
         foreach ($idPermisos as $idPermiso) {
-            // Actualizar el estado del permiso
-            $sql = "UPDATE permiso SET estado = ? WHERE idPermisos = ?";
+            $sql = "UPDATE permiso SET estadoPermiso = ? WHERE idPermisos = ?";
             $params = [$estadoPermiso, $idPermiso];
             $this->dbService->ejecutarAccion($sql, $params);
 
