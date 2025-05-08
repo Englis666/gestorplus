@@ -55,9 +55,8 @@ class Chat {
                 VALUES (:num_doc_emisor, :num_doc_receptor, NOW())
             ";
 
-            $this->dbService->ejecutarConsulta($query, $params, true);
+            return $this->dbService->ejecutarConsulta($query, $params, true);
 
-            return $this->dbService->lastInsertId();
         } catch (PDOException $e) {
             error_log("Error al obtener o crear el chat: " . $e->getMessage());
             return null;

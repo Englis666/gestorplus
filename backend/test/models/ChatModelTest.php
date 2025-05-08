@@ -62,33 +62,28 @@ class ChatModelTest extends TestCase {
         $this->assertEquals(5, $resultado);
     }
 
-    public function testObtenerOcrearChatNuevo() {
-        $num_doc_emisor = '111';
-        $num_doc_receptor = '222';
-
-        $this->dbServiceMock->expects($this->at(0))
-            ->method('ejecutarConsulta')
-            ->willReturn([]);
-
-        $this->dbServiceMock->expects($this->at(1))
-            ->method('ejecutarConsulta')
-            ->with(
-                $this->stringContains('INSERT INTO chat'),
-                $this->equalTo([
-                    ':num_doc_emisor' => $num_doc_emisor,
-                    ':num_doc_receptor' => $num_doc_receptor
-                ]),
-                true
-            )
-            ->willReturn(true);
-
-        $this->dbServiceMock->expects($this->at(2))
-            ->method('lastInsertId')
-            ->willReturn(10);
-
-        $resultado = $this->chat->obtenerOcrearChat($num_doc_emisor, $num_doc_receptor);
-        $this->assertEquals(10, $resultado);
+    
+    public function testObtenerOCrearChat_CreaNuevoChatYDevuelveId() {
+        $dbServiceMock = $this->createMock(DatabaseService::class);
+    
+        // Primera llamada (SELECT) → devuelve que no hay chat
+        // Segunda llamada (INSERT) → no retorna nada útil
+        $dbServiceMock->method('ejecutarConsulta')
+            ->willReturnOnConsecutiveCalls([], true);
+    
+        // Simular que se insertó un nuevo chat con ID 123
+        $dbServiceMock->method('ejecutarInsert')
+            ->willReturn(123);
+    
+        $chat = new Chat($dbServiceMock);
+    
+        $idChat = $chat->obtenerOcrearChat('1001', '1002');
+    
+        $this->assertEquals(123, $idChat);
     }
+    
+    
+
 
     public function testObtenerOcrearChatConExcepcion() {
         $this->dbServiceMock->expects($this->once())

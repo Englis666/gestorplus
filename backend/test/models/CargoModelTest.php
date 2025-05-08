@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 use Model\Cargo;
@@ -12,19 +11,15 @@ class CargoModelTest extends TestCase
     private MockObject $dbServiceMock;
     private Cargo $cargo;
 
-    protected function setUp(): void
-    {
-        // Crear un mock de DatabaseService
+    protected function setUp(): void {
         $this->dbServiceMock = $this->createMock(DatabaseService::class);
         $this->cargo = new Cargo($this->dbServiceMock);
     }
 
-    // Test para el método activarCargo
     public function testActivarCargo(): void
     {
         $idCargo = 1;
 
-        // Configurar el mock para ejecutar correctamente el método
         $this->dbServiceMock
             ->method('ejecutarUpdate')
             ->willReturn(true);
@@ -33,7 +28,6 @@ class CargoModelTest extends TestCase
         $this->assertTrue($result);
     }
 
-    // Test para el método desactivarCargo
     public function testDesactivarCargoSinConvocatoriasRelacionadas(): void
     {
         $idCargo = 1;
@@ -52,7 +46,6 @@ class CargoModelTest extends TestCase
         $this->assertTrue($result);
     }
 
-    // Test para desactivar un cargo con convocatorias relacionadas
     public function testDesactivarCargoConConvocatoriasRelacionadas(): void
     {
         $idCargo = 1;
@@ -69,7 +62,6 @@ class CargoModelTest extends TestCase
         $this->cargo->desactivarCargo($idCargo);
     }
 
-    // Test para el método obtenerCargos
     public function testObtenerCargos(): void
     {
         $cargos = [
@@ -87,25 +79,20 @@ class CargoModelTest extends TestCase
         $this->assertEquals('Desarrollador', $result[0]['nombreCargo']);
     }
 
-    // Test para el método agregarCargo
-    public function testAgregarCargo(): void
-    {
+    public function testAgregarCargo(): void {
         $nombreCargo = 'Tester';
 
-        // Configurar el mock para ejecutar correctamente el insert
-        $this->dbServiceMock
-            ->method('ejecutarInsert')
-            ->willReturn(null); // Suponemos que la inserción no devuelve nada
-
-        // Llamar al método
-        $this->cargo->agregarCargo($nombreCargo);
-
-        // Verificar que se haya llamado correctamente al método de inserción
+        // Consolidar la expectativa para `ejecutarInsert`
         $this->dbServiceMock->expects($this->once())
             ->method('ejecutarInsert')
             ->with(
                 $this->equalTo("INSERT INTO cargo (nombreCargo, estadoCargo) VALUES (?, 'Activo')"),
                 $this->equalTo([$nombreCargo])
-            );
+            )
+            ->willReturn(1); // Retorna un ID ficticio
+
+        $resultado = $this->cargo->agregarCargo($nombreCargo);
+
+        $this->assertEquals(1, $resultado); // Verifica que el ID retornado sea 1
     }
 }

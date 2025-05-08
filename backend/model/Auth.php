@@ -39,7 +39,7 @@ class Auth {
             ]);
 
             if (!$usuarioInsertado) {
-                $this->dbService->reveritrTransaccion();
+                $this->dbService->revertirTransaccion();
                 return json_encode(['message' => 'Error al registrar el usuario.']);
             }
 
@@ -47,7 +47,7 @@ class Auth {
             return json_encode(['message' => 'Usuario registrado correctamente']);
 
         } catch (PDOException $e) {
-            $this->dbService->reveritrTransaccion();
+            $this->dbService->revertirTransaccion();
             return json_encode(['message' => 'Error al registrar: ' . $e->getMessage()]);
         }
     }

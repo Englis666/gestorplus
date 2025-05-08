@@ -7,7 +7,7 @@ use PDO;
 class Calculo {
     private DatabaseService $dbService;
 
-    public function __construct(DatabaseService $dbService){
+    public function __construct(DatabaseService $dbService) {
         $this->dbService = $dbService;
     }
 
@@ -92,10 +92,10 @@ class Calculo {
     }
 
     public function calcularPostulacionesEnConvocatorias() {
-        $sql = "SELECT c.*, ca.nombreCargo , COUNT(p.idpostulacion) as cantidad_postulaciones, p.idpostulacion
+        $sql = "SELECT c.*, ca.nombreCargo, COUNT(p.idpostulacion) as cantidad_postulaciones, p.idpostulacion
                 FROM convocatoria AS c
                 INNER JOIN postulacion AS p ON c.idconvocatoria = p.convocatoria_idconvocatoria
-                INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo
+                INNER JOIN cargo AS ca ON c.cargo_idcargo = ca.idcargo
                 GROUP BY c.idconvocatoria";
         
         return $this->dbService->ejecutarConsulta($sql);
@@ -132,8 +132,8 @@ class Calculo {
                         ) - 480
                         ELSE 0
                     END AS minutos_extra
-                FROM jornada as j
-                INNER JOIN usuario as u ON j.usuario_num_doc = u.num_doc 
+                FROM jornada AS j
+                INNER JOIN usuario AS u ON j.usuario_num_doc = u.num_doc 
                 WHERE j.usuario_num_doc = :num_doc
                 LIMIT 1";
 
@@ -143,40 +143,40 @@ class Calculo {
 
     public function obtenerMinutosTrabajadosDelEmpleado() {
         $sql = "SELECT 
-                j.idJornada,
-                j.fecha,
-                j.horaEntrada,
-                j.horaSalida,
-                u.nombres,
-                u.apellidos,
-                u.num_doc,
-                TIMESTAMPDIFF(MINUTE, 
-                    CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
-                    IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
-                        CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
-                        CONCAT(DATE(j.fecha), ' ', j.horaSalida)
-                    )
-                ) AS minutos_trabajados,
-                CASE
-                    WHEN TIMESTAMPDIFF(MINUTE, 
+                    j.idJornada,
+                    j.fecha,
+                    j.horaEntrada,
+                    j.horaSalida,
+                    u.nombres,
+                    u.apellidos,
+                    u.num_doc,
+                    TIMESTAMPDIFF(MINUTE, 
                         CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
                         IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
                             CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
                             CONCAT(DATE(j.fecha), ' ', j.horaSalida)
                         )
-                    ) > 480 
-                    THEN TIMESTAMPDIFF(MINUTE, 
-                        CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
-                        IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
-                            CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
-                            CONCAT(DATE(j.fecha), ' ', j.horaSalida)
-                        )
-                    ) - 480
-                    ELSE 0
-                END AS minutos_extra
-            FROM jornada as j
-            INNER JOIN usuario as u ON j.usuario_num_doc = u.num_doc 
-            ORDER BY j.fecha DESC";
+                    ) AS minutos_trabajados,
+                    CASE
+                        WHEN TIMESTAMPDIFF(MINUTE, 
+                            CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
+                            IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
+                                CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
+                                CONCAT(DATE(j.fecha), ' ', j.horaSalida)
+                            )
+                        ) > 480 
+                        THEN TIMESTAMPDIFF(MINUTE, 
+                            CONCAT(DATE(j.fecha), ' ', j.horaEntrada), 
+                            IF(TIMESTAMPDIFF(MINUTE, CONCAT(DATE(j.fecha), ' ', j.horaEntrada), CONCAT(DATE(j.fecha), ' ', j.horaSalida)) < 0,
+                                CONCAT(DATE(j.fecha + INTERVAL 1 DAY), ' ', j.horaSalida),
+                                CONCAT(DATE(j.fecha), ' ', j.horaSalida)
+                            )
+                        ) - 480
+                        ELSE 0
+                    END AS minutos_extra
+                FROM jornada AS j
+                INNER JOIN usuario AS u ON j.usuario_num_doc = u.num_doc 
+                ORDER BY j.fecha DESC";
 
         return $this->dbService->ejecutarConsulta($sql);
     }

@@ -4,16 +4,12 @@ declare(strict_types=1);
 namespace Model;
 
 use Service\DatabaseService;
-use PDO;
-use PDOException;
 
 class Entrevista {
     private DatabaseService $dbService;
-    private PDO $db;
 
     public function __construct(DatabaseService $dbService) {
         $this->dbService = $dbService;
-        $this->db = $dbService->getConnection();  // Assuming getConnection method exists in DatabaseService
     }
 
     public function obtenerEntrevistas() {
@@ -23,7 +19,7 @@ class Entrevista {
                 INNER JOIN convocatoria AS c ON p.convocatoria_idconvocatoria = c.idconvocatoria";
 
         try {
-            return $this->dbService->ejecutarConsulta($sql);
+            return $this->dbService->ejecutarConsulta($sql, []);
         } catch (PDOException $e) {
             throw new \Exception('Error al obtener entrevistas: ' . $e->getMessage(), 500);
         }
@@ -65,8 +61,7 @@ class Entrevista {
                 VALUES (?, ?, ?, ?, ?)";
 
         try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
+            $this->dbService->ejecutarConsulta($sql, [
                 $data['fecha'],
                 $data['hora'],
                 $data['lugarMedio'],
@@ -74,28 +69,23 @@ class Entrevista {
                 $estado
             ]);
 
-            if ($stmt->rowCount() > 0) {
-                $buscarNumDoc = "SELECT usuario_num_doc FROM postulacion WHERE idpostulacion = :postulacion_id";
-                $stmtBuscar = $this->db->prepare($buscarNumDoc);
-                $stmtBuscar->execute([':postulacion_id' => $data['postulacion_idpostulaciones']]);
-                $usuario = $stmtBuscar->fetch(PDO::FETCH_ASSOC);
+            // Obtener el número de documento del usuario relacionado con la postulacion
+            $buscarNumDoc = "SELECT usuario_num_doc FROM postulacion WHERE idpostulacion = :postulacion_id";
+            $usuario = $this->dbService->ejecutarConsulta($buscarNumDoc, [':postulacion_id' => $data['postulacion_idpostulaciones']]);
+            if ($usuario) {
+                $descripcionNotificacion = "Fuiste asignado a una entrevista el día " . $data['fecha'] .
+                                           " a la hora " . $data['hora'] .
+                                           " en " . $data['lugarMedio'];
 
-                if ($usuario) {
-                    $descripcionNotificacion = "Fuiste asignado a una entrevista el día " . $data['fecha'] .
-                                               " a la hora " . $data['hora'] .
-                                               " en " . $data['lugarMedio'];
-
-                    $sqlNoti = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, created_at, num_doc)
-                                VALUES (?, ?, ?, ?, ?)";
-                    $stmtNoti = $this->db->prepare($sqlNoti);
-                    $stmtNoti->execute([
-                        $descripcionNotificacion,
-                        "Pendiente",
-                        "entrevista",
-                        date('Y-m-d H:i:s'),
-                        $usuario['usuario_num_doc']
-                    ]);
-                }
+                $sqlNoti = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, created_at, num_doc)
+                            VALUES (?, ?, ?, ?, ?)";
+                $this->dbService->ejecutarConsulta($sqlNoti, [
+                    $descripcionNotificacion,
+                    "Pendiente",
+                    "entrevista",
+                    date('Y-m-d H:i:s'),
+                    $usuario[0]['usuario_num_doc']  // Accedemos al primer elemento del array
+                ]);
             }
 
             return true;
@@ -108,9 +98,7 @@ class Entrevista {
         $sql = "UPDATE entrevista SET estadoEntrevista = 'Asistencia' WHERE identrevista = :identrevista";
         
         try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':identrevista', $identrevista, PDO::PARAM_INT);
-            $stmt->execute();
+            $this->dbService->ejecutarConsulta($sql, [':identrevista' => $identrevista]);
         } catch (PDOException $e) {
             throw new \Exception('Error al confirmar asistencia: ' . $e->getMessage(), 500);
         }
@@ -120,9 +108,7 @@ class Entrevista {
         $sql = "UPDATE entrevista SET estadoEntrevista = 'No asistió' WHERE identrevista = :identrevista";
 
         try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(":identrevista", $identrevista, PDO::PARAM_INT);
-            $stmt->execute();
+            $this->dbService->ejecutarConsulta($sql, [':identrevista' => $identrevista]);
         } catch (PDOException $e) {
             throw new \Exception('Error al marcar asistencia no confirmada: ' . $e->getMessage(), 500);
         }

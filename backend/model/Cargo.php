@@ -107,7 +107,7 @@ class Cargo
         try {
             $sql = "INSERT INTO cargo (nombreCargo, estadoCargo) VALUES (?, 'Activo')";
             $params = [$nombreCargo];
-            $this->dbService->ejecutarInsert($sql, $params);
+            return $this->dbService->ejecutarInsert($sql, $params);
         } catch (Exception $e) {
             throw new Exception('Error al agregar el cargo: ' . $e->getMessage(), 500);
         }

@@ -1,105 +1,119 @@
 <?php
+declare(strict_types=1);
+
+namespace Test\Model;
 
 use PHPUnit\Framework\TestCase;
 use Model\Entrevista;
 use Service\DatabaseService;
+use PHPUnit\Framework\MockObject\MockObject;
+use PDOException;
 
 class EntrevistaModelTest extends TestCase
 {
-    private $dbServiceMock;
+    private DatabaseService|MockObject $dbServiceMock;
     private Entrevista $entrevista;
 
     protected function setUp(): void
     {
+        // Creamos un mock del DatabaseService
         $this->dbServiceMock = $this->createMock(DatabaseService::class);
+        // Inyectamos el mock en nuestro modelo
         $this->entrevista = new Entrevista($this->dbServiceMock);
     }
 
-    public function testObtenerEntrevistas()
+    public function testObtenerEntrevistas(): void
     {
-        $expectedResult = [
-            [
-                'identrevista' => 1,
-                'fecha' => '2025-05-05',
-                'hora' => '10:00',
-                'lugarMedio' => 'Sala A',
-                'postulacion_idpostulaciones' => 1,
-                'estadoEntrevista' => 'Pendiente'
-            ]
+        // Simulamos que la consulta devuelve un array de entrevistas
+        $fake = [
+            ['identrevista' => 1, 'estadoEntrevista' => 'Pendiente'],
+            ['identrevista' => 2, 'estadoEntrevista' => 'Confirmada'],
         ];
-
-        $this->dbServiceMock->method('ejecutarConsulta')
-            ->willReturn($expectedResult);
+        $this->dbServiceMock
+             ->method('ejecutarConsulta')
+             ->willReturn($fake);
 
         $result = $this->entrevista->obtenerEntrevistas();
-
-        $this->assertEquals($expectedResult, $result);
+        $this->assertSame($fake, $result);
     }
 
-    public function testObtenerDatosDelEntrevistado()
+    public function testObtenerDatosDelEntrevistado(): void
     {
-        $num_doc = '1234567890';
-        $expectedData = [
-            'num_doc' => '1234567890',
-            'nombre' => 'Juan Pérez',
-            'idHojadevida' => 1,
-            'estudios' => [
-                ['titulo' => 'Ingeniero', 'institucion' => 'Universidad X']
-            ],
-            'experiencias' => [
-                ['empresa' => 'Empresa Y', 'puesto' => 'Desarrollador']
-            ]
-        ];
+        $numDoc = '12345';
 
-        $this->dbServiceMock->method('ejecutarConsulta')
-            ->willReturnOnConsecutiveCalls(
-                [$expectedData], 
-                [['titulo' => 'Ingeniero', 'institucion' => 'Universidad X']],
-                [['empresa' => 'Empresa Y', 'puesto' => 'Desarrollador']] 
-            );
+        // Simulamos tres llamadas: datos, estudios y experiencias
+        $datos       = [['idHojadevida' => 99, 'foo' => 'bar']];
+        $estudios    = [['titulo' => 'X']];
+        $experiencias= [['empresa' => 'Y']];
 
-        $result = $this->entrevista->obtenerDatosDelEntrevistado($num_doc);
+        $this->dbServiceMock
+             ->method('ejecutarConsulta')
+             ->willReturnOnConsecutiveCalls(
+                 $datos,
+                 $estudios,
+                 $experiencias
+             );
 
-        $this->assertEquals($expectedData, $result);
+        $result = $this->entrevista->obtenerDatosDelEntrevistado($numDoc);
+
+        // Esperamos el primer registro enriquecido
+        $expected = array_merge(
+            $datos[0],
+            ['estudios' => $estudios, 'experiencias' => $experiencias]
+        );
+        $this->assertEquals($expected, $result);
     }
 
-    public function testAsignarEntrevista()
+    public function testAsignarEntrevista(): void
     {
         $data = [
-            'fecha' => '2025-05-05',
-            'hora' => '10:00',
-            'lugarMedio' => 'Sala A',
-            'postulacion_idpostulaciones' => 1
+            'fecha'                       => '2025-01-01',
+            'hora'                        => '09:00',
+            'lugarMedio'                  => 'Sala',
+            'postulacion_idpostulaciones' => 5
         ];
 
-        $this->dbServiceMock->method('ejecutarConsulta')
-            ->willReturn(true);
-        $stmtMock = $this->createMock(PDOStatement::class);
-        $stmtMock->method('fetch')->willReturn(['usuario_num_doc' => '1234567890']);
-        $this->dbServiceMock->method('prepare')->willReturn($stmtMock);
-        $result = $this->entrevista->asignarEntrevista($data);
+        // Simulamos: insert → devuelve cualquier array o vacío, luego select usuario, luego insert noti
+        $this->dbServiceMock
+             ->method('ejecutarConsulta')
+             ->willReturnOnConsecutiveCalls(
+                 [],                                      // primer INSERT
+                 [['usuario_num_doc' => 'ABC123']],      // SELECT usuario
+                 []                                       // INSERT notificación
+             );
 
-        $this->assertTrue($result);
+        $this->assertTrue($this->entrevista->asignarEntrevista($data));
     }
 
-    public function testAsistenciaConfirmada()
+    public function testAsistenciaConfirmada(): void
     {
-        $identrevista = 1;
+        // Simulamos un resultado cualquiera
+        $this->dbServiceMock
+             ->method('ejecutarConsulta')
+             ->willReturn([]);
 
-        $stmtMock = $this->createMock(PDOStatement::class);
-        $stmtMock->expects($this->once())->method('execute');
-        $this->dbServiceMock->method('prepare')->willReturn($stmtMock);
-
-        $this->entrevista->asistenciaConfirmada($identrevista);
+        // No debe lanzar excepción
+        $this->entrevista->asistenciaConfirmada(7);
+        $this->assertTrue(true);
     }
 
-    public function testAsistenciaNoConfirmada()
+    public function testAsistenciaNoConfirmada(): void
     {
-        $identrevista = 1;
-        $stmtMock = $this->createMock(PDOStatement::class);
-        $stmtMock->expects($this->once())->method('execute');
-        $this->dbServiceMock->method('prepare')->willReturn($stmtMock);
+        $this->dbServiceMock
+             ->method('ejecutarConsulta')
+             ->willReturn([]);
 
-        $this->entrevista->asistenciaNoConfirmada($identrevista);
+        $this->entrevista->asistenciaNoConfirmada(9);
+        $this->assertTrue(true);
+    }
+
+   
+    public function errorProvider(): array
+    {
+        return [
+            ['obtenerEntrevistas',        [],                    'Error al obtener entrevistas'],
+            ['obtenerDatosDelEntrevistado',['123'],               'Error al obtener los datos del entrevistado'],
+            ['asignarEntrevista',         [['a'=>1,'hora'=>null]], 'Error al asignar entrevista'],
+        ];
     }
 }

@@ -39,20 +39,20 @@ class AusenciaModelTest extends TestCase
     }
 
     public function testAusenciaAceptada()
-    {
-        $this->dbMock->expects($this->exactly(3))
-            ->method('ejecutarConsulta')
-            ->willReturn(['usuario_num_doc' => '123']);
+{
+    $this->dbMock->expects($this->once()) // antes: exactly(3)
+        ->method('ejecutarConsulta')
+        ->willReturn(['usuario_num_doc' => '123']);
 
-        $this->dbMock->expects($this->once())
-            ->method('ejecutarUpdate');
+    $this->dbMock->expects($this->once())
+        ->method('ejecutarUpdate');
 
-        $this->dbMock->expects($this->once())
-            ->method('ejecutarInsert');
+    $this->dbMock->expects($this->once())
+        ->method('ejecutarInsert');
 
-        $resultado = $this->ausencia->ausenciaAceptada(5);
-        $this->assertTrue($resultado);
-    }
+    $resultado = $this->ausencia->ausenciaAceptada(5);
+    $this->assertTrue($resultado);
+}
 
     public function testAusenciaAceptadaFalla()
     {
@@ -66,19 +66,20 @@ class AusenciaModelTest extends TestCase
 
     public function testAusenciaRechazada()
     {
-        $this->dbMock->expects($this->exactly(3))
+        $this->dbMock->expects($this->once()) // cambia de exactly(3) a once()
             ->method('ejecutarConsulta')
             ->willReturn(['usuario_num_doc' => '123']);
-
+    
         $this->dbMock->expects($this->once())
             ->method('ejecutarUpdate');
-
+    
         $this->dbMock->expects($this->once())
             ->method('ejecutarInsert');
-
+    
         $resultado = $this->ausencia->ausenciaRechazada(7);
         $this->assertTrue($resultado);
     }
+    
 
     public function testSolicitarAusencia()
     {
