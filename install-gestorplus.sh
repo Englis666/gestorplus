@@ -1,7 +1,8 @@
-set -e 
+#!/bin/bash
+set -e
 
 echo " Instalando Gestorplus ... "
-# Comprobar si estamos en Ubuntu o Arch usando /etc/os-release
+
 if grep -q "Ubuntu" /etc/os-release; then
     echo "Detectado Ubuntu ... "
     sudo apt update
@@ -18,7 +19,7 @@ sudo systemctl enable docker
 sudo systemctl start docker
 
 if [ -d "gestorplus" ]; then
-    echo  "La carpeta 'gestorplus' ya existe. Usando carpeta existente..."
+    echo "La carpeta 'gestorplus' ya existe. Usando carpeta existente..."
 else 
     echo "Clonando GestorPlus..."
     git clone https://github.com/Englis666/gestorplus.git
@@ -26,24 +27,34 @@ fi
 
 cd gestorplus
 
-echo " Levantando contenedores de Docker..."
+echo "Levantando contenedores de Docker..."
 sudo docker-compose up -d --build
 
 sleep 25
 
-filename=$(zenity --file-selection --title="Selecciona el excel o base de datos que quieras migrar" --file-filter="*.xlsx *.xls *.csv")
+# Si no existe entorno grafico se pedira la ruta del Excel
+if command -v zenity >/dev/null 2>&1; then
+    filename=$(zenity --file-selection --title="Selecciona el archivo Excel/CSV para migrar" --file-filter="*.xlsx *.xls *.csv")
+else
+    read -p "Ingresa la ruta del archivo Excel/CSV para migrar: " filename
+fi
 
 if [ -z "$filename" ]; then
-    zenity --error --text="No se seleccionó ningún archivo"
+    echo "No se seleccionó ningún archivo"
     exit 1
 fi
 
-echo "Ejecutando migracion de archivo : $filename"
-php backend/migrations/MigrarExcelRunner.php "$filename"
-echo "Migracion completa"
+# Toca corregir el copeo de la base de datos de excel (Ruta especifica a Docker) @param [@Stemansote]
+docker cp "$filename" gestorplus-php:/app/tmp_migrar.xlsx
 
-echo "Creando usuario administrador..."
+echo "Ejecutando migración del archivo: $filename"
+sudo docker exec -it gestorplus-php php backend/migrations/MigrarExcelRunner.php /app/tmp_migrar.xlsx
+echo "Migración completa"
+
+# Toca testear que este script funcione $param [$Stemansote]
+echo "Creando usuario administrador..."2
 sudo docker exec -it gestorplus-php php backend/migrations/CrearAdministrador.php
 
-echo " GestorPlus está listo. Accede en http://localhost:3000"
-echo " Usuario Admin num_doc = 1014736 | password 123"
+echo ""
+echo "✅ GestorPlus está listo. Accede en http://localhost:3000"
+echo "🧑 Usuario Admin num_doc = 898989 | password = 123456789"
