@@ -14,14 +14,14 @@ class PerfilController extends BaseController {
 
     public function __construct() {
         parent::__construct();
-        $this->perfil = $perfil ?? new Perfil($this->dbService);  // Permite inyección o uso predeterminado
-        $this->tokenService = $tokenService ?? new TokenService();  // Permite inyección o uso predeterminado
+        $this->perfil = $perfil ?? new Perfil($this->dbService); 
+        $this->tokenService = $tokenService ?? new TokenService();  
     }
     
 
     public function datosPerfil(): void {
         try {
-            $num_doc = $this->tokenService->validarToken();
+            $num_doc = (int) $this->tokenService->validarToken();
             $resultado = $this->perfil->datosPerfil($num_doc);
 
             $this->jsonResponseService->responder([

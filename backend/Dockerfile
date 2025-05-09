@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install mysqli pdo pdo_mysql mbstring zip gd \
+    && docker-php-ext-install mysqli pdo pdo_mysql mbstring zip gd iconv \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instalar dependencias para Xdebug
@@ -38,10 +38,16 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 # Verificar si PHP y Xdebug están habilitados
 RUN php -m | grep xdebug
 
-#Libreria para que reconozca iconv
+# Libreria para que reconozca iconv
 RUN docker-php-ext-install iconv
 
-#Libreria para la migracion de datos desde un excel
+# Cambiar a la carpeta de trabajo donde está tu código PHP (ajusta según corresponda)
+WORKDIR /var/www/html
+
+# Instalar predis/predis directamente con Composer en un solo paso
+RUN composer require predis/predis
+
+# Librería para la migración de datos desde un excel
 RUN composer require phpoffice/phpspreadsheet
 
 # Limpiar apt-get

@@ -11,11 +11,14 @@ class Notificacion {
         $this->dbService = $dbService;
     }
 
-    public function obtenerTodasLasNotificaciones() {
-        $sql = "SELECT * FROM notificacion";
+    public function obtenerTodasLasNotificaciones($pagina = 1, $registrosPorPagina = 10) {
+        $offset = ($pagina - 1) * $registrosPorPagina;
+    
+        $sql = "SELECT * FROM notificacion LIMIT $registrosPorPagina OFFSET $offset";
+        
         return $this->dbService->ejecutarConsulta($sql);
     }
-
+    
     public function obtenerNotificaciones(int $num_doc) {
         $sql = "SELECT * FROM notificacion WHERE num_doc = :num_doc";
         return $this->dbService->ejecutarConsulta($sql, ['num_doc' => $num_doc]);

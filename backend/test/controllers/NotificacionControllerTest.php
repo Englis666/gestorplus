@@ -19,31 +19,31 @@ class NotificacionControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        // Crear mocks
+        // Crear mocks de las dependencias
         $this->mockNotificacion        = $this->createMock(Notificacion::class);
         $this->mockTokenService        = $this->createMock(TokenService::class);
         $this->mockJsonResponseService = $this->createMock(JsonResponseService::class);
 
-        // Controlador parcial
+        // Controlador con métodos parciales
         $this->controller = $this->getMockBuilder(NotificacionController::class)
                                  ->onlyMethods(['parametrosRequeridos'])
                                  ->disableOriginalConstructor()
                                  ->getMock();
 
-        // Inyectar con reflection
+        // Inyectar las dependencias mediante reflexión
         $ref = new \ReflectionClass(NotificacionController::class);
 
-        // notificacion
+        // Inyectar Notificacion
         $p = $ref->getProperty('notificacion');
         $p->setAccessible(true);
         $p->setValue($this->controller, $this->mockNotificacion);
 
-        // tokenService
+        // Inyectar TokenService
         $p = $ref->getProperty('tokenService');
         $p->setAccessible(true);
         $p->setValue($this->controller, $this->mockTokenService);
 
-        // jsonResponseService en BaseController
+        // Inyectar JsonResponseService en BaseController
         $base = $ref->getParentClass();
         $p    = $base->getProperty('jsonResponseService');
         $p->setAccessible(true);
@@ -55,47 +55,49 @@ class NotificacionControllerTest extends TestCase
         $this->mockTokenService
             ->expects($this->once())
             ->method('validarToken')
-            ->willReturn('abc');
+            ->willReturn('123');  // Simulando que el token validado es '123'
 
-        $lista = [['id' => 1, 'msg' => 'Hola']];
+        $notificaciones = [['id' => 1, 'msg' => 'Notificación 1']];  // Datos simulados
         $this->mockNotificacion
             ->expects($this->once())
             ->method('obtenerNotificaciones')
-            ->with('abc')
-            ->willReturn($lista);
+            ->with(123)  // El método debe recibir el número de documento 123
+            ->willReturn($notificaciones);
 
         $this->mockJsonResponseService
             ->expects($this->once())
             ->method('responder')
-            ->with(['Notificaciones' => $lista]);
+            ->with(['Notificaciones' => $notificaciones]);
 
+        // Llamada al método que estamos probando
         $this->controller->obtenerNotificaciones();
     }
 
     public function testObtenerTodasLasNotificaciones(): void
     {
-        $lista = [['id' => 1, 'msg' => 'Todos']];
+        $notificaciones = [['id' => 1, 'msg' => 'Todas las notificaciones']];  // Datos simulados
         $this->mockNotificacion
             ->expects($this->once())
             ->method('obtenerTodasLasNotificaciones')
-            ->willReturn($lista);
+            ->willReturn($notificaciones);
 
         $this->mockJsonResponseService
             ->expects($this->once())
             ->method('responder')
-            ->with(['Notificaciones' => $lista]);
+            ->with(['Notificaciones' => $notificaciones]);
 
+        // Llamada al método que estamos probando
         $this->controller->obtenerTodasLasNotificaciones();
     }
 
-    public function testObtenerNotificacionesAspiranteNoToken(): void
+    public function testObtenerNotificacionesAspiranteSinToken(): void
     {
         $this->mockTokenService
             ->expects($this->once())
             ->method('validarToken')
-            ->willReturn('');
+            ->willReturn('');  // Simulamos que no se obtiene un token
 
-        // No debe invocar al modelo ni al responderError
+        // No debe invocar el modelo ni responder con notificaciones
         $this->mockNotificacion
             ->expects($this->never())
             ->method('obtenerNotificacionesAspirante');
@@ -103,49 +105,51 @@ class NotificacionControllerTest extends TestCase
             ->expects($this->never())
             ->method('responderError');
 
+        // Llamada al método que estamos probando
         $this->controller->obtenerNotificacionesAspirante();
     }
 
-    public function testObtenerNotificacionesAspiranteNotFound(): void
+    public function testObtenerNotificacionesAspiranteNoHayNotificaciones(): void
     {
         $this->mockTokenService
             ->expects($this->once())
             ->method('validarToken')
-            ->willReturn('xyz');
+            ->willReturn('456');  // Token simulado
 
         $this->mockNotificacion
             ->expects($this->once())
             ->method('obtenerNotificacionesAspirante')
-            ->with('xyz')
-            ->willReturn([]);
-
+            ->with(456)  // El método debe recibir el número de documento 456
+            ->willReturn([]); 
+            
         $this->mockJsonResponseService
             ->expects($this->once())
             ->method('responderError')
-            ->with('No hay notificaciones', 404);
+            ->with('No hay notificaciones', 404);  
 
         $this->controller->obtenerNotificacionesAspirante();
     }
 
-    public function testObtenerNotificacionesAspiranteSuccess(): void
+    public function testObtenerNotificacionesAspiranteConNotificaciones(): void
     {
-        $data = [['id' => 2, 'msg' => 'Mensaje']];
+        $notificaciones = [['id' => 1, 'msg' => 'Notificación Aspirante']];  
         $this->mockTokenService
             ->expects($this->once())
             ->method('validarToken')
-            ->willReturn('xyz');
+            ->willReturn('456');  
 
         $this->mockNotificacion
             ->expects($this->once())
             ->method('obtenerNotificacionesAspirante')
-            ->with('xyz')
-            ->willReturn($data);
+            ->with(456)  
+            ->willReturn($notificaciones);
 
         $this->mockJsonResponseService
             ->expects($this->once())
             ->method('responder')
-            ->with(['message' => 'Notificaciones', 'data' => $data]);
+            ->with(['message' => 'Notificaciones', 'data' => $notificaciones]);
 
         $this->controller->obtenerNotificacionesAspirante();
     }
+
 }

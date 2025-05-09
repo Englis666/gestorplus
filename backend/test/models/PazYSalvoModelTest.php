@@ -11,29 +11,21 @@ class PazySalvoModelTest extends TestCase{
 
     protected function setUp(): void
     {
-        // Crear el mock de la clase DatabaseService
         $this->mockDbService = $this->createMock(DatabaseService::class);
         $this->pazySalvo = new PazySalvo($this->mockDbService);
     }
 
     public function testObtenerPazYSalvos()
     {
-        // Crear un resultado falso para la consulta
         $fakeResult = [
             ['id' => 1, 'motivo' => 'Motivo 1', 'estado' => 'activo'],
             ['id' => 2, 'motivo' => 'Motivo 2', 'estado' => 'inactivo']
         ];
 
-        // Simular el comportamiento de ejecutar la consulta
         $stmt = $this->createMock(PDOStatement::class);
         $stmt->method('fetchAll')->willReturn($fakeResult);
-
         $this->mockDbService->method('prepare')->willReturn($stmt);
-
-        // Llamar al método a probar
         $result = $this->pazySalvo->obtenerPazYSalvos();
-
-        // Verificar los resultados
         $this->assertEquals($fakeResult, $result);
     }
 
@@ -41,7 +33,6 @@ class PazySalvoModelTest extends TestCase{
     {
         $numDoc = 12345;
 
-        // Simular el resultado de la consulta para la vinculación
         $fakeVinculacion = ['idvinculacion' => 1];
         $stmtVinculacion = $this->createMock(PDOStatement::class);
         $stmtVinculacion->method('fetch')->willReturn($fakeVinculacion);

@@ -20,7 +20,7 @@ class NotificacionController extends BaseController {
     }
 
     public function obtenerNotificaciones(): void {
-        $num_doc = $this->tokenService->validarToken();
+        $num_doc = (int) $this->tokenService->validarToken();
         $this->jsonResponseService->responder([
             'Notificaciones' => $this->notificacion->obtenerNotificaciones($num_doc)
         ]);
@@ -33,9 +33,8 @@ class NotificacionController extends BaseController {
     }
 
     public function obtenerNotificacionesAspirante(): void {
-        $num_doc = $this->tokenService->validarToken();
+        $num_doc = (int) $this->tokenService->validarToken();
 
-        // Si no hay token (string vacío o null), salimos sin más acción
         if (!$num_doc) {
             return;
         }

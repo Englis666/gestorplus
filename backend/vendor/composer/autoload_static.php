@@ -79,6 +79,7 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
             'Psr\\Container\\' => 14,
             'Psr\\Clock\\' => 10,
             'Psr\\Cache\\' => 10,
+            'Predis\\' => 7,
             'PhpParser\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
@@ -90,6 +91,7 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         array (
             'Model\\' => 6,
             'Migrations\\' => 11,
+            'Middleware\\' => 11,
             'Matrix\\' => 7,
         ),
         'F' => 
@@ -260,6 +262,10 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
         ),
+        'Predis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/predis/predis/src',
+        ),
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
@@ -279,6 +285,10 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         'Migrations\\' => 
         array (
             0 => __DIR__ . '/../..' . '/migrations',
+        ),
+        'Middleware\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/middleware',
         ),
         'Matrix\\' => 
         array (

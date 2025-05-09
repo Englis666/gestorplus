@@ -14,9 +14,9 @@ const ChatContainer = ({ selectedChat }) => {
   const [mensajes, setMensajes] = useState([]);
   const [message, setMessage] = useState("");
   const [numDocUsuario, setNumDocUsuario] = useState(null);
+  const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
 
-  // Obtener el num_doc del usuario desde el token
   useEffect(() => {
     const token = getCookie("auth_token");
     if (!token) return;
@@ -28,33 +28,32 @@ const ChatContainer = ({ selectedChat }) => {
     }
   }, []);
 
-  // Función para obtener los mensajes
-  const fetchMessages = () => {
+  const fetchMessages = async () => {
     const token = getCookie("auth_token");
 
     if (selectedChat?.idChat && token) {
-      axios
-        .get("http://localhost/gestorplus/backend/", {
+      setLoading(true);
+      try {
+        const response = await axios.get("http://localhost/gestorplus/backend/", {
           params: { idChat: selectedChat.idChat, action: "obtenerMensajes" },
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        })
-        .then((response) => {
-          const data = response.data;
-          if (data.status === "success") {
-            setMensajes(data.mensajes); // Mensajes ya vienen con usuario_num_doc
-          } else {
-            setMensajes([]);
-          }
-        })
-        .catch((error) => {
-          console.error("Error al cargar mensajes:", error);
         });
+
+        if (response.data.status === "success") {
+          setMensajes(response.data.mensajes);
+        } else {
+          setMensajes([]);
+        }
+      } catch (error) {
+        console.error("Error al cargar mensajes:", error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  // Cargar mensajes iniciales al cambiar el chat
   useEffect(() => {
     fetchMessages();
   }, [selectedChat]);
@@ -62,27 +61,27 @@ const ChatContainer = ({ selectedChat }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchMessages();
-    }, 1000); // 3 segundos
+    }, 3000); // Actualización cada 3 segundos
 
     return () => clearInterval(interval);
   }, [selectedChat]);
 
-  // Auto scroll hacia el último mensaje
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [mensajes]);
 
-  // Enviar un mensaje nuevo
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     const token = getCookie("auth_token");
 
     if (!message.trim() || !selectedChat?.idChat) return;
 
-    axios
-      .post(
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
         "http://localhost/gestorplus/backend/",
         {
           idChat: selectedChat.idChat,
@@ -96,30 +95,30 @@ const ChatContainer = ({ selectedChat }) => {
             action: "enviarMensaje",
           },
         }
-      )
-      .then((response) => {
-        if (response.data.status === "success") {
-          setMensajes((prev) => [
-            ...prev,
-            {
-              mensaje: message,
-              usuario_num_doc: numDocUsuario,
-              fecha_envio: new Date().toISOString(),
-            },
-          ]);
-          setMessage("");
-        } else {
-          console.warn("No se pudo enviar el mensaje");
-        }
-      })
-      .catch((error) => {
-        console.error("Error al enviar mensaje:", error);
-      });
+      );
+
+      if (response.data.status === "success") {
+        setMensajes((prev) => [
+          ...prev,
+          {
+            mensaje: message,
+            usuario_num_doc: numDocUsuario,
+            fecha_envio: new Date().toISOString(),
+          },
+        ]);
+        setMessage("");
+      } else {
+        console.warn("No se pudo enviar el mensaje");
+      }
+    } catch (error) {
+      console.error("Error al enviar mensaje:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="chat-container d-flex flex-column" style={{ height: "80vh" }}>
-      {/* Contenedor de mensajes con scroll */}
       <div
         className="message-container flex-grow-1 overflow-auto px-3"
         style={{ scrollBehavior: "smooth" }}
@@ -143,7 +142,6 @@ const ChatContainer = ({ selectedChat }) => {
         <div ref={bottomRef} />
       </div>
 
-      {/* Barra de envío de mensaje */}
       <form
         className="send-message-form d-flex align-items-center gap-3 border-top pt-3 px-3 mt-2"
         onSubmit={handleSendMessage}
@@ -154,15 +152,15 @@ const ChatContainer = ({ selectedChat }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Escribe un mensaje..."
-          disabled={!selectedChat?.idChat}
+          disabled={loading || !selectedChat?.idChat}
         />
         <button
           type="submit"
           className="btn btn-primary rounded-pill px-4"
-          disabled={!selectedChat?.idChat || !message.trim()}
+          disabled={loading || !selectedChat?.idChat || !message.trim()}
           title="Enviar"
         >
-          <i className="bi bi-send-fill"></i>
+          {loading ? <i className="bi bi-hourglass-split"></i> : <i className="bi bi-send-fill"></i>}
         </button>
       </form>
     </div>

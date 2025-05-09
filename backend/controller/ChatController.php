@@ -17,24 +17,48 @@ class ChatController extends BaseController {
     }
 
     public function enviarMensaje($data) {
-        $num_doc_emisor = $this->tokenService->validarToken();
-
+        $num_doc_emisor = (int) $this->tokenService->validarToken();
+    
+        // Validar parámetros requeridos
         if (!$this->parametrosRequeridos($data, ['idChat', 'mensaje'])) {
             return $this->jsonResponseService->responderError('Faltan parámetros requeridos', 400);
         }
-
+    
         $idChat = $data['idChat'];
         $mensaje = $data['mensaje'];
-
-        if ($this->chat->enviarMensaje($idChat, $num_doc_emisor, $mensaje)) {
-            return $this->jsonResponseService->responder([
-                'status' => 'success',
-                'message' => 'Mensaje enviado correctamente'
-            ]);
-        } else {
-            return $this->jsonResponseService->responderError('Error al enviar el mensaje', 500);
+    
+        try {
+            // Intentar enviar el mensaje
+            $mensajeEnviado = $this->chat->enviarMensaje($idChat, $num_doc_emisor, $mensaje);
+    
+            // Verificar si el mensaje fue enviado correctamente
+            if ($mensajeEnviado) {
+                return $this->jsonResponseService->responder([
+                    'status' => 'success',
+                    'message' => 'Mensaje enviado correctamente'
+                ]);
+            } else {
+                // Si no se pudo guardar el mensaje, regresar un error
+                return $this->jsonResponseService->responderError(
+                    'No se pudo guardar el mensaje en la base de datos. Por favor, intente más tarde.',
+                    500
+                );
+            }
+        } catch (PDOException $e) {
+            // Manejo específico para errores de base de datos
+            return $this->jsonResponseService->responderError(
+                'Ocurrió un error en la base de datos. Por favor, intente más tarde.',
+                500
+            );
+        } catch (Exception $e) {
+            // Capturar otros errores genéricos y retornarlos
+            return $this->jsonResponseService->responderError(
+                'Error al procesar el mensaje: ' . $e->getMessage(),
+                500
+            );
         }
     }
+    
 
     public function obtenerIdChat() {
         $num_doc = $this->tokenService->validarToken();

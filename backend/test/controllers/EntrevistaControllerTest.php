@@ -76,29 +76,29 @@ class EntrevistaControllerTest extends TestCase
     }
 
     public function testAsignarEntrevistaSuccess(): void
-    {
-        $data = ['fecha' => '2025-05-01', 'hora' => '10:00', 'lugarMedio' => 'Online'];
-        $resultado = ['id' => 1, 'fecha' => '2025-05-01'];
+{
+    $data = ['fecha' => '2025-05-01', 'hora' => '10:00', 'lugarMedio' => 'Online'];
+    $resultado = true; // Cambiar el resultado a un booleano
 
-        $this->controller
-            ->expects($this->once())
-            ->method('parametrosRequeridos')
-            ->with($data, ['fecha', 'hora', 'lugarMedio'])
-            ->willReturn(true);
+    $this->controller
+        ->expects($this->once())
+        ->method('parametrosRequeridos')
+        ->with($data, ['fecha', 'hora', 'lugarMedio'])
+        ->willReturn(true);
 
-        $this->mockEntrevista
-            ->expects($this->once())
-            ->method('asignarEntrevista')
-            ->with($data)
-            ->willReturn($resultado);
+    $this->mockEntrevista
+        ->expects($this->once())
+        ->method('asignarEntrevista')
+        ->with($data)
+        ->willReturn($resultado); // Retorna true en lugar de un array
 
-        $this->mockJsonResponseService
-            ->expects($this->once())
-            ->method('responder')
-            ->with(['Entrevista' => $resultado]);
+    $this->mockJsonResponseService
+        ->expects($this->once())
+        ->method('responder')
+        ->with(['Entrevista' => $resultado]);
 
-        $this->controller->asignarEntrevista($data);
-    }
+    $this->controller->asignarEntrevista($data);
+}
 
     public function testObtenerEntrevistas(): void
     {
@@ -152,59 +152,57 @@ class EntrevistaControllerTest extends TestCase
         $this->controller->obtenerDatosDelEntrevistado(null);
     }
 
-    public function testAsistenciaConfirmada(): void
-    {
+    public function testAsistenciaConfirmada(): void{
         $data = ['identrevista' => '5'];
+
         $this->controller
             ->expects($this->once())
             ->method('parametrosRequeridos')
             ->with($data, ['identrevista'])
             ->willReturn(true);
+
         $this->controller
             ->expects($this->once())
             ->method('getIntParam')
             ->with($data, 'identrevista')
-            ->willReturn(5);
+            ->willReturn(5); 
 
         $this->mockEntrevista
             ->expects($this->once())
             ->method('asistenciaConfirmada')
-            ->with(5)
-            ->willReturn(true);
+            ->with(5);
 
         $this->mockJsonResponseService
             ->expects($this->once())
             ->method('responder')
-            ->with(['AsistenciaConfirmada' => true]);
+            ->with(['AsistenciaConfirmada' => null]);
 
         $this->controller->asistenciaConfirmada($data);
     }
 
-    public function testAsistenciaNoConfirmada(): void
-    {
-        $data = ['identrevista' => '7'];
+    public function testAsistenciaNoConfirmada(): void{
+        $data = ['identrevista' => '5'];
+
         $this->controller
             ->expects($this->once())
             ->method('parametrosRequeridos')
-            ->with($data, ['identrevista'])
+            ->with($data,['identrevista'])
             ->willReturn(true);
         $this->controller
-            ->expects($this->once())
-            ->method('getIntParam')
-            ->with($data, 'identrevista')
-            ->willReturn(7);
-
+             ->expects($this->once())
+             ->method('getIntParam')
+             ->with($data, 'identrevista')
+            ->willReturn(5);
         $this->mockEntrevista
-            ->expects($this->once())
+             ->expects($this->once())
             ->method('asistenciaNoConfirmada')
-            ->with(7)
-            ->willReturn(false);
-
+            ->with(5);
         $this->mockJsonResponseService
             ->expects($this->once())
             ->method('responder')
-            ->with(['AsistenciaNoConfirmada' => false]);
-
+            ->with(['AsistenciaNoConfirmada' => null]);
         $this->controller->asistenciaNoConfirmada($data);
-    }
+    } 
+   
+    
 }

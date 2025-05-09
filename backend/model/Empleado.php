@@ -12,15 +12,28 @@ class Empleado {
         $this->dbService = $dbService;
     }
     
-    public function obtenerEmpleados() {
-        $sql = "SELECT * FROM vinculacion as v
-                INNER JOIN usuario as u ON v.usuario_num_doc = u.num_doc
-                INNER JOIN postulacion as p ON u.num_doc = p.usuario_num_doc
-                INNER JOIN convocatoria as c ON p.convocatoria_idconvocatoria = c.idconvocatoria
-                INNER JOIN cargo as ca ON c.cargo_idcargo = ca.idcargo";
-        
-        return $this->dbService->ejecutarConsulta($sql);
-    }
+    public function obtenerEmpleados($pagina = 1, $registrosPorPagina = 10) {
+    $offset = ($pagina - 1) * $registrosPorPagina;
+
+    $sql = "SELECT 
+                v.fechaInicio, 
+                v.fechaFin, 
+                u.num_doc, 
+                u.email, 
+                u.nombres, 
+                u.apellidos, 
+                u.tipodDoc, 
+                ca.nombreCargo 
+            FROM vinculacion AS v
+            INNER JOIN usuario AS u ON v.usuario_num_doc = u.num_doc
+            INNER JOIN postulacion AS p ON u.num_doc = p.usuario_num_doc
+            INNER JOIN convocatoria AS c ON p.convocatoria_idconvocatoria = c.idconvocatoria
+            INNER JOIN cargo AS ca ON c.cargo_idcargo = ca.idcargo
+            LIMIT $registrosPorPagina OFFSET $offset";
+    
+    return $this->dbService->ejecutarConsulta($sql);
+}
+
 
     public function solicitarQueja($num_doc, $data) {
         try {

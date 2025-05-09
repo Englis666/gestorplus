@@ -14,6 +14,7 @@
         "doctrine/cache": "^2.0",
         "psr/cache": "^3.0",
         "workerman/workerman": "^5.1",
+        "predis/predis": "^3.0",
         "phpoffice/phpspreadsheet": "^4.2"
     },
     "require-dev": {
@@ -31,7 +32,8 @@
             "Core\\": "core/",
             "Routes\\": "routes/",
             "Utils\\": "utils/",
-            "Migrations\\": "migrations/"
+            "Migrations\\": "migrations/",
+            "Middleware\\": "middleware/"
         }
     },
     "autoload-dev": {

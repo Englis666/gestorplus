@@ -121,7 +121,7 @@ const TablaPermisos = () => {
         idPermisos,
       })
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
         if (response.data.success) {
           alert("Permiso rechazado con éxito.");
           setPermisos((prev) =>

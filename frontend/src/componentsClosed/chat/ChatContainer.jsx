@@ -32,7 +32,6 @@ const ChatContainer = ({ selectedChat }) => {
   }, [token]);
 
   // Hook WebSocket personalizado
-  const { mensajeEstado, ultimoMensaje, sendMessage } = useWebSocket("ws://localhost:8082");
 
   useEffect(() => {
     if (selectedChat?.idChat && token) {

@@ -1,120 +1,105 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Test\Controller;
 
-use Controller\EstadisticaController;
-use Model\Estadistica;
-use Service\TokenService;
-use Service\JsonResponseService;
 use PHPUnit\Framework\TestCase;
+use Controller\EstadisticaController;
+use Service\TokenService;
+use Service\DatabaseService;
+use Service\JsonResponseService;
+use Model\Estadistica;
 use PHPUnit\Framework\MockObject\MockObject;
-use Exception;
-use ReflectionClass;
 
 class EstadisticaControllerTest extends TestCase
 {
-    private EstadisticaController $controller;
-    private MockObject $tokenServiceMock;
-    private MockObject $jsonResponseServiceMock;
-    private MockObject $estadisticaMock;
+    private $estadisticaController;
+    private $estadisticaMock;
+    private $jsonResponseMock;
+    private $tokenServiceMock;
 
     protected function setUp(): void
     {
-        // Crear mocks
-        $this->tokenServiceMock = $this->createMock(TokenService::class);
-        $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
+        $this->jsonResponseMock = $this->createMock(JsonResponseService::class);
         $this->estadisticaMock = $this->createMock(Estadistica::class);
+        $this->tokenServiceMock = $this->createMock(TokenService::class);
 
-        // Crear mock parcial del controlador sin ejecutar constructor
-        $this->controller = $this->getMockBuilder(EstadisticaController::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dbServiceMock = $this->createMock(DatabaseService::class);
 
-        // Inyectar mocks en propiedades privadas
-        $ref = new ReflectionClass(EstadisticaController::class);
+        $this->estadisticaController = new EstadisticaController();
 
-        // Propiedad estadistica
-        $prop = $ref->getProperty('estadistica');
-        $prop->setAccessible(true);
-        $prop->setValue($this->controller, $this->estadisticaMock);
+        $reflection = new \ReflectionClass($this->estadisticaController);
+        $property = $reflection->getProperty('estadistica');
+        $property->setAccessible(true);
+        $property->setValue($this->estadisticaController, $this->estadisticaMock);
 
-        // Propiedad tokenService
-        $prop = $ref->getProperty('tokenService');
-        $prop->setAccessible(true);
-        $prop->setValue($this->controller, $this->tokenServiceMock);
+        $property = $reflection->getProperty('tokenService');
+        $property->setAccessible(true);
+        $property->setValue($this->estadisticaController, $this->tokenServiceMock);
 
-        // Propiedad jsonResponseService en BaseController
-        $baseRef = $ref->getParentClass();
-        $prop = $baseRef->getProperty('jsonResponseService');
-        $prop->setAccessible(true);
-        $prop->setValue($this->controller, $this->jsonResponseServiceMock);
+        $property = $reflection->getProperty('jsonResponseService');
+        $property->setAccessible(true);
+        $property->setValue($this->estadisticaController, $this->jsonResponseMock);
     }
 
-    public function testObtenerTotalEstadisticasConPayloadInvalido(): void
+    public function testObtenerTotalEstadisticasCorrectamente()
     {
-        // Simular payload inválido (null)
+        $this->tokenServiceMock->expects($this->once())
+            ->method('obtenerPayload')
+            ->willReturn((object)[
+                'data' => (object)[
+                    'num_doc' => '123456',
+                    'rol' => 'admin'
+                ]
+            ]);
+
+        $this->estadisticaMock->expects($this->once())
+            ->method('obtenerTotalEstadisticas')
+            ->with('123456', 'admin')
+            ->willReturn([
+                'totalJornadas' => 4,
+                'totalGenerales' => 12,
+                'totalActualizaciones' => 3
+            ]);
+
+        $this->jsonResponseMock->expects($this->once())
+            ->method('responder')
+            ->with([
+                'totalJornadas' => 4,
+                'totalGenerales' => 12,
+                'totalActualizaciones' => 3
+            ]);
+
+        $this->estadisticaController->obtenerTotalEstadisticas();
+    }
+
+    public function testObtenerTotalEstadisticasConPayloadInvalido()
+    {
         $this->tokenServiceMock->expects($this->once())
             ->method('obtenerPayload')
             ->willReturn(null);
 
-        // Esperar respuesta de error 401
-        $this->jsonResponseServiceMock->expects($this->once())
+        $this->jsonResponseMock->expects($this->once())
             ->method('responder')
             ->with(['error' => 'Token inválido o faltan datos'], 401);
 
-        $this->controller->obtenerTotalEstadisticas();
+        $this->estadisticaController->obtenerTotalEstadisticas();
     }
 
-    public function testObtenerTotalEstadisticasConPayloadSinNumDoc(): void
+    public function testObtenerTotalEstadisticasSinNumDoc()
     {
-        // Simular payload sin propiedad data->num_doc
-        $payload = (object)['data' => (object)[]];
         $this->tokenServiceMock->expects($this->once())
             ->method('obtenerPayload')
-            ->willReturn($payload);
-
-        // Esperar respuesta de error 401
-        $this->jsonResponseServiceMock->expects($this->once())
-            ->method('responder')
-            ->with(['error' => 'Token inválido o faltan datos'], 401);
-
-        $this->controller->obtenerTotalEstadisticas();
-    }
-
-    public function testObtenerTotalEstadisticasRespondeCorrectamente(): void
-    {
-        // Simular payload válido con num_doc y rol
-        $payload = (object)[
-            'data' => (object)[
-                'num_doc' => 123,
-                'rol' => 'admin'
-            ]
-        ];
-        $this->tokenServiceMock->expects($this->once())
-            ->method('obtenerPayload')
-            ->willReturn($payload);
-
-        // Resultado esperado de estadistica
-        $stats = [
-            'totalJornadas' => 5,
-            'totalGenerales' => 10,
-            'totalActualizaciones' => 3
-        ];
-        $this->estadisticaMock->expects($this->once())
-            ->method('obtenerTotalEstadisticas')
-            ->with(123, 'admin')
-            ->willReturn($stats);
-
-        // Verificar respuesta con keys reetiquetadas
-        $this->jsonResponseServiceMock->expects($this->once())
-            ->method('responder')
-            ->with([
-                'totalJornadas' => 5,
-                'totalGenerales' => 10,
-                'totalActualizaciones' => 3
+            ->willReturn((object)[
+                'data' => (object)[
+                    'rol' => 'admin'
+                ]
             ]);
 
-        $this->controller->obtenerTotalEstadisticas();
+        $this->jsonResponseMock->expects($this->once())
+            ->method('responder')
+            ->with(['error' => 'Token inválido o faltan datos'], 401);
+
+        $this->estadisticaController->obtenerTotalEstadisticas();
     }
 }

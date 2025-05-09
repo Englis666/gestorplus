@@ -27,7 +27,7 @@ class VacacionesController extends BaseController {
     }
 
     public function solicitarVacaciones(array $data): void {
-        $num_doc = $this->tokenService->validarToken();
+        $num_doc = (int) $this->tokenService->validarToken();
         $mensaje = $this->vacaciones->solicitarVacaciones($num_doc, $data)
             ? 'Vacaciones solicitadas'
             : 'Error al solicitar las vacaciones';

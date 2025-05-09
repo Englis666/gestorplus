@@ -14,6 +14,7 @@ services:
       - gestorplus-network
     depends_on:
       - db
+      - redis
     command: ["sh", "-c", "until nc -z gestorplus-db 3306; do sleep 1; done; php-fpm"]
 
   nginx:
@@ -51,6 +52,14 @@ services:
       - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql
     ports:
       - "3306:3306"
+    networks:
+      - gestorplus-network
+
+  redis:
+    image: redis:alpine
+    container_name: gestorplus-redis
+    ports:
+      - "6379:6379"
     networks:
       - gestorplus-network
 

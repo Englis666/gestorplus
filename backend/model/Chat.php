@@ -66,7 +66,7 @@ class Chat {
     public function obtenerMensajes($idChat) {
         try {
             $query = "
-                SELECT m.*, u.nombre, u.apellido 
+                SELECT m.*, u.nombres, u.apellidos 
                 FROM mensajes m
                 JOIN usuario u ON m.usuario_num_doc = u.num_doc
                 WHERE m.idChat = :idChat
