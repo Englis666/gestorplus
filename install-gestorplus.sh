@@ -23,6 +23,11 @@ if [ -d "gestorplus" ]; then
 else 
     echo "Clonando GestorPlus..."
     git clone https://github.com/Englis666/gestorplus.git
+    
+    if [ -d "gestorplus/backend/test" ]; then
+        echo "Eliminando carpeta Privada (Solo es para desarolladores las pruebas)..."
+        rm -rf gestorplus/test
+    fi
 fi
 
 cd gestorplus
