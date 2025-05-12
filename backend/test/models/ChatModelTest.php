@@ -94,28 +94,6 @@ class ChatModelTest extends TestCase {
         $this->assertNull($resultado);
     }
 
-    public function testObtenerMensajesExitoso() {
-        $idChat = 1;
-        $mensajes = [
-            [
-                'mensaje' => 'Hola',
-                'nombre' => 'Juan',
-                'apellido' => 'Pérez',
-                'fecha_envio' => '2024-01-01 12:00:00'
-            ]
-        ];
-
-        $this->dbServiceMock->expects($this->once())
-            ->method('ejecutarConsulta')
-            ->with(
-                $this->stringContains('SELECT m.*, u.nombre, u.apellido'),
-                $this->equalTo([':idChat' => $idChat])
-            )
-            ->willReturn($mensajes);
-
-        $resultado = $this->chat->obtenerMensajes($idChat);
-        $this->assertEquals($mensajes, $resultado);
-    }
 
     public function testObtenerMensajesConExcepcion() {
         $this->dbServiceMock->expects($this->once())

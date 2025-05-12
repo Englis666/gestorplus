@@ -3,10 +3,9 @@
 //No me hago responsable del uso irresponsable de este script.
 $form_url = 'URL_FORM';
 
-// Inicia sesión para generar el token CSRF si aún no existe
 session_start();
 if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // Generar un token CSRF aleatorio
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 $test_inputs = [
@@ -20,11 +19,8 @@ $test_inputs = [
     "' OR EXISTS(SELECT * FROM users WHERE username = 'admin') --", 
 ];
 
-// Iterar sobre los datos de prueba
 foreach ($test_inputs as $input){
-    // Validación de entrada antes de la inyección
     if (preg_match('/[^\w\s]/', $input)) {
-        // Si la entrada contiene caracteres especiales sospechosos, se marca como inválida
         echo "Entrada no válida detectada: $input\n";
         continue;
     }

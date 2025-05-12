@@ -5,122 +5,126 @@ use PHPUnit\Framework\TestCase;
 use Model\PazySalvo;
 use Service\DatabaseService;
 
-class PazySalvoModelTest extends TestCase{
-    private $mockDbService;
+class PazySalvoModelTest extends TestCase
+{
+    private $dbServiceMock;
     private $pazySalvo;
 
     protected function setUp(): void
     {
-        $this->mockDbService = $this->createMock(DatabaseService::class);
-        $this->pazySalvo = new PazySalvo($this->mockDbService);
+        // Mock del servicio de base de datos
+        $this->dbServiceMock = $this->createMock(DatabaseService::class);
+        $this->pazySalvo = new PazySalvo($this->dbServiceMock);
     }
 
     public function testObtenerPazYSalvos()
     {
-        $fakeResult = [
-            ['id' => 1, 'motivo' => 'Motivo 1', 'estado' => 'activo'],
-            ['id' => 2, 'motivo' => 'Motivo 2', 'estado' => 'inactivo']
+        $expectedResult = [
+            ['id' => 1, 'motivo' => 'Finalización contrato', 'estado' => 'Activo'],
+            ['id' => 2, 'motivo' => 'Renuncia', 'estado' => 'Pendiente']
         ];
 
-        $stmt = $this->createMock(PDOStatement::class);
-        $stmt->method('fetchAll')->willReturn($fakeResult);
-        $this->mockDbService->method('prepare')->willReturn($stmt);
+        $this->dbServiceMock
+            ->expects($this->once())
+            ->method('ejecutarConsulta')
+            ->with("SELECT * FROM pazysalvo")
+            ->willReturn($expectedResult);
+
         $result = $this->pazySalvo->obtenerPazYSalvos();
-        $this->assertEquals($fakeResult, $result);
+        $this->assertEquals($expectedResult, $result);
     }
 
     public function testObtenerMiPazYSalvo()
     {
-        $numDoc = 12345;
-
-        $fakeVinculacion = ['idvinculacion' => 1];
-        $stmtVinculacion = $this->createMock(PDOStatement::class);
-        $stmtVinculacion->method('fetch')->willReturn($fakeVinculacion);
-
-        // Simular el resultado de la consulta del Paz y Salvo
-        $fakePazYSalvo = [
-            ['id' => 1, 'motivo' => 'Motivo 1', 'estado' => 'activo']
+        $num_doc = 12345;
+        $vinculacionResult = ['idvinculacion' => 10];
+        $pazYSalvoResult = [
+            ['id' => 1, 'motivo' => 'Finalización contrato', 'estado' => 'Activo']
         ];
-        $stmtPazYSalvo = $this->createMock(PDOStatement::class);
-        $stmtPazYSalvo->method('fetchAll')->willReturn($fakePazYSalvo);
 
-        // Simular que prepare devuelve las consultas correctas
-        $this->mockDbService->method('prepare')
-            ->will($this->returnValueMap([
-                ["SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc", $stmtVinculacion],
-                ["SELECT * FROM pazysalvo WHERE vinculacion_idvinculacion = :vinculacion_idvinculacion", $stmtPazYSalvo],
-            ]));
+        // Primera llamada
+        $this->dbServiceMock->expects($this->at(0))
+            ->method('ejecutarConsulta')
+            ->with(
+                'SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc',
+                [':num_doc' => $num_doc]
+            )
+            ->willReturn($vinculacionResult);
 
-        // Llamar al método a probar
-        $result = $this->pazySalvo->obtenerMiPazYSalvo($numDoc);
+        // Segunda llamada
+        $this->dbServiceMock->expects($this->at(1))
+            ->method('ejecutarConsulta')
+            ->with(
+                'SELECT * FROM pazysalvo WHERE vinculacion_idvinculacion = :id',
+                [':id' => $vinculacionResult['idvinculacion']]
+            )
+            ->willReturn($pazYSalvoResult);
 
-        // Verificar los resultados
-        $this->assertEquals($fakePazYSalvo, $result);
+        $result = $this->pazySalvo->obtenerMiPazYSalvo($num_doc);
+
+        $this->assertEquals($pazYSalvoResult, $result);
     }
 
-    public function testCrearPazYSalvoSuccess()
+    public function testCrearPazYSalvo()
     {
-        // Datos de prueba
         $data = [
-            'empleado' => ['num_doc' => '12345'],
-            'motivo' => 'Motivo de prueba',
+            'empleado' => ['num_doc' => 12345],
+            'motivo' => 'Finalización contrato',
             'fechaEmision' => '2025-05-01',
-            'estado' => 'activo',
-            'documentoPazysalvo' => 'documento123.pdf'
+            'estado' => 'Activo',
+            'documentoPazysalvo' => 'documento.pdf'
         ];
 
-        // Simular que la consulta de la vinculación devuelve un ID válido
-        $stmtVinculacion = $this->createMock(PDOStatement::class);
-        $stmtVinculacion->method('fetchColumn')->willReturn(1);
+        $vinculacion = ['idvinculacion' => 10];
 
-        // Simular que la consulta de inserción tiene éxito
-        $stmtInsert = $this->createMock(PDOStatement::class);
-        $stmtInsert->method('execute')->willReturn(true);
-        $stmtInsert->method('rowCount')->willReturn(1);
+        $this->dbServiceMock
+            ->expects($this->at(0))
+            ->method('ejecutarConsulta')
+            ->with(
+                'SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc',
+                [':num_doc' => $data['empleado']['num_doc']]
+            )
+            ->willReturn($vinculacion);
 
-        // Simular el comportamiento del método prepare
-        $this->mockDbService->method('prepare')
-            ->will($this->returnValueMap([
-                ["SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc", $stmtVinculacion],
-                [
-                    "INSERT INTO pazysalvo (motivo, fechaEmision, estado, documentoPazysalvo, vinculacion_idvinculacion) 
-                    VALUES (:motivo, :fechaEmision, :estado, :documentoPazysalvo, :vinculacion_idvinculacion)", 
-                    $stmtInsert
-                ]
-            ]));
+        $this->dbServiceMock
+            ->expects($this->at(1))
+            ->method('ejecutarInsert')
+            ->with(
+                'INSERT INTO pazysalvo (motivo, fechaEmision, estado, documentoPazysalvo, vinculacion_idvinculacion) VALUES (:motivo, :fechaEmision, :estado, :documentoPazysalvo, :vinculacion_idvinculacion)',
+                $this->callback(function ($params) use ($data, $vinculacion) {
+                    return $params[':motivo'] === $data['motivo']
+                        && $params[':fechaEmision'] === $data['fechaEmision']
+                        && $params[':estado'] === $data['estado']
+                        && $params[':documentoPazysalvo'] === $data['documentoPazysalvo']
+                        && $params[':vinculacion_idvinculacion'] === $vinculacion['idvinculacion'];
+                })
+            )
+            ->willReturn(1); // Indica éxito
 
-        // Llamar al método a probar
         $result = $this->pazySalvo->crearPazYSalvo($data);
-
-        // Verificar que la inserción fue exitosa
         $this->assertTrue($result);
     }
 
-    public function testCrearPazYSalvoFailure()
+    public function testCrearPazYSalvoSinVinculacion()
     {
-        // Datos de prueba
         $data = [
-            'empleado' => ['num_doc' => '12345'],
-            'motivo' => 'Motivo de prueba',
+            'empleado' => ['num_doc' => 12345],
+            'motivo' => 'Finalización contrato',
             'fechaEmision' => '2025-05-01',
-            'estado' => 'activo',
-            'documentoPazysalvo' => 'documento123.pdf'
+            'estado' => 'Activo',
+            'documentoPazysalvo' => 'documento.pdf'
         ];
 
-        // Simular que la consulta de la vinculación no devuelve un ID válido
-        $stmtVinculacion = $this->createMock(PDOStatement::class);
-        $stmtVinculacion->method('fetchColumn')->willReturn(false);
+        $this->dbServiceMock
+            ->expects($this->once())
+            ->method('ejecutarConsulta')
+            ->with(
+                'SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc',
+                [':num_doc' => $data['empleado']['num_doc']]
+            )
+            ->willReturn(null); // No hay vinculacion
 
-        // Simular el comportamiento del método prepare
-        $this->mockDbService->method('prepare')
-            ->will($this->returnValueMap([
-                ["SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc", $stmtVinculacion]
-            ]));
-
-        // Llamar al método a probar
         $result = $this->pazySalvo->crearPazYSalvo($data);
-
-        // Verificar que la creación falló
         $this->assertFalse($result);
     }
 }
