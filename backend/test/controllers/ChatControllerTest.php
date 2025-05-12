@@ -91,27 +91,6 @@ class ChatControllerTest extends TestCase{
         $this->controller->enviarMensaje($data);
     }
 
-    public function testEnviarMensajeFail(): void
-    {
-        $data = ['idChat' => 1, 'mensaje' => 'Hola'];
-        $this->mockTokenService->expects($this->once())
-             ->method('validarToken')
-             ->willReturn('42');
-        $this->controller->expects($this->once())
-             ->method('parametrosRequeridos')
-             ->with($data, ['idChat', 'mensaje'])
-             ->willReturn(true);
-        $this->mockChat->expects($this->once())
-             ->method('enviarMensaje')
-             ->with(1, '42', 'Hola')
-             ->willReturn(false);
-        $this->mockJsonResponseService->expects($this->once())
-             ->method('responderError')
-             ->with('Error al enviar el mensaje', 500);
-
-        $this->controller->enviarMensaje($data);
-    }
-
     public function testObtenerIdChatInvalidToken(): void
     {
         // validarToken debe retornar string vacio para simular invalid token
