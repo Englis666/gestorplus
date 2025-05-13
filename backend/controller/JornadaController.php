@@ -30,14 +30,6 @@ class JornadaController extends BaseController {
         $this->jsonResponseService->responder(['Jornadas' => $jornadas]);
     }
 
-    public function finalizarJornada(): void {
-        $num_doc = $this->tokenService->validarToken();
-        $mensaje = $this->empleado->finalizarJornada($num_doc)
-            ? 'Jornada finalizada'
-            : 'Error al finalizar la jornada';
-        $this->jsonResponseService->responder(['message' => $mensaje]);
-    }
-
     public function corroborarJornada(array $data): void {
         if (!$this->parametrosRequeridos($data, ['data' => ['idJornada']])) {
             return;
