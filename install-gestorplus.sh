@@ -37,7 +37,6 @@ sudo docker-compose up -d --build
 
 sleep 25
 
-# Si no existe entorno grafico se pedira la ruta del Excel
 if command -v zenity >/dev/null 2>&1; then
     filename=$(zenity --file-selection --title="Selecciona el archivo Excel/CSV para migrar" --file-filter="*.xlsx *.xls *.csv")
 else
