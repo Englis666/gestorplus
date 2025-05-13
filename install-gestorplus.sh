@@ -52,10 +52,9 @@ fi
 docker cp "$filename" gestorplus-php:/app/tmp_migrar.xlsx
 
 echo "Ejecutando migración del archivo: $filename"
-sudo docker exec -it gestorplus-php php backend/migrations/MigrarExcelRunner.php /app/tmp_migrar.xlsx
+sudo docker exec gestorplus-php php backend/migrations/MigrarExcelRunner.php /app/tmp_migrar.xlsx
 echo "Migración completa"
 
-# Toca testear que este script funcione $param [$Stemansote]
 echo "Creando usuario administrador..."2
 sudo docker exec -it gestorplus-php php backend/migrations/CrearAdministrador.php
 
