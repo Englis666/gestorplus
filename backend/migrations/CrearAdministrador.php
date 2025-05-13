@@ -15,7 +15,7 @@ class AdminCreate {
             $num_doc = 898989;
             $email = "Administrador@gmail.com";
 
-            $verificar = $this->db->prepare("SELECT idusuario FROM usuario WHERE num_doc = ? OR email = ?");
+            $verificar = $this->db->prepare("SELECT num_doc FROM usuario WHERE num_doc = ? OR email = ?");
             $verificar->execute([$num_doc, $email]);
 
             if ($verificar->fetch()) {
@@ -64,6 +64,5 @@ class AdminCreate {
     }
 }
 
-// Ejecutar script
 require_once __DIR__ . '/../config/Database.php'; 
 (new AdminCreate())->crearAdministrador();
