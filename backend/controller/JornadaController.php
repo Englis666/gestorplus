@@ -45,5 +45,25 @@ class JornadaController extends BaseController {
         $resultado = $this->jornada->noCorroborarJornada($data['data']['idJornada']);
         $this->jsonResponseService->responder(['JornadaNoCorroborada' => $resultado]);
     }
+
+    public function finalizarJornada(array $data): void {
+        try {
+            $num_doc = $this->tokenService->validarToken();
+
+            if (!$this->parametrosRequeridos($data['data'], ['fechaBogota'])) {
+                $this->jsonResponseService->responderError("Faltan parámetros requeridos.");
+                return;
+            }
+            
+
+            $fecha = $data['data']['fechaBogota'];
+            $resultado = $this->jornada->finalizarJornada($fecha, (int)$num_doc);
+
+            $this->jsonResponseService->responder(['JornadaFinalizada' => $resultado]);
+        } catch (Exception $e) {
+            $this->jsonResponseService->responderError("Error: " . $e->getMessage());
+        }
+    }
 }
+
 
