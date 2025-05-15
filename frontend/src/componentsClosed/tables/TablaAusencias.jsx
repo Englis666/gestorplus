@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import axios from "axios";
 import FormularioAusencia from "../form/FormularioSolicitudAusencia";
 
@@ -23,51 +23,52 @@ const TablaAusencias = () => {
     return null;
   };
 
+  // Función para cargar ausencias según el rol y token
+  const fetchAusencias = (token, rol) => {
+    const action = rol === "1" || rol === "2" ? "obtenerTodasLasAusencias" : "obtenerAusencias";
+
+    axios
+      .get("http://localhost/gestorplus/backend/", {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { action },
+      })
+      .then((response) => {
+        console.log(response);
+        const ausencias = response.data?.Ausencias;
+        if (Array.isArray(ausencias)) setAusencias(ausencias);
+        else if (ausencias && typeof ausencias === "object") setAusencias([ausencias]);
+        else setAusencias([]);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Hubo un problema al cargar las Ausencias.");
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
     const token = getCookie("auth_token");
 
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
-        if (isTokenExpired) {
-          console.error("El token ha expirado");
-          setError("El token ha expirado.");
-          setLoading(false);
-          return;
-        }
-
-        const rol = decodedToken?.data?.rol;
-        setRol(rol);
-
-        const action = rol === "1" || rol === "2" ? "obtenerTodasLasAusencias" : "obtenerAusencias";
-
-        axios
-          .get("http://localhost/gestorplus/backend/", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: { action },
-          })
-          .then((response) => {
-            const ausencias = response.data?.Ausencias;
-            if (Array.isArray(ausencias)) {
-              setAusencias(ausencias);
-            } else {
-              setAusencias([]);
-            }
-            setLoading(false);
-          })
-          .catch((err) => {
-            setError("Hubo un problema al cargar las Ausencias.");
-            setLoading(false);
-          });
-      } catch (error) {
-        setError("Token inválido o malformado.");
-        setLoading(false);
-      }
-    } else {
+    if (!token) {
       setError("Token no encontrado.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode(token);
+      if (decodedToken.exp * 1000 < Date.now()) {
+        setError("El token ha expirado.");
+        setLoading(false);
+        return;
+      }
+
+      const rol = decodedToken?.data?.rol;
+      setRol(rol);
+
+      fetchAusencias(token, rol);
+    } catch {
+      setError("Token inválido o malformado.");
       setLoading(false);
     }
   }, []);
@@ -76,9 +77,9 @@ const TablaAusencias = () => {
     axios
       .post("http://localhost/gestorplus/backend/", {
         action: "ausenciaAceptada",
-        idausencia: idausencia,  
-        })
-      .then((response) => {
+        idausencia,
+      })
+      .then(() => {
         alert("Ausencia aceptada con éxito.");
         setAusencias((prevAusencias) =>
           prevAusencias.map((ausencia) =>
@@ -88,7 +89,7 @@ const TablaAusencias = () => {
           )
         );
       })
-      .catch((err) => {
+      .catch(() => {
         alert("Hubo un problema al aceptar la ausencia.");
       });
   };
@@ -97,10 +98,9 @@ const TablaAusencias = () => {
     axios
       .post("http://localhost/gestorplus/backend/", {
         action: "ausenciaRechazada",
-        idausencia: idausencia,  
+        idausencia,
       })
-      .then((response) => {
-        console.log(response);
+      .then(() => {
         alert("Ausencia rechazada con éxito.");
         setAusencias((prevAusencias) =>
           prevAusencias.map((ausencia) =>
@@ -110,8 +110,8 @@ const TablaAusencias = () => {
           )
         );
       })
-      .catch((err) => {
-        alert("Hubo un problema al rechazar la notificación.");
+      .catch(() => {
+        alert("Hubo un problema al rechazar la ausencia.");
       });
   };
 
@@ -142,7 +142,7 @@ const TablaAusencias = () => {
           },
         }
       )
-      .then((response) => {
+      .then(() => {
         alert("Solicitud de ausencia enviada con éxito.");
         setSolicitud({
           fechaInicio: "",
@@ -150,8 +150,10 @@ const TablaAusencias = () => {
           tipoAusencia: "",
           descripcion: "",
         });
+        // Refrescar lista de ausencias para reflejar nueva solicitud
+        fetchAusencias(token, rol);
       })
-      .catch((err) => {
+      .catch(() => {
         alert("Hubo un problema al enviar la solicitud de ausencia.");
       });
   };
@@ -163,8 +165,14 @@ const TablaAusencias = () => {
   if (loading) return <div>Cargando Ausencias...</div>;
   if (error) return <div>{error}</div>;
 
+  // Filtrado con traducción correcta del filtro a valores booleanos/null
   const ausenciasFiltradas = filtroEstado
-    ? ausencias.filter((ausencia) => ausencia.justificada === (filtroEstado === "aceptada"))
+    ? ausencias.filter((ausencia) => {
+        if (filtroEstado === "aceptada") return ausencia.justificada === true;
+        if (filtroEstado === "rechazada") return ausencia.justificada === false;
+        if (filtroEstado === "en proceso") return ausencia.justificada === null || ausencia.justificada === undefined;
+        return true;
+      })
     : ausencias;
 
   return (
@@ -201,9 +209,7 @@ const TablaAusencias = () => {
                           <option value="rechazada">Rechazada</option>
                         </select>
                       </th>
-                      {rol === "1" || rol === "2" ? (
-                        <th>Acciones</th>
-                      ) : null}
+                      {(rol === "1" || rol === "2") && <th>Acciones</th>}
                     </tr>
                   </thead>
                   <tbody className="text-center">
@@ -215,29 +221,27 @@ const TablaAusencias = () => {
                           <td>{ausencia.tipoAusencia}</td>
                           <td>{ausencia.descripcion}</td>
                           <td>{ausencia.justificada}</td>
-                          <td>
-                            {rol === "1" || rol === "2" ? (
-                              <>
-                                <button
-                                  className="btn btn-success btn-sm me-2"
-                                  onClick={() => handleAceptar(ausencia.idausencia)}
-                                >
-                                  Aceptar
-                                </button>
-                                <button
-                                  className="btn btn-danger btn-sm"
-                                  onClick={() => handleRechazar(ausencia.idausencia)}
-                                >
-                                  Rechazar
-                                </button>
-                              </>
-                            ) : null}
-                          </td>
+                          {(rol === "1" || rol === "2") && (
+                            <td>
+                              <button
+                                className="btn btn-success btn-sm me-2"
+                                onClick={() => handleAceptar(ausencia.idausencia)}
+                              >
+                                Aceptar
+                              </button>
+                              <button
+                                className="btn btn-danger btn-sm"
+                                onClick={() => handleRechazar(ausencia.idausencia)}
+                              >
+                                Rechazar
+                              </button>
+                            </td>
+                          )}
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6">No hay ausencias registradas.</td>
+                        <td colSpan={rol === "1" || rol === "2" ? "6" : "5"}>No hay ausencias registradas.</td>
                       </tr>
                     )}
                   </tbody>
@@ -248,7 +252,12 @@ const TablaAusencias = () => {
         </div>
       </div>
 
-      <FormularioAusencia />
+      {/* Pasar props a FormularioAusencia para manejar solicitud y función */}
+      <FormularioAusencia
+        solicitud={solicitud}
+        setSolicitud={setSolicitud}
+        handleSolicitarAusencia={handleSolicitarAusencia}
+      />
     </div>
   );
 };
