@@ -15,8 +15,6 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia }) => {
         fechaFinExp: "",
         cargo: "",
         empresa: "",
-        fechaIngreso: "",
-        fechaSalida: "",
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
