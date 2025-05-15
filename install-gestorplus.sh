@@ -60,7 +60,7 @@ if [[ "$migrar_excel" =~ ^[sS]$ ]]; then
         docker cp "$filename" gestorplus-php:/app/tmp_migrar.xlsx
 
         echo "🔄 Ejecutando migración del archivo: $filename"
-        docker exec gestorplus-php php /migrations/MigrarExcelRunner.php /app/tmp_migrar.xlsx
+        docker exec gestorplus-php php migrations/MigrarExcelRunner.php /app/tmp_migrar.xlsx
         echo "✅ Migración completa"
     fi
 else
@@ -68,7 +68,7 @@ else
 fi
 
 echo "👤 Creando usuario administrador..."
-docker exec -it gestorplus-php php /migrations/CrearAdministrador.php
+docker exec -it gestorplus-php php migrations/CrearAdministrador.php
 
 echo ""
 echo "✅ GestorPlus está listo. Accede en: http://localhost:3000"
