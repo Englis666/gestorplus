@@ -15,6 +15,8 @@ services:
     depends_on:
       - db
       - redis
+    environment:
+      - TZ=America/Bogota
     command: ["sh", "-c", "until nc -z gestorplus-db 3306; do sleep 1; done; php-fpm"]
 
   nginx:
@@ -27,6 +29,8 @@ services:
       - "80:80"
     networks:
       - gestorplus-network
+    environment:
+      - TZ=America/Bogota
 
   frontend:
     build:
@@ -41,13 +45,16 @@ services:
       - gestorplus-network
     depends_on:
       - php
+    environment:
+      - TZ=America/Bogota
 
   db:
     image: mariadb:latest
     container_name: gestorplus-db
     environment:
       MYSQL_ROOT_PASSWORD: "gestorplustfu"
-      MYSQL_DATABASE: "gestorplus"  
+      MYSQL_DATABASE: "gestorplus"
+      TZ: America/Bogota
     volumes:
       - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql
     ports:
@@ -62,6 +69,19 @@ services:
       - "6379:6379"
     networks:
       - gestorplus-network
+    environment:
+      - TZ=America/Bogota
+
+  swagger:
+    image: swaggerapi/swagger-ui:latest
+    container_name: gestorplus-swagger
+    ports:
+      - "8081:8080"                           
+    environment:
+      SWAGGER_JSON: /swagger/swagger.json
+      - TZ=America/Bogota
+    volumes:
+      - ./backend/docs:/swagger                       
 
 networks:
   gestorplus-network:
