@@ -38,17 +38,20 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 # Verificar si PHP y Xdebug están habilitados
 RUN php -m | grep xdebug
 
-# Libreria para que reconozca iconv
+# Librería para que reconozca iconv
 RUN docker-php-ext-install iconv
 
 # Cambiar a la carpeta de trabajo donde está tu código PHP (ajusta según corresponda)
 WORKDIR /var/www/html
 
-# Instalar predis/predis directamente con Composer en un solo paso
-RUN composer require predis/predis
+# Instalar dependencias de Composer
+RUN /usr/local/bin/composer require predis/predis
 
-# Librería para la migración de datos desde un excel
-RUN composer require phpoffice/phpspreadsheet
+# Swagger PHP
+RUN /usr/local/bin/composer require zircote/swagger-php:^4.11
+
+# Librería para la migración de datos desde un Excel
+RUN /usr/local/bin/composer require phpoffice/phpspreadsheet
 
 # Limpiar apt-get
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
