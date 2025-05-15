@@ -222,13 +222,18 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
       </div>
 
       {/* Formulario */}
-      <div className="row mt-4 container-fluid mt-5 card shadow-sm border-0 mb-5">
-        <FormularioVinculacion
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-        />
-      </div>
+      {formData.idevaluacion ? (
+        <div className="row mt-4 container-fluid mt-5 card shadow-sm border-0 mb-5">
+          <FormularioVinculacion
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+          />
+        </div>
+      ) : (
+        <p className="text-center mt-4">No hay datos para mostrar el formulario.</p>
+      )}
+
 
       {/* Modal para subir contrato PDF */}
       {modalContratoAbierto && selectedVinculacion && (

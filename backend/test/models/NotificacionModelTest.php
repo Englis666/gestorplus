@@ -60,15 +60,28 @@ class NotificacionModelTest extends TestCase {
         $expectedResult = [
             ['idNotificacion' => 1, 'descripcionNotificacion' => 'Notificacion de aspirante']
         ];
-
-        $this->dbService->method('ejecutarConsulta')
-        ->with(
-            $this->equalTo("SELECT * FROM notificacion WHERE num_doc = :num_doc AND (tipo = 'PostulacionAspirantes' OR tipo = 'entrevista')"),
-            $this->equalTo(['num_doc' => $num_doc])
-        )
-        ->willReturn($expectedResult);
     
+        // Configurar el mock para devolver el resultado esperado
+        $this->dbService->method('ejecutarConsulta')
+            ->with(
+                $this->callback(function($sql) {
+                    $clean = fn($s) => preg_replace('/\s+/', '', $s);
+                    return $clean($sql) === $clean("SELECT * FROM notificacion 
+                        WHERE num_doc = :num_doc 
+                        AND (tipo = 'PostulacionAspirantes' OR tipo = 'entrevista')");
+                }),
+                $this->equalTo(['num_doc' => $num_doc])
+            )
+            ->willReturn($expectedResult);
+    
+        // Act
+        $result = $this->notificacion->obtenerNotificacionesAspirante($num_doc);
+    
+        // Assert
+        $this->assertEquals($expectedResult, $result);
     }
+    
+    
 
     public function testNotificacionAceptada() {
         $idausencia = 1;

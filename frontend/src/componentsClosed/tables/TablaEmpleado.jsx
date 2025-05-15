@@ -122,7 +122,7 @@ const TablaEmpleado = () => {
   return (
     <div className="container mt-5">
       <Estadisticas />
-
+      <h2>Finalizar Jornada </h2>
       <h2 className="mb-4 text-center text-dark fw-bold mt-4">Notificaciones</h2>
       <div className="row g-4">
         {/* Notificaciones Generales */}

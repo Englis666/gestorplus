@@ -4,8 +4,6 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { toast, ToastContainer } from 'react-toastify';
 
-
-// Util para obtener cookies
 const getCookie = (name) => {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -29,8 +27,6 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia, onAgregarExperi
       salario: '',
       logros: '',
       referenciasLaborales: '',
-      fechaIngreso: '',
-      fechaSalida: '',
     },
     validationSchema: Yup.object({
       profesion: Yup.string().required('Requerido'),
@@ -41,10 +37,6 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia, onAgregarExperi
         .required('Requerido'),
       cargo: Yup.string().required('Requerido'),
       empresa: Yup.string().required('Requerido'),
-      fechaIngreso: Yup.date().required('Requerido'),
-      fechaSalida: Yup.date()
-        .min(Yup.ref('fechaIngreso'), 'Debe ser posterior a la fecha de ingreso')
-        .required('Requerido'),
     }),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       if (!token) {
@@ -54,7 +46,7 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia, onAgregarExperi
       try {
         const payload = { action: 'agregarExp', ...values };
         const res = await axios.post(
-          `${process.env.REACT_APP_API_URL}/experiencia`,
+          "http://localhost/gestorplus/backend/",
           payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -85,8 +77,6 @@ const Experiencia = ({ modalExperiencia, toggleModalExperiencia, onAgregarExperi
     { name: 'salario', label: 'Salario', type: 'number', col: 'col-6 col-md-3' },
     { name: 'logros', label: 'Logros', type: 'text', col: 'col-12 col-md-6' },
     { name: 'referenciasLaborales', label: 'Referencias', type: 'text', col: 'col-12 col-md-6' },
-    { name: 'fechaIngreso', label: 'Ingreso empresa', type: 'date', col: 'col-6 col-md-3' },
-    { name: 'fechaSalida', label: 'Salida empresa', type: 'date', col: 'col-6 col-md-3' },
   ];
 
   return (

@@ -36,8 +36,6 @@ class Experiencia {
             $data['salario'],
             $data['logros'],
             $data['referenciasLaborales'],
-            $data['fechaIngreso'],
-            $data['fechaSalida'],
             $hojadevida_idHojadevida
         ];
         

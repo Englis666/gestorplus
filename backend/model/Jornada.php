@@ -35,19 +35,30 @@ class Jornada {
         return $this->dbService->ejecutarConsulta($sql, [':num_doc' => $num_doc]);
     }
 
-    public function finalizarJornada(string $num_doc): bool {
-        date_default_timezone_set('America/Bogota');
-        $fecha = date('Y-m-d');
-        $horaSalida = date('H:i:s');
-
-        $sql = "UPDATE jornada 
-                SET horaSalida = :horaSalida, estadoJornada = 'Finalizada' 
-                WHERE usuario_num_doc = :num_doc AND fecha = :fecha AND horaSalida IS NULL";
-
-        return $this->dbService->ejecutarUpdate($sql, [
-            ':horaSalida' => $horaSalida,
-            ':num_doc'    => $num_doc,
-            ':fecha'      => $fecha,
-        ]);
+    public function finalizarJornada(string $fecha, int $num_doc): bool {
+        $validarJornada = $this->validarFinalizacionJornadaExacta($fecha, $num_doc);
+        
+        if ($validarJornada) {
+            $horaSalida = date('H:i:s'); 
+            
+            $sqlFinalizarJornada = "UPDATE jornada SET horaSalida = :horaSalida WHERE fecha = :fecha AND usuario_num_doc = :num_doc";
+            
+            $params = [
+                ':horaSalida' => $horaSalida,
+                ':fecha' => $fecha,
+                ':num_doc' => $num_doc,
+            ];
+            
+            $resultado = $this->dbService->ejecutarUpdate($sqlFinalizarJornada, $params, false);
+        }
+        return false;
     }
+    
+    public function validarFinalizacionJornadaExacta(string $fecha, int $num_doc): bool {
+        $sql = "SELECT idJornada FROM jornada WHERE fecha = :fecha AND usuario_num_doc = :num_doc";
+        $resultado = $this->dbService->ejecutarConsulta($sql, [':fecha' => $fecha, ':num_doc' => $num_doc], true);
+        return !empty($resultado);
+    }
+    
+
 }

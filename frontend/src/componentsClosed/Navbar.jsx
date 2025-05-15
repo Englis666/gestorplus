@@ -71,11 +71,14 @@ const NavbarClosed = ({ activeLink }) => {
       height: "100vh",
       width: isCollapsed ? "80px" : "260px",
       background: "linear-gradient(to bottom, #ffffff, #eaf4ff)",
+      backgroundColor: "linear-gradient(to bottom, #ffffff, #eaf4ff)",  
       transition: "width 0.3s ease",
       boxShadow: "2px 0 10px rgba(0, 0, 0, 0.1)",
       overflowY: "auto",
       position: "relative",
+      zIndex: 1000,  
     },
+    
     toggleBtn: {
       border: "none",
       background: "none",

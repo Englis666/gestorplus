@@ -7,10 +7,8 @@ use Config\Database;
 
 class ArchivosControllerTest extends TestCase
 {
-    // Test para el método subirContrato
     public function testSubirContrato()
     {
-        // Datos simulados para la subida de un contrato
         $_FILES = [
             "pdf_file" => [
                 "name" => "contrato.pdf",

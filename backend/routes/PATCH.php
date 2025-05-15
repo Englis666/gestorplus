@@ -11,6 +11,7 @@ return [
     'actualizarExperiencia' => ['experiencia', 'actualizarExperiencia'],
     'asistenciaConfirmada' => ['entrevista', 'asistenciaConfirmada'],
     'asistenciaNoConfirmada' => ['entrevista', 'asistenciaNoConfirmada'],
+    'finalizarJoranda' => ['jornada', 'finalizarJornada'],
 ];
 
 ?>

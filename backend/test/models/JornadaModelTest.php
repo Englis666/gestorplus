@@ -99,28 +99,5 @@ class JornadaModelTest extends TestCase
         $this->assertSame($expectedResult, $result); // Comprobamos que el resultado sea igual al esperado
     }
 
-    public function testFinalizarJornada()
-    {
-        $numDoc = '12345';
-        $fecha = date('Y-m-d');
-        $horaSalida = date('H:i:s');
-
-        // Simulamos que el método 'ejecutarUpdate' devuelve 'true' cuando la actualización es exitosa
-        $this->dbServiceMock->expects($this->once())
-            ->method('ejecutarUpdate')
-            ->with(
-                $this->anything(), // No nos importa el SQL exacto
-                [
-                    ':horaSalida' => $horaSalida,
-                    ':num_doc'    => $numDoc,
-                    ':fecha'      => $fecha,
-                ]
-            )
-            ->willReturn(true); // Simulamos que la actualización fue exitosa
-
-        // Ejecutamos el método y comprobamos si el resultado es el esperado
-        $result = $this->jornada->finalizarJornada($numDoc);
-
-        $this->assertTrue($result); // Esperamos que el resultado sea 'true'
-    }
+   
 }

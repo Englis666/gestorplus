@@ -16,7 +16,7 @@ class Ausencia {
         try {
             $sql = "SELECT * FROM ausencia WHERE usuario_num_doc = :num_doc";
             $params = [':num_doc' => $num_doc];
-            return $this->dbService->ejecutarConsulta($sql, $params, true);
+            return $this->dbService->ejecutarConsulta($sql, $params, false);
         } catch (PDOException $e) {
             error_log("Error en obtenerAusencias: " . $e->getMessage());
             http_response_code(500);

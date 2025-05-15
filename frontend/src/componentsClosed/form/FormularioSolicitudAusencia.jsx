@@ -137,7 +137,6 @@ const FormularioAusencia = () => {
                             <option value="Enfermedad">Enfermedad</option>
                             <option value="Personal">Personal</option>
                             <option value="Incapacidad">Incapacidad</option>
-                            <option value="Entrega de boletines (Hijo)">Entrega de boletines (Hijo)</option>
                             <option value="Otro">Otro</option>
                         </select>
                         <div className="invalid-feedback">{errores.tipoAusencia}</div>

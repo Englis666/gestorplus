@@ -63,7 +63,7 @@
         <ul>
             <li class="success">Subir contrato</li>
             <li class="defect">Obtener contrato existente</li>
-            <li class="defect">Obtener contrato no existente</li>
+            <li class="success">Obtener contrato no existente</li>
         </ul>
         <h2>Aspirante Controller (Test\Controller\AspiranteController)</h2>
         <ul>
@@ -75,12 +75,12 @@
         <h2>Aspirante Model (Test\Model\AspiranteModel)</h2>
         <ul>
             <li class="success">Obtener detalle convocatoria devuelve resultado</li>
-            <li class="defect">Obtener detalle convocatoria devuelve null cuando falla</li>
+            <li class="success">Obtener detalle convocatoria devuelve null cuando falla</li>
             <li class="success">Obtener notificaciones aspirante devuelve correcto</li>
             <li class="success">Verificar postulacion retorna correcto</li>
             <li class="success">Aplicacion de aspirante inserta correctamente</li>
             <li class="success">Aplicacion de aspirante falla en primer insert</li>
-            <li class="defect">Aplicacion de aspirante falla en notificacion</li>
+            <li class="success">Aplicacion de aspirante falla en notificacion</li>
         </ul>
         <h2>Ausencia Controller (Test\Controller\AusenciaController)</h2>
         <ul>
@@ -93,21 +93,21 @@
         <ul>
             <li class="success">Obtener ausencias devuelve array</li>
             <li class="success">Obtener todas las ausencias</li>
-            <li class="defect">Ausencia aceptada</li>
+            <li class="success">Ausencia aceptada</li>
             <li class="success">Ausencia aceptada falla</li>
-            <li class="defect">Ausencia rechazada</li>
+            <li class="success">Ausencia rechazada</li>
             <li class="success">Solicitar ausencia</li>
         </ul>
         <h2>Auth Controller</h2>
         <ul>
             <li class="success">Registrar</li>
-            <li class="defect">Iniciar con credenciales correctas</li>
+            <li class="success">Iniciar con credenciales correctas</li>
             <li class="success">Iniciar con credenciales incorrectas</li>
         </ul>
         <h2>Auth Model</h2>
         <ul>
             <li class="success">Registrar usuario exitoso</li>
-            <li class="defect">Inicio sesion correcto con registro de jornada</li>
+            <li class="success">Inicio sesion correcto con registro de jornada</li>
             <li class="success">Inicio sesion fallido por password incorrecta</li>
         </ul>
         <h2>Calculo Controller</h2>
@@ -116,12 +116,6 @@
             <li class="success">Calcular horas extra</li>
             <li class="success">Obtener minutos trabajados</li>
             <li class="success">Obtener minutos trabajados del empleado</li>
-        </ul>
-        <h2>Calculo Model</h2>
-        <ul>
-            <li class="success">Calcular horas extra retorna array vacio cuando no hay jornadas</li>
-            <li class="defect">Calcular horas extra calcula correctamente y actualiza registro existente</li>
-            <li class="defect">Calcular horas extra inserta nuevo registro cuando no existe</li>
         </ul>
         <h2>Cargo Controller (Test\Controller\CargoController)</h2>
         <ul>
@@ -137,24 +131,12 @@
             <li class="success">Desactivar cargo sin convocatorias relacionadas</li>
             <li class="success">Desactivar cargo con convocatorias relacionadas</li>
             <li class="success">Obtener cargos</li>
-            <li class="defect">Agregar cargo</li>
-        </ul>
-        <h2>Certificado Controller</h2>
-        <ul>
-            <li class="success">Obtener datos para certificado exitoso</li>
-            <li class="success">Obtener datos para certificado falla</li>
-        </ul>
-        <h2>Certificado Model</h2>
-        <ul>
-            <li class="success">Obtener datos para certificado con resultados</li>
-            <li class="success">Obtener datos para certificado sin resultados</li>
-            <li class="success">Obtener datos para certificado con excepcion</li>
+            <li class="success">Agregar cargo</li>
         </ul>
         <h2>Chat Controller (Test\Controller\ChatController)</h2>
         <ul>
             <li class="success">Enviar mensaje missing params</li>
             <li class="success">Enviar mensaje success</li>
-            <li class="success">Enviar mensaje fail</li>
             <li class="success">Obtener id chat invalid token</li>
             <li class="success">Obtener o crear chat missing params</li>
             <li class="success">Obtener o crear chat error</li>
@@ -163,16 +145,6 @@
             <li class="success">Obtener mensajes missing id chat</li>
             <li class="success">Obtener mensajes success</li>
             <li class="success">Obtener mensajes error</li>
-        </ul>
-        <h2>Chat Model</h2>
-        <ul>
-            <li class="success">Enviar mensaje exitoso</li>
-            <li class="success">Enviar mensaje con excepcion</li>
-            <li class="success">Obtener ocrear chat existente</li>
-            <li class="defect">Obtener ocrear chat nuevo</li>
-            <li class="success">Obtener ocrear chat con excepcion</li>
-            <li class="success">Obtener mensajes exitoso</li>
-            <li class="success">Obtener mensajes con excepcion</li>
         </ul>
         <h2>Convocatoria Controller (Test\Controller\ConvocatoriaController)</h2>
         <ul>
@@ -189,36 +161,30 @@
             <li class="success">Agregar convocatoria</li>
             <li class="success">Obtener detalle convocatoria</li>
         </ul>
-        <h2>Empleado Model</h2>
-        <ul>
-            <li class="success">Obtener empleados</li>
-            <li class="success">Solicitar queja exito</li>
-            <li class="defect">Solicitar queja error</li>
-        </ul>
         <h2>Entrevista Controller (Test\Controller\EntrevistaController)</h2>
         <ul>
             <li class="success">Responder uses json service</li>
             <li class="success">Asignar entrevista missing params</li>
-            <li class="defect">Asignar entrevista success</li>
+            <li class="success">Asignar entrevista success</li>
             <li class="success">Obtener entrevistas</li>
             <li class="success">Obtener datos del entrevistado with param</li>
             <li class="success">Obtener datos del entrevistado not found</li>
-            <li class="defect">Asistencia confirmada</li>
-            <li class="defect">Asistencia no confirmada</li>
+            <li class="success">Asistencia confirmada</li>
+            <li class="success">Asistencia no confirmada</li>
         </ul>
-        <h2>Entrevista Model</h2>
+        <h2>Entrevista Model (Test\Model\EntrevistaModel)</h2>
         <ul>
             <li class="success">Obtener entrevistas</li>
             <li class="success">Obtener datos del entrevistado</li>
-            <li class="defect">Asignar entrevista</li>
-            <li class="defect">Asistencia confirmada</li>
-            <li class="defect">Asistencia no confirmada</li>
+            <li class="success">Asignar entrevista</li>
+            <li class="success">Asistencia confirmada</li>
+            <li class="success">Asistencia no confirmada</li>
         </ul>
         <h2>Estadistica Controller (Test\Controller\EstadisticaController)</h2>
         <ul>
-            <li class="defect">Obtener total estadisticas con payload invalido</li>
-            <li class="defect">Obtener total estadisticas con payload sin num doc</li>
-            <li class="defect">Obtener total estadisticas responde correctamente</li>
+            <li class="success">Obtener total estadisticas correctamente</li>
+            <li class="success">Obtener total estadisticas con payload invalido</li>
+            <li class="success">Obtener total estadisticas sin num doc</li>
         </ul>
         <h2>Estadistica Model</h2>
         <ul>
@@ -231,42 +197,15 @@
             <li class="success">Obtener estudio success</li>
             <li class="success">Obtener estudio token error</li>
         </ul>
-        <h2>Estudio Model</h2>
-        <ul>
-            <li class="success">Obtener estudio</li>
-            <li class="defect">Agregar estudio</li>
-            <li class="defect">Actualizar estudio</li>
-            <li class="defect">Eliminar estudio</li>
-            <li class="defect">Manejar error agregar estudio</li>
-        </ul>
         <h2>Evaluacion Controller</h2>
         <ul>
             <li class="success">Obtener sistema de gestion</li>
             <li class="success">Guardar resultados sistema de gestion con exito</li>
         </ul>
-        <h2>Evaluacion Model</h2>
-        <ul>
-            <li class="defect">Guardar resultados sistema de gestion</li>
-            <li class="defect">Buscar id evaluacion</li>
-        </ul>
-        <h2>Experiencia Model</h2>
-        <ul>
-            <li class="success">Obtener experiencia</li>
-            <li class="success">Eliminar experiencia</li>
-            <li class="defect">Agregar exp</li>
-            <li class="success">Actualizar experiencia</li>
-        </ul>
         <h2>Hojadevida Controller</h2>
         <ul>
             <li class="success">Obtener hojadevida por num doc exitoso</li>
             <li class="success">Obtener hojadevida por num doc invalido</li>
-        </ul>
-        <h2>Hojadevida Model</h2>
-        <ul>
-            <li class="defect">Obtener hojadevida por num doc success</li>
-            <li class="defect">Obtener hojadevida por num doc no found</li>
-            <li class="defect">Obtener hojadevida por num doc throws exception</li>
-            <li class="defect">Actualizacion hojade vida</li>
         </ul>
         <h2>Jornada Controller (Test\Controller\JornadaController)</h2>
         <ul>
@@ -284,21 +223,20 @@
             <li class="success">No corroborar jornada</li>
             <li class="success">Obtener todas las jornadas</li>
             <li class="success">Obtener jornadas</li>
-            <li class="success">Finalizar jornada</li>
         </ul>
         <h2>Notificacion Controller (Test\Controller\NotificacionController)</h2>
         <ul>
-            <li class="defect">Obtener notificaciones</li>
+            <li class="success">Obtener notificaciones</li>
             <li class="success">Obtener todas las notificaciones</li>
-            <li class="success">Obtener notificaciones aspirante no token</li>
-            <li class="defect">Obtener notificaciones aspirante not found</li>
-            <li class="defect">Obtener notificaciones aspirante success</li>
+            <li class="success">Obtener notificaciones aspirante sin token</li>
+            <li class="success">Obtener notificaciones aspirante no hay notificaciones</li>
+            <li class="success">Obtener notificaciones aspirante con notificaciones</li>
         </ul>
         <h2>Notificacion Model</h2>
         <ul>
             <li class="success">Obtener todas las notificaciones</li>
-            <li class="defect">Obtener notificaciones</li>
-            <li class="defect">Obtener notificaciones aspirante</li>
+            <li class="success">Obtener notificaciones</li>
+            <li class="success">Obtener notificaciones aspirante</li>
             <li class="success">Notificacion aceptada</li>
             <li class="success">Notificacion rechazada</li>
         </ul>
@@ -311,18 +249,13 @@
             <li class="success">Obtener paz y salvos error</li>
             <li class="success">Obtener mipaz y salvo error</li>
         </ul>
-        <h2>Pazy Salvo Model</h2>
-        <ul>
-            <li class="defect">Obtener paz y salvos</li>
-            <li class="defect">Obtener mi paz y salvo</li>
-            <li class="defect">Crear paz y salvo success</li>
-            <li class="defect">Crear paz y salvo failure</li>
-        </ul>
         <h2>Perfil Controller</h2>
         <ul>
             <li class="success">Datos perfil success</li>
-            <li class="defect">Actualizar perfil con datos faltantes</li>
             <li class="success">Actualizar perfil success</li>
+            <li class="success">Actualizar perfil faltan datos</li>
+            <li class="success">Actualizar perfil email invalido</li>
+            <li class="success">Actualizar perfil fallo</li>
         </ul>
         <h2>Perfil Model</h2>
         <ul>
@@ -341,11 +274,11 @@
         <ul>
             <li class="success">Obtener todos los permisos</li>
             <li class="success">Obtener permisos</li>
-            <li class="defect">Obtener permisos exception</li>
+            <li class="success">Obtener permisos con excepcion devuelve array vacio</li>
             <li class="success">Solicitar permiso success</li>
-            <li class="defect">Solicitar permiso failure</li>
-            <li class="defect">Gestionar permiso</li>
-            <li class="defect">Permiso rechazado</li>
+            <li class="success">Solicitar permiso failure</li>
+            <li class="success">Gestionar permiso</li>
+            <li class="success">Permiso rechazado</li>
         </ul>
         <h2>Postulacion Controller</h2>
         <ul>
