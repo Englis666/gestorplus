@@ -125,10 +125,15 @@ const Login = () => {
                                         </div>
 
 
-                                        <div className="d-grid gap-2">
-                                            <button className="btn btn-primary btn-lg shadow-sm" type="submit" disabled={isSubmitting}>
+                                            <div className="d-grid gap-2">
+                                            <button 
+                                                className="btn btn-primary btn-lg shadow-sm" 
+                                                type="submit" 
+                                                disabled={isSubmitting}
+                                            >
                                                 {isSubmitting ? "Iniciando..." : "Ingresar"}
                                             </button>
+
                                             <button
                                                 className="btn btn-outline-primary"
                                                 type="button"
@@ -136,7 +141,16 @@ const Login = () => {
                                             >
                                                 Crear una cuenta
                                             </button>
-                                        </div>
+
+                                                    <button
+                                                    className="btn btn-outline-secondary"
+                                                    type="button"
+                                                    onClick={() => navigate('/RecuperarPassword')}
+                                                    >
+                                                    Recuperar Password
+                                                    </button>
+
+                                            </div>
                                     </form>
                                 </div>
                             </div>
