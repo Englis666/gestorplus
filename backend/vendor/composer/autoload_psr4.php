@@ -42,6 +42,7 @@ return array(
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
     'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
     'PhpOffice\\PhpSpreadsheet\\' => array($vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet'),
+    'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'OpenApi\\' => array($vendorDir . '/zircote/swagger-php/src'),
     'Model\\' => array($baseDir . '/model'),
     'Migrations\\' => array($baseDir . '/migrations'),

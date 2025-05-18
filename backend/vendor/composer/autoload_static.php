@@ -82,6 +82,7 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
             'Predis\\' => 7,
             'PhpParser\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'O' => 
         array (
@@ -273,6 +274,10 @@ class ComposerStaticInitdbce64207f3d7a5cbf2fde0c113f750b
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'OpenApi\\' => 
         array (
