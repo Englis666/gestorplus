@@ -11,6 +11,7 @@ import { UserProvider } from './context/userContext';
 
 import Login from './views/Login';
 import Registro from './views/Registro';
+import RecuperarPassword from './views/RecuperarPassword';
 import Perfil from './views/perfil';
 import Layout from './views/Layout';
 
@@ -40,6 +41,7 @@ import Publicaciones from './views/Publicaciones';
 // Vistas Recursos Humanos
 import Inicio from './views/Inicio';
 import PazySalvo from './views/PazYSalvos';
+import RestablecerPassword from './views/RestablecerPassword';
 
 // Hooks
 const getCookie = (name) => {
@@ -71,21 +73,22 @@ const PrivateRoute = () => {
     return <Outlet />;
 };
 
-// Componente para verificar la autenticación al inicio
 const AuthCheck = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
         const token = getCookie("auth_token");
+        const publicPaths = ['/', '/Login', '/Registro', '/RecuperarPassword', '/RestablecerPassword'];
         if (!token || isTokenExpired(token)) {
-            if (location.pathname !== '/Login' && location.pathname !== '/Registro' && location.pathname !== '/') {
-                navigate("/Login", { replace: true });
-            }
+        if (!publicPaths.includes(location.pathname)) {
+            navigate("/Login", { replace: true });
+        }
         }
     }, [navigate, location]);
+  
 
-    return null; // Este componente no renderiza nada visual
+    return null; 
 };
 
 function App() {
@@ -96,6 +99,8 @@ function App() {
                 <div className="App">
                     <Routes>
                         <Route path="/" element={<Layout />} />
+                        <Route path="/RecuperarPassword" element={<RecuperarPassword />} />
+                        <Route path="/RestablecerPassword" element={<RestablecerPassword/>}/>
                         <Route path="/Login" element={<Login />} />
                         <Route path="/Registro" element={<Registro />} />
 
