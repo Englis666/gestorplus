@@ -1,0 +1,138 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15">
+  <diagram name="Page-1" id="gBuXeEMzGLobaRO9ZcyV">
+    <mxGraphModel dx="3211" dy="2329" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-1" value="Diagrama De Despliegue&amp;nbsp;&lt;div&gt;GestorPlus&amp;nbsp;&lt;/div&gt;&lt;div&gt;UML&lt;/div&gt;" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=280;height=70;" vertex="1" parent="1">
+          <mxGeometry x="-410" y="-160" width="2060" height="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-43" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="-95" width="1010" height="1160" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-44" value="&lt;strong data-end=&quot;345&quot; data-start=&quot;308&quot;&gt;&lt;code data-end=&quot;343&quot; data-start=&quot;310&quot;&gt;&lt;font style=&quot;font-size: 24px;&quot;&gt;&amp;lt;&amp;lt;device&amp;gt;&amp;gt;&amp;nbsp;&lt;/font&gt;&lt;/code&gt;&lt;/strong&gt;&lt;div&gt;&lt;strong data-end=&quot;345&quot; data-start=&quot;308&quot;&gt;&lt;code data-end=&quot;343&quot; data-start=&quot;310&quot;&gt;&lt;font style=&quot;font-size: 24px;&quot;&gt;Servidor (Azure)&lt;/font&gt;&lt;/code&gt;&lt;/strong&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="840" y="-60" width="460" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-46" value="&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;«Artefact»&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;font size=&quot;3&quot;&gt;/Install-gestorplus.sh&lt;/font&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="660" y="30" width="360" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-47" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" vertex="1" parent="LmlImwjyLTfHuN8JUYVU-46">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-64" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;" vertex="1" parent="1">
+          <mxGeometry x="-220" y="117.5" width="620" height="495" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-66" value="&lt;strong data-end=&quot;852&quot; data-start=&quot;814&quot;&gt;&lt;code data-end=&quot;850&quot; data-start=&quot;816&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;lt;&amp;lt;execution environment&amp;gt;&amp;gt; Cliente&lt;/font&gt;&lt;/code&gt;&lt;/strong&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-67.5" y="160" width="335" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-67" value="&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;«Artefact»&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;font size=&quot;3&quot;&gt;docker-compose.yml&lt;/font&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="30" width="360" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-68" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" vertex="1" parent="LmlImwjyLTfHuN8JUYVU-67">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-71" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-100" y="260" width="400" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-72" value="&lt;span style=&quot;font-size: 18px;&quot;&gt;&amp;lt;&amp;lt;User Agent&amp;gt;&amp;gt;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;Navegador del cliente&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-20" y="260" width="240" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-73" value="&lt;div&gt;&lt;div&gt;&amp;nbsp;Chrome 87+&lt;/div&gt;&lt;div&gt;- Firefox 78+&lt;/div&gt;&lt;div&gt;- Edge 87+&lt;/div&gt;&lt;div&gt;- Safari 13+&lt;/div&gt;&lt;div&gt;- Opera 74+&lt;/div&gt;&lt;div&gt;- Brave 1.17+&lt;/div&gt;&lt;div&gt;- Vivaldi 3.5+&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-100" y="310" width="400" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-104" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="660" y="130" width="830" height="890" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-105" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="LmlImwjyLTfHuN8JUYVU-108">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="355" as="sourcePoint" />
+            <mxPoint x="955" y="355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-106" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;+ Puerto 80&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="LmlImwjyLTfHuN8JUYVU-105">
+          <mxGeometry x="-0.2931" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-107" value="&lt;strong data-end=&quot;852&quot; data-start=&quot;814&quot;&gt;&lt;code data-end=&quot;850&quot; data-start=&quot;816&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;lt;&amp;lt;execution environment&amp;gt;&amp;gt; Docker (Ubuntu)&lt;/font&gt;&lt;/code&gt;&lt;/strong&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="902.5" y="150" width="335" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-108" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="313.75" width="327.5" height="82.5" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-112" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LmlImwjyLTfHuN8JUYVU-109" target="LmlImwjyLTfHuN8JUYVU-110">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-113" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Archivos Estaticos Sin Port&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="LmlImwjyLTfHuN8JUYVU-112">
+          <mxGeometry x="-0.0173" y="-4" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-117" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LmlImwjyLTfHuN8JUYVU-109" target="LmlImwjyLTfHuN8JUYVU-116">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-118" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;+ Port 9000&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="LmlImwjyLTfHuN8JUYVU-117">
+          <mxGeometry x="-0.7632" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-109" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;lt;&amp;lt;Execution environment&amp;gt;&amp;gt;&lt;br&gt;gestorplus-nginx&lt;/font&gt;&lt;div&gt;NGINX&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="883.75" y="313.75" width="320" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-110" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="480" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-111" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;lt;&amp;lt;Execution environment&amp;gt;&amp;gt;&lt;br&gt;gestorplus-frontend&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;React V18.0&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="480" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-115" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="710" y="480" width="260" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-126" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LmlImwjyLTfHuN8JUYVU-116" target="LmlImwjyLTfHuN8JUYVU-120">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1035" y="535" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-131" value="+ Port 6379" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="LmlImwjyLTfHuN8JUYVU-126">
+          <mxGeometry x="-0.1261" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-127" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="LmlImwjyLTfHuN8JUYVU-116" target="LmlImwjyLTfHuN8JUYVU-119">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="620" />
+              <mxPoint x="789" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-130" value="+ Port 3306" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="LmlImwjyLTfHuN8JUYVU-127">
+          <mxGeometry x="-0.0515" y="-3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-116" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;lt;&amp;lt;Execution environment&amp;gt;&amp;gt;&lt;br&gt;gestorplus-php&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;PHP V8.4.2&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="710" y="480" width="260" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-119" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="693.75" y="700" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-120" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="930" y="700" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-128" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;lt;&amp;lt;node&amp;gt;&amp;gt;&lt;br&gt;gestorplus-db&lt;/font&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;MariaDB 11.7.2&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="693.75" y="700" width="186.25" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="LmlImwjyLTfHuN8JUYVU-129" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;lt;&amp;lt;node&amp;gt;&amp;gt;&lt;br&gt;gestorplus-redis&lt;/font&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;Redis V8.01&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="930" y="700" width="210" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
