@@ -3,6 +3,8 @@ return[
     // AUTH
     'login' => ['auth', 'iniciar'],
     'registrarse' => ['auth', 'registrar'],
+    'recuperarPassword' => ['auth', 'recuperarPassword'],
+    'restablecerPassword' => ['auth', 'restablecerPassword'],
     //Archivo
     'subirContrato' => ['archivos', 'subirContrato'],
     //ESTUDIO
@@ -11,9 +13,6 @@ return[
     'agregarExp' => ['experiencia', 'agregarExp'],
     //HORAEXTRA
     'registroHorasExtra' => ['horaExtra', 'registroHorasExtra'],
-    //estudio
-    //exp
-    //jornada
     
     // Empleado
     'solicitarQueja' => ['empleado', 'solicitarQueja'],
