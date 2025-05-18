@@ -384,10 +384,10 @@ CREATE TABLE `experiencialaboral` (
 LOCK TABLES `experiencialaboral` WRITE;
 /*!40000 ALTER TABLE `experiencialaboral` DISABLE KEYS */;
 INSERT INTO `experiencialaboral` VALUES
-(1,'asddas','dasdsaads','2025-04-02','2025-04-18',38),
-(2,'afssfa','asffas','2025-04-02','2025-04-24',38),
-(3,'ZDasda','sddasads','2025-04-07','2025-05-02',38),
-(4,'asdc','asdasd','2025-04-01','2025-04-18',38);
+(1, 'Desarrollador Backend', 'Encargado del desarrollo en PHP', '2023-01-15', '2024-03-30', 'Analista de Sistemas', 'La Fayette S.A.', 'Medellín, Antioquia', 'Contrato a término indefinido', 3200000, 'Optimización del sistema ERP', 'Carlos Gómez - 3121234567', 38),
+(2, 'Ingeniero de Software', 'Desarrollo de software educativo', '2022-05-01', '2023-12-20', 'Desarrollador Full Stack', 'EduTech Soluciones', 'Bogotá, Cundinamarca', 'Contrato a término fijo', 2900000, 'Implementación de IA en planes de estudio', 'María Ruiz - 3107654321', 38),
+(3, 'Técnico en Sistemas', 'Soporte y mantenimiento de sistemas', '2021-07-10', '2022-04-15', 'Soporte Técnico', 'ServiTIC SAS', 'Cali, Valle del Cauca', 'Prestación de servicios', 2200000, 'Reducción de tiempos de respuesta en un 40%', 'Andrés Torres - 3119876543', 38),
+(4, 'Analista de Datos', 'Manejo de bases de datos y reportes', '2020-02-05', '2021-06-30', 'Analista de Información', 'Datavisión LTDA', 'Barranquilla, Atlántico', 'Contrato de aprendizaje', 1800000, 'Automatización de reportes mensuales', 'Laura Méndez - 3135557890', 38);
 /*!40000 ALTER TABLE `experiencialaboral` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1316,6 +1316,22 @@ INSERT INTO `usuario` VALUES
 (1141114912,'Yised Dayana','Castiblanco Herrera','yised@gmail.com','CEDULA','$2y$12$GETFrXbKFQTVtQHxL.Nf3e.PveaEuAN9C9UK1Rbpk./XcHewKs//.',1,45,3);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- Table structure for table `password_resets`
+
+DROP TABLE IF EXISTS `password_resets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `password_resets` (
+  idPasswordReset INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_num_doc INT NOT NULL,
+  token CHAR(64) NOT NULL UNIQUE,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expires_at DATETIME NOT NULL,
+  used TINYINT(1) NOT NULL DEFAULT 0,
+  FOREIGN KEY (usuario_num_doc) REFERENCES usuario(num_doc) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `vacacion`
