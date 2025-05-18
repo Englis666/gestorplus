@@ -1,10 +1,11 @@
-version: '3.8'
+version: '3.9'
 
 services:
+
   php:
     build:
       context: ./backend
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     container_name: gestorplus-php
     volumes:
       - ./backend:/var/www/html
@@ -17,6 +18,12 @@ services:
       - redis
     environment:
       - TZ=America/Bogota
+      - MAIL_HOST=smtp-relay.brevo.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=scrimsdiscord2@gmail.com
+      - MAIL_PASSWORD=JLANaUHRTcVs3b0t
+      - MAIL_FROM=no-reply@gestorplus.com
+      - MAIL_FROM_NAME=Gestorplus
     command: ["sh", "-c", "until nc -z gestorplus-db 3306; do sleep 1; done; php-fpm"]
 
   nginx:
@@ -29,22 +36,6 @@ services:
       - "80:80"
     networks:
       - gestorplus-network
-    environment:
-      - TZ=America/Bogota
-
-  frontend:
-    build:
-      context: ./frontend
-    container_name: gestorplus-frontend
-    command: ["sh", "-c", "until nc -z php 9000; do sleep 1; done; npm start"]
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-    networks:
-      - gestorplus-network
-    depends_on:
-      - php
     environment:
       - TZ=America/Bogota
 
@@ -72,7 +63,38 @@ services:
     environment:
       - TZ=America/Bogota
 
- 
+  # Frontend modo desarrollo
+  frontend-dev:
+    build:
+      context: ./frontend
+    container_name: gestorplus-frontend-dev
+    command: ["npm", "start"]
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    networks:
+      - gestorplus-network
+    depends_on:
+      - php
+    environment:
+      - TZ=America/Bogota
+    profiles:
+      - dev
+
+  # Frontend modo producción (archivos estáticos con nginx)
+  frontend-prod:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: gestorplus-frontend-prod
+    ports:
+      - "80:80"
+    networks:
+      - gestorplus-network
+    profiles:
+      - prod
+
 networks:
   gestorplus-network:
     driver: bridge
