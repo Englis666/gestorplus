@@ -39,7 +39,7 @@ fi
 cd gestorplus
 
 echo "🐳 Levantando contenedores de Docker..."
-docker-compose up -d --build
+docker compose --profile prod up --build -d
 
 sleep 25
 
@@ -71,5 +71,11 @@ echo "👤 Creando usuario administrador..."
 docker exec -it gestorplus-php php migrations/CrearAdministrador.php
 
 echo ""
-echo "✅ GestorPlus está listo. Accede en: http://localhost:3000"
+# Detectar si se usó perfil prod
+if docker compose config --profiles | grep -q prod; then
+    echo "✅ GestorPlus está listo. Accede en: http://localhost"
+else
+    echo "✅ GestorPlus está listo. Accede en: http://localhost:3000"
+fi
+
 echo "🧑 Usuario Admin: num_doc = 898989 | password = 123456789"
