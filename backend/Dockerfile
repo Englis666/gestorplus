@@ -1,7 +1,14 @@
 FROM php:8.4.2-fpm
 
-# Instalar librerías necesarias
+ENV TZ=America/Bogota
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
+
+RUN echo "date.timezone=America/Bogota" > /usr/local/etc/php/conf.d/timezone.ini
+
 RUN apt-get update && apt-get install -y \
+    telnet \
     netcat-openbsd \
     libonig-dev \
     libzip-dev \
@@ -11,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install mysqli pdo pdo_mysql mbstring zip gd iconv \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 # Instalar dependencias para Xdebug
 RUN apt-get update && apt-get install -y \
@@ -44,14 +52,11 @@ RUN docker-php-ext-install iconv
 # Cambiar a la carpeta de trabajo donde está tu código PHP (ajusta según corresponda)
 WORKDIR /var/www/html
 
-# Instalar dependencias de Composer
-RUN /usr/local/bin/composer require predis/predis
+COPY composer.json composer.lock /var/www/html/
 
-# Swagger PHP
-RUN /usr/local/bin/composer require zircote/swagger-php:^4.11
+RUN composer install --no-dev --optimize-autoloader
 
-# Librería para la migración de datos desde un Excel
-RUN /usr/local/bin/composer require phpoffice/phpspreadsheet
+COPY . /var/www/html/
 
 # Limpiar apt-get
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
