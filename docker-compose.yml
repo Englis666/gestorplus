@@ -71,7 +71,7 @@ services:
     container_name: gestorplus-frontend-dev
     command: sh -c "npm start"
     volumes:
-      - ./app:/app
+      - ./frontend:/app
     ports:
       - "3000:3000"
     networks:

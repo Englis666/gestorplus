@@ -1,16 +1,11 @@
-FROM node:16
-
-RUN apt-get update && apt-get install -y netcat
+FROM node:18
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
-RUN npm install && npm list react-scripts
+RUN npm install
 
 COPY . .
 
-# Expone el puerto que usará la aplicación (si es necesario)
-EXPOSE 3000
-
-CMD ["sh", "-c", "until nc -z php 9000; do sleep 1; done; npx react-scripts start"]
+CMD ["npm", "start"]
