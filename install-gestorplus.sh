@@ -44,17 +44,20 @@ docker compose --profile prod up --build -d
 sleep 25
 
 # 🔽 Pregunta si desea realizar la migración del Excel
-read -p "¿Deseas migrar un archivo Excel/CSV ahora? [s/n]: " migrar_excel
+echo "🔽 ¿Deseas migrar un archivo Excel/CSV ahora?"
+read -p "[s/n]: " migrar_excel
 
 if [[ "$migrar_excel" =~ ^[sS]$ ]]; then
-    if command -v zenity >/dev/null 2>&1; then
+    if command -v zenity >/dev/null 2>&1 && [[ -n "$DISPLAY" ]]; then
         filename=$(zenity --file-selection --title="Selecciona el archivo Excel/CSV para migrar" --file-filter="*.xlsx *.xls *.csv")
     else
-        read -p "Ingresa la ruta del archivo Excel/CSV para migrar: " filename
+        read -p "📁 Ingresa la ruta del archivo Excel/CSV para migrar: " filename
     fi
 
-    if [ -z "$filename" ]; then
+    if [[ -z "$filename" ]]; then
         echo "⚠️ No se seleccionó ningún archivo. Se omite la migración."
+    elif [[ ! -f "$filename" ]]; then
+        echo "❌ El archivo '$filename' no existe. Se omite la migración."
     else
         echo "📤 Copiando archivo al contenedor..."
         docker cp "$filename" gestorplus-php:/app/tmp_migrar.xlsx
