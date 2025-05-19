@@ -6,11 +6,11 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install && npm list react-scripts
 
 COPY . .
 
 # Expone el puerto que usará la aplicación (si es necesario)
 EXPOSE 3000
 
-CMD ["sh", "-c", "until nc -z php 9000; do sleep 1; done; npm start"]
+CMD ["sh", "-c", "until nc -z php 9000; do sleep 1; done; npx react-scripts start"]
