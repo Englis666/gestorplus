@@ -42,7 +42,7 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres, identrevista
                 ...formData,
             });
 
-            if (response.data.success) {
+            if (response.data && response.data.success) {
                 alert("✅ Resultados guardados con éxito.");
                 if (formData.estadoEvaluacion === "Apto") {
                     navigate("/contratos", {
@@ -55,8 +55,10 @@ const FormularioParaAgregarSistemasDeGestion = ({ num_doc, nombres, identrevista
                     });
                 }
             } else {
+                console.warn("Respuesta inesperada del backend:", response.data);
                 alert("❌ Error al guardar los resultados.");
             }
+            
         } catch (error) {
             console.error("Error al enviar datos:", error);
             alert("⚠️ Hubo un problema al conectar con el servidor.");

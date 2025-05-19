@@ -46,7 +46,7 @@ class Evaluacion {
             $data['estadoEvaluacion']
         ];
 
-        return $this->dbService->ejecutarInsert($sql, $params);
+        return $this->dbService->ejecutarAccion($sql, $params);
     }
 
     /**

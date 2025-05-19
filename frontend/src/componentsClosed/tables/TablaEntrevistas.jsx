@@ -35,9 +35,6 @@ const TablaEntrevistas = () => {
                 identrevista
             });
     
-            console.log(response);
-    
-            // Actualizar el estado local si quieres reflejar el cambio sin recargar
             setEntrevistas(prev =>
                 prev.map(e =>
                     e.identrevista === identrevista

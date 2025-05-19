@@ -8,7 +8,6 @@ const SistemaDeGestion = () => {
     const location = useLocation();
     const { num_doc, nombres, identrevista, idpostulacion } = location.state || {};
 
-    // Check if all required data is available
     const isFormDataAvailable = num_doc && nombres && identrevista && idpostulacion;
 
     return (

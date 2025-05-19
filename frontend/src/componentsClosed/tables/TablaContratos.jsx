@@ -15,6 +15,9 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [pdfUrl, setPdfUrl] = useState("");
   const [selectedVinculacion, setSelectedVinculacion] = useState(null); // Estado para la vinculacion seleccionada
 
+  const ifFormDataAvailable = num_doc && nombres && identrevista && idpostulacion;
+
+
   const [formData, setFormData] = useState({
     num_doc,
     nombres,
@@ -172,7 +175,6 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                       <th>Estado</th>
                       <th>Fecha de firma</th>
                       <th>Acción</th>
-                      {/* <th>Acción</th> */}
                       <th>Acción</th>
                     </tr>
                   </thead>
@@ -222,16 +224,17 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
       </div>
 
       {/* Formulario */}
-      {formData.idevaluacion ? (
+      {isFormDataAvailable && (
         <div className="row mt-4 container-fluid mt-5 card shadow-sm border-0 mb-5">
           <FormularioVinculacion
-            formData={formData}
+              num_doc={num_doc}
+              nombres={nombres}
+              identrevista={identrevista}
+              idpostulacion={idpostulacion}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
           />
         </div>
-      ) : (
-        <p className="text-center mt-4">No hay datos para mostrar el formulario.</p>
       )}
 
 

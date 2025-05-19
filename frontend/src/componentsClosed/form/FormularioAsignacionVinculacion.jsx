@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
+const FormularioVinculacion = ({ num_doc,nombres,identrevista,idpostulacion, handleChange, handleSubmit }) => {
     const [errores, setErrores] = useState({});
     const [tocado, setTocado] = useState({});
 
@@ -23,7 +23,7 @@ const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
 
     const validar = (campo = null, valor = null) => {
         let nuevosErrores = { ...errores };
-        const f = { ...formData, [campo]: valor ?? formData[campo] };
+        const f = { ...FormData, [campo]: valor ?? FormData[campo] };
 
         if (!f.num_doc || f.num_doc <= 0)
             nuevosErrores.num_doc = "Documento inválido.";
@@ -97,7 +97,7 @@ const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
             </div>
             <div className="card-body px-4 animate__animated  animate__faster">
                 <form onSubmit={onSubmit} className="animate__animated  animate__faster">
-                    <input type="hidden" value={formData.idevaluacion} readOnly />
+                    <input type="hidden" value={FormData.idevaluacion} readOnly />
 
                     <div className="row">
                         {campos.map(({ label, name, type, icon, options = [] }, index) => (
@@ -114,7 +114,7 @@ const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
                                     <select
                                         name={name}
                                         className={`form-select ${errores[name] && tocado[name] ? "is-invalid" : ""}`}
-                                        value={formData[name]}
+                                        value={FormData[name]}
                                         onChange={handleInputChange}
                                         onBlur={handleBlur}
                                     >
@@ -128,7 +128,7 @@ const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
                                         type={type}
                                         name={name}
                                         className={`form-control ${errores[name] && tocado[name] ? "is-invalid" : ""}`}
-                                        value={formData[name]}
+                                        value={FormData[name]}
                                         onChange={handleInputChange}
                                         onBlur={handleBlur}
                                     />
