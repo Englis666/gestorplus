@@ -32,14 +32,33 @@ else
 
     if [ -d "gestorplus/backend/test" ]; then
         echo "🧹 Eliminando carpeta de pruebas (solo para desarrolladores)..."
-        rm -rf gestorplus/test
+        rm -rf gestorplus/backend/test
     fi
 fi
 
+echo "🔐 Asignando permisos a la carpeta gestorplus..."
+chmod -R 755 gestorplus
+chown -R "$USER":"$USER" gestorplus
+
 cd gestorplus
 
-echo "🐳 Levantando contenedores de Docker..."
-docker compose --profile prod up --build -d
+echo "🛠️ ¿Qué entorno deseas usar?"
+echo "1) Desarrollo"
+echo "2) Producción"
+read -p "Selecciona una opción [1-2]: " opcion_entorno
+
+if [[ "$opcion_entorno" == "1" ]]; then
+    echo "🚀 Levantando contenedores en modo desarrollo..."
+    docker compose --profile dev up
+    perfil="dev"
+elif [[ "$opcion_entorno" == "2" ]]; then
+    echo "🚀 Levantando contenedores en modo producción..."
+    docker compose --profile prod up --build -d
+    perfil="prod"
+else
+    echo "❌ Opción inválida. Abortando."
+    exit 1
+fi
 
 sleep 25
 
@@ -74,8 +93,7 @@ echo "👤 Creando usuario administrador..."
 docker exec -it gestorplus-php php migrations/CrearAdministrador.php
 
 echo ""
-# Detectar si se usó perfil prod
-if docker compose config --profiles | grep -q prod; then
+if [[ "$perfil" == "prod" ]]; then
     echo "✅ GestorPlus está listo. Accede en: http://localhost"
 else
     echo "✅ GestorPlus está listo. Accede en: http://localhost:3000"
