@@ -65,7 +65,24 @@ else
     exit 1
 fi
 
+# Esperar unos segundos para que los contenedores estén listos
 sleep 25
+
+echo "🔍 Buscando nombre del contenedor PHP..."
+
+container_name=$(docker ps --filter "ancestor=gestorplus-php" --format "{{.Names}}" | head -n1)
+
+if [[ -z "$container_name" ]]; then
+    # Intentar buscar por patrón alternativo (ajusta si tu contenedor tiene otro nombre)
+    container_name=$(docker ps --format "{{.Names}}" | grep gestorplus | grep php | head -n1)
+fi
+
+if [[ -z "$container_name" ]]; then
+    echo "❌ No se encontró el contenedor PHP activo. Abortando."
+    exit 1
+fi
+
+echo "✅ Contenedor PHP encontrado: $container_name"
 
 echo "🔽 ¿Deseas migrar un archivo Excel/CSV ahora?"
 read -p "[s/n]: " migrar_excel
@@ -83,10 +100,10 @@ if [[ "$migrar_excel" =~ ^[sS]$ ]]; then
         echo "❌ El archivo '$filename' no existe. Se omite la migración."
     else
         echo "📤 Copiando archivo al contenedor..."
-        docker cp "$filename" gestorplus-php:/app/tmp_migrar.xlsx
+        docker cp "$filename" "$container_name":/app/tmp_migrar.xlsx
 
         echo "🔄 Ejecutando migración del archivo: $filename"
-        docker exec gestorplus-php php migrations/MigrarExcelRunner.php /app/tmp_migrar.xlsx
+        docker exec "$container_name" php migrations/MigrarExcelRunner.php /app/tmp_migrar.xlsx
         echo "✅ Migración completa"
     fi
 else
@@ -94,7 +111,7 @@ else
 fi
 
 echo "👤 Creando usuario administrador..."
-docker exec -it gestorplus-php php migrations/CrearAdministrador.php
+docker exec -it "$container_name" php migrations/CrearAdministrador.php
 
 echo ""
 if [[ "$perfil" == "prod" ]]; then
