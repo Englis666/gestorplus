@@ -36,10 +36,6 @@ else
     fi
 fi
 
-echo "🔐 Asignando permisos a la carpeta gestorplus..."
-chmod -R 755 gestorplus
-chown -R "$USER":"$USER" gestorplus
-
 cd gestorplus
 
 
