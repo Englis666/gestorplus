@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+PROJECT_ROOT="$(pwd)"
+
 if ! docker info >/dev/null 2>&1; then
     echo "❌ Tu usuario no tiene permisos para usar Docker. Ejecuta el script con sudo o agrégate al grupo docker:"
     echo "   sudo usermod -aG docker \$USER && newgrp docker"
@@ -38,7 +40,7 @@ fi
 
 cd gestorplus/frontend
 npm install
-cd ..
+cd "$PROJECT_ROOT"
 
 echo "🛠️ ¿Qué entorno deseas usar?"
 echo "1) Desarrollo"
@@ -58,7 +60,7 @@ else
     exit 1
 fi
 
-sleep 25
+sleep 10
 
 # 🔽 Pregunta si desea realizar la migración del Excel
 echo "🔽 ¿Deseas migrar un archivo Excel/CSV ahora?"
@@ -86,6 +88,13 @@ if [[ "$migrar_excel" =~ ^[sS]$ ]]; then
 else
     echo "⏭️ Migración de Excel omitida"
 fi
+
+
+echo "⌛ Esperando que el contenedor gestorplus-php esté listo..."
+
+until docker exec gestorplus-php php -v >/dev/null 2>&1; do
+    sleep 2
+done
 
 echo "👤 Creando usuario administrador..."
 docker exec -it gestorplus-php php migrations/CrearAdministrador.php
