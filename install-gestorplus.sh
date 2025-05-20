@@ -41,7 +41,7 @@ chmod -R 755 gestorplus
 chown -R "$USER":"$USER" gestorplus
 
 cd gestorplus
-npm install
+
 
 echo "🛠️ ¿Qué entorno deseas usar?"
 echo "1) Desarrollo"
