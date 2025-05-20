@@ -36,8 +36,9 @@ else
     fi
 fi
 
-cd gestorplus
-
+cd gestorplus/frontend
+npm install
+cd ..
 
 echo "🛠️ ¿Qué entorno deseas usar?"
 echo "1) Desarrollo"
