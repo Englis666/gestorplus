@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PROJECT_ROOT="$(pwd)"
+echo "📦 Instalando GestorPlus ..."
 
 if ! docker info >/dev/null 2>&1; then
     echo "❌ Tu usuario no tiene permisos para usar Docker. Ejecuta el script con sudo o agrégate al grupo docker:"
@@ -9,15 +9,14 @@ if ! docker info >/dev/null 2>&1; then
     exit 1
 fi
 
-echo "📦 Instalando GestorPlus ..."
-
+# Instalación de dependencias según SO
 if grep -q "Ubuntu" /etc/os-release; then
     echo "🟢 Detectado Ubuntu"
     sudo apt update
-    sudo apt install -y docker.io docker-compose git
+    sudo apt install -y docker.io docker-compose git npm
 elif grep -q "Arch" /etc/os-release; then
     echo "🟢 Detectado Arch Linux"
-    sudo pacman -S --noconfirm docker docker-compose git
+    sudo pacman -S --noconfirm docker docker-compose git npm
 else
     echo "❌ Sistema Operativo no compatible"
     exit 1
@@ -26,22 +25,27 @@ fi
 sudo systemctl enable docker
 sudo systemctl start docker
 
-if [ -d "gestorplus" ]; then
-    echo "📁 La carpeta 'gestorplus' ya existe. Usando carpeta existente..."
-else 
-    echo "🔄 Clonando repositorio GestorPlus..."
-    git clone https://github.com/Englis666/gestorplus.git
+# Preguntar ruta del proyecto gestorplus
+read -p "📁 Ingresa la ruta donde quieres clonar o donde ya está el proyecto gestorplus (ej: /home/usuario/gestorplus): " PROJECT_PATH
 
-    if [ -d "gestorplus/backend/test" ]; then
+if [ -d "$PROJECT_PATH" ]; then
+    echo "📁 La carpeta '$PROJECT_PATH' ya existe. Usando carpeta existente..."
+else
+    echo "🔄 Clonando repositorio GestorPlus en $PROJECT_PATH..."
+    git clone https://github.com/Englis666/gestorplus.git "$PROJECT_PATH"
+
+    if [ -d "$PROJECT_PATH/backend/test" ]; then
         echo "🧹 Eliminando carpeta de pruebas (solo para desarrolladores)..."
-        rm -rf gestorplus/backend/test
+        rm -rf "$PROJECT_PATH/backend/test"
     fi
 fi
 
-cd gestorplus/frontend
+# Instalar frontend
+cd "$PROJECT_PATH/frontend"
 npm install
-cd "$PROJECT_ROOT"
+cd "$PROJECT_PATH"
 
+# Preguntar entorno
 echo "🛠️ ¿Qué entorno deseas usar?"
 echo "1) Desarrollo"
 echo "2) Producción"
@@ -49,20 +53,20 @@ read -p "Selecciona una opción [1-2]: " opcion_entorno
 
 if [[ "$opcion_entorno" == "1" ]]; then
     echo "🚀 Levantando contenedores en modo desarrollo..."
-    docker compose --profile dev up --build -d
+    docker compose -f "$PROJECT_PATH/docker-compose.yml" --profile dev up --build -d
     perfil="dev"
 elif [[ "$opcion_entorno" == "2" ]]; then
     echo "🚀 Levantando contenedores en modo producción..."
-    docker compose --profile prod up --build -d
+    docker compose -f "$PROJECT_PATH/docker-compose.yml" --profile prod up --build -d
     perfil="prod"
 else
     echo "❌ Opción inválida. Abortando."
     exit 1
 fi
 
-sleep 10
+sleep 25
 
-# 🔽 Pregunta si desea realizar la migración del Excel
+# Migración de Excel
 echo "🔽 ¿Deseas migrar un archivo Excel/CSV ahora?"
 read -p "[s/n]: " migrar_excel
 
@@ -88,13 +92,6 @@ if [[ "$migrar_excel" =~ ^[sS]$ ]]; then
 else
     echo "⏭️ Migración de Excel omitida"
 fi
-
-
-echo "⌛ Esperando que el contenedor gestorplus-php esté listo..."
-
-until docker exec gestorplus-php php -v >/dev/null 2>&1; do
-    sleep 2
-done
 
 echo "👤 Creando usuario administrador..."
 docker exec -it gestorplus-php php migrations/CrearAdministrador.php
