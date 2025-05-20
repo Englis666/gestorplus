@@ -47,7 +47,7 @@ read -p "Selecciona una opción [1-2]: " opcion_entorno
 
 if [[ "$opcion_entorno" == "1" ]]; then
     echo "🚀 Levantando contenedores en modo desarrollo..."
-    docker compose --profile dev up --build
+    docker compose --profile dev up --build -d
     perfil="dev"
 elif [[ "$opcion_entorno" == "2" ]]; then
     echo "🚀 Levantando contenedores en modo producción..."
