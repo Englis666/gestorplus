@@ -68,7 +68,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: gestorplus-frontend-dev
-    command: sh -c "npm start"
+    command: npm start
     volumes:
       - ./frontend:/app
       - ./frontend/node_modules:/app/node_modules
