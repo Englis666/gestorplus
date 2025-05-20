@@ -15,7 +15,7 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [pdfUrl, setPdfUrl] = useState("");
   const [selectedVinculacion, setSelectedVinculacion] = useState(null); // Estado para la vinculacion seleccionada
 
-  const ifFormDataAvailable = num_doc && nombres && identrevista && idpostulacion;
+  const isFormDataAvailable = num_doc && nombres && identrevista && idpostulacion;
 
 
   const [formData, setFormData] = useState({
