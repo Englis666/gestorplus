@@ -1,15 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "📦 Instalando GestorPlus ..."
-
 if ! docker info >/dev/null 2>&1; then
     echo "❌ Tu usuario no tiene permisos para usar Docker. Ejecuta el script con sudo o agrégate al grupo docker:"
     echo "   sudo usermod -aG docker \$USER && newgrp docker"
     exit 1
 fi
 
-# Instalación de dependencias según SO
+echo "📦 Instalando GestorPlus ..."
+
 if grep -q "Ubuntu" /etc/os-release; then
     echo "🟢 Detectado Ubuntu"
     sudo apt update
@@ -25,27 +24,29 @@ fi
 sudo systemctl enable docker
 sudo systemctl start docker
 
-# Preguntar ruta del proyecto gestorplus
-read -p "📁 Ingresa la ruta donde quieres clonar o donde ya está el proyecto gestorplus (ej: /home/usuario/gestorplus): " PROJECT_PATH
+if [ -d "gestorplus" ]; then
+    echo "📁 La carpeta 'gestorplus' ya existe. Usando carpeta existente..."
+else 
+    echo "🔄 Clonando repositorio GestorPlus..."
+    git clone https://github.com/Englis666/gestorplus.git
 
-if [ -d "$PROJECT_PATH" ]; then
-    echo "📁 La carpeta '$PROJECT_PATH' ya existe. Usando carpeta existente..."
-else
-    echo "🔄 Clonando repositorio GestorPlus en $PROJECT_PATH..."
-    git clone https://github.com/Englis666/gestorplus.git "$PROJECT_PATH"
-
-    if [ -d "$PROJECT_PATH/backend/test" ]; then
+    if [ -d "gestorplus/backend/test" ]; then
         echo "🧹 Eliminando carpeta de pruebas (solo para desarrolladores)..."
-        rm -rf "$PROJECT_PATH/backend/test"
+        rm -rf gestorplus/backend/test
     fi
 fi
 
-# Instalar frontend
-cd "$PROJECT_PATH/frontend"
-npm install
-cd "$PROJECT_PATH"
+cd gestorplus/frontend
 
-# Preguntar entorno
+if ! command -v npm >/dev/null 2>&1; then
+    echo "❌ npm no está instalado. Por favor instálalo para continuar."
+    exit 1
+fi
+
+npm install
+
+cd ..
+
 echo "🛠️ ¿Qué entorno deseas usar?"
 echo "1) Desarrollo"
 echo "2) Producción"
@@ -53,11 +54,11 @@ read -p "Selecciona una opción [1-2]: " opcion_entorno
 
 if [[ "$opcion_entorno" == "1" ]]; then
     echo "🚀 Levantando contenedores en modo desarrollo..."
-    docker compose -f "$PROJECT_PATH/docker-compose.yml" --profile dev up --build -d
+    docker compose --profile dev up --build -d
     perfil="dev"
 elif [[ "$opcion_entorno" == "2" ]]; then
     echo "🚀 Levantando contenedores en modo producción..."
-    docker compose -f "$PROJECT_PATH/docker-compose.yml" --profile prod up --build -d
+    docker compose --profile prod up --build -d
     perfil="prod"
 else
     echo "❌ Opción inválida. Abortando."
@@ -66,7 +67,6 @@ fi
 
 sleep 25
 
-# Migración de Excel
 echo "🔽 ¿Deseas migrar un archivo Excel/CSV ahora?"
 read -p "[s/n]: " migrar_excel
 
