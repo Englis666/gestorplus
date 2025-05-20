@@ -5,7 +5,7 @@ FROM node:18
 WORKDIR /app
 
 # Copiamos sólo package.json para aprovechar cache de Docker
-COPY package.json package-lock.json ./
+COPY package.json
 
 # Instalamos dependencias dentro de la imagen
 RUN npm install
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Comando para levantar la app
-CMD ["npm", "start"]
+CMD ["sh", "-c", "until nc -z php 9000; do sleep 1; done; npm start"]
