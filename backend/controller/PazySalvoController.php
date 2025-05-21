@@ -45,14 +45,12 @@ class PazySalvoController extends BaseController
     public function generarPazYSalvo(array $data): void
     {
         try {
-            // Verificar si 'empleado' es un string y asignarlo a la variable
             if (isset($data['empleado'])) {
                 $motivo = $data['motivo'];
                 $fechaEmision = $data['fechaEmision'];
                 $estado = $data['estado'];
-                $empleado = $data['empleado']; // Ahora lo tomamos directamente como un string
+                $empleado = $data['empleado']; 
     
-                // Llamada al método para crear el Paz y Salvo
                 $this->pazysalvo->crearPazYSalvo([
                     'motivo' => $motivo,
                     'fechaEmision' => $fechaEmision,
@@ -60,13 +58,11 @@ class PazySalvoController extends BaseController
                     'empleado' => ['num_doc' => $empleado] // Aseguramos que pase como array
                 ]);
     
-                // Responder con mensaje de éxito
                 $this->jsonResponseService->responder(['mensaje' => 'Paz y Salvo generado exitosamente']);
             } else {
                 throw new Exception('Empleado no especificado correctamente en los datos');
             }
         } catch (Exception $e) {
-            // En caso de error, responder con el mensaje de error y el código correspondiente
             $this->jsonResponseService->responderError($e->getMessage(), $e->getCode() ?: 400);
         }
     }
