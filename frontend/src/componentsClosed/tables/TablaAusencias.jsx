@@ -150,7 +150,6 @@ const TablaAusencias = () => {
           tipoAusencia: "",
           descripcion: "",
         });
-        // Refrescar lista de ausencias para reflejar nueva solicitud
         fetchAusencias(token, rol);
       })
       .catch(() => {
