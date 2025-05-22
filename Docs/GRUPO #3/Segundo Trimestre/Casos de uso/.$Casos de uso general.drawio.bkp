@@ -1,0 +1,28 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15">
+  <diagram name="Página-1" id="XXRASxe_aMrs5WXhI0Pi">
+    <mxGraphModel dx="2458" dy="1911" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="aOGv1YQLPQVqvFgoYvwG-2" value="Recursos&amp;nbsp;&lt;div&gt;humanos&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="-640" y="680" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="aOGv1YQLPQVqvFgoYvwG-5" value="Empleado&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="860" y="612.5" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="aOGv1YQLPQVqvFgoYvwG-6" value="Aspirante" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="860" y="1200" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7Tm4FXXBIRCJir7K7m3A-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="aOGv1YQLPQVqvFgoYvwG-15" target="aOGv1YQLPQVqvFgoYvwG-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aOGv1YQLPQVqvFgoYvwG-15" value="Administrador&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="-640" y="880" width="30" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="7Tm4FXXBIRCJir7K7m3A-5" value="frame" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;" vertex="1" parent="1">
+          <mxGeometry x="-400" y="520" width="1130" height="990" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
