@@ -11,7 +11,7 @@ class Mailer {
         try {
             $mail->isSMTP();
             $mail->Host = 'smtp-relay-offshore-southamerica-east-v2.sendinblue.com';
-            $mail->SMTPAuth = true;                 // Nota la S mayúscula
+            $mail->SMTPAuth = true;                 
             $mail->Username = '8d5363001@smtp-brevo.com';  // Tu usuario SMTP (email)
             $mail->Password = 'JLANaUHRTcVs3b0t';            // La contraseña o token SMTP (nota la P mayúscula)
             $mail->SMTPSecure = 'tls';

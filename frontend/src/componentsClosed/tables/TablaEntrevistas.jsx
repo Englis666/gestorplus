@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import DataTable from "react-data-table-component";
 import CalendarioDeEntrevistas from "../CalendarioDeEntrevistas";
 import ModalHojadeVidaEntrevistado from "../modals/ModalHojadeVidaEntrevistado";
 
@@ -46,10 +47,62 @@ const TablaEntrevistas = () => {
             console.error("Error al actualizar la asistencia", err);
         }
     };
-    
 
     const abrirModalHojadevida = () => {
         setModalOpen(true);
+    };
+
+    const columns = [
+        {
+            name: "Fecha",
+            selector: row => row.fecha,
+            sortable: true,
+            center: true,
+        },
+        {
+            name: "Hora",
+            selector: row => row.hora,
+            sortable: true,
+            center: true,
+        },
+        {
+            name: "Nombre empleado",
+            selector: row => row.nombres,
+            sortable: true,
+            center: true,
+        },
+        {
+            name: "Número de documento",
+            selector: row => row.usuario_num_doc,
+            sortable: true,
+            center: true,
+        },
+        {
+            name: "Estado",
+            selector: row => row.estadoEntrevista,
+            sortable: true,
+            center: true,
+        },
+    ];
+
+    const customStyles = {
+        rows: {
+            style: {
+                cursor: "pointer"
+            }
+        },
+        headCells: {
+            style: {
+                backgroundColor: "#e9ecef",
+                fontWeight: "bold",
+                textAlign: "center"
+            }
+        },
+        cells: {
+            style: {
+                textAlign: "center"
+            }
+        }
     };
 
     if (loading) return <div>Cargando entrevistas...</div>;
@@ -64,34 +117,17 @@ const TablaEntrevistas = () => {
                     <div className="card shadow-sm border-0 mb-4" style={{ borderRadius: "10px" }}>
                         <div className="card-body">
                             <p>Entrevistas en totalidad por empleado</p>
-                            <div className="table-responsive">
-                                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}>
-                                    <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Hora</th>
-                                            <th>Nombre empleado</th>
-                                            <th>Numero de documento</th>
-                                            <th>Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="text-center">
-                                        {entrevistas.map((entrevista) => (
-                                            <tr
-                                                key={entrevista.identrevista}
-                                                style={{ cursor: "pointer" }}
-                                                onClick={() => setSelectedInterview(entrevista)}
-                                            >
-                                                <td>{entrevista.fecha}</td>
-                                                <td>{entrevista.hora}</td>
-                                                <td>{entrevista.nombres}</td>
-                                                <td>{entrevista.usuario_num_doc}</td>
-                                                <td>{entrevista.estadoEntrevista}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+
+                            <DataTable
+                                columns={columns}
+                                data={entrevistas}
+                                customStyles={customStyles}
+                                pagination
+                                highlightOnHover
+                                pointerOnHover
+                                onRowClicked={setSelectedInterview}
+                                responsive
+                            />
                         </div>
                     </div>
 

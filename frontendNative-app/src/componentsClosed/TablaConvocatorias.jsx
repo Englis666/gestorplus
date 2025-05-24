@@ -151,20 +151,20 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 12,
     },
     columnHeader: {
-        color: "#333", // Texto gris oscuro
+        color: "#333",
         fontWeight: "600",
         textAlign: "center",
         fontSize: 14,
         paddingVertical: 12,
     },
     tableRow: {
-        backgroundColor: "#fff", // Filas con fondo blanco
-        borderBottomColor: "#ddd", // Línea gris suave para separar las filas
+        backgroundColor: "#fff", 
+        borderBottomColor: "#ddd",
         borderBottomWidth: 1,
     },
     cell: {
-        backgroundColor: "#fff", // Fondo blanco para las celdas
-        color: "#333", // Texto oscuro para las celdas
+        backgroundColor: "#fff", 
+        color: "#333", 
         textAlign: "center",
         paddingVertical: 10,
         fontSize: 14,
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 20,
-        backgroundColor: "#333", // Botón con fondo gris oscuro
+        backgroundColor: "#333", 
         color: "#fff",
         borderRadius: 8,
     },

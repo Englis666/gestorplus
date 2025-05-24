@@ -90,7 +90,7 @@ const FinalizarJornada = () => {
         <div className="card-body text-center">
           <h5 className="card-title mb-3 fw-bold">Finalizar Jornada</h5>
           <p className="card-text text-muted">
-            Haz clic en el botón para registrar el fin de tu jornada laboral.
+            Esto es obligatorio, debes hacer clic en el botón para registrar el fin de tu jornada laboral, ya que si no se registra tu jornada lo mas probable es que quede invalidada
           </p>
           <button
             className="btn btn-danger w-100 py-2 fw-semibold"

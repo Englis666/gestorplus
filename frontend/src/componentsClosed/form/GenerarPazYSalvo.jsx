@@ -68,13 +68,8 @@ const GenerarPazYSalvo = ({ form, empleados, onChange, onSubmit }) => {
 
     return (
         <div className="container mt-5 mb-5">
-            <div className="card shadow border-0 animate__animated animate__fadeIn" style={{ borderRadius: "14px", maxWidth: "650px", margin: "auto" }}>
+            <div className="card shadow border-0 animate__animated animate__fadeIn">
                 <div className="card-body p-4">
-                    <h4 className="mb-4 text-primary fw-bold d-flex align-items-center">
-                        <span className="material-icons me-2">verified</span>
-                        Generar Paz y Salvo
-                    </h4>
-
                     {success && (
                         <div className="alert alert-success animate__animated animate__fadeInDown">
                             <i className="material-icons me-2">check_circle</i>

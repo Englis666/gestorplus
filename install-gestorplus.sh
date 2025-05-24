@@ -175,16 +175,24 @@ function install_dependencies() {
     apt)
       echo -e "Ejecutando: ${CYAN}sudo apt update && sudo apt install -y docker.io docker-compose git npm figlet${RESET}"
       sudo apt update && sudo apt install -y docker.io docker-compose git npm figlet || {
-        echo -e "${RED}¡Rayos! Hubo un problema instalando las dependencias con apt.${RESET}"
-        echo "Asegúrate de que tus repositorios estén bien configurados."
+        echo -e "${RED}❌ ¡Rayos! Hubo un problema instalando las dependencias con apt.${RESET}"
+        echo "🔧 Asegúrate de que tus repositorios estén bien configurados."
         exit 1
       }
       ;;
     pacman)
       echo -e "Ejecutando: ${CYAN}sudo pacman -Syu --noconfirm docker docker-compose git npm figlet${RESET}"
       sudo pacman -Syu --noconfirm docker docker-compose git npm figlet || {
-        echo -e "${RED}¡Rayos! Hubo un problema instalando las dependencias con pacman.${RESET}"
-        echo "Revisa tu conexión o los repositorios de Arch."
+        echo -e "${RED}❌ ¡Rayos! Hubo un problema instalando las dependencias con pacman.${RESET}"
+        echo "🔧 Revisa tu conexión o los repositorios de Arch."
+        exit 1
+      }
+      ;;
+    yay|paru)
+      echo -e "Ejecutando: ${CYAN}$PKG_MANAGER -Syu --noconfirm docker docker-compose git npm figlet${RESET}"
+      $PKG_MANAGER -Syu --noconfirm docker docker-compose git npm figlet || {
+        echo -e "${RED}❌ ¡Rayos! Hubo un problema instalando las dependencias con $PKG_MANAGER.${RESET}"
+        echo "🔧 Intenta instalar los paquetes manualmente o revisa los mirrors."
         exit 1
       }
       ;;
@@ -193,13 +201,23 @@ function install_dependencies() {
       echo "Por favor, asegúrate de tenerlas listas antes de seguir."
       ;;
     *)
-      echo -e "${RED}¡Lo siento! Tu sistema no es compatible con la instalación automática. ¡Revisa la documentación!${RESET}"
+      echo -e "${RED}❌ ¡Lo siento! Tu sistema no es compatible con la instalación automática. ¡Revisa la documentación!${RESET}"
       exit 1
       ;;
   esac
+
   echo -e "${GREEN}✅ ¡Herramientas instaladas o verificadas! ¡Vamos por buen camino!${RESET}"
+
+  # Validación post-instalación
+  for cmd in docker docker-compose git npm figlet; do
+    if ! command -v $cmd >/dev/null 2>&1; then
+      echo -e "${RED}⚠️ La herramienta '${cmd}' no se encontró tras la instalación. Verifica manualmente.${RESET}"
+    fi
+  done
+
   pause
 }
+
 
 # 5. La guarida de GestorPlus (clonando el repositorio)
 function clone_or_use_repo() {
@@ -416,15 +434,15 @@ function final_messages() {
 
 # --- ¡La Gran Orquesta de Funciones! (ejecución principal) ---
 
-show_banner             # Que empiece el espectáculo con nuestro logo
-intro                   # El telón se abre, ¡bienvenido!
-check_docker_permissions # ¿Todo listo para Docker?
-detect_distro           # ¿Qué sistema operativo tenemos hoy?
-install_dependencies    # Cargando las herramientas necesarias
-clone_or_use_repo       # La casa de GestorPlus: ¿nueva o ya construida?
-install_frontend        # El diseño de interiores: preparando el frontend
-choose_profile_and_run  # ¡Encendiendo los motores! ¿Desarrollo o Producción?
-find_php_container      # Encontrando al cerebro de la operación
-migrate_excel           # ¿Quieres traer tus datos?
-create_admin_user       # Creando a tu primer líder
-final_messages          # ¡El gran final! ¿Dónde encontrar tu GestorPlus?
+show_banner             
+intro                   
+check_docker_permissions 
+detect_distro           
+install_dependencies    
+clone_or_use_repo       
+install_frontend       
+choose_profile_and_run  
+find_php_container      
+migrate_excel           
+create_admin_user       
+final_messages          

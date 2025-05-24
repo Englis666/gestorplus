@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Estadisticas from "../Estadisticas";
 import Grafica from "../Grafica";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
+import DataTable from "react-data-table-component";
 
 const TablaEmpleado = () => {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -95,34 +96,38 @@ const TablaEmpleado = () => {
       }
     };
 
-    // Fetch inicial
     fetchNotificaciones();
 
-    // Polling cada 10 segundos
     const intervalId = setInterval(fetchNotificaciones, 10000);
 
-    // Limpiar al desmontar
     return () => clearInterval(intervalId);
   }, []);
 
   if (loading) return <div>Cargando notificaciones...</div>;
   if (error) return <div>{error}</div>;
 
-  // Clasificación de notificaciones
+  // Filtrar notificaciones por tipo
   const jornadaNotificaciones = notificaciones.filter((n) => n.tipo === "Jornada");
-
   const actualizacionNotificaciones = notificaciones.filter((n) => {
     if (rol === "3") return n.tipo === "PostulacionAspirantes";
     if (rol === "1" || rol === "2") return n.tipo === "Postulacion";
     return false;
   });
-
   const generalNotificaciones = notificaciones.filter((n) => n.tipo === "General");
+
+  // Definir columnas para DataTable
+  const columns = [
+    {
+      name: "Actividad",
+      selector: row => row.descripcionNotificacion,
+      sortable: true,
+      wrap: true,
+    }
+  ];
 
   return (
     <div className="container mt-5">
       <Estadisticas />
-      <h2>Finalizar Jornada </h2>
       <h2 className="mb-4 text-center text-dark fw-bold mt-4">Notificaciones</h2>
       <div className="row g-4">
         {/* Notificaciones Generales */}
@@ -130,28 +135,14 @@ const TablaEmpleado = () => {
           <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
             <div className="card-body">
               <p>Notificaciones generales</p>
-              <div className="table-responsive">
-                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa" }}>
-                  <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
-                    <tr>
-                      <th className="py-3 px-4">Actividad</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-center">
-                    {generalNotificaciones.length > 0 ? (
-                      generalNotificaciones.map((notificacion) => (
-                        <tr key={notificacion.idnotificacion}>
-                          <td className="py-3 px-4 text-dark">{notificacion.descripcionNotificacion}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td>No hay notificaciones generales.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              <DataTable
+                columns={columns}
+                data={generalNotificaciones}
+                noDataComponent="No hay notificaciones generales."
+                pagination
+                dense
+                highlightOnHover
+              />
             </div>
           </div>
         </div>
@@ -161,28 +152,14 @@ const TablaEmpleado = () => {
           <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
             <div className="card-body">
               <p>Notificaciones de actualizaciones</p>
-              <div className="table-responsive">
-                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa" }}>
-                  <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
-                    <tr>
-                      <th className="py-3 px-4">Actualizaciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-center">
-                    {actualizacionNotificaciones.length > 0 ? (
-                      actualizacionNotificaciones.map((notificacion) => (
-                        <tr key={notificacion.idnotificacion}>
-                          <td className="py-3 px-4 text-dark">{notificacion.descripcionNotificacion}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td>No hay notificaciones de actualización.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              <DataTable
+                columns={columns}
+                data={actualizacionNotificaciones}
+                noDataComponent="No hay notificaciones de actualización."
+                pagination
+                dense
+                highlightOnHover
+              />
             </div>
           </div>
         </div>
@@ -192,28 +169,14 @@ const TablaEmpleado = () => {
           <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
             <div className="card-body">
               <p>Control de entradas de trabajo</p>
-              <div className="table-responsive">
-                <table className="table table-hover" style={{ backgroundColor: "#f8f9fa" }}>
-                  <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
-                    <tr>
-                      <th className="py-3 px-4">Control de entrada de trabajo</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-center">
-                    {jornadaNotificaciones.length > 0 ? (
-                      jornadaNotificaciones.map((notificacion) => (
-                        <tr key={notificacion.idnotificacion}>
-                          <td className="py-3 px-4 text-dark">{notificacion.descripcionNotificacion}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td>No hay notificaciones de jornada.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              <DataTable
+                columns={columns}
+                data={jornadaNotificaciones}
+                noDataComponent="No hay notificaciones de jornada."
+                pagination
+                dense
+                highlightOnHover
+              />
             </div>
           </div>
         </div>

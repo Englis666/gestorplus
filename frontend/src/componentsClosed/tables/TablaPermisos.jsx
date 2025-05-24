@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import DataTable from "react-data-table-component";
 import SolicitudPermiso from "../form/FormularioSolicitudPermisos";
 
 const TablaPermisos = () => {
@@ -8,12 +9,6 @@ const TablaPermisos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rol, setRol] = useState(null);
-  const [solicitud, setSolicitud] = useState({
-    fechaInicio: "",
-    fechaFin: "",
-    tipoPermiso: "",
-    descripcion: "",
-  });
 
   useEffect(() => {
     const getCookie = (name) => {
@@ -28,9 +23,7 @@ const TablaPermisos = () => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
-        if (isTokenExpired) {
-          console.error("El token ha expirado");
+        if (decodedToken?.exp * 1000 < Date.now()) {
           setError("El token ha expirado.");
           setLoading(false);
           return;
@@ -39,52 +32,32 @@ const TablaPermisos = () => {
         const Rol = decodedToken?.data?.rol;
         setRol(Rol);
 
-        const action = (() => {
-          switch (Rol) {
-            case "1":
-            case "2":
-              return "obtenerTodosLosPermisos";
-            case "3":
-              return "obtenerPermisos";
-            default:
-              console.error("Rol no válido");
-              setError("Rol no reconocido.");
-              setLoading(false);
-              return null;
-          }
-        })();
-
-        if (!action) return;
+        const action = Rol === "1" || Rol === "2" ? "obtenerTodosLosPermisos" : Rol === "3" ? "obtenerPermisos" : null;
+        if (!action) {
+          setError("Rol no reconocido.");
+          setLoading(false);
+          return;
+        }
 
         axios
           .get("http://localhost/gestorplus/backend/", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
             params: { action },
           })
-          .then((response) => {
-            const permisos = response.data?.permisos;
-            if (Array.isArray(permisos)) {
-              setPermisos(permisos);
-            } else {
-              console.error("Los permisos no son un array.");
-              setPermisos([]);
-            }
+          .then((res) => {
+            const data = res.data?.permisos;
+            setPermisos(Array.isArray(data) ? data : []);
             setLoading(false);
           })
-          .catch((err) => {
-            console.error("Error al obtener los permisos:", err);
+          .catch(() => {
             setError("Hubo un problema al cargar los permisos.");
             setLoading(false);
           });
-      } catch (error) {
-        console.error("Error al decodificar el token:", error);
+      } catch {
         setError("Token inválido o malformado.");
         setLoading(false);
       }
     } else {
-      console.error("No se encontró el token en las cookies.");
       setError("Token no encontrado.");
       setLoading(false);
     }
@@ -96,22 +69,15 @@ const TablaPermisos = () => {
         action: "permisoAceptado",
         idPermisos,
       })
-      .then((response) => {
-        console.log(idPermisos);
-        console.log(response);
+      .then(() => {
         alert("Permiso aceptado con éxito.");
         setPermisos((prev) =>
           prev.map((permiso) =>
-            permiso.idpermiso === idPermisos
-              ? { ...permiso, aprobado: true }
-              : permiso
+            permiso.idPermisos === idPermisos ? { ...permiso, aprobado: true } : permiso
           )
         );
       })
-      .catch((err) => {
-        console.error("Error al aceptar el permiso:", err);
-        alert("Hubo un problema al aceptar el permiso.");
-      });
+      .catch(() => alert("Hubo un problema al aceptar el permiso."));
   };
 
   const handleRechazar = (idPermisos) => {
@@ -121,144 +87,114 @@ const TablaPermisos = () => {
         idPermisos,
       })
       .then((response) => {
-        console.log(response.data);
         if (response.data.success) {
           alert("Permiso rechazado con éxito.");
           setPermisos((prev) =>
             prev.map((permiso) =>
-              permiso.idPermisos === idPermisos
-                ? { ...permiso, aprobado: false }
-                : permiso
+              permiso.idPermisos === idPermisos ? { ...permiso, aprobado: false } : permiso
             )
           );
         } else {
           alert("Hubo un problema al rechazar el permiso.");
         }
       })
-      .catch((err) => {
-        console.error("Error al rechazar el permiso:", err);
-        alert("Hubo un problema al rechazar el permiso.");
-      });
+      .catch(() => alert("Hubo un problema al rechazar el permiso."));
   };
 
-  const handleSolicitarPermiso = (e) => {
-    e.preventDefault();
+  const columns = [
+    {
+      name: "Nombre Empleado",
+      selector: (row) => `${row.nombres} ${row.apellidos}`,
+      sortable: true,
+      center: true,
+    },
+    {
+      name: "Fecha de inicio",
+      selector: (row) => row.fechaInicio,
+      sortable: true,
+      center: true,
+    },
+    {
+      name: "Fecha Fin",
+      selector: (row) => row.fechaFin,
+      sortable: true,
+      center: true,
+    },
+    {
+      name: "Tipo de permiso",
+      selector: (row) => row.tipo,
+      sortable: true,
+      center: true,
+    },
+    {
+      name: "Estado",
+      selector: (row) => row.estadoPermiso,
+      sortable: true,
+      center: true,
+    },
+  ];
 
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    };
-
-    const token = getCookie("auth_token");
-    if (!token) {
-      alert("Token no encontrado. Inicia sesión nuevamente.");
-      return;
-    }
-
-    if (new Date(solicitud.fechaInicio) > new Date(solicitud.fechaFin)) {
-      alert("La fecha de inicio no puede ser posterior a la fecha de fin.");
-      return;
-    }
-
-    axios
-      .post(
-        "http://localhost/gestorplus/backend/",
-        {
-          action: "solicitarPermiso",
-          ...solicitud,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((response) => {
-        alert("Solicitud de permiso enviada con éxito.");
-        setSolicitud({
-          fechaInicio: "",
-          fechaFin: "",
-          tipoPermiso: "",
-          descripcion: "",
-        });
-      })
-      .catch((err) => {
-        console.error("Error al enviar la solicitud de permiso:", err);
-        alert("Hubo un problema al enviar la solicitud de permiso.");
-      });
-  };
+  if (rol === "1" || rol === "2") {
+    columns.push({
+      name: "Acciones",
+      cell: (row) => (
+        <div>
+          <button
+            className="btn btn-success btn-sm mt-2"
+            onClick={() => handleAceptar(row.idPermisos)}
+          >
+            Aceptar
+          </button>
+          <button
+            className="btn btn-danger btn-sm mt-2"
+            onClick={() => handleRechazar(row.idPermisos)}
+          >
+            Rechazar
+          </button>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+    });
+  }
 
   if (loading) return <div>Cargando permisos...</div>;
   if (error) return <div>{error}</div>;
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-center text-dark font-weight-bold mt-4">Permisos</h2>
-      <div className="row g-4">
-        <div className="col-12 col-md-12">
-          <div
-            className="card shadow-sm border-0 mb-5"
-            style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}
-          >
+      <h2 className="mb-4 text-center text-dark font-weight-bold">Permisos</h2>
+      <div className="row">
+        <div className="col-md-8 mb-4">
+          <div className="card shadow-sm border-0" style={{ borderRadius: "10px" }}>
             <div className="card-body">
-              <p>Control de Permisos</p>
-              <div className="table-responsive">
-                <table
-                  className="table table-hover"
-                  style={{ backgroundColor: "#f8f9fa", borderRadius: "10px" }}
-                >
-                  <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
-                    <tr>
-                      <th>Nombre Empleado</th>
-                      <th>Fecha de inicio</th>
-                      <th>Fecha de fin</th>
-                      <th>Tipo de Permiso</th>
-                      <th>Estado</th>
-                      {(rol === "1" || rol === "2") && <th>Acciones</th>}
-                    </tr>
-                  </thead>
-                  <tbody className="text-center">
-                    {permisos.length > 0 ? (
-                      permisos.map((permiso) => (
-                        <tr key={permiso.idPermisos}>
-                          <td>{permiso.nombres}, {permiso.apellidos}</td>
-                          <td>{permiso.fechaInicio}</td>
-                          <td>{permiso.fechaFin}</td>
-                          <td>{permiso.tipo}</td>
-                          <td>{permiso.estadoPermiso}</td>
-                          {(rol === "1" || rol === "2") && (
-                            <td>
-                              <button
-                                className="btn btn-success btn-sm me-2"
-                                onClick={() => handleAceptar(permiso.idPermisos)}
-                              >
-                                Aceptar
-                              </button>
-                              <button
-                                className="btn btn-danger btn-sm"
-                                onClick={() => handleRechazar(permiso.idPermisos)}
-                              >
-                                Rechazar
-                              </button>
-                            </td>
-                          )}
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="6">No hay permisos registrados.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              <p className="mb-3">Control de Permisos</p>
+              <DataTable
+                columns={columns}
+                data={permisos}
+                pagination
+                highlightOnHover
+                responsive
+                noDataComponent="No hay permisos registrados."
+                customStyles={{
+                  headCells: {
+                    style: {
+                      fontWeight: 'bold',
+                      backgroundColor: '#e9ecef',
+                      textAlign: 'center',
+                    },
+                  },
+                }}
+              />
             </div>
           </div>
         </div>
+        <div className="col-md-4">
+          <SolicitudPermiso />
+        </div>
       </div>
-      <SolicitudPermiso/>
     </div>
   );
 };

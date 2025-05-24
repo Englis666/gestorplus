@@ -51,7 +51,7 @@ class AuthController extends BaseController{
     
         $payload = [
             'iss' => '/',
-            'aud' => 'localhost,192.168.194.70',
+            'aud' => 'localhost,192.168.194.70', //Cambiar dependiendo de el servidor
             'iat' => time(),
             'exp' => time() + 3600,
             'data' => [

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-
+import DataTable from "react-data-table-component";
 
 const TablaSistemaDeGestion = () => {
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,6 @@ const TablaSistemaDeGestion = () => {
           params: { action: "obtenerSistemaDeGestion" },
         })
         .then((response) => {
-          console.log(response);
           const data = response.data?.sistemaDeGestion;
           setSistemaDeGestion(Array.isArray(data) ? data : []);
         })
@@ -54,70 +53,97 @@ const TablaSistemaDeGestion = () => {
     }
   }, []);
 
+  // Definir columnas para DataTable
+  const columns = [
+    {
+      name: "Documento",
+      selector: row => row.usuario_num_doc,
+      sortable: true,
+      center: true,
+    },
+    {
+      name: "Nombre",
+      selector: row => row.nombres,
+      sortable: true,
+      center: true,
+    },
+    {
+      name: "Estado de salud",
+      selector: row => row.estado_salud,
+      center: true,
+    },
+    {
+      name: "Evaluación de riesgos",
+      selector: row => row.evaluacionRiesgos,
+      center: true,
+    },
+    {
+      name: "Recomendaciones",
+      selector: row => row.recomendaciones,
+      center: true,
+      wrap: true,
+      maxWidth: '200px',
+    },
+    {
+      name: "Aptitud laboral",
+      selector: row => row.aptitudLaboral,
+      center: true,
+    },
+    {
+      name: "Comentarios",
+      selector: row => row.comentarios,
+      center: true,
+      wrap: true,
+      maxWidth: '200px',
+    },
+    {
+      name: "Acción",
+      cell: row => (
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() =>
+            navigate("/Contratos", {
+              state: {
+                num_doc: row.usuario_num_doc,
+                nombres: row.nombres,
+                identrevista: row.identrevista,
+                idpostulacion: row.idpostulacion,
+              },
+            })
+          }
+        >
+          Asignarle Vinculación
+        </button>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+    },
+  ];
+
   return (
     <div className="container-fluid">
       <h1 className="mb-4">Sistema de Gestión</h1>
 
-      <div className="row">
-        <div className="card shadow-sm border- mb-4">
-          <div className="card-body">
-            <p>Sistema de Gestión por aspirante y empleado</p>
-
-            {loading ? (
-              <p>Cargando...</p>
-            ) : error ? (
-              <p className="text-danger">{error}</p>
-            ) : sistemaDeGestion.length === 0 ? (
-              <p>No hay datos disponibles</p>
-            ) : (
-              <table className="table table-hover">
-                <thead className="text-center">
-                  <tr>
-                    <th>Documento</th>
-                    <th>Nombre</th>
-                    <th>Estado de salud</th>
-                    <th>Evaluación de riesgos</th>
-                    <th>Recomendaciones</th>
-                    <th>Aptitud laboral</th>
-                    <th>Comentarios</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody className="text-center">
-                  {sistemaDeGestion.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.usuario_num_doc}</td>
-                      <td>{item.nombres}</td>
-                      <td>{item.estado_salud}</td>
-                      <td>{item.evaluacionRiesgos}</td>
-                      <td>{item.recomendaciones}</td>
-                      <td>{item.aptitudLaboral}</td>
-                      <td>{item.comentarios}</td>
-                      <td>
-                        <button
-                            className="btn btn-danger"
-                            onClick={() =>
-                              navigate("/Contratos", {
-                                state: {
-                                  num_doc: item.usuario_num_doc,
-                                  nombres: item.nombres,
-                                  identrevista: item.identrevista,
-                                  idpostulacion: item.idpostulacion,
-                                },
-                              })
-                            }
-                          >
-                            Asignarle Vinculacion
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-      </div>
+      {loading ? (
+        <p>Cargando...</p>
+      ) : error ? (
+        <p className="text-danger">{error}</p>
+      ) : sistemaDeGestion.length === 0 ? (
+        <p>No hay datos disponibles</p>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={sistemaDeGestion}
+          pagination
+          highlightOnHover
+          responsive
+          defaultSortField="usuario_num_doc"
+          striped
+          noHeader
+        />
+      )}
     </div>
   );
 };

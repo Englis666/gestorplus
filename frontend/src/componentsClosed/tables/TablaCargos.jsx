@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import DataTable from "react-data-table-component";
 import FormularioCargo from "../form/FormularioAgregarCargo";
 
 const API_URL = "http://localhost/gestorplus/backend/";
 
 const TablaCargos = () => {
   const [cargos, setCargos] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Carga inicial de cargos
   useEffect(() => {
     fetchCargos();
   }, []);
 
   const fetchCargos = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(API_URL, {
         params: { action: "obtenerCargos" },
@@ -23,14 +25,12 @@ const TablaCargos = () => {
       console.error("[fetchCargos] Error al obtener los cargos:", err);
       setCargos([]);
     }
+    setLoading(false);
   };
 
   const desactivarCargo = async (idCargo) => {
     try {
-      const response = await axios.patch(
-        API_URL + "?action=desactivarCargo",
-        { idCargo },
-      );
+      await axios.patch(API_URL + "?action=desactivarCargo", { idCargo });
       await fetchCargos();
     } catch (err) {
       const mensaje = err?.response?.data?.error ??
@@ -38,27 +38,67 @@ const TablaCargos = () => {
       alert(mensaje);
     }
   };
-  
-  
-  
+
   const activarCargo = async (idCargo) => {
-    console.log("[activarCargo] llamado con idCargo =", idCargo);
     try {
-      const response = await axios.patch(
-        API_URL + "?action=activarCargo",
-        { idCargo },
-      );
-      console.log("[activarCargo] respuesta completa:", response);
-      console.log("[activarCargo] response.data:", response.data);
+      await axios.patch(API_URL + "?action=activarCargo", { idCargo });
       await fetchCargos();
-      console.log("[activarCargo] lista de cargos actualizada");
     } catch (err) {
       console.error("[activarCargo] error al activar el cargo:", err);
     }
-  };  
+  };
+
   const agregarCargo = (nuevoCargo) => {
     setCargos((prev) => [...prev, nuevoCargo]);
   };
+
+  // Definir columnas para DataTable
+  const columns = [
+    {
+      name: "Nombre del cargo",
+      selector: row => row.nombreCargo,
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: "Estado del cargo",
+      selector: row => row.estadoCargo,
+      sortable: true,
+      center: true,
+    },
+    {
+      name: "Desactivar",
+      cell: row => (
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => desactivarCargo(row.idCargo ?? row.idcargo ?? row.id)}
+          disabled={row.estadoCargo !== "Activo"}
+        >
+          Desactivar
+        </button>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+    },
+    {
+      name: "Activar",
+      cell: row => (
+        <button
+          className="btn btn-success btn-sm"
+          onClick={() => activarCargo(row.idCargo ?? row.idcargo ?? row.id)}
+          disabled={row.estadoCargo === "Activo"}
+        >
+          Activar
+        </button>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      center: true,
+    },
+  ];
 
   return (
     <div className="container-fluid">
@@ -69,57 +109,16 @@ const TablaCargos = () => {
           <div className="card shadow-sm border-0 mb-4">
             <div className="card-body">
               <p>Cargos que están cargados en el sistema</p>
-              <div className="table-responsive">
-                <table className="table table-hover text-center">
-                  <thead>
-                    <tr>
-                      <th>Nombre del cargo</th>
-                      <th>Estado del cargo</th>
-                      <th>Desactivar</th>
-                      <th>Activar</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cargos.length === 0 ? (
-                      <tr>
-                        <td colSpan="4" className="py-3">
-                          <span className="text-dark">
-                            No existen cargos en la base de datos
-                          </span>
-                        </td>
-                      </tr>
-                    ) : (
-                      cargos.map((cargo, idx) => {
-                        const id = cargo.idCargo ?? cargo.idcargo ?? cargo.id;
-                        return (
-                          <tr key={idx}>
-                            <td>{cargo.nombreCargo}</td>
-                            <td>{cargo.estadoCargo}</td>
-                            <td>
-                              <button
-                                className="btn btn-danger"
-                                onClick={() => desactivarCargo(id)}
-                                disabled={cargo.estadoCargo !== "Activo"}
-                              >
-                                Desactivar
-                              </button>
-                            </td>
-                            <td>
-                              <button
-                                className="btn btn-success"
-                                onClick={() => activarCargo(id)}
-                                disabled={cargo.estadoCargo === "Activo"}
-                              >
-                                Activar
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              <DataTable
+                columns={columns}
+                data={cargos}
+                progressPending={loading}
+                pagination
+                highlightOnHover
+                noDataComponent="No existen cargos en la base de datos"
+                dense
+                responsive
+              />
             </div>
           </div>
         </div>

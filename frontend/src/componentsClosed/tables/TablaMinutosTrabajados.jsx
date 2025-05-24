@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import DataTable from "react-data-table-component";
 import { jwtDecode } from "jwt-decode";
 
 const TablaMinutosTrabajados = () => {
@@ -52,10 +53,8 @@ const TablaMinutosTrabajados = () => {
           params: { action },
         })
         .then((res) => {
-          console.log(res.data);
           const data = res.data?.minutosTrabajados;
           const jornadas = Array.isArray(data) ? data : data ? [data] : [];
-
           setJornadas(jornadas);
           setEmpleados([...new Set(jornadas.map((j) => j.nombres))]);
           setLoading(false);
@@ -78,10 +77,42 @@ const TablaMinutosTrabajados = () => {
     return coincideEmpleado && coincideFecha;
   });
 
-  if (loading)
-    return <div className="text-center mt-5">Cargando jornadas...</div>;
-  if (error)
-    return <div className="text-center mt-5 text-danger">{error}</div>;
+  const columns = [
+    {
+      name: "Fecha",
+      selector: (row) => row.fecha,
+      sortable: true,
+      center: true,
+    },
+    {
+      name: "Hora Entrada",
+      selector: (row) => row.horaEntrada,
+      center: true,
+    },
+    {
+      name: "Hora Salida",
+      selector: (row) => row.horaSalida,
+      center: true,
+    },
+    {
+      name: "Empleado",
+      selector: (row) => row.nombres,
+      center: true,
+    },
+    {
+      name: "Min. Trabajados",
+      selector: (row) => row.minutos_trabajados ?? "-",
+      center: true,
+    },
+    {
+      name: "Min. Extra",
+      selector: (row) => row.minutos_extra ?? "-",
+      center: true,
+    },
+  ];
+
+  if (loading) return <div className="text-center mt-5">Cargando jornadas...</div>;
+  if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
 
   return (
     <div className="container mt-5">
@@ -96,64 +127,37 @@ const TablaMinutosTrabajados = () => {
         relacionado con el empleado (nombre, apellidos, número de documento).
       </p>
 
-      <div
-        className="card shadow-sm border-0"
-        style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}
-      >
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover table-bordered align-middle">
-              <thead className="text-center bg-light">
-                <tr>
-                  <th>
-                    Fecha
-                    <input
-                      type="date"
-                      className="form-control mt-1"
-                      value={filtroFecha}
-                      onChange={(e) => setFiltroFecha(e.target.value)}
-                    />
-                  </th>
-                  <th>Hora entrada</th>
-                  <th>Hora salida</th>
-                  <th>
-                    Empleado
-                    <input
-                      type="text"
-                      className="form-control mt-1"
-                      placeholder="Buscar"
-                      value={empleadoFiltro}
-                      onChange={(e) => setEmpleadoFiltro(e.target.value)}
-                    />
-                  </th>
-                  <th>Min. Trabajados</th>
-                  <th>Min. Extra</th>
-                </tr>
-              </thead>
-              <tbody className="text-center">
-                {jornadasFiltradas.length > 0 ? (
-                  jornadasFiltradas.map((j) => (
-                    <tr key={j.idJornada}>
-                      <td>{j.fecha}</td>
-                      <td>{j.horaEntrada}</td>
-                      <td>{j.horaSalida}</td>
-                      <td>{j.nombres}</td>
-                      <td>{j.minutos_trabajados ?? "-"}</td>
-                      <td>{j.minutos_extra ?? "-"}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6">
-                      No hay trabajadores con minutos trabajados.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+      <div className="row mb-3">
+        <div className="col-md-4">
+          <label>Filtrar por fecha</label>
+          <input
+            type="date"
+            className="form-control"
+            value={filtroFecha}
+            onChange={(e) => setFiltroFecha(e.target.value)}
+          />
+        </div>
+        <div className="col-md-4">
+          <label>Buscar empleado</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Nombre del empleado"
+            value={empleadoFiltro}
+            onChange={(e) => setEmpleadoFiltro(e.target.value)}
+          />
         </div>
       </div>
+
+      <DataTable
+        columns={columns}
+        data={jornadasFiltradas}
+        noDataComponent="No hay trabajadores con minutos trabajados."
+        pagination
+        highlightOnHover
+        striped
+        responsive
+      />
     </div>
   );
 };

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import DataTable from "react-data-table-component";
 
 const TablaJornadas = () => {
   const [Jornadas, setJornadas] = useState([]);
   const [filtrado, setFiltrado] = useState([]);
   const [empleados, setEmpleados] = useState([]);
-  const [minutosTrabajados, setMinutosTrabajados] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rol, setRol] = useState(null);
@@ -48,7 +48,6 @@ const TablaJornadas = () => {
             params: { action },
           })
           .then((res) => {
-            console.log(res.data);
             const jornadas = res.data?.Jornadas || [];
             setJornadas(jornadas);
             setFiltrado(jornadas);
@@ -76,18 +75,14 @@ const TablaJornadas = () => {
 
   const aplicarFiltros = () => {
     let resultado = [...Jornadas];
-
     if (filtroNombreTabla !== "todos") {
       resultado = resultado.filter((j) => j.nombres === filtroNombreTabla);
     }
-
     if (filtroFechaTabla !== "") {
       resultado = resultado.filter((j) => j.fecha === filtroFechaTabla);
     }
-
     setFiltrado(resultado);
   };
-
 
   const handleCorroborar = (idJornada) => {
     axios
@@ -109,7 +104,7 @@ const TablaJornadas = () => {
         alert("Hubo un problema al corroborar la jornada.");
       });
   };
-  
+
   const handleNoCorroborar = (idJornada) => {
     axios
       .post("http://localhost/gestorplus/backend/", {
@@ -130,7 +125,6 @@ const TablaJornadas = () => {
         alert("Hubo un problema al rechazar la jornada.");
       });
   };
-  
 
   const handleFinalizarJornada = async (idJornada, fecha) => {
     try {
@@ -148,98 +142,116 @@ const TablaJornadas = () => {
         },
       });
 
-      // Refrescar jornadas después de finalizar
       setJornadas((prev) =>
         prev.map((j) =>
           j.idJornada === idJornada
-            ? { ...j, estadoJornada: "Finalizada", horaSalida: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+            ? {
+                ...j,
+                estadoJornada: "Finalizada",
+                horaSalida: new Date().toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              }
             : j
         )
       );
-    } catch (error) {
+    } catch {
       alert("Error al finalizar la jornada.");
     }
   };
+
+  const columnas = [
+    {
+      name: "Fecha",
+      selector: (row) => row.fecha,
+      sortable: true,
+    },
+    {
+      name: "Hora Entrada",
+      selector: (row) => row.horaEntrada,
+    },
+    {
+      name: "Hora Salida",
+      selector: (row) => row.horaSalida,
+    },
+    {
+      name: "Empleado",
+      selector: (row) => row.nombres,
+      sortable: true,
+    },
+    {
+      name: "Estado",
+      selector: (row) => row.estadoJornada,
+    },
+  ];
+
+  if (rol === "1" || rol === "2") {
+    columnas.push({
+      name: "Acciones",
+      cell: (row) => (
+        <div className="d-flex flex-column">
+          <button
+            className="btn btn-success btn-sm mb-1"
+            onClick={() => handleCorroborar(row.idJornada)}
+          >
+            Corroborar
+          </button>
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={() => handleNoCorroborar(row.idJornada)}
+            disabled={row.estadoJornada === "Jornada rechazada"}
+          >
+            No Corroborar
+          </button>
+        </div>
+      ),
+    });
+  }
 
   if (loading) return <div>Cargando jornadas...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="container mt-5">
-      <h2 className="text-center text-dark font-weight-bold mb-4">
+    <div className="container mt-4">
+      <h2 className="text-center mb-4 text-dark fw-bold">
         Jornadas (Control de Entrada de Trabajo)
       </h2>
 
-      <div className="card shadow-sm border-0" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover table-bordered">
-              <thead className="text-center" style={{ backgroundColor: "#e9ecef" }}>
-                <tr>
-                  <th>
-                    <input
-                      type="date"
-                      className="form-control form-control-sm"
-                      value={filtroFechaTabla}
-                      onChange={(e) => setFiltroFechaTabla(e.target.value)}
-                    />
-                  </th>
-                  <th>Hora Entrada</th>
-                  <th>Hora Salida</th>
-                  <th>
-                    <select
-                      className="form-select form-select-sm"
-                      value={filtroNombreTabla}
-                      onChange={(e) => setFiltroNombreTabla(e.target.value)}
-                    >
-                      <option value="todos">Todos</option>
-                      {empleados.map((nombre, idx) => (
-                        <option key={idx} value={nombre}>{nombre}</option>
-                      ))}
-                    </select>
-                  </th>
-                  <th>Estado</th>
-                  {(rol === "1" || rol === "2") && <th>Acciones</th>}
-                </tr>
-              </thead>
-              <tbody className="text-center">
-                {filtrado.length > 0 ? (
-                  filtrado.map((j) => (
-                    <tr key={j.idJornada}>
-                      <td>{j.fecha}</td>
-                      <td>{j.horaEntrada}</td>
-                      <td>{j.horaSalida}</td>
-                      <td>{j.nombres}</td>
-                      <td>{j.estadoJornada}</td>
-                      {(rol === "1" || rol === "2") && (
-                        <td className="d-flex flex-column">
-                          <button
-                            className="btn btn-success btn-sm mb-2"
-                            onClick={() => handleCorroborar(j.idJornada)}
-                          >
-                            Corroborar
-                          </button>
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleNoCorroborar(j.idJornada)}
-                            disabled={j.estadoJornada === "Jornada rechazada"}
-                          >
-                            No Corroborar
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="8">No hay jornadas disponibles.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+      <div className="row mb-3">
+        <div className="col-md-6">
+          <input
+            type="date"
+            className="form-control"
+            value={filtroFechaTabla}
+            onChange={(e) => setFiltroFechaTabla(e.target.value)}
+          />
+        </div>
+        <div className="col-md-6">
+          <select
+            className="form-select"
+            value={filtroNombreTabla}
+            onChange={(e) => setFiltroNombreTabla(e.target.value)}
+          >
+            <option value="todos">Todos</option>
+            {empleados.map((nombre, idx) => (
+              <option key={idx} value={nombre}>
+                {nombre}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
+
+      <DataTable
+        columns={columnas}
+        data={filtrado}
+        pagination
+        highlightOnHover
+        striped
+        responsive
+        noDataComponent="No hay jornadas disponibles."
+      />
     </div>
   );
 };

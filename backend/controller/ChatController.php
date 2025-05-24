@@ -28,24 +28,20 @@ class ChatController extends BaseController {
         $mensaje = $data['mensaje'];
     
         try {
-            // Intentar enviar el mensaje
             $mensajeEnviado = $this->chat->enviarMensaje($idChat, $num_doc_emisor, $mensaje);
     
-            // Verificar si el mensaje fue enviado correctamente
             if ($mensajeEnviado) {
                 return $this->jsonResponseService->responder([
                     'status' => 'success',
                     'message' => 'Mensaje enviado correctamente'
                 ]);
             } else {
-                // Si no se pudo guardar el mensaje, regresar un error
                 return $this->jsonResponseService->responderError(
                     'No se pudo guardar el mensaje en la base de datos. Por favor, intente más tarde.',
                     500
                 );
             }
         } catch (PDOException $e) {
-            // Manejo específico para errores de base de datos
             return $this->jsonResponseService->responderError(
                 'Ocurrió un error en la base de datos. Por favor, intente más tarde.',
                 500

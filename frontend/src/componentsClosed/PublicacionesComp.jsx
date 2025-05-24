@@ -89,7 +89,7 @@ const PublicacionesComp = () => {
     <main className="publicaciones-wrapper">
       <header className="blog-header text-center py-5 animate__animated animate__fadeInDown">
         <h1 className="display-4 fw-bold text-black">Publicaciones La Fayette</h1>
-        <p className="lead text-white-50">Descubre las últimas novedades y actualizaciones en nuestro sistema.</p>
+        <p className="lead text-black-50">Descubre las últimas novedades y actualizaciones en nuestro sistema.</p>
       </header>
 
       <div className="container my-5">
