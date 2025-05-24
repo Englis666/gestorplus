@@ -18,14 +18,14 @@ class Publicaciones {
             SELECT p.*
             FROM publicacion p
             WHERE p.estado = 'activo'
-              AND (
+            AND (
                 p.tipo_contrato = 'todos'
                 OR p.tipo_contrato IN (
-                    SELECT v.tipoContrato
-                    FROM vinculacion v
-                    WHERE v.usuario_num_doc = :num_doc
+                SELECT v.tipoContrato
+                FROM vinculacion v
+                WHERE v.usuario_num_doc = :num_doc
                 )
-              )
+            )
             ORDER BY p.fechaPublicacion DESC
         ";
         return $this->dbService->ejecutarConsulta($sql, [':num_doc' => $num_doc]);

@@ -13,7 +13,7 @@ class Chat {
     public function enviarMensaje($idChat, $num_doc_emisor, $mensaje) {
         try {
             $query = "INSERT INTO mensajes (usuario_num_doc, fecha_envio, mensaje, idChat) 
-                      VALUES (:num_doc_emisor, NOW(), :mensaje, :idChat)";
+                    VALUES (:num_doc_emisor, NOW(), :mensaje, :idChat)";
 
             $params = [
                 ':idChat' => $idChat,
@@ -34,7 +34,7 @@ class Chat {
                 SELECT idChat 
                 FROM chat 
                 WHERE (usuario1 = :num_doc_emisor AND usuario2 = :num_doc_receptor) 
-                   OR (usuario1 = :num_doc_receptor AND usuario2 = :num_doc_emisor)
+                OR (usuario1 = :num_doc_receptor AND usuario2 = :num_doc_emisor)
                 ORDER BY created_at DESC 
                 LIMIT 1
             ";
