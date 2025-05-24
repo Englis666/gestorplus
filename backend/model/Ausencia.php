@@ -35,8 +35,8 @@ class Ausencia {
             $params = [':idausencia' => $idausencia];
             $resultado = $this->dbService->ejecutarConsulta($sql, $params);
             
-            if ($resultado) {
-                $usuario_num_doc = $resultado['usuario_num_doc'];
+            if (!empty($resultado) && isset($resultado[0]['usuario_num_doc'])) {
+                $usuario_num_doc = $resultado[0]['usuario_num_doc'];
 
                 $updateSql = "UPDATE ausencia SET justificada = 'Justificada' WHERE idausencia = :idausencia";
                 $updateParams = [':idausencia' => $idausencia];
@@ -104,7 +104,7 @@ class Ausencia {
             $this->dbService->ejecutarInsert($sql, $params);
 
             $descripcionNotificacion = "El empleado identificado con la cédula $num_doc ha solicitado una ausencia desde el día " . 
-                                       $data['fechaInicio'] . " hasta el día " . $data['fechaFin'];
+                        $data['fechaInicio'] . " hasta el día " . $data['fechaFin'];
             $notificationSql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
                                 VALUES (?, 'No leída', 'General', ?)";
             $notificationParams = [$descripcionNotificacion, $num_doc];
