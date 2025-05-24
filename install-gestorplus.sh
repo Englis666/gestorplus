@@ -200,7 +200,7 @@ function find_php_container() {
   pause
 }
 
-# Migrar Excel/CSV
+# Migrar Excel
 function migrate_excel() {
   echo -e "${YELLOW}Paso 8: ¿Deseas migrar un archivo Excel o CSV?${RESET}"
   echo "1) Sí"
