@@ -1,49 +1,49 @@
-import React from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import React from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
 
 const CalendarioDeEntrevistas = ({ entrevistas, onSelectInterview }) => {
-    // Convertir las entrevistas en eventos para el calendario
-    const eventos = entrevistas.map(entrevista => ({
-        title: `Entrevista con ${entrevista.nombres} a las ${entrevista.hora}`,
-        start: new Date(`${entrevista.fecha}T${entrevista.hora}`),
-        end: new Date(`${entrevista.fecha}T${entrevista.hora}`),
-        allDay: false,
-        id: entrevista.identrevista, 
-    }));
+  const eventos = entrevistas.map((entrevista) => ({
+    title: `Entrevista con ${entrevista.nombres} a las ${entrevista.hora}`,
+    start: new Date(`${entrevista.fecha}T${entrevista.hora}`),
+    end: new Date(`${entrevista.fecha}T${entrevista.hora}`),
+    allDay: false,
+    id: entrevista.identrevista,
+  }));
 
-    const handleSelectEvent = (event) => {
-        // funcion que actualiza al evento padre (En tablaCitas)
-        const entrevistaSeleccionada = entrevistas.find(entrevista => entrevista.identrevista === event.id);
-        onSelectInterview(entrevistaSeleccionada);
-    };
-
-    return (
-        <div style={{ height: 500 }}>
-            <Calendar
-                localizer={localizer}
-                events={eventos}
-                startAccessor="start"
-                endAccessor="end"
-                defaultView="month"
-                views={['month', 'week', 'day']}
-                eventPropGetter={(event) => ({
-                    style: {
-                        backgroundColor: "#007bff", 
-                        border: "none",
-                        borderRadius: "5px",
-                        color: "white",
-                        padding: "5px",
-                    },
-                })}
-                tooltipAccessor={(event) => event.title} 
-                onSelectEvent={handleSelectEvent} // Se llama para mostrar el modal 
-            />
-        </div>
+  const handleSelectEvent = (event) => {
+    const entrevistaSeleccionada = entrevistas.find(
+      (entrevista) => entrevista.identrevista === event.id
     );
+    onSelectInterview(entrevistaSeleccionada);
+  };
+
+  return (
+    <div style={{ height: 500 }}>
+      <Calendar
+        localizer={localizer}
+        events={eventos}
+        startAccessor="start"
+        endAccessor="end"
+        defaultView="month"
+        views={["month", "week", "day"]}
+        eventPropGetter={(event) => ({
+          style: {
+            backgroundColor: "#007bff",
+            border: "none",
+            borderRadius: "5px",
+            color: "white",
+            padding: "5px",
+          },
+        })}
+        tooltipAccessor={(event) => event.title}
+        onSelectEvent={handleSelectEvent} // Se llama para mostrar el modal
+      />
+    </div>
+  );
 };
 
 export default CalendarioDeEntrevistas;

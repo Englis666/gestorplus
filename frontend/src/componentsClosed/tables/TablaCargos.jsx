@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import FormularioCargo from "../form/FormularioAgregarCargo";
-
-const API_URL = "http://localhost/gestorplus/backend/";
+import API_URL from "../../config";
 
 const TablaCargos = () => {
   const [cargos, setCargos] = useState([]);

@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import API_URL from "../../config";
 
 const localizer = momentLocalizer(moment);
 
@@ -25,7 +26,7 @@ const TablaVacaciones = () => {
     setLoading(true);
     setError(null);
     axios
-      .get("http://localhost/gestorplus/backend/", {
+      .get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
         params: { action },
       })
@@ -96,7 +97,7 @@ const TablaVacaciones = () => {
 
     axios
       .post(
-        "http://localhost/gestorplus/backend/",
+        API_URL,
         {
           action: "solicitarVacaciones",
           fechaInicio: form.fechaInicio,
@@ -109,7 +110,6 @@ const TablaVacaciones = () => {
       .then(() => {
         alert("Vacaciones solicitadas correctamente.");
         setForm({ fechaInicio: "", fechaFin: "" });
-        // Refrescar la lista sin recargar la página
         const decodedToken = jwtDecode(token);
         const rolActual = decodedToken?.data?.rol;
         const action =
@@ -134,7 +134,7 @@ const TablaVacaciones = () => {
 
     axios
       .post(
-        "http://localhost/gestorplus/backend/",
+        API_URL,
         {
           action: "aceptarVacacion",
           idvacacion,
@@ -148,7 +148,7 @@ const TablaVacaciones = () => {
         setVacaciones((prev) =>
           prev.map((v) =>
             v.idvacacion === idvacacion
-              ? { ...v, estadoVacacion: "aceptada" }
+              ? { ...v, estadoVacacion: "Aceptada" }
               : v
           )
         );
@@ -167,7 +167,7 @@ const TablaVacaciones = () => {
 
     axios
       .post(
-        "http://localhost/gestorplus/backend/",
+        API_URL,
         {
           action: "rechazarVacacion",
           idvacacion,
@@ -181,7 +181,7 @@ const TablaVacaciones = () => {
         setVacaciones((prev) =>
           prev.map((v) =>
             v.idvacacion === idvacacion
-              ? { ...v, estadoVacacion: "rechazada" }
+              ? { ...v, estadoVacacion: "Rechazada" }
               : v
           )
         );

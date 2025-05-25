@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
+import API_URL from "../config";
 
 const FinalizarJornada = () => {
   const [mensaje, setMensaje] = useState("");
   const [cargando, setCargando] = useState(false);
 
   const getCookie = (name) => {
-    const value = `; ${document.cookie}`; 
+    const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
     return null;
@@ -53,7 +54,7 @@ const FinalizarJornada = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost/gestorplus/backend/",
+        API_URL,
         {
           action: "finalizarJornada",
           data: { fechaBogota },
@@ -90,7 +91,14 @@ const FinalizarJornada = () => {
         <div className="card-body text-center">
           <h5 className="card-title mb-3 fw-bold">Finalizar Jornada</h5>
           <p className="card-text text-muted">
-            Esto es obligatorio, debes hacer clic en el botón para registrar el fin de tu jornada laboral, ya que si no se registra tu jornada lo mas probable es que quede invalidada
+            <span>
+              Esto es obligatorio, debes hacer clic en el botón para registrar
+              el fin de tu jornada laboral.
+            </span>
+            <span>
+              Si no se registra tu jornada, lo más probable es que quede
+              invalidada.
+            </span>
           </p>
           <button
             className="btn btn-danger w-100 py-2 fw-semibold"

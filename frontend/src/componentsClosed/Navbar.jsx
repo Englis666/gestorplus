@@ -182,7 +182,7 @@ const NavbarClosed = ({ activeLink }) => {
     },
     { label: "Paz y salvos", icon: "check_circle", path: "/PazYsalvo" },
     { label: "Publicaciones", icon: "library_books", path: "/Publicaciones" },
-    { label: "Quejas", icon: "report_problem", path: "/Quejas" },
+    { label: "PQRS", icon: "report_problem", path: "/Quejas" },
     { label: "Mi perfil", icon: "person", path: "/Perfil" },
     { label: "Certificados", icon: "description", path: "/Certificados" },
   ];

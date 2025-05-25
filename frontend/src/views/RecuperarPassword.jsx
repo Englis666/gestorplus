@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import imagen from "../assets/1.png";
 import { Link } from "react-router-dom";
+import API_URL from "../config";
 
 const RecuperarPassword = () => {
   const [formData, setFormData] = useState({ email: "" });
@@ -21,7 +22,7 @@ const RecuperarPassword = () => {
     }
     setIsSubmitting(true);
     axios
-      .post("http://localhost/gestorplus/backend/", formData, {
+      .post(API_URL, formData, {
         params: { action: "recuperarPassword" },
       })
       .then((response) => {

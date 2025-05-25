@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import "./css/chat.css";
+import API_URL from "../config";
 
 const getCookie = (name) => {
   const value = `; ${document.cookie}`;
@@ -34,7 +35,7 @@ const ChatContainer = ({ selectedChat }) => {
     if (selectedChat?.idChat && token) {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost/gestorplus/backend/", {
+        const response = await axios.get(API_URL, {
           params: { idChat: selectedChat.idChat, action: "obtenerMensajes" },
           headers: {
             Authorization: `Bearer ${token}`,
@@ -82,7 +83,7 @@ const ChatContainer = ({ selectedChat }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost/gestorplus/backend/",
+        API_URL,
         {
           idChat: selectedChat.idChat,
           mensaje: message,
@@ -118,7 +119,10 @@ const ChatContainer = ({ selectedChat }) => {
   };
 
   return (
-    <div className="chat-container d-flex flex-column" style={{ height: "80vh" }}>
+    <div
+      className="chat-container d-flex flex-column"
+      style={{ height: "80vh" }}
+    >
       <div
         className="message-container flex-grow-1 overflow-auto px-3"
         style={{ scrollBehavior: "smooth" }}
@@ -160,7 +164,11 @@ const ChatContainer = ({ selectedChat }) => {
           disabled={loading || !selectedChat?.idChat || !message.trim()}
           title="Enviar"
         >
-          {loading ? <i className="bi bi-hourglass-split"></i> : <i className="bi bi-send-fill"></i>}
+          {loading ? (
+            <i className="bi bi-hourglass-split"></i>
+          ) : (
+            <i className="bi bi-send-fill"></i>
+          )}
         </button>
       </form>
     </div>

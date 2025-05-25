@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import ModalPostulantes from "../modals/ModalPostulacionesAgrupadas";
+import API_URL from "../../config";
 
 const TablaConvocatoriasAgrupadas = () => {
   const [convocatorias, setConvocatorias] = useState([]);
@@ -13,7 +14,7 @@ const TablaConvocatoriasAgrupadas = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost/gestorplus/backend/", {
+      .get(API_URL, {
         params: { action: "calcularPostulacionesEnConvocatorias" },
       })
       .then((response) => {
@@ -40,41 +41,41 @@ const TablaConvocatoriasAgrupadas = () => {
   const columns = [
     {
       name: "Nombre",
-      selector: row => row.nombreConvocatoria,
+      selector: (row) => row.nombreConvocatoria,
       sortable: true,
       center: true,
       wrap: true,
     },
     {
       name: "Descripción",
-      selector: row => row.descripcion,
+      selector: (row) => row.descripcion,
       sortable: false,
       wrap: true,
       center: false,
     },
     {
       name: "# Aspirantes",
-      selector: row => row.cantidad_postulaciones,
+      selector: (row) => row.cantidad_postulaciones,
       sortable: true,
       center: true,
     },
     {
       name: "Salario",
-      selector: row => row.salario,
+      selector: (row) => row.salario,
       sortable: true,
       center: true,
-      format: row => `$${row.salario}`, 
+      format: (row) => `$${row.salario}`,
     },
     {
       name: "Cargo",
-      selector: row => row.nombreCargo,
+      selector: (row) => row.nombreCargo,
       sortable: true,
       center: true,
       wrap: true,
     },
     {
       name: "Acción",
-      cell: row => (
+      cell: (row) => (
         <button
           className="btn btn-primary btn-sm"
           onClick={() => handleOpenModal(row)}
@@ -100,7 +101,10 @@ const TablaConvocatoriasAgrupadas = () => {
       {loading ? (
         <p className="text-center">Cargando datos...</p>
       ) : (
-        <div className="card shadow-sm border-0 mb-5" style={{ borderRadius: "10px" }}>
+        <div
+          className="card shadow-sm border-0 mb-5"
+          style={{ borderRadius: "10px" }}
+        >
           <div className="card-body">
             <b>Lista de Convocatorias</b>
             <DataTable
@@ -120,7 +124,10 @@ const TablaConvocatoriasAgrupadas = () => {
       )}
 
       {showModal && selectedConvocatoria && (
-        <ModalPostulantes convocatoria={selectedConvocatoria} onClose={handleCloseModal} />
+        <ModalPostulantes
+          convocatoria={selectedConvocatoria}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

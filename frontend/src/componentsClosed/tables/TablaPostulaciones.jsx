@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import AsignarEntrevistaModal from "../form/AsignarEntrevistaModal";
+import API_URL from "../../config";
 
 const TablaPostulaciones = () => {
   const [postulaciones, setPostulaciones] = useState([]);
@@ -13,14 +14,16 @@ const TablaPostulaciones = () => {
   useEffect(() => {
     const fetchPostulaciones = async () => {
       try {
-        const response = await axios.get("http://localhost/gestorplus/backend/", {
+        const response = await axios.get(API_URL, {
           params: { action: "obtenerPostulaciones" },
         });
         const data = response.data.Postulaciones;
         if (Array.isArray(data)) {
           setPostulaciones(data);
         } else {
-          console.error("Las postulaciones no están en un arreglo o está vacía la consulta");
+          console.error(
+            "Las postulaciones no están en un arreglo o está vacía la consulta"
+          );
           setPostulaciones([]);
         }
       } catch (err) {
@@ -43,29 +46,28 @@ const TablaPostulaciones = () => {
     setSelectedPostulacion(null);
   };
 
-
   const columns = [
     {
       name: "Nombre del postulante",
-      selector: row => row.nombres,
+      selector: (row) => row.nombres,
       sortable: true,
       center: true,
     },
     {
       name: "Cargo de la postulacion",
-      selector: row => row.nombreCargo,
+      selector: (row) => row.nombreCargo,
       sortable: true,
       center: true,
     },
     {
       name: "Estado de la postulacion",
-      selector: row => row.estadoPostulacion,
+      selector: (row) => row.estadoPostulacion,
       sortable: true,
       center: true,
     },
     {
       name: "Accion",
-      cell: row => (
+      cell: (row) => (
         <button
           className="btn btn-primary"
           onClick={() => handleShowModal(row)}

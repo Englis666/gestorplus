@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import FormularioAusencia from "../form/FormularioSolicitudAusencia";
+import API_URL from "../../config";
 
 const TablaAusencias = () => {
   const [ausencias, setAusencias] = useState([]);
@@ -31,7 +32,7 @@ const TablaAusencias = () => {
         : "obtenerAusencias";
 
     axios
-      .get("http://localhost/gestorplus/backend/", {
+      .get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
         params: { action },
       })
@@ -80,7 +81,7 @@ const TablaAusencias = () => {
     const token = getCookie("auth_token");
     axios
       .post(
-        "http://localhost/gestorplus/backend/",
+        API_URL,
         {
           action: "ausenciaAceptada",
           idausencia,
@@ -106,7 +107,7 @@ const TablaAusencias = () => {
     const token = getCookie("auth_token");
     axios
       .post(
-        "http://localhost/gestorplus/backend/",
+        API_URL,
         {
           action: "ausenciaRechazada",
           idausencia,
@@ -144,7 +145,7 @@ const TablaAusencias = () => {
 
     axios
       .post(
-        "http://localhost/gestorplus/backend/",
+        API_URL,
         {
           action: "solicitarAusencia",
           ...solicitud,

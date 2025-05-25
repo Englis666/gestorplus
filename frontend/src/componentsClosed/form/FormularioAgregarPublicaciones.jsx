@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import API_URL from "../../config";
 
 const getCookie = (name) => {
   const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
@@ -25,6 +27,7 @@ const FormularioPublicacion = () => {
 
   const [errors, setErrors] = useState({});
   const [enviado, setEnviado] = useState(false);
+  const [errorApi, setErrorApi] = useState("");
 
   useEffect(() => {
     const token = getCookie("auth_token");
@@ -49,11 +52,17 @@ const FormularioPublicacion = () => {
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    if (name === "imagen" && files && files[0]) {
+      setForm({ ...form, imagen: files[0] });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorApi("");
     const validationErrors = validar();
 
     if (Object.keys(validationErrors).length > 0) {
@@ -63,9 +72,43 @@ const FormularioPublicacion = () => {
     }
 
     setErrors({});
-    setEnviado(true);
+    setEnviado(false);
 
-    console.log("Formulario enviado:", form);
+    // Preparamos los datos para enviar, usando FormData si hay imagen
+    const formData = new FormData();
+    formData.append("titulo", form.titulo);
+    formData.append("descripcion", form.descripcion);
+    formData.append("usuario_num_doc", form.usuario_num_doc);
+    formData.append("tipo_contrato", form.tipo_contrato);
+    formData.append("estado", form.estado);
+    if (form.imagen) {
+      formData.append("imagen", form.imagen);
+    }
+
+    try {
+      const response = await axios.post(API_URL, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        params: { action: "agregarPublicacion" },
+      });
+      if (response.data?.status === "success") {
+        console.log("Publicación agregada:", response);
+        setEnviado(true);
+        setForm({
+          titulo: "",
+          descripcion: "",
+          imagen: "",
+          usuario_num_doc: form.usuario_num_doc,
+          tipo_contrato: "todos",
+          estado: "activo",
+        });
+      } else {
+        setErrorApi(response.data?.message || "Error al agregar publicación.");
+      }
+    } catch (error) {
+      setErrorApi("Error al conectar con la API.");
+    }
   };
 
   return (
@@ -78,6 +121,11 @@ const FormularioPublicacion = () => {
         {enviado && (
           <div className="alert alert-success animate__animated animate__fadeInDown">
             Publicación agregada correctamente.
+          </div>
+        )}
+        {errorApi && (
+          <div className="alert alert-danger animate__animated animate__fadeInDown">
+            {errorApi}
           </div>
         )}
 
@@ -113,14 +161,13 @@ const FormularioPublicacion = () => {
           </div>
 
           <div className="mb-3">
-            <label className="form-label fw-semibold">
-              URL de la Imagen (opcional)
-            </label>
+            <label className="form-label fw-semibold">Imagen (opcional)</label>
             <input
               type="file"
               name="imagen"
               className="form-control"
               onChange={handleChange}
+              accept="image/*"
             />
           </div>
 

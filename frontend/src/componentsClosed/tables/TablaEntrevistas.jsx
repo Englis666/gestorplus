@@ -3,6 +3,7 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 import CalendarioDeEntrevistas from "../CalendarioDeEntrevistas";
 import ModalHojadeVidaEntrevistado from "../modals/ModalHojadeVidaEntrevistado";
+import API_URL from "../../config";
 
 const TablaEntrevistas = () => {
   const [entrevistas, setEntrevistas] = useState([]);
@@ -14,12 +15,9 @@ const TablaEntrevistas = () => {
   useEffect(() => {
     const fetchEntrevistas = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/gestorplus/backend/",
-          {
-            params: { action: "obtenerEntrevistas" },
-          }
-        );
+        const response = await axios.get(API_URL, {
+          params: { action: "obtenerEntrevistas" },
+        });
         const data = response.data.Entrevista;
         setEntrevistas(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -34,7 +32,7 @@ const TablaEntrevistas = () => {
 
   const enviarAsistencia = async (asistencia, identrevista) => {
     try {
-      await axios.patch("http://localhost/gestorplus/backend/", {
+      await axios.patch(API_URL, {
         action: asistencia ? "asistenciaConfirmada" : "asistenciaNoConfirmada",
         identrevista,
       });

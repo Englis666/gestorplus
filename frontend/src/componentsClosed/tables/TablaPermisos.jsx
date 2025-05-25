@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import SolicitudPermiso from "../form/FormularioSolicitudPermisos";
+import API_URL from "../../config";
 
 const TablaPermisos = () => {
   const [permisos, setPermisos] = useState([]);
@@ -32,7 +33,12 @@ const TablaPermisos = () => {
         const Rol = decodedToken?.data?.rol;
         setRol(Rol);
 
-        const action = Rol === "1" || Rol === "2" ? "obtenerTodosLosPermisos" : Rol === "3" ? "obtenerPermisos" : null;
+        const action =
+          Rol === "1" || Rol === "2"
+            ? "obtenerTodosLosPermisos"
+            : Rol === "3"
+            ? "obtenerPermisos"
+            : null;
         if (!action) {
           setError("Rol no reconocido.");
           setLoading(false);
@@ -40,7 +46,7 @@ const TablaPermisos = () => {
         }
 
         axios
-          .get("http://localhost/gestorplus/backend/", {
+          .get(API_URL, {
             headers: { Authorization: `Bearer ${token}` },
             params: { action },
           })
@@ -65,7 +71,7 @@ const TablaPermisos = () => {
 
   const handleAceptar = (idPermisos) => {
     axios
-      .post("http://localhost/gestorplus/backend/", {
+      .post(API_URL, {
         action: "permisoAceptado",
         idPermisos,
       })
@@ -73,7 +79,9 @@ const TablaPermisos = () => {
         alert("Permiso aceptado con éxito.");
         setPermisos((prev) =>
           prev.map((permiso) =>
-            permiso.idPermisos === idPermisos ? { ...permiso, aprobado: true } : permiso
+            permiso.idPermisos === idPermisos
+              ? { ...permiso, aprobado: true }
+              : permiso
           )
         );
       })
@@ -82,7 +90,7 @@ const TablaPermisos = () => {
 
   const handleRechazar = (idPermisos) => {
     axios
-      .post("http://localhost/gestorplus/backend/", {
+      .post(API_URL, {
         action: "permisoRechazado",
         idPermisos,
       })
@@ -91,7 +99,9 @@ const TablaPermisos = () => {
           alert("Permiso rechazado con éxito.");
           setPermisos((prev) =>
             prev.map((permiso) =>
-              permiso.idPermisos === idPermisos ? { ...permiso, aprobado: false } : permiso
+              permiso.idPermisos === idPermisos
+                ? { ...permiso, aprobado: false }
+                : permiso
             )
           );
         } else {
@@ -168,7 +178,10 @@ const TablaPermisos = () => {
       <h2 className="mb-4 text-center text-dark font-weight-bold">Permisos</h2>
       <div className="row">
         <div className="col-md-8 mb-4">
-          <div className="card shadow-sm border-0" style={{ borderRadius: "10px" }}>
+          <div
+            className="card shadow-sm border-0"
+            style={{ borderRadius: "10px" }}
+          >
             <div className="card-body">
               <p className="mb-3">Control de Permisos</p>
               <DataTable
@@ -181,9 +194,9 @@ const TablaPermisos = () => {
                 customStyles={{
                   headCells: {
                     style: {
-                      fontWeight: 'bold',
-                      backgroundColor: '#e9ecef',
-                      textAlign: 'center',
+                      fontWeight: "bold",
+                      backgroundColor: "#e9ecef",
+                      textAlign: "center",
                     },
                   },
                 }}

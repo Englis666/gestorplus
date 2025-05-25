@@ -4,6 +4,7 @@ import Estadisticas from "../Estadisticas";
 import Grafica from "../Grafica";
 import { jwtDecode } from "jwt-decode";
 import DataTable from "react-data-table-component";
+import API_URL from "../../config.jsx";
 
 const TablaEmpleado = () => {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -64,15 +65,12 @@ const TablaEmpleado = () => {
 
     const fetchNotificaciones = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/gestorplus/backend/",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: { action: actionToSend },
-          }
-        );
+        const response = await axios.get(API_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: { action: actionToSend },
+        });
 
         let notificaciones = [];
         if (response.data?.Notificaciones) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import EstadisticaCard from "./card/EstadisticaCard";
+import API_URL from "../config";
 const Estadisticas = () => {
   const [totalEntradas, setTotalEntradas] = useState(0);
   const [totalActualizaciones, setTotalActualizaciones] = useState(0);
@@ -38,7 +39,7 @@ const Estadisticas = () => {
     }
 
     axios
-      .get("http://localhost/gestorplus/backend/", {
+      .get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "obtenerTotalEstadisticas" },
       })

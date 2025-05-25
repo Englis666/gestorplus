@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import imagen from "../assets/1.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from "../config";
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -91,7 +92,7 @@ const Registro = () => {
     setIsSubmitting(true);
 
     axios
-      .post("http://localhost/gestorplus/backend/", data)
+      .post(API_URL, data)
       .then((response) => {
         let serverMessage = response.data.message;
         try {

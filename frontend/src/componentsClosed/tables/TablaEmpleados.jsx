@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import DataTable from "react-data-table-component";
+import API_URL from "../../config";
 
 const TablaEmpleados = () => {
   const [empleados, setEmpleados] = useState([]);
@@ -29,7 +30,7 @@ const TablaEmpleados = () => {
         }
 
         axios
-          .get("http://localhost/gestorplus/backend/", {
+          .get(API_URL, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

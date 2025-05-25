@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import API_URL from "../config";
 
 const SidebarChat = ({ onChatSelect }) => {
   const [usuarios, setUsuarios] = useState([]);
@@ -21,7 +22,7 @@ const SidebarChat = ({ onChatSelect }) => {
 
   const fetchUsuarios = useCallback(async (action) => {
     try {
-      const { data } = await axios.get("http://localhost/gestorplus/backend/", {
+      const { data } = await axios.get(API_URL, {
         params: { action },
       });
 
@@ -61,14 +62,11 @@ const SidebarChat = ({ onChatSelect }) => {
       if (!num_doc_emisor)
         return handleError("No se pudo obtener el ID del usuario.");
 
-      const { data } = await axios.post(
-        "http://localhost/gestorplus/backend/",
-        {
-          action: "obtenerOcrearChat",
-          num_doc_emisor,
-          num_doc_receptor,
-        }
-      );
+      const { data } = await axios.post(API_URL, {
+        action: "obtenerOcrearChat",
+        num_doc_emisor,
+        num_doc_receptor,
+      });
 
       if (data.status === "success") {
         onChatSelect(data.idChat);

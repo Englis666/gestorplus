@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import API_URL from "../../config";
 
-const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarEstudio, estudioSeleccionado }) => {
+const EditarEstudio = ({
+  modalEditarEstudio,
+  toggleModalEditarEstudio,
+  onEditarEstudio,
+  estudioSeleccionado,
+}) => {
   const [formData, setFormData] = useState({
     tituloEstudio: "",
     institucionEstudio: "",
@@ -45,15 +51,15 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
 
   const validateForm = () => {
     const requiredFields = [
-      "tituloEstudio", 
-      "institucionEstudio", 
-      "nivelEstudio", 
-      "areaEstudio", 
-      "estadoEstudio", 
-      "fechaInicioEstudio", 
-      "ubicacionEstudio"
+      "tituloEstudio",
+      "institucionEstudio",
+      "nivelEstudio",
+      "areaEstudio",
+      "estadoEstudio",
+      "fechaInicioEstudio",
+      "ubicacionEstudio",
     ];
-    
+
     for (let field of requiredFields) {
       if (!formData[field]?.trim()) {
         alert(`El campo ${field} es obligatorio.`);
@@ -73,10 +79,10 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
       if (!token) return alert("No se encontró el token de autenticación.");
 
       const response = await axios.patch(
-        "http://localhost/gestorplus/backend/",
-        { 
+        API_URL,
+        {
           ...formData,
-          action: "actualizarEstudio" 
+          action: "actualizarEstudio",
         },
         {
           headers: {
@@ -87,14 +93,25 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
       );
       if (response.data.status === "success") {
         alert("Estudio actualizado correctamente");
-        onEditarEstudio(response.data.data || { ...formData, idestudio: estudioSeleccionado.idestudio });
+        onEditarEstudio(
+          response.data.data || {
+            ...formData,
+            idestudio: estudioSeleccionado.idestudio,
+          }
+        );
         toggleModalEditarEstudio();
       } else {
         alert("Error al actualizar el estudio.");
       }
     } catch (error) {
-      console.error("Error al actualizar:", error.response?.data || error.message);
-      alert("Error del servidor: " + (error.response?.data?.message || "Inténtalo nuevamente."));
+      console.error(
+        "Error al actualizar:",
+        error.response?.data || error.message
+      );
+      alert(
+        "Error del servidor: " +
+          (error.response?.data?.message || "Inténtalo nuevamente.")
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -102,7 +119,11 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
 
   return (
     <div
-      className={`modal fade ${modalEditarEstudio ? "show d-block animate__animated animate__fadeInDown" : ""}`}
+      className={`modal fade ${
+        modalEditarEstudio
+          ? "show d-block animate__animated animate__fadeInDown"
+          : ""
+      }`}
       tabIndex="-1"
       role="dialog"
       aria-labelledby="modalEditarEstudioLabel"
@@ -116,13 +137,22 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
               <h5 className="modal-title d-flex align-items-center gap-2">
                 <span className="material-icons">school</span> Editar Estudio
               </h5>
-              <button type="button" className="btn-close" onClick={toggleModalEditarEstudio} />
+              <button
+                type="button"
+                className="btn-close"
+                onClick={toggleModalEditarEstudio}
+              />
             </div>
 
             <div className="modal-body">
               <div className="row g-3">
                 <div className="col-md-6">
-                  <label htmlFor="tituloEstudio" className="form-label fw-semibold">Título</label>
+                  <label
+                    htmlFor="tituloEstudio"
+                    className="form-label fw-semibold"
+                  >
+                    Título
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -134,7 +164,12 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="institucionEstudio" className="form-label fw-semibold">Institución</label>
+                  <label
+                    htmlFor="institucionEstudio"
+                    className="form-label fw-semibold"
+                  >
+                    Institución
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -146,7 +181,12 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="nivelEstudio" className="form-label fw-semibold">Nivel</label>
+                  <label
+                    htmlFor="nivelEstudio"
+                    className="form-label fw-semibold"
+                  >
+                    Nivel
+                  </label>
                   <select
                     className="form-select"
                     id="nivelEstudio"
@@ -166,7 +206,12 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
                   </select>
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="areaEstudio" className="form-label fw-semibold">Área</label>
+                  <label
+                    htmlFor="areaEstudio"
+                    className="form-label fw-semibold"
+                  >
+                    Área
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -178,7 +223,12 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="estadoEstudio" className="form-label fw-semibold">Estado</label>
+                  <label
+                    htmlFor="estadoEstudio"
+                    className="form-label fw-semibold"
+                  >
+                    Estado
+                  </label>
                   <select
                     className="form-select"
                     id="estadoEstudio"
@@ -194,7 +244,12 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
                   </select>
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="fechaInicioEstudio" className="form-label fw-semibold">Fecha de inicio</label>
+                  <label
+                    htmlFor="fechaInicioEstudio"
+                    className="form-label fw-semibold"
+                  >
+                    Fecha de inicio
+                  </label>
                   <input
                     type="date"
                     className="form-control"
@@ -206,7 +261,12 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="fechaFinEstudio" className="form-label fw-semibold">Fecha de fin</label>
+                  <label
+                    htmlFor="fechaFinEstudio"
+                    className="form-label fw-semibold"
+                  >
+                    Fecha de fin
+                  </label>
                   <input
                     type="date"
                     className="form-control"
@@ -217,7 +277,12 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="ubicacionEstudio" className="form-label fw-semibold">Ubicación</label>
+                  <label
+                    htmlFor="ubicacionEstudio"
+                    className="form-label fw-semibold"
+                  >
+                    Ubicación
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -232,17 +297,28 @@ const EditarEstudio = ({ modalEditarEstudio, toggleModalEditarEstudio, onEditarE
             </div>
 
             <div className="modal-footer">
-              <button type="button" className="btn btn-outline-secondary" onClick={toggleModalEditarEstudio} disabled={isSubmitting}>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={toggleModalEditarEstudio}
+                disabled={isSubmitting}
+              >
                 Cerrar
               </button>
-              <button type="submit" className="btn btn-success" disabled={isSubmitting}>
+              <button
+                type="submit"
+                className="btn btn-success"
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? (
                   <>
-                    <span className="spinner-border spinner-border-sm me-1" /> Guardando...
+                    <span className="spinner-border spinner-border-sm me-1" />{" "}
+                    Guardando...
                   </>
                 ) : (
                   <>
-                    <span className="material-icons me-1">save</span> Guardar cambios
+                    <span className="material-icons me-1">save</span> Guardar
+                    cambios
                   </>
                 )}
               </button>

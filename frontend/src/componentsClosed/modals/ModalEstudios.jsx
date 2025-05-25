@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import API_URL from "../../config";
 
 const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
   const [formData, setFormData] = useState({
@@ -89,7 +90,8 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
       const inicio = new Date(formData.fechaInicioEstudio);
       const fin = new Date(formData.fechaFinEstudio);
       if (inicio > fin) {
-        newErrors.fechaFinEstudio = "La fecha de fin no puede ser anterior a la fecha de inicio.";
+        newErrors.fechaFinEstudio =
+          "La fecha de fin no puede ser anterior a la fecha de inicio.";
       }
     }
 
@@ -106,7 +108,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
     setIsSubmitting(true);
 
     axios
-      .post("http://localhost/gestorplus/backend/", formData, {
+      .post(API_URL, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -116,9 +118,9 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
         alert("✅ Estudio agregado correctamente.");
 
         if (res.data && res.data.data) {
-          onAgregarEstudio(res.data.data); // Si backend responde con data
+          onAgregarEstudio(res.data.data);
         } else {
-          onAgregarEstudio(formData); // Si no responde con data
+          onAgregarEstudio(formData);
         }
       })
       .catch((err) => {
@@ -133,7 +135,11 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
 
   return (
     <div
-      className={`modal fade ${modalEstudios ? "show d-block animate__animated animate__fadeInDown" : ""}`}
+      className={`modal fade ${
+        modalEstudios
+          ? "show d-block animate__animated animate__fadeInDown"
+          : ""
+      }`}
       tabIndex="-1"
       role="dialog"
       aria-labelledby="modalEstudiosLabel"
@@ -146,7 +152,11 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
             <h5 className="modal-title d-flex align-items-center gap-2">
               <span className="material-icons">school</span> Agregar Estudios
             </h5>
-            <button type="button" className="btn-close" onClick={toggleModalEstudios} />
+            <button
+              type="button"
+              className="btn-close"
+              onClick={toggleModalEstudios}
+            />
           </div>
 
           <div className="modal-body">
@@ -155,8 +165,16 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
                 { label: "Nivel de estudio", name: "nivelEstudio" },
                 { label: "Área de estudio", name: "areaEstudio" },
                 { label: "Estado del estudio", name: "estadoEstudio" },
-                { label: "Fecha de inicio", name: "fechaInicioEstudio", type: "date" },
-                { label: "Fecha de fin", name: "fechaFinEstudio", type: "date" },
+                {
+                  label: "Fecha de inicio",
+                  name: "fechaInicioEstudio",
+                  type: "date",
+                },
+                {
+                  label: "Fecha de fin",
+                  name: "fechaFinEstudio",
+                  type: "date",
+                },
                 { label: "Título obtenido", name: "tituloEstudio" },
                 { label: "Institución educativa", name: "institucionEstudio" },
                 { label: "Ubicación", name: "ubicacionEstudio" },
@@ -171,13 +189,17 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
                   </label>
                   <input
                     type={type}
-                    className={`form-control ${errors[name] ? "is-invalid" : ""}`}
+                    className={`form-control ${
+                      errors[name] ? "is-invalid" : ""
+                    }`}
                     id={name}
                     name={name}
                     value={formData[name]}
                     onChange={handleChange}
                   />
-                  {errors[name] && <div className="invalid-feedback">{errors[name]}</div>}
+                  {errors[name] && (
+                    <div className="invalid-feedback">{errors[name]}</div>
+                  )}
                 </div>
               ))}
 
@@ -189,14 +211,20 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
                 >
                   Cancelar
                 </button>
-                <button type="submit" className="btn btn-success" disabled={isSubmitting}>
+                <button
+                  type="submit"
+                  className="btn btn-success"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? (
                     <>
-                      <span className="spinner-border spinner-border-sm me-1" /> Guardando...
+                      <span className="spinner-border spinner-border-sm me-1" />{" "}
+                      Guardando...
                     </>
                   ) : (
                     <>
-                      <span className="material-icons me-1">save</span> Guardar cambios
+                      <span className="material-icons me-1">save</span> Guardar
+                      cambios
                     </>
                   )}
                 </button>

@@ -4,6 +4,7 @@ import ModalSubirContratoPdf from "../modals/ModalSubirContratoPdf";
 import ModalVerContratoPdf from "../modals/ModalVerContrato";
 
 import FormularioVinculacion from "../form/FormularioAsignacionVinculacion";
+import API_URL from "../../config";
 
 const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [vinculaciones, setVinculaciones] = useState([]);
@@ -32,7 +33,7 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
 
   useEffect(() => {
     axios
-      .get("http://localhost/gestorplus/backend/", {
+      .get(API_URL, {
         params: { action: "obtenerVinculaciones" },
       })
       .then((response) => {
@@ -54,11 +55,11 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
     if (!identrevista && !idpostulacion) return;
 
     axios
-      .get("http://localhost/gestorplus/backend/", {
+      .get(API_URL, {
         params: {
           action: "buscarIdEvaluacion",
-          identrevista: identrevista || null,
-          idpostulacion: idpostulacion || null,
+          identrevista: identrevista,
+          idpostulacion: idpostulacion,
         },
       })
       .then((response) => {
@@ -116,7 +117,7 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const handleSearch = async (e, num_doc) => {
     e.preventDefault();
     try {
-      const response = await axios.get("http://localhost/gestorplus/backend/", {
+      const response = await axios.get(API_URL, {
         params: { action: "obtenerContrato", num_doc },
         responseType: "blob",
       });
@@ -245,10 +246,8 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
       {isFormDataAvailable && (
         <div className="row mt-4 container-fluid mt-5 card shadow-sm border-0 mb-5">
           <FormularioVinculacion
-            num_doc={num_doc}
-            nombres={nombres}
-            identrevista={identrevista}
-            idpostulacion={idpostulacion}
+            formData={formData}
+            setFormData={setFormData}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
           />

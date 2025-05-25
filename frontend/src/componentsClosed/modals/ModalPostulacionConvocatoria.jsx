@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const PostulacionesEnConvocatorias = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
-
-
+const PostulacionesEnConvocatorias = ({
+  modalEstudios,
+  toggleModalEstudios,
+  onAgregarEstudio,
+}) => {
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -12,32 +14,13 @@ const PostulacionesEnConvocatorias = ({ modalEstudios, toggleModalEstudios, onAg
   };
   const token = getCookie("auth_token");
 
-  
-
-  const handleSubmit = (e) => {
-    axios
-      .post("http://localhost/gestorplus/backend/", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        alert("✅ Estudio agregado correctamente.");
-        onAgregarEstudio?.();
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-        alert("❌ Error al guardar estudio.");
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-        toggleModalEstudios();
-      });
-  };
-
   return (
     <div
-      className={`modal fade ${modalEstudios ? "show d-block animate__animated animate__fadeInDown" : ""}`}
+      className={`modal fade ${
+        modalEstudios
+          ? "show d-block animate__animated animate__fadeInDown"
+          : ""
+      }`}
       tabIndex="-1"
       role="dialog"
       aria-labelledby="modalEstudiosLabel"
@@ -50,12 +33,14 @@ const PostulacionesEnConvocatorias = ({ modalEstudios, toggleModalEstudios, onAg
             <h5 className="modal-title d-flex align-items-center gap-2">
               <span className="material-icons">school</span> Actualizar Estudios
             </h5>
-            <button type="button" className="btn-close" onClick={toggleModalEstudios} />
+            <button
+              type="button"
+              className="btn-close"
+              onClick={toggleModalEstudios}
+            />
           </div>
 
-          <div className="modal-body">
-              
-          </div>
+          <div className="modal-body"></div>
         </div>
       </div>
     </div>

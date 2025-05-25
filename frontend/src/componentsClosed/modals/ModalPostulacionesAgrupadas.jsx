@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 import AsignarEntrevistaModal from "../form/AsignarEntrevistaModal";
+import API_URL from "../../config";
 
 const ModalPostulantes = ({ convocatoria, onClose }) => {
   const [postulantes, setPostulantes] = useState([]);
@@ -21,7 +22,7 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
     setError(null);
 
     axios
-      .get("http://localhost/gestorplus/backend/", {
+      .get(API_URL, {
         params: {
           action: "obtenerPostulacionesAgrupadasPorConvocatoria",
           idconvocatoria: convocatoria.idconvocatoria,
@@ -45,7 +46,7 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
     setModalHoja(true);
 
     axios
-      .get("http://localhost/gestorplus/backend/", {
+      .get(API_URL, {
         params: {
           action: "obtenerHojadevidaPorNumDoc",
           num_doc: p.num_doc,

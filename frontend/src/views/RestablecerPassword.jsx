@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import imagen from "../assets/1.png";
+import API_URL from "../config";
 
 const RestablecerPassword = () => {
   const [formData, setFormData] = useState({
@@ -46,10 +47,7 @@ const RestablecerPassword = () => {
     setIsSubmitting(true);
     try {
       const data = { action: "restablecerPassword", token, password };
-      const response = await axios.post(
-        "http://localhost/gestorplus/backend/",
-        data
-      );
+      const response = await axios.post(API_URL, data);
       console.log(response);
       if (response.data?.status === "success") {
         console.log(response.data);

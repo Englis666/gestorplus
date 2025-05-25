@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf";
 import NavbarClosed from "../componentsClosed/Navbar";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import API_URL from "../config";
 
 const Certificados = () => {
   const fechaEmision = new Date().toLocaleDateString("es-ES");
@@ -39,15 +40,12 @@ const Certificados = () => {
           return;
         }
 
-        const response = await axios.get(
-          "http://localhost/gestorplus/backend/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { action: "obtenerDatosParaCertificado" },
-          }
-        );
+        const response = await axios.get(API_URL, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { action: "obtenerDatosParaCertificado" },
+        });
 
-        console.log(response.data); // Verifica qué devuelve la API
+        console.log(response.data);
 
         if (
           response.data?.Certificado &&

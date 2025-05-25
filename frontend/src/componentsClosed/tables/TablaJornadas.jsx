@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import DataTable from "react-data-table-component";
+import API_URL from "../../config";
 
 const TablaJornadas = () => {
   const [Jornadas, setJornadas] = useState([]);
@@ -43,7 +44,7 @@ const TablaJornadas = () => {
         }[Rol];
 
         axios
-          .get("http://localhost/gestorplus/backend/", {
+          .get(API_URL, {
             headers: { Authorization: `Bearer ${token}` },
             params: { action },
           })
@@ -86,7 +87,7 @@ const TablaJornadas = () => {
 
   const handleCorroborar = (idJornada) => {
     axios
-      .post("http://localhost/gestorplus/backend/", {
+      .post(API_URL, {
         action: "corroborarJornada",
         idJornada,
       })
@@ -107,7 +108,7 @@ const TablaJornadas = () => {
 
   const handleNoCorroborar = (idJornada) => {
     axios
-      .post("http://localhost/gestorplus/backend/", {
+      .post(API_URL, {
         action: "noCorroborarJornada",
         idJornada,
       })

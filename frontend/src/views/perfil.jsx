@@ -6,6 +6,7 @@ import Experiencia from "../componentsClosed/modals/ModalExperienciaLaboral";
 import EditarEstudio from "../componentsClosed/modals/ModalEditarEstudios";
 import EditarExperiencia from "../componentsClosed/modals/ModalEditarExperiencia";
 import axios from "axios";
+import API_URL from "../config";
 
 const Perfil = () => {
   const [formData, setFormData] = useState({
@@ -55,7 +56,7 @@ const Perfil = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost/gestorplus/backend/", {
+      const response = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "datosPerfil" },
       });
@@ -100,7 +101,7 @@ const Perfil = () => {
 
     const fetchEstudios = async () => {
       try {
-        const responseEstudios = await axios.get("http://localhost/gestorplus/backend/", {
+        const responseEstudios = await axios.get(API_URL, {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerEstudio" },
         });
@@ -111,10 +112,10 @@ const Perfil = () => {
         setEstudios([]);
       }
     };
-  
+
     const fetchExperienciaLaboral = async () => {
       try {
-        const responseExperiencia = await axios.get("http://localhost/gestorplus/backend/", {
+        const responseExperiencia = await axios.get(API_URL, {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerExperiencia" },
         });
@@ -125,18 +126,15 @@ const Perfil = () => {
         setExperiencia([]);
       }
     };
-  
-    // Llamar las funciones inicialmente
+
     fetchEstudios();
     fetchExperienciaLaboral();
-  
-    // Configurar el polling cada 10 segundos
+
     const intervalId = setInterval(() => {
       fetchEstudios();
       fetchExperienciaLaboral();
-    }, 10000); // 10000 ms = 10 segundos
-  
-    // Limpiar el intervalo al desmontar el componente
+    }, 10000);
+
     return () => clearInterval(intervalId);
   }, []);
 
@@ -145,17 +143,24 @@ const Perfil = () => {
     if (!token) return;
 
     try {
-      const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este estudio?");
+      const confirmDelete = window.confirm(
+        "¿Estás seguro de que deseas eliminar este estudio?"
+      );
       if (!confirmDelete) return;
 
-      const response = await axios.delete("http://localhost/gestorplus/backend/", {
-        headers: { Authorization: `Bearer ${token}`, "x-estudio-id": idestudio },
+      const response = await axios.delete(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "x-estudio-id": idestudio,
+        },
         params: { action: "eliminarEstudio" },
       });
 
       if (response.status === 200) {
         alert("Estudio eliminado");
-        setEstudios((prevEstudios) => prevEstudios.filter((estudio) => estudio.idestudio !== idestudio));
+        setEstudios((prevEstudios) =>
+          prevEstudios.filter((estudio) => estudio.idestudio !== idestudio)
+        );
       } else {
         alert("Hubo un error al eliminar el estudio.");
       }
@@ -169,16 +174,25 @@ const Perfil = () => {
     if (!token) return;
 
     try {
-      const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta experiencia laboral?");
+      const confirmDelete = window.confirm(
+        "¿Estás seguro de que deseas eliminar esta experiencia laboral?"
+      );
       if (!confirmDelete) return;
 
-      const response = await axios.delete("http://localhost/gestorplus/backend/", {
-        headers: { Authorization: `Bearer ${token}`, "x-experiencia-id": idexperienciaLaboral },
+      const response = await axios.delete(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "x-experiencia-id": idexperienciaLaboral,
+        },
         params: { action: "eliminarExperiencia" },
       });
 
       if (response.status === 200) {
-        setExperiencia((prevExperiencia) => prevExperiencia.filter((exp) => exp.idexperienciaLaboral !== idexperienciaLaboral));
+        setExperiencia((prevExperiencia) =>
+          prevExperiencia.filter(
+            (exp) => exp.idexperienciaLaboral !== idexperienciaLaboral
+          )
+        );
       } else {
         alert("Hubo un error al eliminar la experiencia.");
       }
@@ -194,48 +208,54 @@ const Perfil = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const updatedData = {
       nombres: formData.nombres,
       apellidos: formData.apellidos,
       email: formData.email,
-      tipodDoc: formData.tipodDoc
+      tipodDoc: formData.tipodDoc,
     };
-  
+
     const token = getCookie("auth_token");
     if (!token) return;
-  
+
     try {
       const decodedToken = jwtDecode(token);
       if (isTokenExpired(decodedToken)) return;
-  
-      const response = await axios.patch("http://localhost/gestorplus/backend/", updatedData, {
+
+      const response = await axios.patch(API_URL, updatedData, {
         headers: { Authorization: `Bearer ${token}` },
         params: { action: "actualizarPerfil" },
       });
       if (response.status === 200) {
-        setFormData((prevFormData) => ({ ...prevFormData, originalData: { ...prevFormData } }));
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          originalData: { ...prevFormData },
+        }));
         alert("Perfil actualizado con éxito");
       } else {
         alert("Hubo un error al actualizar el perfil.");
       }
     } catch (error) {
       alert("Ocurrió un error al actualizar los datos.");
-      console.error("Error al actualizar los datos del perfil:", error.response?.data || error.message);
+      console.error(
+        "Error al actualizar los datos del perfil:",
+        error.response?.data || error.message
+      );
     }
   };
 
   const toggleModalHojaDeVida = () => setModalHojaDeVida(!modalHojaDeVida);
   const toggleModalEstudios = () => setModalEstudios(!modalEstudios);
   const toggleModalExperiencia = () => setModalExperiencia(!modalExperiencia);
-  
+
   const toggleModalEditarEstudio = () => {
     setModalEditarEstudio(!modalEditarEstudio);
     if (!modalEditarEstudio) {
       setEstudioSeleccionado(null);
     }
   };
-  
+
   const toggleModalEditarExperiencia = () => {
     setModalEditarExperiencia(!modalEditarExperiencia);
     if (!modalEditarExperiencia) {
@@ -259,54 +279,63 @@ const Perfil = () => {
     } else {
       const token = getCookie("auth_token");
       if (token) {
-        axios.get("http://localhost/gestorplus/backend/", {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { action: "obtenerEstudio" },
-        })
-        .then(response => {
-          const data = response.data?.obtenerEstudio || [];
-          setEstudios(Array.isArray(data) ? data : []);
-        })
-        .catch(error => {
-          console.error("Error al obtener estudios:", error);
-        });
+        axios
+          .get(API_URL, {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { action: "obtenerEstudio" },
+          })
+          .then((response) => {
+            const data = response.data?.obtenerEstudio || [];
+            setEstudios(Array.isArray(data) ? data : []);
+          })
+          .catch((error) => {
+            console.error("Error al obtener estudios:", error);
+          });
       }
     }
   };
 
   const agregarExperiencia = (nuevaExperiencia) => {
     if (nuevaExperiencia) {
-      setExperiencia((prevExperiencia) => [...prevExperiencia, nuevaExperiencia]);
+      setExperiencia((prevExperiencia) => [
+        ...prevExperiencia,
+        nuevaExperiencia,
+      ]);
     } else {
       const token = getCookie("auth_token");
       if (token) {
-        axios.get("http://localhost/gestorplus/backend/", {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { action: "obtenerExperiencia" },
-        })
-        .then(response => {
-          const data = response.data?.obtenerExperiencia || [];
-          setExperiencia(Array.isArray(data) ? data : []);
-        })
-        .catch(error => {
-          console.error("Error al obtener la experiencia laboral:", error);
-        });
+        axios
+          .get(API_URL, {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { action: "obtenerExperiencia" },
+          })
+          .then((response) => {
+            const data = response.data?.obtenerExperiencia || [];
+            setExperiencia(Array.isArray(data) ? data : []);
+          })
+          .catch((error) => {
+            console.error("Error al obtener la experiencia laboral:", error);
+          });
       }
     }
   };
 
   const editarEstudio = (estudioActualizado) => {
-    setEstudios((prevEstudios) => 
-      prevEstudios.map((estudio) => 
-        estudio.idestudio === estudioActualizado.idestudio ? estudioActualizado : estudio
+    setEstudios((prevEstudios) =>
+      prevEstudios.map((estudio) =>
+        estudio.idestudio === estudioActualizado.idestudio
+          ? estudioActualizado
+          : estudio
       )
     );
   };
 
   const editarExperiencia = (experienciaActualizada) => {
-    setExperiencia((prevExperiencia) => 
-      prevExperiencia.map((exp) => 
-        exp.idexperienciaLaboral === experienciaActualizada.idexperienciaLaboral ? experienciaActualizada : exp
+    setExperiencia((prevExperiencia) =>
+      prevExperiencia.map((exp) =>
+        exp.idexperienciaLaboral === experienciaActualizada.idexperienciaLaboral
+          ? experienciaActualizada
+          : exp
       )
     );
   };
@@ -318,12 +347,18 @@ const Perfil = () => {
         <div className="col-md-6 mb-4">
           <div className="card shadow animated fadeIn">
             <div className="card-body">
-              <h2 className="card-title text-primary text-center mb-4">Configuración de Perfil</h2>
-              <p className="text-center mb-4">Actualiza tu información personal y profesional.</p>
+              <h2 className="card-title text-primary text-center mb-4">
+                Configuración de Perfil
+              </h2>
+              <p className="text-center mb-4">
+                Actualiza tu información personal y profesional.
+              </p>
 
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label htmlFor="num_doc" className="form-label">Número de documento</label>
+                  <label htmlFor="num_doc" className="form-label">
+                    Número de documento
+                  </label>
                   <input
                     type="number"
                     className="form-control"
@@ -334,7 +369,9 @@ const Perfil = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="nombres" className="form-label">Nombres</label>
+                  <label htmlFor="nombres" className="form-label">
+                    Nombres
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -345,7 +382,9 @@ const Perfil = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="apellidos" className="form-label">Apellidos</label>
+                  <label htmlFor="apellidos" className="form-label">
+                    Apellidos
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -356,7 +395,9 @@ const Perfil = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label">Correo electrónico</label>
+                  <label htmlFor="email" className="form-label">
+                    Correo electrónico
+                  </label>
                   <input
                     type="email"
                     className="form-control"
@@ -367,7 +408,9 @@ const Perfil = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="tipodDoc" className="form-label">Tipo de documento</label>
+                  <label htmlFor="tipodDoc" className="form-label">
+                    Tipo de documento
+                  </label>
                   <select
                     name="tipodDoc"
                     id="tipodDoc"
@@ -375,9 +418,15 @@ const Perfil = () => {
                     value={formData.tipodDoc}
                     onChange={handleChange}
                   >
-                    <option value="cedula de ciudadania">Cédula de ciudadanía</option>
-                    <option value="tarjeta de identidad">Tarjeta de identidad</option>
-                    <option value="cedula de extranjeria">Cédula de extranjería</option>
+                    <option value="cedula de ciudadania">
+                      Cédula de ciudadanía
+                    </option>
+                    <option value="tarjeta de identidad">
+                      Tarjeta de identidad
+                    </option>
+                    <option value="cedula de extranjeria">
+                      Cédula de extranjería
+                    </option>
                     <option value="pasaporte">Pasaporte</option>
                   </select>
                 </div>
@@ -392,22 +441,41 @@ const Perfil = () => {
                     onChange={handleChange}
                   />
                 </div> */}
-                <button type="submit" className="btn btn-primary w-100 mb-3 shadow-sm">Actualizar datos</button>
+                <button
+                  type="submit"
+                  className="btn btn-primary w-100 mb-3 shadow-sm"
+                >
+                  Actualizar datos
+                </button>
               </form>
 
               <div className="mt-4 d-grid gap-2">
-                <button onClick={toggleModalHojaDeVida} className="btn btn-outline-primary animated fadeInUp">
-                  <i className="material-icons me-2">description</i> Hoja de Vida
+                <button
+                  onClick={toggleModalHojaDeVida}
+                  className="btn btn-outline-primary animated fadeInUp"
+                >
+                  <i className="material-icons me-2">description</i> Hoja de
+                  Vida
                 </button>
-                <button onClick={toggleModalEstudios} className="btn btn-outline-primary animated fadeInUp">
+                <button
+                  onClick={toggleModalEstudios}
+                  className="btn btn-outline-primary animated fadeInUp"
+                >
                   <i className="material-icons me-2">school</i> Estudios
                 </button>
-                <button onClick={toggleModalExperiencia} className="btn btn-outline-primary animated fadeInUp">
-                  <i className="material-icons me-2">work</i> Experiencia Laboral
+                <button
+                  onClick={toggleModalExperiencia}
+                  className="btn btn-outline-primary animated fadeInUp"
+                >
+                  <i className="material-icons me-2">work</i> Experiencia
+                  Laboral
                 </button>
               </div>
 
-              <button onClick={() => window.history.back()} className="btn btn-secondary w-100 mt-3 animated fadeInUp">
+              <button
+                onClick={() => window.history.back()}
+                className="btn btn-secondary w-100 mt-3 animated fadeInUp"
+              >
                 <i className="material-icons me-2">arrow_back</i> Volver
               </button>
             </div>
@@ -419,7 +487,11 @@ const Perfil = () => {
           <div className="card shadow animated fadeIn">
             <div className="card-body">
               <div className="nav nav-tabs">
-                <select value={seleccionado} onChange={(e) => setSeleccionado(e.target.value)} className="form-select animated fadeInUp">
+                <select
+                  value={seleccionado}
+                  onChange={(e) => setSeleccionado(e.target.value)}
+                  className="form-select animated fadeInUp"
+                >
                   <option value="Estudios">Estudios</option>
                   <option value="Experiencias">Experiencia Laboral</option>
                 </select>
@@ -431,26 +503,36 @@ const Perfil = () => {
                     estudios.map((estudio, index) => (
                       <div key={index} className="card mb-3 animated fadeInUp">
                         <div className="card-body">
-                          <h5 className="card-title text-primary">{estudio.tituloEstudio}</h5>
+                          <h5 className="card-title text-primary">
+                            {estudio.tituloEstudio}
+                          </h5>
                           <p className="card-text">
-                            <strong>Institución:</strong> {estudio.institucionEstudio} <br />
-                            <strong>Nivel:</strong> {estudio.nivelEstudio} <br />
+                            <strong>Institución:</strong>{" "}
+                            {estudio.institucionEstudio} <br />
+                            <strong>Nivel:</strong> {estudio.nivelEstudio}{" "}
+                            <br />
                             <strong>Área:</strong> {estudio.areaEstudio} <br />
-                            <strong>Estado:</strong> {estudio.estadoEstudio} <br />
-                            <strong>Fecha de inicio:</strong> {estudio.fechaInicioEstudio} <br />
-                            <strong>Fecha de fin:</strong> {estudio.fechaFinEstudio} <br />
-                            <strong>Ubicación:</strong> {estudio.ubicacionEstudio}
+                            <strong>Estado:</strong> {estudio.estadoEstudio}{" "}
+                            <br />
+                            <strong>Fecha de inicio:</strong>{" "}
+                            {estudio.fechaInicioEstudio} <br />
+                            <strong>Fecha de fin:</strong>{" "}
+                            {estudio.fechaFinEstudio} <br />
+                            <strong>Ubicación:</strong>{" "}
+                            {estudio.ubicacionEstudio}
                           </p>
                           <div className="d-flex justify-content-end">
-                            <button 
+                            <button
                               className="btn btn-sm btn-primary me-2"
                               onClick={() => editarEstudioHandler(estudio)}
                             >
                               <i className="material-icons">edit</i>
                             </button>
-                            <button 
-                              className="btn btn-sm btn-danger" 
-                              onClick={() => eliminarEstudioHandler(estudio.idestudio)}
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() =>
+                                eliminarEstudioHandler(estudio.idestudio)
+                              }
                             >
                               <i className="material-icons">delete</i>
                             </button>
@@ -465,22 +547,33 @@ const Perfil = () => {
                   experiencia.map((experiencia, index) => (
                     <div key={index} className="card mb-3 animated fadeInUp">
                       <div className="card-body">
-                        <h5 className="card-title text-primary">{experiencia.profesion}</h5>
+                        <h5 className="card-title text-primary">
+                          {experiencia.profesion}
+                        </h5>
                         <p className="card-text">
-                          <strong>Descripción del perfil:</strong> {experiencia.descripcionPerfil} <br />
-                          <strong>Fecha de inicio:</strong> {experiencia.fechaInicioExp} <br />
-                          <strong>Fecha de fin:</strong> {experiencia.fechaFinExp}
+                          <strong>Descripción del perfil:</strong>{" "}
+                          {experiencia.descripcionPerfil} <br />
+                          <strong>Fecha de inicio:</strong>{" "}
+                          {experiencia.fechaInicioExp} <br />
+                          <strong>Fecha de fin:</strong>{" "}
+                          {experiencia.fechaFinExp}
                         </p>
                         <div className="d-flex justify-content-end">
-                          <button 
+                          <button
                             className="btn btn-sm btn-primary me-2"
-                            onClick={() => editarExperienciaHandler(experiencia)}
+                            onClick={() =>
+                              editarExperienciaHandler(experiencia)
+                            }
                           >
                             <i className="material-icons">edit</i>
                           </button>
-                          <button 
-                            className="btn btn-sm btn-danger" 
-                            onClick={() => eliminarExperienciaHandler(experiencia.idexperienciaLaboral)}
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() =>
+                              eliminarExperienciaHandler(
+                                experiencia.idexperienciaLaboral
+                              )
+                            }
                           >
                             <i className="material-icons">delete</i>
                           </button>
@@ -489,7 +582,9 @@ const Perfil = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-center">No hay experiencia laboral disponible.</p>
+                  <p className="text-center">
+                    No hay experiencia laboral disponible.
+                  </p>
                 )}
               </div>
             </div>
@@ -497,18 +592,29 @@ const Perfil = () => {
         </div>
       </div>
 
-      <ModalHojaDeVida modalHojaDeVida={modalHojaDeVida} toggleModalHojaDeVida={toggleModalHojaDeVida} />
-      <Estudios modalEstudios={modalEstudios} toggleModalEstudios={toggleModalEstudios} onAgregarEstudio={agregarEstudio} />
-      <Experiencia modalExperiencia={modalExperiencia} toggleModalExperiencia={toggleModalExperiencia} onAgregarExperiencia={agregarExperiencia} />
-      <EditarEstudio 
-        modalEditarEstudio={modalEditarEstudio} 
-        toggleModalEditarEstudio={toggleModalEditarEstudio} 
-        onEditarEstudio={editarEstudio} 
+      <ModalHojaDeVida
+        modalHojaDeVida={modalHojaDeVida}
+        toggleModalHojaDeVida={toggleModalHojaDeVida}
+      />
+      <Estudios
+        modalEstudios={modalEstudios}
+        toggleModalEstudios={toggleModalEstudios}
+        onAgregarEstudio={agregarEstudio}
+      />
+      <Experiencia
+        modalExperiencia={modalExperiencia}
+        toggleModalExperiencia={toggleModalExperiencia}
+        onAgregarExperiencia={agregarExperiencia}
+      />
+      <EditarEstudio
+        modalEditarEstudio={modalEditarEstudio}
+        toggleModalEditarEstudio={toggleModalEditarEstudio}
+        onEditarEstudio={editarEstudio}
         estudioSeleccionado={estudioSeleccionado}
       />
-      <EditarExperiencia 
-        modalEditarExperiencia={modalEditarExperiencia} 
-        toggleModalEditarExperiencia={toggleModalEditarExperiencia} 
+      <EditarExperiencia
+        modalEditarExperiencia={modalEditarExperiencia}
+        toggleModalEditarExperiencia={toggleModalEditarExperiencia}
         onEditarExperiencia={editarExperiencia}
         experienciaSeleccionada={experienciaSeleccionada}
       />

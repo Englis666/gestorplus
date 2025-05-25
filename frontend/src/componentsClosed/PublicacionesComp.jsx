@@ -4,6 +4,7 @@ import FormularioPublicacion from "./form/FormularioAgregarPublicaciones";
 import "./css/Publicaciones.css";
 import { jwtDecode } from "jwt-decode";
 import ModalEditarPublicacion from "./modals/ModalEditarPublicacion";
+import API_URL from "../config";
 
 const getCookie = (name) => {
   const value = `; ${document.cookie}`;
@@ -35,13 +36,10 @@ const PublicacionesComp = () => {
 
     const fetchPublicaciones = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/gestorplus/backend/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { action: "obtenerPublicacionPorTipoDeContrato" },
-          }
-        );
+        const response = await axios.get(API_URL, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { action: "obtenerPublicacionPorTipoDeContrato" },
+        });
 
         console.log("Respuesta completa:", response.data);
 
@@ -65,13 +63,10 @@ const PublicacionesComp = () => {
     );
     if (confirmDelete) {
       try {
-        const response = await axios.delete(
-          "http://localhost/gestorplus/backend/",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            data: { action: "eliminarPublicacion", idPublicacion: id },
-          }
-        );
+        const response = await axios.delete(API_URL, {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { action: "eliminarPublicacion", idPublicacion: id },
+        });
         if (response.status === 200) {
           setPublicaciones(publicaciones.filter((p) => p.idPublicacion !== id));
           alert("Publicación eliminada exitosamente");

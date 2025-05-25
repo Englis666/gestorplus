@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import { jwtDecode } from "jwt-decode";
+import API_URL from "../../config";
 
 const TablaMinutosTrabajados = () => {
   const [jornadas, setJornadas] = useState([]);
@@ -42,13 +43,13 @@ const TablaMinutosTrabajados = () => {
       setRol(Rol);
 
       const action = {
-        "1": "obtenerMinutosTrabajadosDelEmpleado",
-        "2": "obtenerMinutosTrabajadosDelEmpleado",
-        "3": "obtenerMinutosTrabajados",
+        1: "obtenerMinutosTrabajadosDelEmpleado",
+        2: "obtenerMinutosTrabajadosDelEmpleado",
+        3: "obtenerMinutosTrabajados",
       }[Rol];
 
       axios
-        .get("http://localhost/gestorplus/backend/", {
+        .get(API_URL, {
           headers: { Authorization: `Bearer ${token}` },
           params: { action },
         })
@@ -111,7 +112,8 @@ const TablaMinutosTrabajados = () => {
     },
   ];
 
-  if (loading) return <div className="text-center mt-5">Cargando jornadas...</div>;
+  if (loading)
+    return <div className="text-center mt-5">Cargando jornadas...</div>;
   if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from "../../config";
 
 const FormularioParaAgregarSistemasDeGestion = ({
   num_doc,
@@ -42,13 +43,10 @@ const FormularioParaAgregarSistemasDeGestion = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost/gestorplus/backend/",
-        {
-          action: "guardarResultadosSistemaDeGestion",
-          ...formData,
-        }
-      );
+      const response = await axios.post(API_URL, {
+        action: "guardarResultadosSistemaDeGestion",
+        ...formData,
+      });
 
       if (response.data && response.data.success) {
         alert("✅ Resultados guardados con éxito.");

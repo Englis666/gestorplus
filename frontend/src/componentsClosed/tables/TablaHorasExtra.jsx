@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import API_URL from "../../config";
 
 const TablaHorasExtra = () => {
   const [horasExtra, setHorasExtra] = useState([]);
@@ -37,7 +38,7 @@ const TablaHorasExtra = () => {
 
       setMensajeEstado("Consultando horas extra...");
 
-      const response = await axios.get("http://localhost/gestorplus/backend/", {
+      const response = await axios.get(API_URL, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -79,31 +80,31 @@ const TablaHorasExtra = () => {
   const columnas = [
     {
       name: "Fecha",
-      selector: row => row.fecha,
+      selector: (row) => row.fecha,
       sortable: true,
       center: true,
     },
     {
       name: "Horas Extra",
-      selector: row => row.horasExtra,
+      selector: (row) => row.horasExtra,
       sortable: true,
       center: true,
     },
     {
       name: "Documento",
-      selector: row => row.numDoc,
+      selector: (row) => row.numDoc,
       sortable: true,
       center: true,
     },
     {
       name: "Nombre",
-      selector: row => row.nombres,
+      selector: (row) => row.nombres,
       sortable: true,
       center: true,
     },
     {
       name: "Rol",
-      selector: row => row.rol,
+      selector: (row) => row.rol,
       sortable: true,
       center: true,
     },
@@ -111,7 +112,9 @@ const TablaHorasExtra = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-center text-dark font-weight-bold">Horas Extra</h2>
+      <h2 className="mb-4 text-center text-dark font-weight-bold">
+        Horas Extra
+      </h2>
       <p className="text-dark mb-3">
         Aquí podrás analizar tus horas extra. Si tienes alguna duda, contacta
         con Recursos Humanos en la sección "Quejas".

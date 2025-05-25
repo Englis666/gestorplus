@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import API_URL from "../../config";
 
-const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperiencia, onEditarExperiencia, experienciaSeleccionada }) => {
+const EditarExperiencia = ({
+  modalEditarExperiencia,
+  toggleModalEditarExperiencia,
+  onEditarExperiencia,
+  experienciaSeleccionada,
+}) => {
   const [formData, setFormData] = useState({
     profesion: "",
     descripcionPerfil: "",
@@ -14,7 +20,8 @@ const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperienci
   useEffect(() => {
     if (experienciaSeleccionada && modalEditarExperiencia) {
       setFormData({
-        idexperienciaLaboral: experienciaSeleccionada.idexperienciaLaboral || "",
+        idexperienciaLaboral:
+          experienciaSeleccionada.idexperienciaLaboral || "",
         profesion: experienciaSeleccionada.profesion || "",
         descripcionPerfil: experienciaSeleccionada.descripcionPerfil || "",
         fechaInicioExp: experienciaSeleccionada.fechaInicioExp || "",
@@ -56,10 +63,10 @@ const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperienci
       if (!token) return alert("No se encontró el token de autenticación.");
 
       const response = await axios.patch(
-        "http://localhost/gestorplus/backend/",
-        { 
+        API_URL,
+        {
           ...formData,
-          action: "actualizarExperiencia" 
+          action: "actualizarExperiencia",
         },
         {
           headers: {
@@ -71,17 +78,25 @@ const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperienci
 
       if (response.data.status === "success") {
         alert("Experiencia laboral actualizada correctamente");
-        onEditarExperiencia(response.data.data || { 
-          ...formData, 
-          idexperienciaLaboral: experienciaSeleccionada.idexperienciaLaboral 
-        });
+        onEditarExperiencia(
+          response.data.data || {
+            ...formData,
+            idexperienciaLaboral: experienciaSeleccionada.idexperienciaLaboral,
+          }
+        );
         toggleModalEditarExperiencia();
       } else {
         alert("Error al actualizar la experiencia laboral.");
       }
     } catch (error) {
-      console.error("Error al actualizar:", error.response?.data || error.message);
-      alert("Error del servidor: " + (error.response?.data?.message || "Inténtalo nuevamente."));
+      console.error(
+        "Error al actualizar:",
+        error.response?.data || error.message
+      );
+      alert(
+        "Error del servidor: " +
+          (error.response?.data?.message || "Inténtalo nuevamente.")
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -89,7 +104,11 @@ const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperienci
 
   return (
     <div
-      className={`modal fade ${modalEditarExperiencia ? "show d-block animate__animated animate__fadeInDown" : ""}`}
+      className={`modal fade ${
+        modalEditarExperiencia
+          ? "show d-block animate__animated animate__fadeInDown"
+          : ""
+      }`}
       tabIndex="-1"
       role="dialog"
       aria-labelledby="modalEditarExperienciaLabel"
@@ -101,15 +120,22 @@ const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperienci
           <form onSubmit={handleSubmit}>
             <div className="modal-header bg-primary text-white">
               <h5 className="modal-title d-flex align-items-center gap-2">
-                <span className="material-icons">work</span> Editar Experiencia Laboral
+                <span className="material-icons">work</span> Editar Experiencia
+                Laboral
               </h5>
-              <button type="button" className="btn-close" onClick={toggleModalEditarExperiencia} />
+              <button
+                type="button"
+                className="btn-close"
+                onClick={toggleModalEditarExperiencia}
+              />
             </div>
 
             <div className="modal-body">
               <div className="row g-3">
                 <div className="col-md-6">
-                  <label htmlFor="profesion" className="form-label fw-semibold">Profesión o Cargo</label>
+                  <label htmlFor="profesion" className="form-label fw-semibold">
+                    Profesión o Cargo
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -121,7 +147,12 @@ const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperienci
                   />
                 </div>
                 <div className="col-md-12">
-                  <label htmlFor="descripcionPerfil" className="form-label fw-semibold">Descripción del perfil</label>
+                  <label
+                    htmlFor="descripcionPerfil"
+                    className="form-label fw-semibold"
+                  >
+                    Descripción del perfil
+                  </label>
                   <textarea
                     className="form-control"
                     id="descripcionPerfil"
@@ -133,7 +164,12 @@ const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperienci
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="fechaInicioExp" className="form-label fw-semibold">Fecha de inicio</label>
+                  <label
+                    htmlFor="fechaInicioExp"
+                    className="form-label fw-semibold"
+                  >
+                    Fecha de inicio
+                  </label>
                   <input
                     type="date"
                     className="form-control"
@@ -145,7 +181,12 @@ const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperienci
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="fechaFinExp" className="form-label fw-semibold">Fecha de fin</label>
+                  <label
+                    htmlFor="fechaFinExp"
+                    className="form-label fw-semibold"
+                  >
+                    Fecha de fin
+                  </label>
                   <input
                     type="date"
                     className="form-control"
@@ -159,17 +200,28 @@ const EditarExperiencia = ({ modalEditarExperiencia, toggleModalEditarExperienci
             </div>
 
             <div className="modal-footer">
-              <button type="button" className="btn btn-outline-secondary" onClick={toggleModalEditarExperiencia} disabled={isSubmitting}>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={toggleModalEditarExperiencia}
+                disabled={isSubmitting}
+              >
                 Cerrar
               </button>
-              <button type="submit" className="btn btn-success" disabled={isSubmitting}>
+              <button
+                type="submit"
+                className="btn btn-success"
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? (
                   <>
-                    <span className="spinner-border spinner-border-sm me-1" /> Guardando...
+                    <span className="spinner-border spinner-border-sm me-1" />{" "}
+                    Guardando...
                   </>
                 ) : (
                   <>
-                    <span className="material-icons me-1">save</span> Guardar cambios
+                    <span className="material-icons me-1">save</span> Guardar
+                    cambios
                   </>
                 )}
               </button>

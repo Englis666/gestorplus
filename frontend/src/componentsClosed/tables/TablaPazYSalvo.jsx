@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {jwtDecode} from "jwt-decode";  
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import GenerarPazYSalvo from "../form/GenerarPazYSalvo";
+import API_URL from "../../config";
 
 const TablaPazYSalvo = () => {
   const [Salvos, setSalvos] = useState([]);
@@ -14,7 +15,7 @@ const TablaPazYSalvo = () => {
     motivo: "",
     fechaEmision: "",
     estado: "",
-    empleado: ""
+    empleado: "",
   });
 
   useEffect(() => {
@@ -43,10 +44,10 @@ const TablaPazYSalvo = () => {
 
         const action = (() => {
           switch (Rol) {
-            case '1':
-            case '2':
+            case "1":
+            case "2":
               return "obtenerPazYSalvos";
-            case '3':
+            case "3":
               return "obtenerMiPazySalvo";
             default:
               console.error("Rol no valido");
@@ -58,9 +59,8 @@ const TablaPazYSalvo = () => {
 
         if (!action) return;
 
-        // Obtener Paz y Salvos
         axios
-          .get("http://localhost/gestorplus/backend/", {
+          .get(API_URL, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -82,7 +82,7 @@ const TablaPazYSalvo = () => {
 
         // Obtener Empleados
         axios
-          .get("http://localhost/gestorplus/backend/", {
+          .get(API_URL, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -126,14 +126,18 @@ const TablaPazYSalvo = () => {
     const token = getCookie("auth_token");
 
     axios
-      .post("http://localhost/gestorplus/backend/", {
-        action: "generarPazYSalvo",
-        ...form
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      .post(
+        API_URL,
+        {
+          action: "generarPazYSalvo",
+          ...form,
         },
-      })
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
         if (response.data.success) {
           alert("Paz y salvo generado con éxito");
@@ -147,26 +151,31 @@ const TablaPazYSalvo = () => {
       });
   };
 
-  // Columnas para DataTable
   const columns = [
     {
-      name: "Motivo",
-      selector: row => row.motivo,
+      name: "Empleado",
+      selector: (row) => row.nombres,
       sortable: true,
-      center: true
+      center: true,
+    },
+    {
+      name: "Motivo",
+      selector: (row) => row.motivo,
+      sortable: true,
+      center: true,
     },
     {
       name: "Fecha Emisión",
-      selector: row => row.fechaEmision,
+      selector: (row) => row.fechaEmision,
       sortable: true,
-      center: true
+      center: true,
     },
     {
       name: "Estado",
-      selector: row => row.estado,
+      selector: (row) => row.estado,
       sortable: true,
-      center: true
-    }
+      center: true,
+    },
   ];
 
   if (loading) {
@@ -179,7 +188,9 @@ const TablaPazYSalvo = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4 text-center text-dark font-weight-bold mt-4">Paz y Salvo</h1>
+      <h1 className="mb-4 text-center text-dark font-weight-bold mt-4">
+        Paz y Salvo
+      </h1>
       <div className="row g-4">
         <div className="col-12 col-md-8">
           <DataTable
@@ -188,13 +199,15 @@ const TablaPazYSalvo = () => {
             pagination
             highlightOnHover
             pointerOnHover
-            noDataComponent={<div className="text-center p-3">No existen Paz y Salvos</div>}
+            noDataComponent={
+              <div className="text-center p-3">No existen Paz y Salvos</div>
+            }
             responsive
             striped
           />
         </div>
 
-        {(rol === '1' || rol === '2') && (
+        {(rol === "1" || rol === "2") && (
           <div className="col-12 col-md-4">
             <h4 className="text-primary">Generar Paz y Salvo</h4>
             <GenerarPazYSalvo

@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import { jwtDecode } from "jwt-decode";
+import API_URL from "../config";
 
 ChartJS.register(
   CategoryScale,
@@ -52,7 +53,7 @@ const Grafica = () => {
         setRol(Rol);
 
         axios
-          .get("http://localhost/gestorplus/backend/", {
+          .get(API_URL, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -88,7 +89,6 @@ const Grafica = () => {
     return <div>{error}</div>;
   }
 
-  // Datos para la gráfica (sin la serie de Generales)
   const data = {
     labels: ["Estadísticas"],
     datasets: [

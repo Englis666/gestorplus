@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
+import API_URL from "../../config";
 
 const TablaSistemaDeGestion = () => {
   const [loading, setLoading] = useState(true);
@@ -34,7 +35,7 @@ const TablaSistemaDeGestion = () => {
       }
 
       axios
-        .get("http://localhost/gestorplus/backend/", {
+        .get(API_URL, {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerSistemaDeGestion" },
         })
@@ -57,48 +58,48 @@ const TablaSistemaDeGestion = () => {
   const columns = [
     {
       name: "Documento",
-      selector: row => row.usuario_num_doc,
+      selector: (row) => row.usuario_num_doc,
       sortable: true,
       center: true,
     },
     {
       name: "Nombre",
-      selector: row => row.nombres,
+      selector: (row) => row.nombres,
       sortable: true,
       center: true,
     },
     {
       name: "Estado de salud",
-      selector: row => row.estado_salud,
+      selector: (row) => row.estado_salud,
       center: true,
     },
     {
       name: "Evaluación de riesgos",
-      selector: row => row.evaluacionRiesgos,
+      selector: (row) => row.evaluacionRiesgos,
       center: true,
     },
     {
       name: "Recomendaciones",
-      selector: row => row.recomendaciones,
+      selector: (row) => row.recomendaciones,
       center: true,
       wrap: true,
-      maxWidth: '200px',
+      maxWidth: "200px",
     },
     {
       name: "Aptitud laboral",
-      selector: row => row.aptitudLaboral,
+      selector: (row) => row.aptitudLaboral,
       center: true,
     },
     {
       name: "Comentarios",
-      selector: row => row.comentarios,
+      selector: (row) => row.comentarios,
       center: true,
       wrap: true,
-      maxWidth: '200px',
+      maxWidth: "200px",
     },
     {
       name: "Acción",
-      cell: row => (
+      cell: (row) => (
         <button
           className="btn btn-danger btn-sm"
           onClick={() =>
