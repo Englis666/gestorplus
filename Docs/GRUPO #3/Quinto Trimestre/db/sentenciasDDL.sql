@@ -36,222 +36,88 @@
 /* EN CONSOLA: XAMPP / SHELL / cd mysql/bin / mysql -h localhost -u root -p / ENTER      */
 /* ************************************************************************************* */
 
--- ------------------------------------------------------------------------------------- --
--- 01. Mostrar BBDDs. ------------------------------------------------------------------ --
---     SHOW DATABASES : ---------------------------------------------------------------- -- 
--- ------------------------------------------------------------------------------------- --
+-- 01. Mostrar BBDDs :
 SHOW DATABASES;
 
--- ------------------------------------------------------------------------------------- --
--- 02. Usar BBDD. ---------------------------------------------------------------------- --
---     USE __ : ------------------------------------------------------------------------ --
--- ------------------------------------------------------------------------------------- --
+-- 02. Usar BBDD :
 USE gestorplus;
 
--- ------------------------------------------------------------------------------------- --
--- 03. Eliminar BBDD. ------------------------------------------------------------------ --
---     DROP DATABASE __ : -------------------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
+-- 03. Eliminar BBDD :
 DROP DATABASE gestorplus;
 
--- ------------------------------------------------------------------------------------- --
--- 04. Mostrar Tablas. ----------------------------------------------------------------- --
---     SHOW TABLES __ : ---------------------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
+-- 04. Mostrar Tablas :
 SHOW TABLES;
 
--- ------------------------------------------------------------------------------------- --
--- 05. Mostar Columnas. ---------------------------------------------------------------- --
---     SHOW COLUMNS FROM __ . DESCRIBE __ : -------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
+-- 05. Mostrar Columnas :
 SHOW COLUMNS FROM usuario;
 DESCRIBE usuario;
 
--- ------------------------------------------------------------------------------------- --
--- 06. Agregar Columna. ---------------------------------------------------------------- --
---     ALTER TABLE __ ADD __ __ : ------------------------------------------------------ --
--- ------------------------------------------------------------------------------------- --
-ALTER TABLE usuario ADD direccionVivienda DATE;
+-- 06. Agregar Columna :
+ALTER TABLE usuario ADD telefono VARCHAR(20);
 
--- ------------------------------------------------------------------------------------- --
--- 07. Renombrar Columna. -------------------------------------------------------------- --
---     ALTER TABLE __ CHANGE __ __ : --------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
-ALTER TABLE usuario CHANGE direccionVivienda direccionResidencia VARCHAR(100);
+-- 07. Renombrar Columna :
+ALTER TABLE usuario CHANGE telefono celular VARCHAR(20);
 
--- ------------------------------------------------------------------------------------- --
--- 08. Eliminar Columna. --------------------------------------------------------------- --
---     ALTER TABLE __ DROP __ : -------------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
-ALTER TABLE usuario DROP direccionResidencia;
+-- 08. Eliminar Columna :
+ALTER TABLE usuario DROP celular;
 
--- ------------------------------------------------------------------------------------- --
--- 09. Agregar Valor x Defecto Columna. ------------------------------------------------ --
---     ALTER TABLE __ ALTER __ SET DEFAULT __ :	---------------------------------------- --
--- ------------------------------------------------------------------------------------- --
-ALTER TABLE usuario ALTER rol_idrol SET DEFAULT 4;
+-- 09. Agregar Valor x Defecto Columna :
+ALTER TABLE usuario ALTER estado SET DEFAULT 1;
 
--- ------------------------------------------------------------------------------------- --
--- 10. Eliminar Valor x Defecto Columna. ----------------------------------------------- --
---     ALTER TABLE __ ALTER __ DROP DEFAULT : ------------------------------------------ --
--- ------------------------------------------------------------------------------------- --
-ALTER TABLE usuario ALTER rol_idrol DROP DEFAULT;
+-- 10. Eliminar Valor x Defecto Columna :
+ALTER TABLE usuario ALTER estado DROP DEFAULT;
 
--- ------------------------------------------------------------------------------------- --
--- 11. Mostrar Creación Tabla. --------------------------------------------------------- --
---     SHOW CREATE TABLE __ : ---------------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
+-- 11. Mostrar Creación Tabla :
 SHOW CREATE TABLE usuario;
-SHOW CREATE TABLE hojadevida;
-SHOW CREATE TABLE estudio;
+SHOW CREATE TABLE ausencia;
+SHOW CREATE TABLE vacacion;
 
--- ------------------------------------------------------------------------------------- --
--- 12. Eliminar Restricción. ----------------------------------------------------------- --
---     ALTER TABLE __ DROP CONSTRAINT __ : --------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
-ALTER TABLE USUARIOS DROP CONSTRAINT fk_usuario_rol;
-ALTER TABLE MENSAJES DROP CONSTRAINT fk_mensaje_usuario;
-ALTER TABLE CREDENCIALES DROP CONSTRAINT chk_evitarPersona;
-ALTER TABLE CREDENCIALES DROP CONSTRAINT fk_credencial_usuario;
-ALTER TABLE CLIENTES DROP CONSTRAINT chk_soloCliente;
-ALTER TABLE CLIENTES DROP CONSTRAINT fk_cliente_credencial;
-ALTER TABLE VENDEDORES DROP CONSTRAINT chk_soloVendedor;
-ALTER TABLE VENDEDORES DROP CONSTRAINT fk_vendedor_credencial;
+-- 12. Eliminar Restricción :
+ALTER TABLE usuario DROP FOREIGN KEY usuario_ibfk_2;
 
--- ------------------------------------------------------------------------------------- --
--- 13. Eliminar Índice. ---------------------------------------------------------------- --
---     ALTER TABLE __ DROP INDEX __ : -------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
-ALTER TABLE USUARIOS DROP INDEX ind_usuario_rol;
-ALTER TABLE USUARIOS DROP INDEX uq_correo_user;
-ALTER TABLE CREDENCIALES DROP INDEX ind_codigo_cred_identificacion_cred;
-ALTER TABLE CREDENCIALES DROP INDEX ind_credencial_usuario;
-ALTER TABLE CREDENCIALES DROP INDEX uq_identificacion_cred;
+-- 13. Eliminar Índice :
+ALTER TABLE usuario DROP INDEX rol_idrol;
 
--- ------------------------------------------------------------------------------------- --
--- 14. Eliminar Llave Primaria. -------------------------------------------------------- --
---     ALTER TABLE __ DROP PRIMARY KEY : ----------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
+-- 14. Eliminar Llave Primaria :
 ALTER TABLE usuario DROP PRIMARY KEY;
-ALTER TABLE hojadevida DROP PRIMARY KEY;
 
--- ------------------------------------------------------------------------------------- --
--- 15. Limpiar Registros. -------------------------------------------------------------- --
---     TRUNCATE __ : ------------------------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
+-- 15. Limpiar Registros :
 TRUNCATE usuario;
 
--- ------------------------------------------------------------------------------------- --
--- 16. Eliminar Tabla. ----------------------------------------------------------------- --
---     DROP TABLE __ : ----------------------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
+-- 16. Eliminar Tabla :
 DROP TABLE usuario;
 
--- ------------------------------------------------------------------------------------- --
--- 17. Crear Tabla. -------------------------------------------------------------------- --
---     CREATE TABLE __ ( __ , __ ) : --------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
-CREATE TABLE usuario (  
-  num_doc INT UNIQUE NOT NULL,
-  nombres VARCHAR(30) NOT NULL,
-  apellidos VARCHAR(30) NOT NULL,
-  email  VARCHAR(50) NOT NULL,
-  password VARCHAR(250) NOT NULL
+-- 17. Crear Tabla :
+CREATE TABLE usuario (
+  num_doc INT PRIMARY KEY,
+  nombres VARCHAR(50) NOT NULL,
+  apellidos VARCHAR(50) NOT NULL,
+  email VARCHAR(45) NOT NULL,
+  tipodDoc VARCHAR(40) NOT NULL,
+  password VARCHAR(250) NOT NULL,
+  estado INT NOT NULL DEFAULT 1,
+  hojadevida_idHojadevida INT NOT NULL,
+  rol_idrol INT NOT NULL
 );
 
--- ------------------------------------------------------------------------------------- --
--- 18. Renombrar Tabla. ---------------------------------------------------------------- --
---     RENAME TABLE __ TO __ : --------------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
+-- 18. Renombrar Tabla :
 RENAME TABLE usuario TO usuarios;
-RENAME TABLE hojadevida TO Hojasdevida;
 
--- ------------------------------------------------------------------------------------- --
--- 19. Crear Llave Primaria. ----------------------------------------------------------- --
---     ALTER TABLE __ ADD PRIMARY KEY ( __ ) : ----------------------------------------- --
--- ------------------------------------------------------------------------------------- --
+-- 19. Crear Llave Primaria :
 ALTER TABLE usuario ADD PRIMARY KEY (num_doc);
-ALTER TABLE Mensaje ADD PRIMARY KEY (idMensaje);
 
--- ------------------------------------------------------------------------------------- --
--- 20. Crear Índice Campo. ------------------------------------------------------------- --
---     CREATE INDEX __ ON __ ( __ ) :  ------------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
-CREATE INDEX ind_usuario_rol ON USUARIOS (codigo_rol);
-CREATE INDEX ind_credencial_usuario ON CREDENCIALES (codigo_cred);
+-- 20. Crear Índice Campo :
+CREATE INDEX idx_usuario_rol ON usuario (rol_idrol);
 
--- ------------------------------------------------------------------------------------- --
--- 21. Crear Índice Multicampo. -------------------------------------------------------- --
---     CREATE INDEX _ ON _ ( __ , __ ) : ----------------------------------------------- -- 
--- ------------------------------------------------------------------------------------- --
-CREATE INDEX ind_codigo_cred_identificacion_cred
-ON CREDENCIALES (codigo_cred, identificacion_cred);
+-- 21. Crear Índice Multicampo :
+CREATE INDEX idx_nombre_apellido ON usuario (nombres, apellidos);
 
--- ------------------------------------------------------------------------------------- --
--- 22. Crear Índice Único. ------------------------------------------------------------- --
---     CREATE UNIQUE INDEX __ ON __ ( __ ) : ------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
-CREATE UNIQUE INDEX uq_correo_user ON USUARIOS (correo_user);
-CREATE UNIQUE INDEX uq_identificacion_cred ON CREDENCIALES (identificacion_cred);
+-- 22. Crear Índice Único :
+CREATE UNIQUE INDEX uq_email ON usuario (email);
 
--- ------------------------------------------------------------------------------------- --
--- 23. Crear Restricción. -------------------------------------------------------------- --
---     ALTER TABLE __ ADD CONSTRAINT __ FOREIGN KEY ( __ ) REFERENCES __ ( __ ) -------- --
---     ON DELETE CASCADE ON UPDATE CASCADE : ------------------------------------------- --
--- ------------------------------------------------------------------------------------- --
-ALTER TABLE USUARIOS ADD 
-CONSTRAINT fk_usuario_rol 
-	FOREIGN KEY (codigo_rol)
-	REFERENCES ROLES (codigo_rol)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE;
-ALTER TABLE MENSAJES ADD 
-CONSTRAINT fk_mensaje_usuario 
-	FOREIGN KEY (codigo_user)
-	REFERENCES USUARIOS (codigo_user)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE;
-ALTER TABLE CREDENCIALES ADD 
-CONSTRAINT chk_evitarPersona 
-	CHECK (codigo_cred NOT LIKE '%person%');
-ALTER TABLE CREDENCIALES ADD 
-CONSTRAINT fk_credencial_usuario 
-	FOREIGN KEY (codigo_cred)
-	REFERENCES USUARIOS (codigo_user)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE;
-ALTER TABLE CLIENTES ADD
-CONSTRAINT chk_soloCliente 
-  CHECK (codigo_customer LIKE '%customer%'),
-ALTER TABLE CLIENTES ADD 
-CONSTRAINT fk_cliente_credencial 
-	FOREIGN KEY (codigo_customer)
-	REFERENCES CREDENCIALES (codigo_cred)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE;
-ALTER TABLE VENDEDORES ADD
-CONSTRAINT chk_soloVendedor 
-  CHECK (codigo_seller LIKE '%seller%'),
-ALTER TABLE VENDEDORES ADD 
-CONSTRAINT fk_vendedor_credencial 
-	FOREIGN KEY (codigo_seller)
-	REFERENCES CREDENCIALES (codigo_cred)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE;
-	
-
-/* ************************************************************************************* */
-/* ------------------------------------------------------------------------------------- */
-/* ----------------------------------- BIBLIOGRAFÍA ------------------------------------ */
-/* ------------------------------------------------------------------------------------- */
-/* ************************************************************************************* */
-
--- ------------------------------------------------------------------------------------- --
--- Tutoriales de Programación ya. (s.f.). MySQL ya. Recuperado el 15 de Mayo de 2022,    --
---      de https://www.tutorialesprogramacionya.com/mysqlya/                             --
--- ------------------------------------------------------------------------------------- --
--- Pildoras Informáticas. (16 de Julio de 2015). Curso SQL.                              --
---      Recuperado el 16 de Abril de 2022, de [Archivo de Vídeo]                         --
---      https://www.youtube.com/playlist?list=PLU8oAlHdN5Bmx-LChV4K3MbHrpZKefNwn         --
---      página web                                                                       --
--- ------------------------------------------------------------------------------------- --
+-- 23. Crear Restricción :
+ALTER TABLE usuario ADD CONSTRAINT fk_usuario_rol
+  FOREIGN KEY (rol_idrol)
+  REFERENCES rol (idrol)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
