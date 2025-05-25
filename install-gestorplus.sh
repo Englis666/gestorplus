@@ -1,4 +1,3 @@
-#!/bin/bash
 
 # Este script automatiza la instalación y configuración de GestorPlus,
 # una aplicación que utiliza Docker, Docker Compose, Git, Node.js y PHP.
@@ -47,18 +46,25 @@ function show_banner() {
 " \\____\\___/ \\__,_|\\___/_/   \\_\\__,_| \\_/ \\__,_|_| |_|\\___\\___|"
   )
 
-
-  # Información de los desarrolladores
-  local dev_team_info=(
-"Equipo de Desarrollo:"
-"Englis (Acnth)"
-"Juan Becerra (stemansote)"
-"Cristian Cadena"
-"Johan Rodriguez"
+  developers_banner=(
+  "  ____                            _ _           _                    "
+  " |  _ \  ___  ___  __ _ _ __ ___ | | | __ _  __| | ___  _ __ ___  ___"
+  " | | | |/ _ \/ __|/ _\` | '__/ _ \| | |/ _\` |/ _\` |/ _ \| '__/ _ \/ __|"
+  " | |_| |  __/\__ \ (_| | | | (_) | | | (_| | (_| | (_) | | |  __/\__ \\"
+  " |____/ \___||___/\__,_|_|  \___/|_|_|\__,_|\__,_|\___/|_|  \___||___/"
   )
 
-  # Calcular el espacio superior para centrar todo el bloque de banners y texto
-  # Sumamos las líneas de cada banner + las líneas de info del equipo + espacios entre ellos
+  local dev_team_info=(
+
+  "  EQUIPO DE DESARROLLO 👾"
+  "  ✦ Englis (Acnth)"
+  "  ✦ Juan Becerra (stemansote)"
+  "  ✦ Cristian Cadena"
+  "  ✦ Johan Rodriguez"
+  "  ─────────────────────────────────────────────────────────"
+  )
+
+
   local total_banner_lines=$(( ${#gestorplus_banner[@]} + ${#created_by_banner[@]} + ${#codeadvance_banner[@]} + ${#dev_team_info[@]} + 6 )) # +6 por los espacios entre banners
   local start_line=$(( (lines - total_banner_lines) / 2 ))
 
@@ -81,7 +87,7 @@ function show_banner() {
     printf "%*s%s\n" "$padding" "" "$line"
   done
   echo -e "${RESET}"
-  echo "" # Espacio
+  echo ""
 
   # Imprimir banner de CodeAdvance
   echo -e "${MAGENTA}"
@@ -91,6 +97,15 @@ function show_banner() {
   done
   echo -e "${RESET}"
   echo "" # Espacio
+
+   # Imprimir banner de CodeAdvance
+  echo -e "${MAGENTA}"
+  for line in "${developers_banner[@]}"; do
+    local padding=$(( (columns - ${#line}) / 2 ))
+      printf "%*s%s\n" "$padding" "" "$line"
+  done
+  echo -e "${RESET}"
+  echo "" 
 
   # Imprimir información del equipo de desarrollo
   echo -e "${CYAN}"
@@ -128,12 +143,11 @@ function check_docker_permissions() {
     echo "para que los cambios se activen. ¡Así Docker será tu mejor amigo!"
     echo "Si algo no va bien, la documentación oficial de Docker siempre ayuda."
     echo -e "${RED}Por ahora, no podemos avanzar sin esos permisos. ¡Vuelve cuando estén listos!${RESET}"
-    exit 1 # Cerramos el script, ¡pero esperamos tu regreso!
+    exit 1 
   fi
   pause
 }
 
-# 3. Detectando la personalidad de tu Linux (distribución)
 function detect_distro() {
   echo -e "${YELLOW}🕵️‍♀️ Paso 2: ¡Descubriendo qué sabor de Linux tienes!${RESET}"
   echo "Esto nos ayuda a saber qué herramientas usar para instalar todo lo que necesitamos."
@@ -166,7 +180,6 @@ function detect_distro() {
   pause
 }
 
-# 4. Cargando el arsenal (instalando dependencias)
 function install_dependencies() {
   echo -e "${YELLOW}🛠️ Paso 3: ¡Instalando las herramientas que GestorPlus necesita para funcionar!${RESET}"
   echo "Esto puede tardar un poco, ¡depende de la velocidad de tu internet!"
@@ -208,7 +221,7 @@ function install_dependencies() {
 
   echo -e "${GREEN}✅ ¡Herramientas instaladas o verificadas! ¡Vamos por buen camino!${RESET}"
 
-  # Validación post-instalación
+
   for cmd in docker docker-compose git npm figlet; do
     if ! command -v $cmd >/dev/null 2>&1; then
       echo -e "${RED}⚠️ La herramienta '${cmd}' no se encontró tras la instalación. Verifica manualmente.${RESET}"
@@ -219,7 +232,7 @@ function install_dependencies() {
 }
 
 
-# 5. La guarida de GestorPlus (clonando el repositorio)
+# 5. GestorPlus clonando el repositorio
 function clone_or_use_repo() {
   echo -e "${YELLOW}📦 Paso 4: ¡Trayendo el código de GestorPlus a tu equipo!${RESET}"
   local repo_dir="gestorplus"
