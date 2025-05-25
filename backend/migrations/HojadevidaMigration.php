@@ -15,6 +15,7 @@ class HojadevidaMigration {
             $stmt = $this->db->prepare("INSERT INTO hojadevida 
                 (idHojadevida, fechaNacimiento, direccion, ciudad, ciudadNacimiento, telefono, telefonoFijo, estadohojadevida, estadoCivil, genero, habilidades, portafolio) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                
             $stmt->execute([
                 $idhojadevida, $fechaNacimiento, $direccion, $ciudad, $ciudadNacimiento, $telefono,
                 $telefonoFijo, $estado, $estadoCivil, $genero, $habilidades, $portafolio
@@ -24,5 +25,6 @@ class HojadevidaMigration {
         } catch (\Exception $e) {
             echo "Error al insertar hoja de vida: " . $e->getMessage() . "\n";
         }
+
     }
 }
