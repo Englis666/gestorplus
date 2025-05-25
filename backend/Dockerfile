@@ -58,5 +58,8 @@ RUN composer install --no-dev --optimize-autoloader
 
 COPY . /var/www/html/
 
+# Crear la carpeta uploads y dar permisos (esto solo aplica si NO usas volumen para uploads)
+RUN mkdir -p /var/www/html/uploads && chmod 777 /var/www/html/uploads
+
 # Limpiar apt-get
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
