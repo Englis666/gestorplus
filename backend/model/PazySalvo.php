@@ -13,13 +13,18 @@ class PazySalvo {
     }
 
     public function obtenerPazYSalvos() {
-        $sql = "SELECT * FROM pazysalvo";
+        $sql = "SELECT * FROM pazysalvo
+                INNER JOIN vinculacion ON pazysalvo.vinculacion_idvinculacion = vinculacion.idvinculacion
+                INNER JOIN usuario ON vinculacion.usuario_num_doc = usuario.num_doc";
         return $this->dbService->ejecutarConsulta($sql);
     }
 
     public function obtenerMiPazYSalvo($num_doc) {
         try {
-            $sql = "SELECT idvinculacion FROM vinculacion WHERE usuario_num_doc = :num_doc";
+            $sql = "SELECT idvinculacion FROM vinculacion 
+                    INNER JOIN usuario ON vinculacion.usuario_num_doc = usuario.num_doc
+                    INNER JOIN pazysalvo ON vinculacion.idvinculacion = pazysalvo.vinculacion_idvinculacion
+                    WHERE usuario_num_doc = :num_doc";
             $vinculacion = $this->dbService->ejecutarConsulta($sql, [':num_doc' => $num_doc], true);
 
             if ($vinculacion) {
