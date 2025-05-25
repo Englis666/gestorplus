@@ -32,7 +32,6 @@ class AspiranteController extends BaseController {
         try {
             $resultado = $this->aspirante->aplicacionDeAspirante($num_doc, $idconvocatoria);
             if (!$resultado) {
-                // Cambio aquí para pasar un string como mensaje
                 $this->jsonResponseService->responderError('No se pudo completar la aplicación', 500);
                 return;
             }
