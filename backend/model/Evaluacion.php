@@ -55,7 +55,7 @@ class Evaluacion {
      * @param int $identrevista
      * @return array|null
      */
-    public function buscarIdEvaluacion(int $identrevista): ?array {
+    public function buscarIdEvaluacion(int $identrevista): array {
         $sql = "SELECT idevaluacion FROM evaluacionessg WHERE entrevista_identrevista = ?";
         $result = $this->dbService->ejecutarConsulta($sql, [$identrevista], true);
         return $result ?: null;
