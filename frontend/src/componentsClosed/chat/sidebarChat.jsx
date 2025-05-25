@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import API_URL from "../../config";
 
 const SidebarChat = ({ onChatSelect }) => {
   const [usuarios, setUsuarios] = useState([]);
@@ -21,7 +22,7 @@ const SidebarChat = ({ onChatSelect }) => {
 
   const fetchUsuarios = useCallback(async (action) => {
     try {
-      const { data } = await axios.get("http://localhost/gestorplus/backend/", {
+      const { data } = await axios.get(API_URL, {
         params: { action },
       });
 
@@ -53,15 +54,15 @@ const SidebarChat = ({ onChatSelect }) => {
     }
   }, [fetchUsuarios]);
 
-
-
   const handleChatSelection = async (num_doc_receptor) => {
     try {
-      if (!decodedToken) return handleError("No se pudo obtener el ID del usuario.");
+      if (!decodedToken)
+        return handleError("No se pudo obtener el ID del usuario.");
       const num_doc_emisor = decodedToken?.data?.num_doc;
-      if (!num_doc_emisor) return handleError("No se pudo obtener el ID del usuario.");
+      if (!num_doc_emisor)
+        return handleError("No se pudo obtener el ID del usuario.");
 
-      const { data } = await axios.post("http://localhost/gestorplus/backend/", {
+      const { data } = await axios.post(API_URL, {
         action: "obtenerOcrearChat",
         num_doc_emisor,
         num_doc_receptor,
@@ -89,7 +90,9 @@ const SidebarChat = ({ onChatSelect }) => {
           placeholder="Buscar empleado..."
         />
         {errorMessage && (
-          <div className="alert alert-danger mt-2 py-2 px-3">{errorMessage}</div>
+          <div className="alert alert-danger mt-2 py-2 px-3">
+            {errorMessage}
+          </div>
         )}
       </div>
 
