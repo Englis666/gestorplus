@@ -33,7 +33,8 @@ const TablaCargos = () => {
       await axios.patch(API_URL + "?action=desactivarCargo", { idCargo });
       await fetchCargos();
     } catch (err) {
-      const mensaje = err?.response?.data?.error ??
+      const mensaje =
+        err?.response?.data?.error ??
         "No se pudo desactivar el cargo. Inténtalo de nuevo.";
       alert(mensaje);
     }
@@ -56,19 +57,19 @@ const TablaCargos = () => {
   const columns = [
     {
       name: "Nombre del cargo",
-      selector: row => row.nombreCargo,
+      selector: (row) => row.nombreCargo,
       sortable: true,
       wrap: true,
     },
     {
       name: "Estado del cargo",
-      selector: row => row.estadoCargo,
+      selector: (row) => row.estadoCargo,
       sortable: true,
       center: true,
     },
     {
       name: "Desactivar",
-      cell: row => (
+      cell: (row) => (
         <button
           className="btn btn-danger btn-sm"
           onClick={() => desactivarCargo(row.idCargo ?? row.idcargo ?? row.id)}
@@ -84,7 +85,7 @@ const TablaCargos = () => {
     },
     {
       name: "Activar",
-      cell: row => (
+      cell: (row) => (
         <button
           className="btn btn-success btn-sm"
           onClick={() => activarCargo(row.idCargo ?? row.idcargo ?? row.id)}

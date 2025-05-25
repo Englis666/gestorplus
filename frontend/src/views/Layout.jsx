@@ -3,13 +3,11 @@ import Navbar from "../components/Navbar";
 import Convocatoria from "../components/Convocatoria";
 
 const Layout = () => {
-
-    return(
-        <div>
-        <Navbar></Navbar>
-        <Convocatoria></Convocatoria>
-        </div>
-
-    )
-}
+  return (
+    <div>
+      <Navbar></Navbar>
+      <Convocatoria></Convocatoria>
+    </div>
+  );
+};
 export default Layout;

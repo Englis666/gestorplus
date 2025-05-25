@@ -69,4 +69,27 @@ class Vacaciones {
             return false;
         }
     }
+    public function aceptarVacacion(int $idvacacion) {
+        try {
+            $sql = "UPDATE vacacion SET estadoVacacion = 'Aceptada' WHERE idvacacion = :idvacacion";
+            return $this->dbService->ejecutarUpdate($sql, [':idvacacion' => $idvacacion]);
+        } catch (Exception $e) {
+            error_log("Error al aceptar vacación: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function rechazarVacacion(int $idvacacion) {
+        try {
+            $sql = "UPDATE vacacion SET estadoVacacion = 'Rechazada' WHERE idvacacion = :idvacacion";
+            return $this->dbService->ejecutarUpdate($sql, [':idvacacion' => $idvacacion]);
+        } catch (Exception $e) {
+            error_log("Error al rechazar vacación: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
+
+
 }

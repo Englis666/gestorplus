@@ -56,19 +56,25 @@ class DatabaseService {
         }
     }
 
-    public function ejecutarUpdate(string $sql, array $params = []): bool {
+    public function ejecutarUpdate(string $sql, array $params = []): array {
         try {
             $stmt = $this->db->prepare($sql);
             if ($stmt === false) {
                 throw new PDOException('Error al preparar la consulta SQL');
             }
             $stmt->execute($params);
-            return $stmt->rowCount() > 0; 
+            return [
+                'exito' => true,
+                'filas_afectadas' => $stmt->rowCount()
+            ];
         } catch (PDOException $e) {
-            $this->jsonResponseService->responderError(['error' => 'Ocurrio un error al ejecutar la actualización', 'detalle' => $e->getMessage()]);
-            return false;
+            return [
+                'exito' => false,
+                'error' => $e->getMessage()
+            ];
         }
     }
+
     
     // Iniciar transacción
     public function iniciarTransaccion(): void {

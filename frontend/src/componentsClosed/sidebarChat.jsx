@@ -53,19 +53,22 @@ const SidebarChat = ({ onChatSelect }) => {
     }
   }, [fetchUsuarios]);
 
-
-
   const handleChatSelection = async (num_doc_receptor) => {
     try {
-      if (!decodedToken) return handleError("No se pudo obtener el ID del usuario.");
+      if (!decodedToken)
+        return handleError("No se pudo obtener el ID del usuario.");
       const num_doc_emisor = decodedToken?.data?.num_doc;
-      if (!num_doc_emisor) return handleError("No se pudo obtener el ID del usuario.");
+      if (!num_doc_emisor)
+        return handleError("No se pudo obtener el ID del usuario.");
 
-      const { data } = await axios.post("http://localhost/gestorplus/backend/", {
-        action: "obtenerOcrearChat",
-        num_doc_emisor,
-        num_doc_receptor,
-      });
+      const { data } = await axios.post(
+        "http://localhost/gestorplus/backend/",
+        {
+          action: "obtenerOcrearChat",
+          num_doc_emisor,
+          num_doc_receptor,
+        }
+      );
 
       if (data.status === "success") {
         onChatSelect(data.idChat);
@@ -89,7 +92,9 @@ const SidebarChat = ({ onChatSelect }) => {
           placeholder="Buscar empleado..."
         />
         {errorMessage && (
-          <div className="alert alert-danger mt-2 py-2 px-3">{errorMessage}</div>
+          <div className="alert alert-danger mt-2 py-2 px-3">
+            {errorMessage}
+          </div>
         )}
       </div>
 

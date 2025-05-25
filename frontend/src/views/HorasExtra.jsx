@@ -5,10 +5,7 @@ import TablaMinutosTrabajados from "../componentsClosed/tables/TablaMinutosTraba
 
 const HorasExtra = () => {
   return (
-    <div
-      className=" min-vh-100 d-flex"
-      style={{ overflow: "hidden" }}
-    >
+    <div className=" min-vh-100 d-flex" style={{ overflow: "hidden" }}>
       {/* Sidebar fijo */}
       <div style={{ width: "250px", minWidth: "250px" }}>
         <NavbarClosed />
@@ -19,7 +16,7 @@ const HorasExtra = () => {
           style={{
             display: "flex",
             gap: "2rem",
-            flexWrap: "wrap", 
+            flexWrap: "wrap",
             justifyContent: "center",
           }}
         >

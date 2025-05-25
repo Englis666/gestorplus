@@ -34,14 +34,17 @@ class VacacionesController extends BaseController {
         $this->jsonResponseService->responder(['message' => $mensaje]);
     }
 
-    public function aceptarVacacion(array $data): void{
+    public function aceptarVacacion(array $data): void {
+        $idvacacion = $data['idvacacion'];
         $vacaciones = $this->vacaciones->aceptarVacacion($idvacacion);
         $this->jsonResponseService->responder(['vacacionAceptada' => $vacaciones]);
     }
 
-    public function rechazarVacacion(array $data): void{
+    public function rechazarVacacion(array $data): void {
+        $idvacacion = $data['idvacacion']; 
         $vacaciones = $this->vacaciones->rechazarVacacion($idvacacion);
         $this->jsonResponseService->responder(['vacacionRechazada' => $vacaciones]);
     }
+
 
 }

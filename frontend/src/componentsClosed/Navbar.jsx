@@ -60,7 +60,8 @@ const NavbarClosed = ({ activeLink }) => {
 
   const isMenuItemActive = (item) => {
     if (item.path === activeLink) return true;
-    if (item.subMenu) return item.subMenu.some((sub) => sub.path === activeLink);
+    if (item.subMenu)
+      return item.subMenu.some((sub) => sub.path === activeLink);
     return false;
   };
 
@@ -71,14 +72,14 @@ const NavbarClosed = ({ activeLink }) => {
       height: "100vh",
       width: isCollapsed ? "80px" : "260px",
       background: "linear-gradient(to bottom, #ffffff, #eaf4ff)",
-      backgroundColor: "linear-gradient(to bottom, #ffffff, #eaf4ff)",  
+      backgroundColor: "linear-gradient(to bottom, #ffffff, #eaf4ff)",
       transition: "width 0.3s ease",
       boxShadow: "2px 0 10px rgba(0, 0, 0, 0.1)",
       overflowY: "auto",
       position: "relative",
-      zIndex: 1000,  
+      zIndex: 1000,
     },
-    
+
     toggleBtn: {
       border: "none",
       background: "none",
@@ -172,12 +173,12 @@ const NavbarClosed = ({ activeLink }) => {
     },
     {
       label: "Sección Novedades",
-        icon: "hourglass_empty",
-        subMenu: [
-          { label: "Permisos", icon: "event_available", path: "/Permisos" },
-          { label: "Vacaciones", icon: "beach_access", path: "/Vacaciones" },
-          { label: "Ausencias", icon: "event_busy", path: "/Ausencias" },
-        ],
+      icon: "hourglass_empty",
+      subMenu: [
+        { label: "Permisos", icon: "event_available", path: "/Permisos" },
+        { label: "Vacaciones", icon: "beach_access", path: "/Vacaciones" },
+        { label: "Ausencias", icon: "event_busy", path: "/Ausencias" },
+      ],
     },
     { label: "Paz y salvos", icon: "check_circle", path: "/PazYsalvo" },
     { label: "Publicaciones", icon: "library_books", path: "/Publicaciones" },
@@ -194,7 +195,11 @@ const NavbarClosed = ({ activeLink }) => {
       icon: "event_note",
       subMenu: [
         { label: "Entrevistas", icon: "event_note", path: "/Entrevistas" },
-        { label: "Sistema de Gestión", icon: "work", path: "/SistemaDeGestion" },
+        {
+          label: "Sistema de Gestión",
+          icon: "work",
+          path: "/SistemaDeGestion",
+        },
       ],
     });
     menuItems.push({
@@ -210,7 +215,11 @@ const NavbarClosed = ({ activeLink }) => {
       label: "GESTORPLUS IA",
       icon: "people",
       subMenu: [
-        { label: "Analizador IA hojas de vida de postulantes", icon: "people", path: "/AnalizadorDeHojasDeVida" },
+        {
+          label: "Analizador IA hojas de vida de postulantes",
+          icon: "people",
+          path: "/AnalizadorDeHojasDeVida",
+        },
       ],
     });
   }
@@ -218,13 +227,14 @@ const NavbarClosed = ({ activeLink }) => {
   return (
     <aside style={styles.navbar}>
       <button style={styles.toggleBtn} onClick={toggleCollapse}>
-        <span className="material-icons">{isCollapsed ? "menu_open" : "menu"}</span>
+        <span className="material-icons">
+          {isCollapsed ? "menu_open" : "menu"}
+        </span>
       </button>
 
       <div style={styles.logoContainer}>
         <img src={logo} alt="GestorPlus Logo" style={styles.logoImage} />
-        <span style={styles.logoText}>
-          Gestorplus</span>
+        <span style={styles.logoText}>Gestorplus</span>
       </div>
 
       <nav>
@@ -297,4 +307,3 @@ const NavbarClosed = ({ activeLink }) => {
 };
 
 export default NavbarClosed;
- 

@@ -43,7 +43,8 @@ const Estadisticas = () => {
         params: { action: "obtenerTotalEstadisticas" },
       })
       .then((res) => {
-        const { totalJornadas, totalActualizaciones, totalGenerales } = res.data;
+        const { totalJornadas, totalActualizaciones, totalGenerales } =
+          res.data;
 
         const totalJornadasNumber = Number(totalJornadas);
         const totalActualizacionesNumber = Number(totalActualizaciones);
@@ -69,7 +70,7 @@ const Estadisticas = () => {
   }, []);
 
   if (loading) return <div>Cargando estadísticas...</div>;
-  if (error)   return <div>{error}</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <section className="container-fluid d-flex justify-content-center mt-5">

@@ -1,7 +1,6 @@
-version: '3.9'
+version: "3.9"
 
 services:
-
   php:
     build:
       context: ./backend
@@ -24,7 +23,8 @@ services:
       - MAIL_PASSWORD=JLANaUHRTcVs3b0t
       - MAIL_FROM=no-reply@gestorplus.com
       - MAIL_FROM_NAME=Gestorplus
-    command: ["sh", "-c", "until nc -z gestorplus-db 3306; do sleep 1; done; php-fpm"]
+    command:
+      ["sh", "-c", "until nc -z gestorplus-db 3306; do sleep 1; done; php-fpm"]
 
   nginx:
     image: nginx:latest

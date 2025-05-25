@@ -41,8 +41,10 @@ const FormularioPublicacion = () => {
   const validar = () => {
     const newErrors = {};
     if (!form.titulo.trim()) newErrors.titulo = "El título es obligatorio.";
-    if (!form.descripcion.trim()) newErrors.descripcion = "La descripción es obligatoria.";
-    if (!form.usuario_num_doc) newErrors.usuario_num_doc = "El documento del usuario es obligatorio.";
+    if (!form.descripcion.trim())
+      newErrors.descripcion = "La descripción es obligatoria.";
+    if (!form.usuario_num_doc)
+      newErrors.usuario_num_doc = "El documento del usuario es obligatorio.";
     return newErrors;
   };
 
@@ -69,7 +71,9 @@ const FormularioPublicacion = () => {
   return (
     <div className="container mt-5 animate__animated animate__fadeIn">
       <div className="card shadow rounded-4 p-4">
-        <h2 className="text-center mb-4 fw-bold text-primary">Nueva Publicación</h2>
+        <h2 className="text-center mb-4 fw-bold text-primary">
+          Nueva Publicación
+        </h2>
 
         {enviado && (
           <div className="alert alert-success animate__animated animate__fadeInDown">
@@ -87,23 +91,31 @@ const FormularioPublicacion = () => {
               value={form.titulo}
               onChange={handleChange}
             />
-            {errors.titulo && <div className="invalid-feedback">{errors.titulo}</div>}
+            {errors.titulo && (
+              <div className="invalid-feedback">{errors.titulo}</div>
+            )}
           </div>
 
           <div className="mb-3">
             <label className="form-label fw-semibold">Descripción *</label>
             <textarea
               name="descripcion"
-              className={`form-control ${errors.descripcion ? "is-invalid" : ""}`}
+              className={`form-control ${
+                errors.descripcion ? "is-invalid" : ""
+              }`}
               rows="4"
               value={form.descripcion}
               onChange={handleChange}
             />
-            {errors.descripcion && <div className="invalid-feedback">{errors.descripcion}</div>}
+            {errors.descripcion && (
+              <div className="invalid-feedback">{errors.descripcion}</div>
+            )}
           </div>
 
           <div className="mb-3">
-            <label className="form-label fw-semibold">URL de la Imagen (opcional)</label>
+            <label className="form-label fw-semibold">
+              URL de la Imagen (opcional)
+            </label>
             <input
               type="file"
               name="imagen"
@@ -112,7 +124,11 @@ const FormularioPublicacion = () => {
             />
           </div>
 
-          <input type="hidden" name="usuario_num_doc" value={form.usuario_num_doc} />
+          <input
+            type="hidden"
+            name="usuario_num_doc"
+            value={form.usuario_num_doc}
+          />
 
           <div className="mb-3">
             <label className="form-label fw-semibold">Tipo de Contrato</label>
@@ -123,7 +139,9 @@ const FormularioPublicacion = () => {
               onChange={handleChange}
             >
               <option value="todos">Todos</option>
-              <option value="Prestación de servicios">Prestación de servicios</option>
+              <option value="Prestación de servicios">
+                Prestación de servicios
+              </option>
               <option value="Obra laboral">Obra laboral</option>
               <option value="Fijo">Fijo</option>
               <option value="Indefinido">Indefinido</option>

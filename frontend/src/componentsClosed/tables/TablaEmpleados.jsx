@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import DataTable from "react-data-table-component";
 
 const TablaEmpleados = () => {
@@ -61,37 +61,37 @@ const TablaEmpleados = () => {
   const columns = [
     {
       name: "Nombre y Apellido",
-      selector: row => row.nombres,
+      selector: (row) => row.nombres,
       sortable: true,
     },
     {
       name: "Email",
-      selector: row => row.email,
+      selector: (row) => row.email,
       sortable: true,
     },
     {
       name: "Rol en la empresa",
-      selector: row => row.nombreCargo,
+      selector: (row) => row.nombreCargo,
       sortable: true,
     },
     {
       name: "Tipo de documento",
-      selector: row => row.tipodDoc,
+      selector: (row) => row.tipodDoc,
       sortable: true,
     },
     {
       name: "Número de documento",
-      selector: row => row.num_doc,
+      selector: (row) => row.num_doc,
       sortable: true,
     },
     {
       name: "Inicio de contrato",
-      selector: row => row.fechaInicio,
+      selector: (row) => row.fechaInicio,
       sortable: true,
     },
     {
       name: "Fin de contrato",
-      selector: row => row.fechaFin,
+      selector: (row) => row.fechaFin,
       sortable: true,
     },
   ];

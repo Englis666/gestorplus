@@ -48,7 +48,7 @@ return[
     'notificacionRechazada' => ['notificacion', 'notificacionRechazada'],
     //vacaciones
     'aceptarVacacion' => ['vacaciones', 'aceptarVacacion'],
-    'rechazarVacacion' => ['vacaciones' , 'aceptarVacacion'],
+    'rechazarVacacion' => ['vacaciones' , 'rechazarVacacion'],
     //entrevista
     'asignarEntrevista' => ['entrevista', 'asignarEntrevista'],
     //vinculacion

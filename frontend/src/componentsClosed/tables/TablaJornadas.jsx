@@ -37,9 +37,9 @@ const TablaJornadas = () => {
         setRol(Rol);
 
         const action = {
-          "1": "obtenerTodasLasJornadas",
-          "2": "obtenerTodasLasJornadas",
-          "3": "obtenerJornadas",
+          1: "obtenerTodasLasJornadas",
+          2: "obtenerTodasLasJornadas",
+          3: "obtenerJornadas",
         }[Rol];
 
         axios
@@ -124,41 +124,6 @@ const TablaJornadas = () => {
       .catch(() => {
         alert("Hubo un problema al rechazar la jornada.");
       });
-  };
-
-  const handleFinalizarJornada = async (idJornada, fecha) => {
-    try {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("auth_token"))
-        ?.split("=")[1];
-
-      await axios.post("http://localhost/gestorplus/backend/", null, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: {
-          action: "finalizarJornada",
-          idJornada,
-          fecha,
-        },
-      });
-
-      setJornadas((prev) =>
-        prev.map((j) =>
-          j.idJornada === idJornada
-            ? {
-                ...j,
-                estadoJornada: "Finalizada",
-                horaSalida: new Date().toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
-              }
-            : j
-        )
-      );
-    } catch {
-      alert("Error al finalizar la jornada.");
-    }
   };
 
   const columnas = [

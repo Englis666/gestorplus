@@ -35,10 +35,13 @@ const PublicacionesComp = () => {
 
     const fetchPublicaciones = async () => {
       try {
-        const response = await axios.get("http://localhost/gestorplus/backend/", {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { action: "obtenerPublicacionPorTipoDeContrato" },
-        });
+        const response = await axios.get(
+          "http://localhost/gestorplus/backend/",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { action: "obtenerPublicacionPorTipoDeContrato" },
+          }
+        );
 
         console.log("Respuesta completa:", response.data);
 
@@ -57,13 +60,18 @@ const PublicacionesComp = () => {
   }, [token]);
 
   const eliminarPublicacion = async (id) => {
-    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar esta publicación?");
+    const confirmDelete = window.confirm(
+      "¿Estás seguro de que quieres eliminar esta publicación?"
+    );
     if (confirmDelete) {
       try {
-        const response = await axios.delete("http://localhost/gestorplus/backend/", {
-          headers: { Authorization: `Bearer ${token}` },
-          data: { action: "eliminarPublicacion", idPublicacion: id },
-        });
+        const response = await axios.delete(
+          "http://localhost/gestorplus/backend/",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            data: { action: "eliminarPublicacion", idPublicacion: id },
+          }
+        );
         if (response.status === 200) {
           setPublicaciones(publicaciones.filter((p) => p.idPublicacion !== id));
           alert("Publicación eliminada exitosamente");
@@ -79,7 +87,9 @@ const PublicacionesComp = () => {
 
   const guardarCambiosPublicacion = (publicacionEditada) => {
     const nuevasPublicaciones = publicaciones.map((p) =>
-      p.idPublicacion === publicacionEditada.idPublicacion ? publicacionEditada : p
+      p.idPublicacion === publicacionEditada.idPublicacion
+        ? publicacionEditada
+        : p
     );
     setPublicaciones(nuevasPublicaciones);
     setModalEditarAbierto(false);
@@ -88,8 +98,12 @@ const PublicacionesComp = () => {
   return (
     <main className="publicaciones-wrapper">
       <header className="blog-header text-center py-5 animate__animated animate__fadeInDown">
-        <h1 className="display-4 fw-bold text-black">Publicaciones La Fayette</h1>
-        <p className="lead text-black-50">Descubre las últimas novedades y actualizaciones en nuestro sistema.</p>
+        <h1 className="display-4 fw-bold text-black">
+          Publicaciones La Fayette
+        </h1>
+        <p className="lead text-black-50">
+          Descubre las últimas novedades y actualizaciones en nuestro sistema.
+        </p>
       </header>
 
       <div className="container my-5">
@@ -103,8 +117,12 @@ const PublicacionesComp = () => {
                   alt={publicacion.titulo}
                 />
                 <div className="card-body d-flex flex-column">
-                  <h5 className="card-title fw-semibold text-primary">{publicacion.titulo}</h5>
-                  <p className="card-text text-secondary">{publicacion.descripcion}</p>
+                  <h5 className="card-title fw-semibold text-primary">
+                    {publicacion.titulo}
+                  </h5>
+                  <p className="card-text text-secondary">
+                    {publicacion.descripcion}
+                  </p>
                   {rol === 1 || rol === 2 ? (
                     <div className="mt-auto d-flex justify-content-between">
                       <button
@@ -118,7 +136,9 @@ const PublicacionesComp = () => {
                       </button>
                       <button
                         className="btn btn-outline-danger d-flex align-items-center"
-                        onClick={() => eliminarPublicacion(publicacion.idPublicacion)}
+                        onClick={() =>
+                          eliminarPublicacion(publicacion.idPublicacion)
+                        }
                       >
                         <i className="material-icons me-2">delete</i> Eliminar
                       </button>
@@ -150,12 +170,25 @@ const PublicacionesComp = () => {
       )}
 
       {(rol === 1 || rol === 2) && (
-        <div className="modal fade" id="modalPublicacion" tabIndex="-1" aria-labelledby="modalPublicacionLabel" aria-hidden="true">
+        <div
+          className="modal fade"
+          id="modalPublicacion"
+          tabIndex="-1"
+          aria-labelledby="modalPublicacionLabel"
+          aria-hidden="true"
+        >
           <div className="modal-dialog modal-lg modal-dialog-centered">
             <div className="modal-content rounded-4 shadow">
               <div className="modal-header">
-                <h5 className="modal-title fw-bold" id="modalPublicacionLabel">Agregar nueva publicación</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <h5 className="modal-title fw-bold" id="modalPublicacionLabel">
+                  Agregar nueva publicación
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Cerrar"
+                ></button>
               </div>
               <div className="modal-body">
                 <FormularioPublicacion />

@@ -33,7 +33,6 @@ const Quejas = () => {
       navigate("/login");
       return;
     }
-
   }, [navigate, token]);
 
   return (
@@ -49,7 +48,6 @@ const Quejas = () => {
             <SidebarChat onChatSelect={setSelectedChatId} />
           </div>
           <div className="col-md-8 d-flex flex-column">
-
             <div
               className="flex-grow-1 overflow-auto px-4 py-3"
               style={{ backgroundColor: "#f8f9fa" }}

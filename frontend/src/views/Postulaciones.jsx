@@ -15,7 +15,7 @@ const Postulaciones = () => {
         style={{
           backgroundColor: "#ECF0F1",
           display: "flex",
-          gap: "20px", 
+          gap: "20px",
           alignItems: "flex-start",
           justifyContent: "space-between",
         }}

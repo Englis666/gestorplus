@@ -15,8 +15,8 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [pdfUrl, setPdfUrl] = useState("");
   const [selectedVinculacion, setSelectedVinculacion] = useState(null); // Estado para la vinculacion seleccionada
 
-  const isFormDataAvailable = num_doc && nombres && identrevista && idpostulacion;
-
+  const isFormDataAvailable =
+    num_doc && nombres && identrevista && idpostulacion;
 
   const [formData, setFormData] = useState({
     num_doc,
@@ -83,10 +83,13 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost/gestorplus/backend/", {
-        action: "asignarVinculacion",
-        ...formData,
-      });
+      const response = await axios.post(
+        "http://localhost/gestorplus/backend/",
+        {
+          action: "asignarVinculacion",
+          ...formData,
+        }
+      );
 
       if (response.data.Vinculacion) {
         alert("Vinculación asignada con éxito");
@@ -110,7 +113,6 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
     }
   };
 
-
   const handleSearch = async (e, num_doc) => {
     e.preventDefault();
     try {
@@ -118,15 +120,15 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
         params: { action: "obtenerContrato", num_doc },
         responseType: "blob",
       });
-  
+
       const contentType = response.headers["content-type"];
-  
+
       if (contentType !== "application/pdf") {
         const text = await response.data.text();
         const jsonError = JSON.parse(text);
         throw new Error(jsonError.error || "Error inesperado del servidor");
       }
-  
+
       const file = new Blob([response.data], { type: "application/pdf" });
       const fileURL = URL.createObjectURL(file);
       setPdfUrl(fileURL);
@@ -136,7 +138,6 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
       setErrorMessage(err.message || "Hubo un error al obtener el contrato.");
     }
   };
-  
 
   const closeModal = () => {
     setModalContratoAbierto(false);
@@ -184,12 +185,24 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                         <tr key={vinculacion.usuario_num_doc}>
                           <td>{vinculacion.usuario_num_doc}</td>
                           <td>{vinculacion.nombres}</td>
-                          <td>{new Date(vinculacion.fechaInicio).toLocaleDateString("es-ES")}</td>
-                          <td>{new Date(vinculacion.fechaFin).toLocaleDateString("es-ES")}</td>
+                          <td>
+                            {new Date(
+                              vinculacion.fechaInicio
+                            ).toLocaleDateString("es-ES")}
+                          </td>
+                          <td>
+                            {new Date(vinculacion.fechaFin).toLocaleDateString(
+                              "es-ES"
+                            )}
+                          </td>
                           <td>{vinculacion.tipoContrato}</td>
                           <td>${vinculacion.salario.toLocaleString()}</td>
                           <td>{vinculacion.estadoContrato}</td>
-                          <td>{new Date(vinculacion.fechaFirma).toLocaleDateString("es-ES")}</td>
+                          <td>
+                            {new Date(
+                              vinculacion.fechaFirma
+                            ).toLocaleDateString("es-ES")}
+                          </td>
                           <td>
                             <button
                               className="btn btn-primary"
@@ -204,7 +217,12 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                             </button>
                           </td> */}
                           <td>
-                            <button className="btn btn-primary" onClick={(e) => handleSearch(e, vinculacion.usuario_num_doc)}>
+                            <button
+                              className="btn btn-primary"
+                              onClick={(e) =>
+                                handleSearch(e, vinculacion.usuario_num_doc)
+                              }
+                            >
                               Revisar Contrato
                             </button>
                           </td>
@@ -227,16 +245,15 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
       {isFormDataAvailable && (
         <div className="row mt-4 container-fluid mt-5 card shadow-sm border-0 mb-5">
           <FormularioVinculacion
-              num_doc={num_doc}
-              nombres={nombres}
-              identrevista={identrevista}
-              idpostulacion={idpostulacion}
+            num_doc={num_doc}
+            nombres={nombres}
+            identrevista={identrevista}
+            idpostulacion={idpostulacion}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
           />
         </div>
       )}
-
 
       {/* Modal para subir contrato PDF */}
       {modalContratoAbierto && selectedVinculacion && (
@@ -252,9 +269,10 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
         <ModalVerContratoPdf pdfUrl={pdfUrl} closeModal={closeModal} />
       )}
 
-
       {/* Mostrar mensaje de error */}
-      {errorMessage && <div className="alert alert-danger mt-3">{errorMessage}</div>}
+      {errorMessage && (
+        <div className="alert alert-danger mt-3">{errorMessage}</div>
+      )}
     </div>
   );
 };

@@ -25,7 +25,10 @@ const TablaAusencias = () => {
   };
 
   const fetchAusencias = (token, rol) => {
-    const action = rol === "1" || rol === "2" ? "obtenerTodasLasAusencias" : "obtenerAusencias";
+    const action =
+      rol === "1" || rol === "2"
+        ? "obtenerTodasLasAusencias"
+        : "obtenerAusencias";
 
     axios
       .get("http://localhost/gestorplus/backend/", {
@@ -35,7 +38,8 @@ const TablaAusencias = () => {
       .then((response) => {
         const ausencias = response.data?.Ausencias;
         if (Array.isArray(ausencias)) setAusencias(ausencias);
-        else if (ausencias && typeof ausencias === "object") setAusencias([ausencias]);
+        else if (ausencias && typeof ausencias === "object")
+          setAusencias([ausencias]);
         else setAusencias([]);
         setLoading(false);
       })
@@ -173,9 +177,12 @@ const TablaAusencias = () => {
   const ausenciasFiltradas = filtroEstado
     ? ausencias.filter((a) => {
         const estado = a.justificada;
-        if (filtroEstado === "justificada") return estado === true || estado === "Justificada";
-        if (filtroEstado === "rechazada") return estado === false || estado === "Rechazada";
-        if (filtroEstado === "en proceso") return estado === null || estado === undefined || estado === "";
+        if (filtroEstado === "justificada")
+          return estado === true || estado === "Justificada";
+        if (filtroEstado === "rechazada")
+          return estado === false || estado === "Rechazada";
+        if (filtroEstado === "en proceso")
+          return estado === null || estado === undefined || estado === "";
         return true;
       })
     : ausencias;
@@ -209,8 +216,10 @@ const TablaAusencias = () => {
     {
       name: "Estado",
       selector: (row) => {
-        if (row.justificada === true || row.justificada === "Justificada") return "Justificada";
-        if (row.justificada === false || row.justificada === "Rechazada") return "Rechazada";
+        if (row.justificada === true || row.justificada === "Justificada")
+          return "Justificada";
+        if (row.justificada === false || row.justificada === "Rechazada")
+          return "Rechazada";
         return "En Proceso";
       },
       sortable: true,
@@ -246,7 +255,9 @@ const TablaAusencias = () => {
 
   return (
     <div className="mt-5">
-      <h2 className="mb-4 text-center text-dark font-weight-bold mt-4">Ausencias</h2>
+      <h2 className="mb-4 text-center text-dark font-weight-bold mt-4">
+        Ausencias
+      </h2>
 
       <div className="mb-3">
         <label htmlFor="filtroEstado" className="form-label ">

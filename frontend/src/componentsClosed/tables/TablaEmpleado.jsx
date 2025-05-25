@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Estadisticas from "../Estadisticas";
 import Grafica from "../Grafica";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import DataTable from "react-data-table-component";
 
 const TablaEmpleado = () => {
@@ -55,21 +55,24 @@ const TablaEmpleado = () => {
     }
 
     const actionMap = {
-      "1": "obtenerTodasLasNotificaciones",
-      "2": "obtenerTodasLasNotificaciones",
-      "3": "obtenerNotificaciones",
+      1: "obtenerTodasLasNotificaciones",
+      2: "obtenerTodasLasNotificaciones",
+      3: "obtenerNotificaciones",
     };
 
     const actionToSend = actionMap[Rol];
 
     const fetchNotificaciones = async () => {
       try {
-        const response = await axios.get("http://localhost/gestorplus/backend/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: { action: actionToSend },
-        });
+        const response = await axios.get(
+          "http://localhost/gestorplus/backend/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: { action: actionToSend },
+          }
+        );
 
         let notificaciones = [];
         if (response.data?.Notificaciones) {
@@ -107,32 +110,45 @@ const TablaEmpleado = () => {
   if (error) return <div>{error}</div>;
 
   // Filtrar notificaciones por tipo
-  const jornadaNotificaciones = notificaciones.filter((n) => n.tipo === "Jornada");
+  const jornadaNotificaciones = notificaciones.filter(
+    (n) => n.tipo === "Jornada"
+  );
   const actualizacionNotificaciones = notificaciones.filter((n) => {
     if (rol === "3") return n.tipo === "PostulacionAspirantes";
     if (rol === "1" || rol === "2") return n.tipo === "Postulacion";
     return false;
   });
-  const generalNotificaciones = notificaciones.filter((n) => n.tipo === "General");
+  const generalNotificaciones = notificaciones.filter(
+    (n) => n.tipo === "General"
+  );
 
   // Definir columnas para DataTable
   const columns = [
     {
       name: "Actividad",
-      selector: row => row.descripcionNotificacion,
+      selector: (row) => row.descripcionNotificacion,
       sortable: true,
       wrap: true,
-    }
+    },
   ];
 
   return (
     <div className="container mt-5">
       <Estadisticas />
-      <h2 className="mb-4 text-center text-dark fw-bold mt-4">Notificaciones</h2>
+      <h2 className="mb-4 text-center text-dark fw-bold mt-4">
+        Notificaciones
+      </h2>
       <div className="row g-4">
         {/* Notificaciones Generales */}
         <div className="col-12 col-md-6">
-          <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
+          <div
+            className="card shadow-sm border-0 mb-5"
+            style={{
+              maxHeight: "450px",
+              overflowY: "auto",
+              borderRadius: "10px",
+            }}
+          >
             <div className="card-body">
               <p>Notificaciones generales</p>
               <DataTable
@@ -149,7 +165,14 @@ const TablaEmpleado = () => {
 
         {/* Notificaciones de Actualización */}
         <div className="col-12 col-md-6">
-          <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
+          <div
+            className="card shadow-sm border-0 mb-5"
+            style={{
+              maxHeight: "450px",
+              overflowY: "auto",
+              borderRadius: "10px",
+            }}
+          >
             <div className="card-body">
               <p>Notificaciones de actualizaciones</p>
               <DataTable
@@ -166,7 +189,14 @@ const TablaEmpleado = () => {
 
         {/* Notificaciones de Jornada */}
         <div className="col-12 col-md-6">
-          <div className="card shadow-sm border-0 mb-5" style={{ maxHeight: "450px", overflowY: "auto", borderRadius: "10px" }}>
+          <div
+            className="card shadow-sm border-0 mb-5"
+            style={{
+              maxHeight: "450px",
+              overflowY: "auto",
+              borderRadius: "10px",
+            }}
+          >
             <div className="card-body">
               <p>Control de entradas de trabajo</p>
               <DataTable
