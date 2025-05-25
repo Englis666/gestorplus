@@ -1,4 +1,3 @@
--------------------------------------------------------------------------- START AUSENCIA -----------------------------------------------------------------------------------
 DELIMITER $$
 
 CREATE PROCEDURE SolicitarAusencia(
@@ -26,12 +25,6 @@ BEGIN
     );
 END$$
 
-DELIMITER ;
-
-
--- Procedimiento AusenciaAceptada --
-DELIMITER $$
-
 CREATE PROCEDURE AceptarAusencia(IN p_idausencia INT)
 BEGIN
     DECLARE p_num_doc VARCHAR(11);
@@ -46,80 +39,47 @@ BEGIN
     END IF;
 END$$
 
-DELIMITER ;
-
--- PROCEDIMIENTO ALMACENADO AUSENCIA RECHAZADA --
-DELIMITER $$
-
-CREATE PROCEDURE RechazarAusencia(IN p_ausencia INT)
+CREATE PROCEDURE RechazarAusencia(IN p_idausencia INT)
 BEGIN 
-    DECLARE p_num_doc INT(11)
+    DECLARE p_num_doc INT(11);
 
     SELECT usuario_num_doc INTO p_num_doc FROM ausencia WHERE idausencia = p_idausencia;
     
     IF p_num_doc IS NOT NULL THEN
-        UPDATE ausencia SET jusitifcada = 'Rechazada' WHERE idausencia = p_idausencia;
+        UPDATE ausencia SET justificada = 'Rechazada' WHERE idausencia = p_idausencia;
 
         INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo , num_doc)
-        VALUES ('Tu solicitud de ausencia ha sido rechazada' 'Rechazada', 'General', p_num_doc);
+        VALUES ('Tu solicitud de ausencia ha sido rechazada', 'Rechazada', 'General', p_num_doc);
     END IF;
 END$$
-
-DELIMITER ;
-
--- PROCEDIMIENTO ALMACENADO OBTENER AUSENCIAS --
-DELIMITER $$
 
 CREATE PROCEDURE ObtenerAusenciasPorUsuario(IN p_num_doc INT(11))
 BEGIN 
     SELECT * FROM ausencia WHERE usuario_num_doc = p_num_doc;
 END$$
 
-DELIMITER ;
-
--- PROCEDIMIENTO ALMACENADO ObtenerTodasLasAusencias --
-
-DELIMITER $$
-
 CREATE PROCEDURE ObtenerTodasLasAusencias()
 BEGIN 
     SELECT * FROM ausencia;
 END $$
 
-DELIMITER ; 
- 
------------------------------------------------------------------------------ END AUSENCIA ---------------------------------------------------------------
-
-------------------------------------------------------------------------------START CARGO-----------------------------------------------------------------
-
--- PROCEDIMIENTO ALMACENADO ActivarCargo --
-DELIMITER $$
-
-CREATE PROCEDURE ActivarCargo(in idcargo INT(11))
+CREATE PROCEDURE CrearAusencia(
+    IN p_fechaInicio DATE,
+    IN p_fechaFin DATE,
+    IN p_tipoAusencia VARCHAR(45),
+    IN p_descripcion TEXT,
+    IN p_justificada VARCHAR(45),
+    IN p_fechaRegistro DATE,
+    IN p_usuario_num_doc INT
+)
 BEGIN
-    UPDATE cargo SET estadoCargo = 'Activo' WHERE idcargo = idcargo;
-END $$
+    INSERT INTO ausencia (fechaInicio, fechaFin, tipoAusencia, descripcion, justificada, fechaRegistro, usuario_num_doc)
+    VALUES (p_fechaInicio, p_fechaFin, p_tipoAusencia, p_descripcion, p_justificada, p_fechaRegistro, p_usuario_num_doc);
+END$$
 
-DELIMITER ;
-
--- PROCEDIMIENTO ALMACENADO DesactivarCargo --
-DELIMITER $$
-
-CREATE PROCEDURE DesactivarCargo(IN idcargo INT(11))
-BEGIN 
-    UPDATE cargo set estadoCargo = 'Inactiva' WHERE idcargo = idcargo;
-END $$
-
-DELIMITER ;
-
--- Procedimiento almacenado ContarConvocatoriasRelacionadas --
-DELIMITER $$
-
-CREATE PROCEDURE ContarConvocatoriasRelacionadas(IN idcargo INT(11))
+CREATE PROCEDURE EliminarAusencia(IN p_idausencia INT)
 BEGIN
-    SELECT COUNT(*) AS total from convocatoria WHERE cargo_idCargo = idcargo;
-END $$
+    DELETE FROM ausencia WHERE idausencia = p_idausencia;
+END$$
 
 DELIMITER ;
-
--- Procedimiento almacenado 

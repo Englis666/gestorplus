@@ -1,4 +1,20 @@
-CREATE DATABASE `gestorplus` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
+-- Base de datos: `gestorplus`
+-- --------------------------------------------------------
+--
+-- MySQL dump 10.13  Distrib 8.0.32, for Linux (x86_64)
+--
+-- Host: gestorplus-db   Database: gestorplus
+-- ------------------------------------------------------
+-- Server version	8.0.32-0ubuntu0.20.04.3
+--
+-- SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+-- SET time_zone = "+00:00";
+-- SET NAMES utf8mb4;
+-- SET foreign_key_checks = 0;
+-- SET sql_notes = 0;
+--
+-- ------------------------------------------------------
+CREATE DATABASE `gestorplus` 
 
 
 CREATE TABLE `ausencia` (
