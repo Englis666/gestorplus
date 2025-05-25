@@ -49,7 +49,7 @@ class EvaluacionController extends BaseController{
             return;
         }
 
-        $evaluacion = $this->evaluacion->buscarIdEvaluacion($identrevista);
+        $evaluacion = $this->evaluacion->buscarIdEvaluacion((int) $identrevista);
         if ($evaluacion) {
             $this->responder(["encontrada" => true, "idevaluacion" => $evaluacion['idevaluacion']]);
         } else {
