@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+ */
+
 const Chat = ({ selectedChat, mensajes, numDocUsuario }) => {
   if (!Array.isArray(mensajes)) {
     return (

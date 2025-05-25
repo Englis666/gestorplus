@@ -1,4 +1,9 @@
 <?php
+/*
+ * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+ */
+
 //Este es un script realizado para verificar vulnerabilidades en gestorplus hecho por Acnth666(Englis666)
 //No me hago responsable del uso irresponsable de este script.
 $form_url = 'URL_FORM';

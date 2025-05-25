@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+ */
+
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import ModalHojaDeVida from "../componentsClosed/modals/ModalHojadevida";

@@ -1,4 +1,9 @@
 <?php
+/*
+ * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+ */
+
 use PHPUnit\Framework\TestCase;
 use Model\Auth;
 use Service\DatabaseService;

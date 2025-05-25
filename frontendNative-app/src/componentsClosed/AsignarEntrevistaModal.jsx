@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+ */
+
 import React, { useState } from "react";
 import { Modal, View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
 import axios from "axios";

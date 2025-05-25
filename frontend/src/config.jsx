@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+ */
+
 const API_URL = "http://localhost/"; // Dependiendo el entorno, puede ser localhost o la URL de producción
 // En producción, puedes usar una variable de entorno para definir la URL
 // Por ejemplo, en un archivo .env puedes definir REACT_APP_API_URL=http://api.example.com

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+ */
+
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Asegúrate de tener instalada y configurada una biblioteca de iconos

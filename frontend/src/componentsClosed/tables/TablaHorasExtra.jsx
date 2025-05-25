@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+ */
+
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { jwtDecode } from "jwt-decode";

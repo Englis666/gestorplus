@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+ */
+
 import React from "react";
 import { View, TextInput, Button, Text } from "react-native";
 import { Picker } from '@react-native-picker/picker'; // Asegúrate de importar Picker desde el paquete correcto

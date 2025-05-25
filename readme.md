@@ -152,5 +152,12 @@ Muchas gracias y Consulta la documentación para detalles de uso y distribución
 
 ---
 
+> **AVISO LEGAL:**  
+> Este software y todo su código fuente son propiedad exclusiva de CodeAdvance.  
+> Queda estrictamente prohibida la copia, redistribución, uso no autorizado o ingeniería inversa del código, total o parcial, sin el consentimiento expreso y por escrito de CodeAdvance.  
+> El incumplimiento será sancionado conforme a la ley.
+
+---
+
 **¿Dudas o sugerencias?**  
 Consulta la documentación en [`/Docs`](Docs/) o contacta al equipo de desarrollo.
