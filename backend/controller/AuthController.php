@@ -42,7 +42,9 @@ class AuthController extends BaseController{
             $this->jsonResponseService->responder(['status' => 'error', 'message' => 'Número de documento y contraseña son requeridos'], 400);
             return;
         }
-    
+        $num_doc = trim($data['num_doc']);
+        $password = trim($data['password']);
+
         $usuario = $this->auth->inicioSesion(['num_doc' => trim($data['num_doc']), 'password' => trim($data['password'])]);
         if (!$usuario) {
             $this->jsonResponseService->responder(['status' => 'error', 'message' => 'Credenciales incorrectas'], 401);
@@ -64,10 +66,7 @@ class AuthController extends BaseController{
     
         $token = JWT::encode($payload, \Config\Clave::SECRET_KEY, \Config\Clave::JWT_ALGO);
     
-        header('Content-Type: application/json');
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+        
         
         $this->jsonResponseService->responder([
             'status' => 'success', 
