@@ -1,32 +1,58 @@
 # Creado por Englis Alexander Barros Osuna Desarrolador de software
+
 # README Para estudios de Estilos y Componentes
 
 Este archivo README está diseñado para estudiar los principales estilos y clases que utilicé en los componentes del front-end de mi aplicación. A continuación se describen los detalles de cómo estructuré y diseñé los componentes usando **Bootstrap** y estilos personalizados.
 
 ---
 
-### `npm start`
-Este comando ejecuta la aplicación en modo de desarrollo.\
-La página se recargará automáticamente cada vez que realices cambios.\
-También podrás ver cualquier error de lint en la consola.
+# GestorPlus Frontend
 
-### `npm test`
-
-Este comando lanza el corredor de pruebas en modo interactivo.
+Este proyecto es el **frontend de GestorPlus**, una plataforma moderna para la gestión de talento humano y procesos administrativos en empresas.  
+Desarrollado en **React**, utiliza componentes reutilizables, estilos personalizados y librerías populares para ofrecer una experiencia de usuario ágil, responsiva y profesional.
 
 ---
 
-## Dependencias
+## Instalación y uso
 
-Estas son las dependencias que instalé en el proyecto:
+1. **Instala las dependencias:**
 
-- **Bootstrap**: `npm install bootstrap`
-- **Axios**: `npm install axios`
-- **React-Router-Dom**: `npm install react-router-dom`
-- **Material Icons**: `npm install @material-icons/font`
-- **CHARTJS**: `npm install chart.js react-chartjs-2`
-  **JSPDF**: 'npm install jspdf'
+   ```sh
+   npm install
+   ```
 
+2. **Ejecuta la aplicación:**
+
+   ```sh
+   npm start
+   ```
+
+   Este comando ejecuta la aplicación en modo de desarrollo.\
+   La página se recargará automáticamente cada vez que realices cambios.\
+   También podrás ver cualquier error de lint en la consola.
+
+3. **Corre las pruebas:**
+
+   ```sh
+   npm test
+   ```
+
+   Este comando lanza el corredor de pruebas en modo interactivo.
+
+---
+
+# Principales dependencias
+
+Bootstrap: npm install bootstrap
+Axios: npm install axios
+React Router Dom: npm install react-router-dom
+Material Icons: npm install @material-icons/font
+Chart.js y react-chartjs-2: npm install chart.js react-chartjs-2
+jsPDF: npm install jspdf
+react-big-calendar y moment: npm install react-big-calendar moment
+animate.css: npm install animate.css
+
+---
 
 ---
 
@@ -41,6 +67,7 @@ Este componente es el menú lateral de la aplicación. Lo diseñé para ser comp
 #### Estilos y clases:
 
 - **Clases de Bootstrap**:
+
   - `col-12 col-md-3 col-lg-2`: Hice que el menú ocupe el 100% del ancho en pantallas pequeñas, el 25% en pantallas medianas, y el 16.6% en pantallas grandes.
   - `d-flex align-items-center`: Usé Flexbox para centrar los elementos del menú verticalmente.
   - `text-dark`: Apliqué un color oscuro al texto para asegurar que fuera legible.
@@ -53,8 +80,10 @@ Este componente es el menú lateral de la aplicación. Lo diseñé para ser comp
   - `borderTopRightRadius`, `borderBottomRightRadius`: Redondeé las esquinas del menú para darle un toque más amigable y moderno.
 
 # Libreria animate.css
+
 Con esta libreria es facil animar las cosas la clase para animacion es
- - `animate_animated animate_fadeInDown` 
+
+- `animate_animated animate_fadeInDown`
 
 ---
 
@@ -65,6 +94,7 @@ El componente **TablaEmpleado** muestra las notificaciones de los empleados de m
 #### Estilos y clases:
 
 - **Clases de Bootstrap**:
+
   - `table-responsive`: Usé esta clase para que la tabla sea responsiva y se pueda desplazar horizontalmente en pantallas pequeñas.
   - `table-striped`: Apliqué rayas alternas en las filas de la tabla para mejorar la legibilidad.
   - `table-bordered`: Añadí bordes alrededor de la tabla y sus celdas para mejorar la claridad visual.
@@ -82,27 +112,28 @@ El componente **TablaEmpleado** muestra las notificaciones de los empleados de m
 
 El componente **Estadisticas** muestra información visual con tarjetas. Estas tarjetas tienen un diseño atractivo y moderno.
 
-
 ### 4. `Calendario y moment` (Componente de CalendarioDeEntrevistas)
-El componente **CalendarioDeEntrevistas** que esta en las vistas de admin y recursos humanos en la vista **Citas.jsx** usa una dependencia de react que es **npm install react-big-calendar moment** eso significa que son dos 
+
+El componente **CalendarioDeEntrevistas** que esta en las vistas de admin y recursos humanos en la vista **Citas.jsx** usa una dependencia de react que es **npm install react-big-calendar moment** eso significa que son dos
 
 ## Calendario Usos{
-  npm: 
-  react-big-calendar: Para el calendario.
-  moment: Para manejar fechas y horas.
 
-  ## Estilos personalizados para los eventos:
+npm:
+react-big-calendar: Para el calendario.
+moment: Para manejar fechas y horas.
 
-  Se usa eventPropGetter para aplicar estilos personalizados a los eventos del calendario (color azul, bordes redondeados, etc.).
+## Estilos personalizados para los eventos:
 
-  Se usa tooltipAccessor para mostrar el título del evento como un tooltip al pasar el cursor sobre él.
-   
+Se usa eventPropGetter para aplicar estilos personalizados a los eventos del calendario (color azul, bordes redondeados, etc.).
+
+Se usa tooltipAccessor para mostrar el título del evento como un tooltip al pasar el cursor sobre él.
+
 ## };
-
 
 #### Estilos y clases:
 
 - **Clases de Bootstrap**:
+
   - `container-fluid`: Utilicé esta clase para que el contenedor ocupe todo el ancho disponible.
   - `row`: Para organizar los elementos de forma flexible y responsiva.
   - `col-12 col-md-5 col-lg-6`: Hice que las tarjetas tengan un ancho proporcional según el tamaño de la pantalla (100% en pantallas pequeñas, 41.6% en pantallas medianas y 50% en pantallas grandes).
@@ -115,4 +146,8 @@ El componente **CalendarioDeEntrevistas** que esta en las vistas de admin y recu
   - `padding: "1.4rem"`: Puse un relleno en las tarjetas para que el contenido no toque los bordes.
   - `height: "11rem"`, `width: "11rem"`: Definí un tamaño fijo para las tarjetas para que se mantuvieran proporcionales y bien alineadas.
 
+# Licencia
 
+Este frontend es propiedad de CodeAdvance.
+Queda prohibida su copia, redistribución o uso no autorizado sin el consentimiento expreso de los autores.
+Consulta el archivo LICENCIA en la raíz del proyecto para más detalles.
