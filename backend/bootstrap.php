@@ -2,18 +2,11 @@
 
 use Core\Router;
 
-require_once __DIR__ . '/vendor/autoload.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, x-estudio-id, x-experiencia-id");
-    header("Access-Control-Allow-Credentials: true");
-    exit;
-}
 
 header("Content-Type: application/json; charset=UTF-8");
 
+require_once __DIR__ . '/vendor/autoload.php';
 // Cargar variables de entorno si usas .env
 // $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 // $dotenv->load();
