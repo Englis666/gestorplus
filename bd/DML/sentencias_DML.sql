@@ -1,11 +1,13 @@
 /* ************************************************************************************* */
-/* ---------------------------------------- DML ---------------------------------------- */
 /* -------------------------- DATA MANIPULATION LANGUAGE ------------------------------- */
-/* -------------------------- LENGUAJE DE MANIPULACIÓN DE DATOS ------------------------ */
-/* ------------------------------------------------------------------------------------- */
-/* ************************************************************************************* */
+/* ***************************************************************************************
+        ____  __  __ _        ____ _____ ____ _____ ___  ____  ____  _    _   _ ____
+        |  _ \|  \/  | |      / ___| ____/ ___|_   _/ _ \|  _ \|  _ \| |  | | | / ___|
+        | | | | |\/| | |     | |  _|  _| \___ \ | || | | | |_) | |_) | |  | | | \___ \
+        | |_| | |  | | |___  | |_| | |___ ___) || || |_| |  _ <|  __/| |__| |_| |___) |
+        |____/|_|  |_|_____|  \____|_____|____/ |_| \___/|_| \_\_|   |_____\___/|____/
 
-/* ===================== DML UNA TABLA ===================== */
+/* ***************************************DML UNA TABLA *********************************  */ */
 
 /* 01. Insertar un usuario (una tabla) */
 INSERT INTO usuario (num_doc, nombres, apellidos, email, tipodDoc, password, estado, hojadevida_idHojadevida, rol_idrol)
@@ -55,29 +57,8 @@ VALUES (1, '2024-06-01', '2024-06-03', 'Enfermedad', 'No', 1001);
 INSERT INTO vacacion (idvacacion, fechaInicio, fechaFin, estadoVacacion, usuario_num_doc)
 VALUES (1, '2024-07-01', '2024-07-15', 'Pendiente', 1001);
 
-/* ===================== DML UNA TABLA ===================== */
 
-/* Insertar un usuario */
-INSERT INTO usuario (num_doc, nombres, apellidos, email, tipodDoc, password, estado, hojadevida_idHojadevida, rol_idrol)
-VALUES (1003, 'Laura', 'Martínez', 'laura.martinez@email.com', 'CC', 'clave123', 1, 2, 1);
-
-/* Actualizar el estado de un usuario */
-UPDATE usuario
-SET estado = 0
-WHERE num_doc = 1003;
-
-/* Eliminar un usuario */
-DELETE FROM usuario
-WHERE num_doc = 1003;
-
-/* Consultar todas las vacaciones */
-SELECT * FROM vacacion;
-
-/* Insertar un rol */
-INSERT INTO rol (idrol, nombreRol)
-VALUES (2, 'Empleado');
-
-/* ===================== DML MULTITABLA (JOIN) ===================== */
+/* ***************************************DML MULTITABLA JOIN *********************************  */ */
 
 /* Consultar usuarios y su rol */
 SELECT u.num_doc, u.nombres, u.apellidos, r.nombreRol
