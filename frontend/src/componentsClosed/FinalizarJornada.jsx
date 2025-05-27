@@ -76,6 +76,7 @@ const FinalizarJornada = () => {
 
       if (response.data?.JornadaFinalizada) {
         setMensaje("✅ Jornada finalizada correctamente.");
+        localStorage.setItem("jornadaFinalizada", "true");
       } else {
         setMensaje("⚠️ No se pudo finalizar la jornada.");
       }
