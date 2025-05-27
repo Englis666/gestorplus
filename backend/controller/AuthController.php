@@ -8,6 +8,8 @@ namespace Controller;
 
 use Core\Controllers\BaseController;
 use Model\Auth;
+use Service\AntiAttackForce;
+use Predis\Client as RedisClient;
 use Service\TokenService;
 use Exception;
 use Firebase\JWT\JWT;
@@ -15,11 +17,20 @@ use Firebase\JWT\JWT;
 class AuthController extends BaseController{
     private Auth $auth;
     private TokenService $tokenService;
+    private AntiAttackForce $antiAttackForce;
 
     public function __construct() {
         parent::__construct();
         $this->auth = new Auth($this->dbService);
         $this->tokenService = new TokenService();
+
+        $redis = new RedisClient([
+            'scheme' => 'tcp',
+            'host' => 'gestorplus-redis',
+            'port' => 6379
+        ]);
+        $this->antiAttackForce = new AntiAttackForce($redis);
+
     }
 
     private function verificarToken(): ?object {
@@ -42,6 +53,7 @@ class AuthController extends BaseController{
     }
 
     public function iniciar($data) {
+        $this->antiAttackForce->detectSuspiciousUserAgent();
         if (empty($data['num_doc']) || empty($data['password'])) {
             $this->jsonResponseService->responder(['status' => 'error', 'message' => 'Número de documento y contraseña son requeridos'], 400);
             return;
@@ -49,15 +61,21 @@ class AuthController extends BaseController{
         $num_doc = trim($data['num_doc']);
         $password = trim($data['password']);
 
-        $usuario = $this->auth->inicioSesion(['num_doc' => trim($data['num_doc']), 'password' => trim($data['password'])]);
-        if (!$usuario) {
+        $this->antiAttackForce->checkLoginAttempts($num_doc);
+
+        $usuario = $this->auth->inicioSesion(['num_doc' => $num_doc, 'password' => $password]);
+        $loginSuccess = (bool)$usuario;
+
+        $this->antiAttackForce->registerLoginAttempt($num_doc, $loginSuccess);
+
+        if (!$loginSuccess) {
             $this->jsonResponseService->responder(['status' => 'error', 'message' => 'Credenciales incorrectas'], 401);
             return;
         }
     
         $payload = [
             'iss' => '/',
-            'aud' => 'localhost,192.168.194.70', //Cambiar dependiendo de el servidor
+            'aud' => 'localhost,192.168.194.70', 
             'iat' => time(),
             'exp' => time() + 3600,
             'data' => [
