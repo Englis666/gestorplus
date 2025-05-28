@@ -45,9 +45,13 @@ services:
       MYSQL_DATABASE: "gestorplus"
       TZ: America/Bogota
     volumes:
-      - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql
       # Esto es para inicializar la base de datos dependiendo el orden de los archivos
       #- ./bd:/docker-entrypoint-initdb.d
+      - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql
+
+    # Los puertos no se usan en produccion, solo para desarrollo
+    # ya que el contenedor de php se conecta a la base de datos a traves de la red interna
+    #
     ports:
       - "3306:3306"
     networks:

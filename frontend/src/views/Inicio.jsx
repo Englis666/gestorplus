@@ -47,6 +47,21 @@ const Inicio = () => {
     return null;
   };
 
+  // Banner solo para roles 1, 2, 3 y jornada no finalizada
+  const token = getCookie("auth_token");
+  let showBanner = false;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      const rol = Number(decoded?.data?.rol);
+      const jornadaFinalizada =
+        localStorage.getItem("jornadaFinalizada") === "true";
+      if ([1, 2, 3].includes(rol) && !jornadaFinalizada) {
+        showBanner = true;
+      }
+    } catch {}
+  }
+
   return (
     <div
       className="bg-light min-vh-100"
@@ -54,6 +69,21 @@ const Inicio = () => {
     >
       <NavbarClosed />
       <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
+        {showBanner && (
+          <div
+            style={{
+              background: "#ffcccc",
+              color: "#a94442",
+              padding: "12px",
+              textAlign: "center",
+              fontWeight: "bold",
+              zIndex: 9999,
+              marginBottom: "16px",
+            }}
+          >
+            ⚠️ Debes finalizar la jornada antes de salir del sistema.
+          </div>
+        )}
         <TablaEmpleado />
       </div>
     </div>

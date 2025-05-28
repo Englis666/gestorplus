@@ -37,7 +37,6 @@ const PublicacionesComp = () => {
 
     const Rol = Number(decodedToken?.data?.rol);
     setRol(Rol);
-    console.log("ROL:", Rol);
 
     const fetchPublicaciones = async () => {
       try {
@@ -45,8 +44,6 @@ const PublicacionesComp = () => {
           headers: { Authorization: `Bearer ${token}` },
           params: { action: "obtenerPublicacionPorTipoDeContrato" },
         });
-
-        console.log("Respuesta completa:", response.data);
 
         const publicacionesObtenidas = response.data.Publicaciones;
         if (Array.isArray(publicacionesObtenidas)) {

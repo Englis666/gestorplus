@@ -48,8 +48,10 @@ const Login = () => {
 
           const decoded = decodeToken(token);
           const role = decoded?.data?.rol;
+          localStorage.setItem("rol", role);
+          localStorage.setItem("jornadaFinalizada", "false");
           if (["1", "2", "3"].includes(role)) {
-            navigate("/inicio");
+            navigate("/Inicio");
           } else {
             navigate("/aspirante/inicio");
           }
