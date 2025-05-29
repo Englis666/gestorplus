@@ -17,84 +17,111 @@ class Calculo {
     }
 
     public function calcularHorasExtra() {
-        $sql = "SELECT * FROM jornada j
-                INNER JOIN usuario u ON j.usuario_num_doc = u.num_doc
-                INNER JOIN rol r ON u.rol_idrol = r.idrol
-                WHERE WEEK(j.fecha) = WEEK(CURDATE())";
+    // Función para convertir decimal horas a string HH:MM:SS
+    function decimalHorasAStrTiempo(float $horasDecimal): string {
+        $horas = floor($horasDecimal);
+        $minutos = floor(($horasDecimal - $horas) * 60);
+        $segundos = round((($horasDecimal - $horas) * 60 - $minutos) * 60);
 
-        $jornadas = $this->dbService->ejecutarConsulta($sql);
+        return sprintf('%02d:%02d:%02d', $horas, $minutos, $segundos);
+    }
 
-        if (empty($jornadas)) {
-            return [];
+    $sql = "SELECT * FROM jornada j
+            INNER JOIN usuario u ON j.usuario_num_doc = u.num_doc
+            INNER JOIN rol r ON u.rol_idrol = r.idrol
+            WHERE WEEK(j.fecha) = WEEK(CURDATE())";
+
+    $jornadas = $this->dbService->ejecutarConsulta($sql);
+
+    if (empty($jornadas)) {
+        return [];
+    }
+
+    $totalHorasSemana = [];
+    $datosUsuario = [];
+
+    foreach ($jornadas as $jornada) {
+        $num_doc = $jornada['usuario_num_doc'];
+
+        $horaEntradaStr = $jornada['horaEntrada'] ?? null;
+        $horaSalidaStr = $jornada['horaSalida'] ?? null;
+
+        $horaEntrada = $horaEntradaStr ? strtotime($horaEntradaStr) : false;
+        $horaSalida = $horaSalidaStr ? strtotime($horaSalidaStr) : false;
+
+        if ($horaEntrada === false || $horaSalida === false) {
+            // Si alguna hora no es válida, consideramos cero horas trabajadas
+            $horasTrabajadas = 0;
+        } else {
+            $horasTrabajadas = ($horaSalida - $horaEntrada) / 3600;
         }
 
-        $totalHorasSemana = [];
-        $datosUsuario = [];
+        $totalHorasSemana[$num_doc] = ($totalHorasSemana[$num_doc] ?? 0) + $horasTrabajadas;
+        $datosUsuario[$num_doc] = [
+            'nombres' => $jornada['nombres'],
+            'nombreRol' => $jornada['nombreRol']
+        ];
+    }
 
-        foreach ($jornadas as $jornada) {
-            $num_doc = $jornada['usuario_num_doc'];
-            $horaEntrada = strtotime($jornada['horaEntrada']);
-            $horaSalida = strtotime($jornada['horaSalida']);
-            $horasTrabajadas = ($horaSalida - $horaEntrada) / 3600;
+    $jornadasExtra = [];
 
-            $totalHorasSemana[$num_doc] = ($totalHorasSemana[$num_doc] ?? 0) + $horasTrabajadas;
-            $datosUsuario[$num_doc] = [
-                'nombres' => $jornada['nombres'],
-                'nombreRol' => $jornada['nombreRol']
+    foreach ($totalHorasSemana as $num_doc => $totalHoras) {
+        if ($totalHoras > 48) {
+            $horasExtra = $totalHoras - 48;
+            $jornadasExtra[] = [
+                'num_doc' => $num_doc,
+                'nombres' => $datosUsuario[$num_doc]['nombres'],
+                'nombreRol' => $datosUsuario[$num_doc]['nombreRol'],
+                'horasExtra' => $horasExtra,
             ];
         }
+    }
 
-        $jornadasExtra = [];
+    foreach ($jornadasExtra as $jornada) {
+        $sql = "SELECT horasExtra FROM horaextra 
+                WHERE usuario_num_doc = :num_doc 
+                AND DATE(fecha) = CURDATE()";
 
-        foreach ($totalHorasSemana as $num_doc => $totalHoras) {
-            if ($totalHoras > 48) {
-                $horasExtra = $totalHoras - 48;
-                $jornadasExtra[] = [
-                    'num_doc' => $num_doc,
-                    'nombres' => $datosUsuario[$num_doc]['nombres'],
-                    'nombreRol' => $datosUsuario[$num_doc]['nombreRol'],
-                    'horasExtra' => $horasExtra,
-                ];
-            }
-        }
+        $params = [':num_doc' => $jornada['num_doc']];
+        $result = $this->dbService->ejecutarConsulta($sql, $params, true);
 
-        foreach ($jornadasExtra as $jornada) {
-            $sql = "SELECT horasExtra FROM horaextra 
-                    WHERE usuario_num_doc = :num_doc 
-                    AND DATE(fecha) = CURDATE()";
+        $horasExtraStr = decimalHorasAStrTiempo($jornada['horasExtra']);
 
-            $params = [':num_doc' => $jornada['num_doc']];
-            $result = $this->dbService->ejecutarConsulta($sql, $params, true);
+        if ($result) {
+            $horasExistentes = $result['horasExtra'];
 
-            if ($result) {
-                $horasExistentes = $result['horasExtra'];
+            // Compara horasExtra en formato decimal
+            // Convertimos horasExistentes de "HH:MM:SS" a decimal para comparar correctamente
+            list($h, $m, $s) = explode(':', $horasExistentes);
+            $horasExistentesDecimal = $h + $m/60 + $s/3600;
 
-                if ($jornada['horasExtra'] > $horasExistentes) {
-                    $sql = "UPDATE horaextra 
-                            SET horasExtra = :horasExtra 
-                            WHERE usuario_num_doc = :num_doc 
-                            AND DATE(fecha) = CURDATE()";
-
-                    $params = [
-                        ':num_doc' => $jornada['num_doc'],
-                        ':horasExtra' => gmdate("H:i:s", $jornada['horasExtra'] * 3600),
-                    ];
-                    $this->dbService->ejecutarUpdate($sql, $params);
-                }
-            } else {
-                $sql = "INSERT INTO horaextra (usuario_num_doc, horasExtra, fecha) 
-                        VALUES (:num_doc, :horasExtra, CURDATE())";
+            if ($jornada['horasExtra'] > $horasExistentesDecimal) {
+                $sql = "UPDATE horaextra 
+                        SET horasExtra = :horasExtra 
+                        WHERE usuario_num_doc = :num_doc 
+                        AND DATE(fecha) = CURDATE()";
 
                 $params = [
                     ':num_doc' => $jornada['num_doc'],
-                    ':horasExtra' => gmdate("H:i:s", $jornada['horasExtra'] * 3600),
+                    ':horasExtra' => $horasExtraStr,
                 ];
-                $this->dbService->ejecutarInsert($sql, $params);
+                $this->dbService->ejecutarUpdate($sql, $params);
             }
-        }
+        } else {
+            $sql = "INSERT INTO horaextra (usuario_num_doc, horasExtra, fecha) 
+                    VALUES (:num_doc, :horasExtra, CURDATE())";
 
-        return $jornadasExtra;
+            $params = [
+                ':num_doc' => $jornada['num_doc'],
+                ':horasExtra' => $horasExtraStr,
+            ];
+            $this->dbService->ejecutarInsert($sql, $params);
+        }
     }
+
+    return $jornadasExtra;
+}
+
 
     public function calcularPostulacionesEnConvocatorias() {
         $sql = "SELECT c.*, ca.nombreCargo, COUNT(p.idpostulacion) as cantidad_postulaciones, p.idpostulacion
