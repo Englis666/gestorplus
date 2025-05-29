@@ -22,4 +22,10 @@ class HorasExtra {
         $sql = "SELECT * FROM horaextra";
         return $this->dbService->ejecutarConsulta($sql);
     }
+
+    public function obtenerMisHorasExtra(int $num_doc){
+        $sql = "SELECT * FROM horasextra WHERE num_doc = :num_doc";
+        return $this->dbService->ejecutarConsulta($sql, [':num_doc' => $num_doc]);
+    }
+
 }
