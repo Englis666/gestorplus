@@ -1,12 +1,7 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
+import { useState, useEffect } from "react";
+import { solicitarPermiso } from "../../services/PermisosService";
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import API_URL from "../../config";
-const SolicitudPermiso = () => {
+const SolicitudPermiso = ({ onSuccess }) => {
   const [formData, setFormData] = useState({
     tipo: "",
     fechaInicio: "",
@@ -15,25 +10,11 @@ const SolicitudPermiso = () => {
 
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState("");
-  const [token, setToken] = useState(null);
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  };
-
-  useEffect(() => {
-    const authToken = getCookie("auth_token");
-    if (authToken) {
-      setToken(authToken);
-    }
-  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
+    setSuccess("");
   };
 
   const validate = () => {
@@ -62,37 +43,21 @@ const SolicitudPermiso = () => {
     }
 
     try {
-      const response = await axios.post(
-        API_URL,
-        {
-          action: "solicitarPermiso",
-          ...formData,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response);
-      if (response.status === 200) {
-        setSuccess("Permiso solicitado con éxito.");
-        setFormData({ tipo: "", fechaInicio: "", fechaFin: "" });
-      } else {
-        setErrors({
-          general: response.data.message || "Error al enviar la solicitud.",
-        });
+      const nuevoPermiso = await solicitarPermiso(formData);
+      setSuccess("Permiso solicitado con éxito.");
+      setFormData({ tipo: "", fechaInicio: "", fechaFin: "" });
+      setErrors({});
+
+      if (onSuccess) {
+        onSuccess(nuevoPermiso); // Avisar al padre para actualizar tabla
       }
     } catch (error) {
-      if (error.response) {
-        setErrors({
-          general: error.response.data.message || "Error del servidor.",
-        });
-      } else if (error.request) {
-        setErrors({ general: "No se recibió respuesta del servidor." });
-      } else {
-        setErrors({ general: "Error de conexión: " + error.message });
-      }
+      setErrors({
+        general:
+          error.response?.data?.message ||
+          error.message ||
+          "Error al enviar la solicitud.",
+      });
     }
   };
 
@@ -137,6 +102,7 @@ const SolicitudPermiso = () => {
                 <div className="invalid-feedback">{errors.tipo}</div>
               )}
             </div>
+
             <div className="row">
               <div className="col-md-6 mb-3">
                 <label htmlFor="fechaInicio" className="form-label">
