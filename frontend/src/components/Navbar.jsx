@@ -36,7 +36,7 @@ const Navbar = () => {
     };
 
     if (user) fetchNotifications();
-  }, [user]);
+  }, [user, token]);
 
   const handleLogout = () => {
     document.cookie =
