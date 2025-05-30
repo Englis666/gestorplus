@@ -8,10 +8,8 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  Navigate,
   useLocation,
   useNavigate,
-  Outlet,
 } from "react-router-dom";
 import { UserProvider } from "./context/userContext";
 import RoleRoute from "./context/RoleRoute";
@@ -37,18 +35,6 @@ const isTokenExpired = (token) => {
   } catch {
     return true;
   }
-};
-
-// Componente PrivateRoute
-const PrivateRoute = () => {
-  const token = getCookie("auth_token");
-  const location = useLocation();
-
-  if (!token || isTokenExpired(token)) {
-    return <Navigate to="/Login" state={{ from: location }} replace />;
-  }
-
-  return <Outlet />;
 };
 
 const AuthCheck = () => {
