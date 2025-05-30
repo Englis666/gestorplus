@@ -1,56 +1,30 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
+import { useState, useEffect } from "react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { obtenerEstadisticas } from "../services/EstadisticasService";
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import EstadisticaCard from "./card/EstadisticaCard";
-import API_URL from "../config";
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
+
 const Estadisticas = () => {
-  const [totalEntradas, setTotalEntradas] = useState(0);
-  const [totalActualizaciones, setTotalActualizaciones] = useState(0);
-  const [notificacionesGenerales, setNotificacionesGenerales] = useState(0);
+  const [data, setData] = useState([
+    { name: "Actualizaciones", value: 0 },
+    { name: "Entradas", value: 0 },
+    { name: "Notificaciones", value: 0 },
+  ]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    };
-
-    const token = getCookie("auth_token");
-    if (!token) {
-      setError("No se encontró un token de autenticación.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const decoded = jwtDecode(token);
-      if (decoded.exp * 1000 < Date.now()) {
-        setError("El token ha expirado.");
-        setLoading(false);
-        return;
-      }
-    } catch {
-      setError("Token inválido.");
-      setLoading(false);
-      return;
-    }
-
-    axios
-      .get(API_URL, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { action: "obtenerTotalEstadisticas" },
-      })
-      .then((res) => {
+    const cargarEstadisticas = async () => {
+      try {
         const { totalJornadas, totalActualizaciones, totalGenerales } =
-          res.data;
+          await obtenerEstadisticas();
 
         const totalJornadasNumber = Number(totalJornadas);
         const totalActualizacionesNumber = Number(totalActualizaciones);
@@ -63,41 +37,101 @@ const Estadisticas = () => {
         ) {
           setError("Datos no válidos en la respuesta.");
         } else {
-          setTotalEntradas(totalJornadasNumber);
-          setTotalActualizaciones(totalActualizacionesNumber);
-          setNotificacionesGenerales(totalGeneralesNumber);
+          setData([
+            { name: "Actualizaciones", value: totalActualizacionesNumber },
+            { name: "Entradas", value: totalJornadasNumber },
+            { name: "Notificaciones", value: totalGeneralesNumber },
+          ]);
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error(err);
         setError("Error al obtener las estadísticas.");
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarEstadisticas();
   }, []);
 
-  if (loading) return <div>Cargando estadísticas...</div>;
-  if (error) return <div>{error}</div>;
-
-  return (
-    <section className="container-fluid d-flex justify-content-center mt-5">
-      <div className="row g-5">
-        <EstadisticaCard
-          icon="trending_up"
-          title="Actualizaciones de información"
-          value={totalActualizaciones}
-        />
-        <EstadisticaCard
-          icon="trending_up"
-          title="Entradas al trabajo"
-          value={totalEntradas}
-        />
-        <EstadisticaCard
-          icon="trending_up"
-          title="Notificaciones Generales"
-          value={notificacionesGenerales}
+  if (loading)
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center mt-5"
+        style={{ height: "300px" }}
+        role="status"
+        aria-live="polite"
+      >
+        <div
+          className="spinner-border text-primary"
+          aria-label="Cargando estadísticas"
         />
       </div>
-    </section>
+    );
+
+  if (error)
+    return (
+      <div
+        className="alert alert-danger mt-5 text-center"
+        role="alert"
+        aria-live="assertive"
+      >
+        {error}
+      </div>
+    );
+
+  return (
+    <div className="row g-4">
+      <div className="col-lg-12 col-md-12">
+        <div className="card shadow-sm rounded-3 p-3 h-100">
+          <h5 className="card-title mb-3 text-center text-success fw-semibold">
+            Distribución en Pie Chart
+          </h5>
+          <ResponsiveContainer width="100%" height={320}>
+            <PieChart>
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={90}
+                fill="#82ca9d"
+                labelLine={true}
+                label={({ name, percent }) =>
+                  `${name}: ${(percent * 100).toFixed(1)}%`
+                }
+                isAnimationActive={true}
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value) => [value, "Cantidad"]}
+                contentStyle={{
+                  backgroundColor: "#f5f5f5",
+                  borderRadius: "8px",
+                }}
+              />
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                iconType="circle"
+                wrapperStyle={{
+                  fontSize: "14px",
+                  color: "#555",
+                  flexWrap: "wrap",
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
   );
 };
 
