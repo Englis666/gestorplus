@@ -3,7 +3,6 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React from "react";
 import NavbarClosed from "../componentsClosed/Navbar";
 import TablaJornadas from "../componentsClosed/tables/TablaJornadas";
 import FinalizarJornada from "../componentsClosed/FinalizarJornada";
