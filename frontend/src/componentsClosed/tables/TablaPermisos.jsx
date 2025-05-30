@@ -1,119 +1,72 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
-import React, { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import SolicitudPermiso from "../form/FormularioSolicitudPermisos";
-import API_URL from "../../config";
+import { decodedTokenWithRol } from "../../utils/Auth";
+import {
+  obtenerPermisosDependiendoRol,
+  permisoAceptado,
+  permisoRechazado,
+} from "../../services/PermisosService";
 
 const TablaPermisos = () => {
   const [permisos, setPermisos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rol, setRol] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    };
-
-    const token = getCookie("auth_token");
-
-    if (token) {
+    const fetchPermisos = async () => {
       try {
-        const decodedToken = jwtDecode(token);
-        if (decodedToken?.exp * 1000 < Date.now()) {
-          setError("El token ha expirado.");
-          setLoading(false);
-          return;
-        }
-
-        const Rol = decodedToken?.data?.rol;
-        setRol(Rol);
-
-        const action =
-          Rol === "1" || Rol === "2"
-            ? "obtenerTodosLosPermisos"
-            : Rol === "3"
-            ? "obtenerPermisos"
-            : null;
-        if (!action) {
-          setError("Rol no reconocido.");
-          setLoading(false);
-          return;
-        }
-
-        axios
-          .get(API_URL, {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { action },
-          })
-          .then((res) => {
-            const data = res.data?.permisos;
-            setPermisos(Array.isArray(data) ? data : []);
-            setLoading(false);
-          })
-          .catch(() => {
-            setError("Hubo un problema al cargar los permisos.");
-            setLoading(false);
-          });
-      } catch {
-        setError("Token inválido o malformado.");
+        setLoading(true);
+        const rolObtenido = decodedTokenWithRol();
+        setRol(rolObtenido);
+        const data = await obtenerPermisosDependiendoRol(rolObtenido);
+        setPermisos(data);
+      } catch (err) {
+        setError(err.message || "Error al obtener permisos.");
+      } finally {
         setLoading(false);
       }
-    } else {
-      setError("Token no encontrado.");
-      setLoading(false);
-    }
-  }, []);
+    };
 
-  const handleAceptar = (idPermisos) => {
-    axios
-      .post(API_URL, {
-        action: "permisoAceptado",
-        idPermisos,
-      })
-      .then(() => {
-        alert("Permiso aceptado con éxito.");
-        setPermisos((prev) =>
-          prev.map((permiso) =>
-            permiso.idPermisos === idPermisos
-              ? { ...permiso, aprobado: true }
-              : permiso
-          )
-        );
-      })
-      .catch(() => alert("Hubo un problema al aceptar el permiso."));
+    fetchPermisos();
+  }, [refreshTrigger]);
+
+  const recargarPermisos = () => setRefreshTrigger((prev) => prev + 1);
+
+  const handleAceptar = async (idPermisos) => {
+    try {
+      await permisoAceptado(idPermisos);
+      alert("Permiso aceptado con éxito.");
+      setPermisos((prev) =>
+        prev.map((permiso) =>
+          permiso.idPermisos === idPermisos
+            ? { ...permiso, estadoPermiso: "Aceptada" }
+            : permiso
+        )
+      );
+    } catch (error) {
+      console.error("Error al aceptar el permiso:", error);
+      alert("Hubo un problema al aceptar el permiso.");
+    }
   };
 
-  const handleRechazar = (idPermisos) => {
-    axios
-      .post(API_URL, {
-        action: "permisoRechazado",
-        idPermisos,
-      })
-      .then((response) => {
-        if (response.data.success) {
-          alert("Permiso rechazado con éxito.");
-          setPermisos((prev) =>
-            prev.map((permiso) =>
-              permiso.idPermisos === idPermisos
-                ? { ...permiso, aprobado: false }
-                : permiso
-            )
-          );
-        } else {
-          alert("Hubo un problema al rechazar el permiso.");
-        }
-      })
-      .catch(() => alert("Hubo un problema al rechazar el permiso."));
+  const handleRechazar = async (idPermisos) => {
+    try {
+      await permisoRechazado(idPermisos);
+      alert("Permiso rechazado con éxito.");
+      setPermisos((prev) =>
+        prev.map((permiso) =>
+          permiso.idPermisos === idPermisos
+            ? { ...permiso, estadoPermiso: "Rechazada" }
+            : permiso
+        )
+      );
+    } catch (error) {
+      console.error("Error al rechazar el permiso:", error);
+      alert("Hubo un problema al rechazar el permiso.");
+    }
   };
 
   const columns = [
@@ -210,7 +163,7 @@ const TablaPermisos = () => {
           </div>
         </div>
         <div className="col-md-4">
-          <SolicitudPermiso />
+          <SolicitudPermiso onSuccess={recargarPermisos} />{" "}
         </div>
       </div>
     </div>
