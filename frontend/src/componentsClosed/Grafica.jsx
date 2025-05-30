@@ -1,10 +1,4 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -15,8 +9,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { jwtDecode } from "jwt-decode";
-import API_URL from "../config";
+import { obtenerEstadisticas } from "../services/EstadisticasService";
+import { decodedTokenWithRol } from "../utils/Auth";
 
 ChartJS.register(
   CategoryScale,
@@ -35,64 +29,26 @@ const Grafica = () => {
   const [rol, setRol] = useState(null);
 
   useEffect(() => {
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    };
-    const token = getCookie("auth_token");
-
-    if (token) {
+    const cargarDatos = async () => {
       try {
-        const decodedToken = jwtDecode(token);
-
-        const isTokenExpired = decodedToken.exp * 1000 < Date.now();
-        if (isTokenExpired) {
-          console.error("El token ha expirado.");
-          setError("El token ha expirado.");
-          setLoading(false);
-          return;
-        }
-        const Rol = decodedToken?.data?.rol;
-        setRol(Rol);
-
-        axios
-          .get(API_URL, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: { action: "obtenerTotalEstadisticas" },
-          })
-          .then((response) => {
-            const { totalJornadas, totalActualizaciones } = response.data;
-            setTotalJornadas(totalJornadas);
-            setTotalActualizaciones(totalActualizaciones);
-            setLoading(false);
-          })
-          .catch((err) => {
-            console.error("Error al obtener las estadísticas:", err);
-            setError("Hubo un problema al cargar las estadísticas.");
-            setLoading(false);
-          });
-      } catch (error) {
-        console.error("Error al decodificar el token:", error);
-        setError("Token inválido o malformado.");
+        const rolObtenido = decodedTokenWithRol();
+        setRol(rolObtenido);
+        const data = await obtenerEstadisticas();
+        setTotalJornadas(data.totalJornadas);
+        setTotalActualizaciones(data.totalActualizaciones);
+      } catch (err) {
+        console.error("Error al cargar estadísticas:", err);
+        setError("No se pudieron cargar las estadísticas.");
+      } finally {
         setLoading(false);
       }
-    } else {
-      setError("No se encontró el token.");
-      setLoading(false);
-    }
+    };
+
+    cargarDatos();
   }, []);
 
-  if (loading) {
-    return <div>Cargando gráfico...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Cargando gráfico...</div>;
+  if (error) return <div>{error}</div>;
 
   const data = {
     labels: ["Estadísticas"],
@@ -114,7 +70,6 @@ const Grafica = () => {
     ],
   };
 
-  // Opciones para la gráfica
   const options = {
     responsive: true,
     plugins: {
@@ -132,8 +87,8 @@ const Grafica = () => {
       y: {
         beginAtZero: true,
         ticks: {
-          max: Math.max(totalJornadas, totalActualizaciones) + 1, // Ajustamos para ver todos los valores
           stepSize: 1,
+          max: Math.max(totalJornadas, totalActualizaciones) + 1,
         },
       },
     },
