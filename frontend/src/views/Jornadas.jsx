@@ -1,35 +1,29 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
 import NavbarClosed from "../componentsClosed/Navbar";
 import TablaJornadas from "../componentsClosed/tables/TablaJornadas";
 import FinalizarJornada from "../componentsClosed/FinalizarJornada";
+
 const Jornadas = () => {
   return (
     <div
-      className="bg-light min-vh-100"
-      style={{ transition: "all 3s ease", display: "flex" }}
+      className="bg-light min-vh-100 d-flex"
+      style={{ transition: "all 0.5s ease" }}
     >
       <NavbarClosed />
       <div
         className="flex-grow-1 p-4"
-        style={{ backgroundColor: "#ECF0F1", display: "flex" }}
+        style={{ backgroundColor: "#ECF0F1", width: "100%" }}
       >
-        <div style={{ flex: 2 }}>
-          <TablaJornadas />
-        </div>
+        <div className="d-flex flex-column flex-lg-row" style={{ gap: "1rem" }}>
+          <div className="flex-fill mb-3 mb-lg-0" style={{ flex: 2 }}>
+            <TablaJornadas />
+          </div>
 
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <FinalizarJornada />
+          <div
+            className="flex-fill d-flex justify-content-center align-items-center"
+            style={{ flex: 1 }}
+          >
+            <FinalizarJornada />
+          </div>
         </div>
       </div>
     </div>

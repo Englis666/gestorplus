@@ -139,12 +139,12 @@ const TablaJornadas = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="container mt-4">
+    <div className="container-fluid mt-4">
       <h2 className="text-center mb-4 text-dark fw-bold">
         Jornadas (Control de Entrada de Trabajo)
       </h2>
 
-      <div className="row mb-3">
+      <div className="row mb-3 justify-content-center">
         <div className="col-md-6">
           <input
             type="date"
@@ -170,6 +170,17 @@ const TablaJornadas = () => {
       </div>
 
       <DataTable
+        className="table-responsive"
+        title="Lista de Jornadas"
+        fixedHeader
+        defaultSortField="fecha"
+        defaultSortAsc={false}
+        sortIcon={<span className="material-icons">sort</span>}
+        paginationComponentOptions={{
+          rowsPerPageText: "Filas por página:",
+          rangeSeparatorText: "de",
+        }}
+        paginationPerPage={4}
         columns={columnas}
         data={filtrado}
         pagination

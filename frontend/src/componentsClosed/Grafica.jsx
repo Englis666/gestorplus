@@ -47,8 +47,8 @@ const Grafica = () => {
     cargarDatos();
   }, []);
 
-  if (loading) return <div>Cargando gráfico...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className="text-center">Cargando gráfico...</div>;
+  if (error) return <div className="text-center text-danger">{error}</div>;
 
   const data = {
     labels: ["Estadísticas"],
@@ -72,6 +72,8 @@ const Grafica = () => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
+    aspectRatio: 2, // Opcional: mejor control en pantallas chicas
     plugins: {
       title: {
         display: true,
@@ -95,26 +97,20 @@ const Grafica = () => {
   };
 
   return (
-    <div className="container">
-      <div
-        className="card shadow-lg border-0 mb-5"
-        style={{
-          borderRadius: "15px",
-          width: "500px",
-          height: "400px",
-          overflow: "hidden",
-        }}
-      >
+    <div className="container-fluid">
+      <div className="card shadow-lg border-0 mb-4">
         <div className="card-body p-4">
-          <h5
-            className="text-center mb-4"
-            style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#333" }}
-          >
+          <h5 className="text-center mb-4" style={{ fontWeight: "bold" }}>
             Gráfica de Estadísticas Globales
           </h5>
           <div
             className="chart-container"
-            style={{ position: "relative", height: "400px" }}
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "300px",
+              minHeight: "250px",
+            }}
           >
             <Bar data={data} options={options} />
           </div>

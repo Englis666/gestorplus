@@ -41,12 +41,12 @@ const TablaEmpleado = () => {
   const generales = notificaciones.filter((n) => n.tipo === "General");
 
   return (
-    <div className="container mt-5 mb-5">
+    <div className="container-fluid px-3 mt-4 mb-5">
       <div className="row g-4 mb-4">
-        <div className="col-md-6 col-12">
+        <div className="col-lg-6 col-md-12">
           <Estadisticas />
         </div>
-        <div className="col-md-6 col-12">
+        <div className="col-lg-6 col-md-12">
           <Grafica />
         </div>
       </div>

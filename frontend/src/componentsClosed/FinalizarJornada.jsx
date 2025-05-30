@@ -45,12 +45,12 @@ const FinalizarJornada = () => {
   };
 
   return (
-    <div className="container my-5 d-flex justify-content-center">
+    <div className="container p-3">
       <div
-        className="card shadow-lg border-0"
+        className="card shadow-lg border-0 mx-auto"
         style={{ maxWidth: "500px", width: "100%" }}
       >
-        <div className="card-body text-center">
+        <div className="card-body p-4">
           <h5 className="card-title mb-3 fw-bold">Finalizar Jornada</h5>
           <p className="card-text text-muted">
             Esto es obligatorio, debes hacer clic en el botón para registrar el
