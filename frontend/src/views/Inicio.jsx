@@ -64,17 +64,26 @@ const Inicio = () => {
 
   return (
     <div
-      className="bg-light min-vh-100"
-      style={{ transition: "all 3s ease", display: "flex" }}
+      className="min-vh-100 "
+      style={{
+        transition: "all 3s ease",
+        display: "flex",
+        backgroundColor: "#ECF0F1",
+      }}
     >
       <NavbarClosed />
-      <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
+      <div
+        className="flex-grow-1"
+        style={{ backgroundColor: "#ECF0F1", padding: "10px" }}
+      >
         {showBanner && (
           <div
             style={{
               background: "#ffcccc",
               color: "#a94442",
-              padding: "12px",
+              padding: "5px",
+              borderRadius: "5px",
+              top: "0",
               textAlign: "center",
               fontWeight: "bold",
               zIndex: 9999,
