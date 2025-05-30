@@ -75,9 +75,8 @@ const Certificados = () => {
   const handleDownload = () => {
     const doc = new jsPDF({ unit: "mm", format: "a4" });
 
-    const marginLeft = 25; // Márgenes APA (2.54 cm)
-    const marginRight = 185; // Ancho máximo (210mm - 25mm * 2)
-    const lineHeight = 7; // Espaciado entre líneas para simular interlineado doble
+    const marginLeft = 25;
+    const lineHeight = 7;
     const startY = 30; // Punto de inicio del contenido
     let currentY = startY;
 
