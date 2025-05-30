@@ -46,7 +46,6 @@ const NavbarClosed = ({ activeLink }) => {
 
   const handleLogout = () => {
     logout();
-    if (isMounted) navigate("/");
   };
 
   const toggleCollapse = () => {
@@ -74,13 +73,13 @@ const NavbarClosed = ({ activeLink }) => {
     navbar: {
       display: "flex",
       flexDirection: "column",
-      height: "100vh",
+      height: "auto",
       width: isCollapsed ? "80px" : "260px",
       background: "linear-gradient(to bottom, #ffffff, #eaf4ff)",
       backgroundColor: "linear-gradient(to bottom, #ffffff, #eaf4ff)",
       transition: "width 0.3s ease",
       boxShadow: "2px 0 10px rgba(0, 0, 0, 0.1)",
-      overflowY: "auto",
+
       position: "relative",
       zIndex: 1000,
     },
@@ -98,13 +97,14 @@ const NavbarClosed = ({ activeLink }) => {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      padding: "1.5rem 0",
-      gap: "0.5rem",
       transition: "all 0.3s ease",
     },
     logoImage: {
-      height: isCollapsed ? "140px" : "180px", // más grande
-      width: isCollapsed ? "140px" : "180px",
+      height: isCollapsed ? "40px" : "60px",
+      marginBottom: isCollapsed ? "0" : "10px",
+      width: isCollapsed ? "40px" : "60px",
+      maxWidth: "100%",
+      maxHeight: "100%",
       borderRadius: "16px",
       objectFit: "contain",
       transition: "all 0.3s ease",
@@ -190,6 +190,14 @@ const NavbarClosed = ({ activeLink }) => {
     { label: "PQRS", icon: "report_problem", path: "/Quejas" },
     { label: "Mi perfil", icon: "person", path: "/Perfil" },
     { label: "Certificados", icon: "description", path: "/Certificados" },
+    {
+      label: "Cerrar sesión",
+      icon: "logout",
+      path: "/",
+      onClick: handleLogout,
+      style: styles.logout,
+      isLogout: true,
+    },
   ];
 
   if (rol === "1" || rol === "2") {
@@ -301,11 +309,6 @@ const NavbarClosed = ({ activeLink }) => {
             )}
           </div>
         ))}
-
-        <div style={styles.logout} onClick={handleLogout}>
-          <span className="material-icons">exit_to_app</span>
-          {!isCollapsed && <span>Cerrar sesión</span>}
-        </div>
       </nav>
     </aside>
   );
