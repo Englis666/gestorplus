@@ -1,15 +1,9 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import Estadisticas from "../Estadisticas";
 import Grafica from "../Grafica";
-import { jwtDecode } from "jwt-decode";
-import DataTable from "react-data-table-component";
-import API_URL from "../../config.jsx";
+import SeccionNotificaciones from "../Notifications/SeccionNotificaciones.jsx";
+import { decodedTokenWithRol } from "../../utils/Auth.jsx";
+import { obtenerNotificacionesDependiendoRol } from "../../services/NotififacionesService.jsx";
 
 const TablaEmpleado = () => {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -18,206 +12,55 @@ const TablaEmpleado = () => {
   const [rol, setRol] = useState(null);
 
   useEffect(() => {
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    };
-
-    const token = getCookie("auth_token");
-
-    if (!token) {
-      setError("No hay token disponible.");
-      setLoading(false);
-      return;
-    }
-
-    let decodedToken;
-    try {
-      decodedToken = jwtDecode(token);
-    } catch (err) {
-      console.error("Error al decodificar el token:", err);
-      setError("Token inválido.");
-      setLoading(false);
-      return;
-    }
-
-    if (!decodedToken?.data?.rol) {
-      setError("Token inválido o sin rol definido.");
-      setLoading(false);
-      return;
-    }
-
-    const Rol = decodedToken.data.rol;
-    setRol(Rol);
-
-    const isTokenExpired = decodedToken.exp * 1000 < Date.now();
-    if (isTokenExpired) {
-      console.error("El token ha expirado.");
-      setError("El token ha expirado.");
-      setLoading(false);
-      return;
-    }
-
-    const actionMap = {
-      1: "obtenerTodasLasNotificaciones",
-      2: "obtenerTodasLasNotificaciones",
-      3: "obtenerNotificaciones",
-    };
-
-    const actionToSend = actionMap[Rol];
-
-    const fetchNotificaciones = async () => {
+    const cargarNotificaciones = async () => {
       try {
-        const response = await axios.get(API_URL, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: { action: actionToSend },
-        });
-
-        let notificaciones = [];
-        if (response.data?.Notificaciones) {
-          notificaciones = response.data.Notificaciones;
-        } else if (
-          response.data?.status === "Notificaciones" &&
-          Array.isArray(response.data?.message)
-        ) {
-          notificaciones = response.data.message;
-        } else {
-          console.error("Formato de notificaciones no reconocido");
-        }
-
-        if (Array.isArray(notificaciones)) {
-          setNotificaciones(notificaciones);
-        } else {
-          setNotificaciones([]);
-        }
-        setLoading(false);
+        const rolObtenido = decodedTokenWithRol();
+        setRol(rolObtenido);
+        const data = await obtenerNotificacionesDependiendoRol(rolObtenido);
+        setNotificaciones(data);
       } catch (err) {
-        console.error("Error al obtener las notificaciones:", err);
-        setError("Hubo un problema al cargar las notificaciones.");
+        console.error("Error al cargar notificaciones:", err);
+        setError("No se pudieron cargar las notificaciones.");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchNotificaciones();
-
-    const intervalId = setInterval(fetchNotificaciones, 10000);
-
-    return () => clearInterval(intervalId);
+    cargarNotificaciones();
   }, []);
 
-  if (loading) return <div>Cargando notificaciones...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading)
+    return <div className="text-center mt-5">Cargando notificaciones...</div>;
+  if (error)
+    return <div className="alert alert-danger text-center mt-5">{error}</div>;
 
-  // Filtrar notificaciones por tipo
-  const jornadaNotificaciones = notificaciones.filter(
-    (n) => n.tipo === "Jornada"
+  const jornada = notificaciones.filter((n) => n.tipo === "Jornada");
+  const actualizaciones = notificaciones.filter((n) =>
+    rol === "3" ? n.tipo === "PostulacionAspirantes" : n.tipo === "Postulacion"
   );
-  const actualizacionNotificaciones = notificaciones.filter((n) => {
-    if (rol === "3") return n.tipo === "PostulacionAspirantes";
-    if (rol === "1" || rol === "2") return n.tipo === "Postulacion";
-    return false;
-  });
-  const generalNotificaciones = notificaciones.filter(
-    (n) => n.tipo === "General"
-  );
-
-  // Definir columnas para DataTable
-  const columns = [
-    {
-      name: "Actividad",
-      selector: (row) => row.descripcionNotificacion,
-      sortable: true,
-      wrap: true,
-    },
-  ];
+  const generales = notificaciones.filter((n) => n.tipo === "General");
 
   return (
-    <div className="container mt-5">
-      <Estadisticas />
-      <h2 className="mb-4 text-center text-dark fw-bold mt-4">
-        Notificaciones
-      </h2>
-      <div className="row g-4">
-        {/* Notificaciones Generales */}
-        <div className="col-12 col-md-6">
-          <div
-            className="card shadow-sm border-0 mb-5"
-            style={{
-              maxHeight: "450px",
-              overflowY: "auto",
-              borderRadius: "10px",
-            }}
-          >
-            <div className="card-body">
-              <p>Notificaciones generales</p>
-              <DataTable
-                columns={columns}
-                data={generalNotificaciones}
-                noDataComponent="No hay notificaciones generales."
-                pagination
-                dense
-                highlightOnHover
-              />
-            </div>
-          </div>
+    <div className="container mt-5 mb-5">
+      <div className="row g-4 mb-4">
+        <div className="col-md-6 col-12">
+          <Estadisticas />
         </div>
-
-        {/* Notificaciones de Actualización */}
-        <div className="col-12 col-md-6">
-          <div
-            className="card shadow-sm border-0 mb-5"
-            style={{
-              maxHeight: "450px",
-              overflowY: "auto",
-              borderRadius: "10px",
-            }}
-          >
-            <div className="card-body">
-              <p>Notificaciones de actualizaciones</p>
-              <DataTable
-                columns={columns}
-                data={actualizacionNotificaciones}
-                noDataComponent="No hay notificaciones de actualización."
-                pagination
-                dense
-                highlightOnHover
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Notificaciones de Jornada */}
-        <div className="col-12 col-md-6">
-          <div
-            className="card shadow-sm border-0 mb-5"
-            style={{
-              maxHeight: "450px",
-              overflowY: "auto",
-              borderRadius: "10px",
-            }}
-          >
-            <div className="card-body">
-              <p>Control de entradas de trabajo</p>
-              <DataTable
-                columns={columns}
-                data={jornadaNotificaciones}
-                noDataComponent="No hay notificaciones de jornada."
-                pagination
-                dense
-                highlightOnHover
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Gráfico */}
-        <div className="col-12 col-md-6">
+        <div className="col-md-6 col-12">
           <Grafica />
         </div>
+      </div>
+
+      <div className="row g-4">
+        <SeccionNotificaciones
+          titulo="Notificaciones generales"
+          datos={generales}
+        />
+        <SeccionNotificaciones
+          titulo="Actualizaciones"
+          datos={actualizaciones}
+        />
+        <SeccionNotificaciones titulo="Control de jornadas" datos={jornada} />
       </div>
     </div>
   );
