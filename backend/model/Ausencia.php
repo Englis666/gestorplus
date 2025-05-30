@@ -19,7 +19,7 @@ class Ausencia {
 
     public function obtenerAusencias(string $num_doc): array {
         try {
-            $sql = "SELECT * FROM ausencia WHERE usuario_num_doc = :num_doc";
+            $sql = "SELECT * FROM ausencia WHERE usuario_num_doc = :num_doc ORDER BY idausencia DESC;";
             $params = [':num_doc' => $num_doc];
             return $this->dbService->ejecutarConsulta($sql, $params, false);
         } catch (PDOException $e) {
@@ -66,7 +66,6 @@ class Ausencia {
 
     public function ausenciaRechazada(int $idausencia): bool {
         try {
-            // Obtener el usuario
             $sql = "SELECT usuario_num_doc FROM ausencia WHERE idausencia = :idausencia";
             $params = [':idausencia' => $idausencia];
             $resultado = $this->dbService->ejecutarConsulta($sql, $params);
