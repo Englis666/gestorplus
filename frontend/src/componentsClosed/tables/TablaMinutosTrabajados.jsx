@@ -1,86 +1,50 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import { jwtDecode } from "jwt-decode";
-import API_URL from "../../config";
+import { decodedTokenWithRol } from "../../utils/Auth";
+import { calcularMinutosTrabajados } from "../../services/HoraExtraService";
 
 const TablaMinutosTrabajados = () => {
   const [jornadas, setJornadas] = useState([]);
-  const [empleados, setEmpleados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rol, setRol] = useState(null);
   const [empleadoFiltro, setEmpleadoFiltro] = useState("");
   const [filtroFecha, setFiltroFecha] = useState("");
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  };
-
-  const token = getCookie("auth_token");
-
   useEffect(() => {
-    if (!token) {
-      setError("Token no encontrado.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const decodedToken = jwtDecode(token);
-      const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
-
-      if (isTokenExpired) {
-        setError("El token ha expirado.");
+    const cargarDatos = async () => {
+      try {
+        const obtenerRol = decodedTokenWithRol();
+        setRol(obtenerRol);
+        const data = await calcularMinutosTrabajados(obtenerRol);
+        // Aseguramos que data sea un array
+        setJornadas(
+          Array.isArray(data.minutosTrabajados) ? data.minutosTrabajados : []
+        );
         setLoading(false);
-        return;
+      } catch (err) {
+        setError("Token inválido, malformado o error en la carga de datos.");
+        setLoading(false);
       }
-
-      const Rol = decodedToken?.data?.rol;
-      setRol(Rol);
-
-      const action = {
-        1: "obtenerMinutosTrabajadosDelEmpleado",
-        2: "obtenerMinutosTrabajadosDelEmpleado",
-        3: "obtenerMinutosTrabajados",
-      }[Rol];
-
-      axios
-        .get(API_URL, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { action },
-        })
-        .then((res) => {
-          const data = res.data?.minutosTrabajados;
-          const jornadas = Array.isArray(data) ? data : data ? [data] : [];
-          setJornadas(jornadas);
-          setEmpleados([...new Set(jornadas.map((j) => j.nombres))]);
-          setLoading(false);
-        })
-        .catch(() => {
-          setError("Hubo un problema al cargar las Jornadas.");
-          setLoading(false);
-        });
-    } catch {
-      setError("Token inválido o malformado.");
-      setLoading(false);
-    }
+    };
+    cargarDatos();
   }, []);
 
-  const jornadasFiltradas = jornadas.filter((j) => {
-    const coincideEmpleado = empleadoFiltro
-      ? j.nombres.toLowerCase().includes(empleadoFiltro.toLowerCase())
-      : true;
-    const coincideFecha = filtroFecha ? j.fecha === filtroFecha : true;
-    return coincideEmpleado && coincideFecha;
+  const jornadasFiltradas = jornadas.filter((jornada) => {
+    const fechaJornada = new Date(jornada.fecha);
+    const fechaFiltro = filtroFecha ? new Date(filtroFecha) : null;
+
+    const nombreEmpleado = (jornada.nombres || "").toLowerCase();
+    const nombreFiltro = empleadoFiltro.toLowerCase();
+
+    const fechaCoincide =
+      !fechaFiltro ||
+      fechaJornada.toDateString() === fechaFiltro.toDateString();
+
+    const empleadoCoincide =
+      !empleadoFiltro || nombreEmpleado.includes(nombreFiltro);
+
+    return fechaCoincide && empleadoCoincide;
   });
 
   const columns = [
