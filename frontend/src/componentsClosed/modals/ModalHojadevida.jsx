@@ -129,7 +129,7 @@ const ModalHojaDeVida = ({
       if (!token) return alert("No se encontró el token de autenticación.");
 
       const response = await axios.patch(
-        "http://localhost/gestorplus/backend/",
+        API_URL,
         { ...formDataToSend, action: "actualizacionHojaDevida", num_doc },
         {
           headers: {
