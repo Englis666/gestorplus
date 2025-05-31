@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import Estadisticas from "../Estadisticas";
-import Grafica from "../Grafica";
+import Estadisticas from "../Graphics/Estadisticas.jsx";
+import Grafica from "../Graphics/Grafica.jsx";
 import SeccionNotificaciones from "../Notifications/SeccionNotificaciones.jsx";
 import { decodedTokenWithRol } from "../../utils/Auth.jsx";
 import { obtenerNotificacionesDependiendoRol } from "../../services/NotififacionesService.jsx";
