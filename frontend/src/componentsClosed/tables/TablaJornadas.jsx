@@ -6,6 +6,9 @@ import {
   noCorroborarJornada,
 } from "../../services/JornadasService";
 import { decodedTokenWithRol } from "../../utils/Auth";
+import JornadaChart from "../Graphics/JornadaChart";
+import FinalizarJornada from "../FinalizarJornada";
+import JornadaEstadosChart from "../Graphics/JornadaEstadosChart";
 
 const TablaJornadas = () => {
   const [jornadas, setJornadas] = useState([]);
@@ -126,7 +129,7 @@ const TablaJornadas = () => {
           <button
             className="btn btn-danger btn-sm"
             onClick={() => handleNoCorroborar(row.idJornada)}
-            disabled={row.estadoJornada === "Jornada rechazada"}
+            disabled={row.estadoJornada === "Jornada Rechazada"}
           >
             No Corroborar
           </button>
@@ -139,10 +142,32 @@ const TablaJornadas = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="container-fluid mt-4">
-      <h2 className="text-center mb-4 text-dark fw-bold">
-        Jornadas (Control de Entrada de Trabajo)
-      </h2>
+    <div className="container-fluid px-3">
+      <div className="container-fluid mt-4">
+        <h2 className="text-center mb-4 text-dark fw-bold">
+          Jornadas (Control de Entrada de Trabajo)
+        </h2>
+        <div className="row">
+          <div className="col-12 col-lg-6 mb-4">
+            <h2>Gráfica de Jornadas</h2>
+            <p className="text-muted">
+              Esta gráfica muestra la distribución de las jornadas registradas
+              por empleado. Puedes filtrar por fecha y nombre de empleado para
+              ver detalles específicos.
+            </p>
+            <JornadaChart jornadas={filtrado} />
+          </div>
+          <div className="col-12 col-lg-6 mb-4">
+            <h2>Gráfica de Estados de Jornadas</h2>
+            <p className="text-muted">
+              Esta gráfica muestra el estado de las jornadas registradas. Puedes
+              filtrar por fecha y nombre de empleado para ver detalles
+              específicos.
+            </p>
+            <JornadaEstadosChart jornadas={filtrado} />
+          </div>
+        </div>
+      </div>
 
       <div className="row mb-3 justify-content-center">
         <div className="col-md-6">
@@ -189,6 +214,7 @@ const TablaJornadas = () => {
         responsive
         noDataComponent="No hay jornadas disponibles."
       />
+      <FinalizarJornada />
     </div>
   );
 };
