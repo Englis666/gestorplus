@@ -35,18 +35,18 @@ class JornadaController extends BaseController {
     }
 
     public function corroborarJornada(array $data): void {
-        if (!$this->parametrosRequeridos($data, ['data' => ['idJornada']])) {
+        if (!$this->parametrosRequeridos($data, ['idJornada'])) {
             return;
         }
-        $resultado = $this->jornada->corroborarJornada($data['data']['idJornada']);
+        $resultado = $this->jornada->corroborarJornada($data['idJornada']);
         $this->jsonResponseService->responder(['JornadaCorroborada' => $resultado]);
     }
 
     public function noCorroborarJornada(array $data): void {
-        if (!$this->parametrosRequeridos($data, ['data' => ['idJornada']])) {
+        if (!$this->parametrosRequeridos($data, ['idJornada'])) {
             return;
         }
-        $resultado = $this->jornada->noCorroborarJornada($data['data']['idJornada']);
+        $resultado = $this->jornada->noCorroborarJornada($data['idJornada']);
         $this->jsonResponseService->responder(['JornadaNoCorroborada' => $resultado]);
     }
 
