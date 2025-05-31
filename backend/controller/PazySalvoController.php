@@ -61,8 +61,8 @@ class PazySalvoController extends BaseController
                     'estado' => $estado,
                     'empleado' => ['num_doc' => $empleado] // Aseguramos que pase como array
                 ]);
-    
-                $this->jsonResponseService->responder(['mensaje' => 'Paz y Salvo generado exitosamente']);
+
+                $this->jsonResponseService->responder(['mensaje' => 'Paz y Salvo generado exitosamente', 'success' => true]);
             } else {
                 throw new Exception('Empleado no especificado correctamente en los datos');
             }
