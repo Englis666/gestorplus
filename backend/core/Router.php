@@ -15,8 +15,7 @@ class Router {
     private $maxRequest = 100;
     private $timeWindow = 60;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->controllers = ControllerFactory::createControllers();
         $this->redis = new RedisClient([
             'scheme' => 'tcp',
@@ -25,45 +24,38 @@ class Router {
         ]);
     }
 
-    private function checkRateLimit($ip)
-    {
+    private function checkRateLimit($ip) {
         $currentTime = time();
-        $key = "rate_limit: {$ip}";
+        $key = "rate_limit:{$ip}";
 
         $pipe = $this->redis->pipeline();
 
-        // Comandos dentro del pipeline
         $pipe->zremrangebyscore($key, 0, $currentTime - $this->timeWindow);
         $pipe->zadd($key, [$currentTime => $currentTime]);
-        $pipe->expire($key, $this->timeWindow);  // Configuramos la expiración
+        $pipe->expire($key, $this->timeWindow);
 
-        // Ejecutamos todos los comandos de una vez
         $pipe->exec();
 
-        // Obtener el número de solicitudes
         $requestCount = $this->redis->zcard($key);
 
         if ($requestCount >= $this->maxRequest) {
+            $this->sendCorsHeaders();
             http_response_code(429);
             echo json_encode(['message' => 'Demasiadas solicitudes. Intenta más tarde']);
             exit;
         }
     }
 
-    private function getRoutes($method)
-    {
+    private function getRoutes($method) {
         $cacheKey = "routes:{$method}";
-
-        // Intentar obtener rutas desde Redis
         $routes = $this->redis->get($cacheKey);
 
         if (!$routes) {
-            // Si no están cacheadas, cargar las rutas desde el archivo
             $routeFile = __DIR__ . "/../routes/{$method}.php";
+
             if (file_exists($routeFile)) {
                 $routes = include $routeFile;
-                // Almacenar las rutas en Redis por 1 hora
-                $this->redis->setex($cacheKey, 3600, serialize($routes));  // 3600 segundos = 1 hora
+                $this->redis->setex($cacheKey, 3600, serialize($routes));
             } else {
                 http_response_code(500);
                 echo json_encode(['message' => "No se encontró el archivo de rutas para el método {$method}."]);
@@ -76,9 +68,37 @@ class Router {
         return $routes;
     }
 
-    public function route($method, $action, $data)
-    {
-        $clientIp = $_SERVER['REMOTE_ADDR'];
+    private function sendCorsHeaders() {
+        $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+        $allowed_origins = [
+    'http://localhost:3000',
+    'https://gestorplus.codeadvance.com',
+    'https://gestorplus.codeadvance.com:3000',
+    ];
+      
+        $allowed_origins = array_map('strtolower', $allowed_origins);
+        $origin = strtolower($origin);
+        // Si el origen está permitido, establece los encabezados CORS
+
+        if (in_array($origin, $allowed_origins)) {
+            header("Access-Control-Allow-Origin: $origin");
+            header("Access-Control-Allow-Credentials: true");
+        }
+
+        header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, x-estudio-id, x-experiencia-id");
+        header("Content-Type: application/json; charset=UTF-8");
+    }
+
+    public function route($method, $action, $data) {
+        $this->sendCorsHeaders();
+
+        if ($method === 'OPTIONS') {
+            http_response_code(200);
+            exit;
+        }
+
+        $clientIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
         $this->checkRateLimit($clientIp);
 
         $routes = $this->getRoutes($method);
@@ -90,21 +110,23 @@ class Router {
                 $this->controllers[$controllerKey]->$methodToCall($data);
                 exit;
             } else {
+                $this->sendCorsHeaders();
                 http_response_code(500);
                 echo json_encode([
-                    'message' => 'El método no existe en el controlador.',
+                    'message'    => 'El método no existe en el controlador.',
                     'controller' => $controllerKey,
-                    'method' => $methodToCall
+                    'method'     => $methodToCall
                 ]);
                 exit;
             }
         } else {
+            $this->sendCorsHeaders();
             http_response_code(404);
             echo json_encode([
-                'message' => 'Acción no encontrada.',
-                'method' => $method,
-                'action' => $action,
-                'routes' => array_keys($routes)
+                'message' => 'Recurso no encontrado.',
+                'method'  => $method,
+                'action'  => $action,
+                'routes'  => array_keys($routes)
             ]);
             exit;
         }
