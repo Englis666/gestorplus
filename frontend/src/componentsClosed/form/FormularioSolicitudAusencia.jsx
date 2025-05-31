@@ -1,12 +1,6 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
 // src/components/FormularioAusencia.jsx
 import React, { useState } from "react";
-import axios from "axios";
-import API_URL from "../../config";
+import { solicitarAusencia } from "../../services/AusenciasService";
 
 const FormularioAusencia = () => {
   const [solicitud, setSolicitud] = useState({
@@ -19,13 +13,6 @@ const FormularioAusencia = () => {
   const [errores, setErrores] = useState({});
   const [enviando, setEnviando] = useState(false);
   const [success, setSuccess] = useState(false);
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  };
 
   const validarCampos = () => {
     const erroresTemp = {};
@@ -54,28 +41,10 @@ const FormularioAusencia = () => {
 
     if (!validarCampos()) return;
 
-    const token = getCookie("auth_token");
-    if (!token) {
-      alert("Token no encontrado. Inicia sesión nuevamente.");
-      return;
-    }
-
     setEnviando(true);
 
     try {
-      const response = await axios.post(
-        API_URL,
-        {
-          action: "solicitarAusencia",
-          ...solicitud,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response.data);
+      await solicitarAusencia(solicitud);
       setSolicitud({
         fechaInicio: "",
         fechaFin: "",
@@ -85,8 +54,8 @@ const FormularioAusencia = () => {
       setErrores({});
       setSuccess(true);
     } catch (err) {
-      console.error("Error al enviar la solicitud de ausencia:", err);
-      alert("Hubo un problema al enviar la solicitud.");
+      console.error("Error al enviar la solicitud:", err);
+      alert(`Hubo un problema al enviar la solicitud: ${err.message}`);
     } finally {
       setEnviando(false);
     }
@@ -94,7 +63,7 @@ const FormularioAusencia = () => {
 
   return (
     <div
-      className="container mt-5 card shadow border-0 animate__animated animate__fadeIn"
+      className="container-fluid  card shadow border-0 animate__animated animate__fadeIn"
       style={{ borderRadius: "12px", maxWidth: "600px" }}
     >
       <div className="p-4">
