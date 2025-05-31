@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode"; // Asegúrate de tener instalada esta librería
 
 const UserContext = createContext();
@@ -19,12 +19,6 @@ const setCookie = (name, value, days) => {
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
   document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
   console.log(`Cookie set: ${name}=${value}`);
-};
-
-const deleteCookie = (name) => {
-  document.cookie = `${name}=; Max-Age=0; path=/;`;
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;`;
-  console.log(`Cookie deleted: ${name}`);
 };
 
 export const UserProvider = ({ children }) => {
@@ -52,13 +46,8 @@ export const UserProvider = ({ children }) => {
     console.log("User logged in:", userData);
   };
 
-  const logout = () => {
-    setUser(null);
-    deleteCookie("auth_token");
-  };
-
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, login }}>
       {children}
     </UserContext.Provider>
   );
