@@ -3,7 +3,7 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 const GenerarPazYSalvo = ({ form, empleados, onChange, onSubmit }) => {
   const [enviando, setEnviando] = useState(false);
