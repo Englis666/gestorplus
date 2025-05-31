@@ -51,6 +51,9 @@ export const noCorroborarJornada = async (idJornada) => {
       headers: { Authorization: `Bearer ${token}` },
     }
   );
+  if (!response || !response.data) {
+    throw new Error("No se pudo corroborar la jornada");
+  }
   if (response.status !== 200) {
     throw new Error("Error al no corroborar la jornada");
   }
@@ -71,7 +74,6 @@ export const finalizarJornada = async (fechaBogota) => {
     }
   );
   if (response.status !== 200) {
-    console.log(response);
     throw new Error("Error al finalizar la jornada");
   }
   return response.data;
