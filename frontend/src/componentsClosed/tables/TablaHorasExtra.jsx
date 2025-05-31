@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { calcularHorasExtra } from "../../services/HoraExtraService";
+import HoraExtraChart from "../Graphics/HoraExtraChart";
 
 const TablaHorasExtra = () => {
   const [horasExtra, setHorasExtra] = useState([]);
@@ -67,32 +68,35 @@ const TablaHorasExtra = () => {
   ];
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4 text-center text-dark font-weight-bold">
-        Horas Extra
-      </h2>
-      <p className="text-dark mb-3">
-        Aquí podrás analizar tus horas extra. Si tienes alguna duda, contacta
-        con Recursos Humanos en la sección "Quejas".
-      </p>
+    <div className="mt-4 animate__animated animate__fadeIn animate__faster">
+      <div className="mb-5">
+        <HoraExtraChart datos={horasExtra} />
+      </div>
 
       {error && (
         <div className="alert alert-danger" role="alert">
           {error}
         </div>
       )}
-
-      <DataTable
-        columns={columnas}
-        data={horasExtra}
-        progressPending={loading}
-        noDataComponent="No hay horas extra registradas para esta semana."
-        highlightOnHover
-        striped
-        responsive
-        pagination
-        persistTableHead
-      />
+      <div className="text-center mb-4">
+        <h2 className="text-center mb-4 text-dark fw-bold">
+          <i className="material-icons align-middle me-2 text-center">
+            access_time
+          </i>
+          Horas Extra Registradas
+        </h2>
+        <DataTable
+          columns={columnas}
+          data={horasExtra}
+          progressPending={loading}
+          noDataComponent="No hay horas extra registradas para esta semana."
+          highlightOnHover
+          striped
+          responsive
+          pagination
+          persistTableHead
+        />
+      </div>
     </div>
   );
 };
