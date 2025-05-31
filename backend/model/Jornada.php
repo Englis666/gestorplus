@@ -18,18 +18,22 @@ class Jornada {
 
     public function corroborarJornada(int $idJornada): bool {
         $sql = "UPDATE jornada SET estadoJornada = 'Jornada Corroborada' WHERE idjornada = :idjornada";
-        return $this->dbService->ejecutarUpdate($sql, [':idjornada' => $idJornada]);
+        $resultado = $this->dbService->ejecutarUpdate($sql, [':idjornada' => $idJornada]);
+        return is_array($resultado) ? ($resultado['exito'] ?? false) : false;
     }
 
     public function noCorroborarJornada(int $idJornada): bool {
         $sql = "UPDATE jornada SET estadoJornada = 'Jornada rechazada' WHERE idjornada = :idjornada";
-        return $this->dbService->ejecutarUpdate($sql, [':idjornada' => $idJornada]);
+        $resultado = $this->dbService->ejecutarUpdate($sql, [':idjornada' => $idJornada]);
+        return is_array($resultado) ? ($resultado['exito'] ?? false) : false;
     }
 
     public function obtenerTodasLasJornadas(): array {
         $sql = "SELECT * FROM jornada AS j
                 INNER JOIN usuario AS u ON j.usuario_num_doc = u.num_doc
-                WHERE estadoJornada != 'Jornada Corroborada'";
+                INNER JOIN vinculacion AS v ON u.num_doc = v.usuario_num_doc
+                WHERE j.estadoJornada = 'Jornada Corroborada' OR j.estadoJornada = 'Jornada rechazada'
+                ";
         return $this->dbService->ejecutarConsulta($sql);
     }
 
