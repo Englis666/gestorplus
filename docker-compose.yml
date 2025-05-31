@@ -1,11 +1,12 @@
 services:
-  php:
+  gestorplus-php:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: gestorplus-php
     volumes:
       - ./backend:/var/www/html
+      - ./backend/config/.env:/var/www/html/.env
     ports:
       - "9000:9000"
     networks:
@@ -36,6 +37,8 @@ services:
       - gestorplus-network
     environment:
       - TZ=America/Bogota
+    depends_on:
+      - gestorplus-php
 
   db:
     image: mariadb:latest
@@ -81,7 +84,7 @@ services:
     networks:
       - gestorplus-network
     depends_on:
-      - php
+      - gestorplus-php
     environment:
       - TZ=America/Bogota
     profiles:
