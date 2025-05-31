@@ -5,10 +5,13 @@
 
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
 import DataTable from "react-data-table-component";
 import GenerarPazYSalvo from "../form/GenerarPazYSalvo";
-import API_URL from "../../config";
+import {
+  obtenerPazYSalvos,
+  generarPazYSalvo,
+} from "../../services/PazySalvoService";
+import { obtenerEmpleados } from "../../services/EmpleadosService";
 
 const TablaPazYSalvo = () => {
   const [Salvos, setSalvos] = useState([]);
@@ -32,84 +35,35 @@ const TablaPazYSalvo = () => {
     };
 
     const token = getCookie("auth_token");
-
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
-        if (isTokenExpired) {
-          console.error("El token ha expirado");
-          setError("El token ha expirado");
-          setLoading(false);
-          return;
-        }
-
-        const Rol = decodedToken?.data?.rol;
-        setRol(Rol);
-
-        const action = (() => {
-          switch (Rol) {
-            case "1":
-            case "2":
-              return "obtenerPazYSalvos";
-            case "3":
-              return "obtenerMiPazySalvo";
-            default:
-              console.error("Rol no valido");
-              setError("Rol no reconocido");
-              setLoading(false);
-              return null;
-          }
-        })();
-
-        if (!action) return;
-
-        axios
-          .get(API_URL, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: { action },
-          })
-          .then((response) => {
-            const Salvos = response.data.Salvos;
-            if (Array.isArray(Salvos)) {
-              setSalvos(Salvos);
-            } else {
-              setSalvos([]);
-            }
-            setLoading(false);
-          })
-          .catch(() => {
-            setError("Hubo un problema al cargar los paz y salvo");
-            setLoading(false);
-          });
-
-        // Obtener Empleados
-        axios
-          .get(API_URL, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: { action: "obtenerEmpleados" },
-          })
-          .then((response) => {
-            const empleados = response.data?.empleados;
-            if (Array.isArray(empleados)) {
-              setEmpleados(empleados);
-            } else {
-              setEmpleados([]);
-            }
-          })
-          .catch(() => {
-            setError("Hubo un problema al cargar los empleados");
-          });
-      } catch {
-        setError("Token invalido o malformado");
-        setLoading(false);
-      }
-    } else {
+    if (!token) {
       setError("Token no encontrado");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode(token);
+      const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
+      if (isTokenExpired) {
+        setError("El token ha expirado");
+        setLoading(false);
+        return;
+      }
+      const Rol = decodedToken?.data?.rol;
+      setRol(Rol);
+
+      Promise.all([obtenerPazYSalvos(Rol), obtenerEmpleados()])
+        .then(([salvos, empleados]) => {
+          setSalvos(salvos);
+          setEmpleados(empleados);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError("Error al cargar datos: " + err.message);
+          setLoading(false);
+        });
+    } catch {
+      setError("Token invalido o malformado");
       setLoading(false);
     }
   }, []);
@@ -119,41 +73,19 @@ const TablaPazYSalvo = () => {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    };
-
-    const token = getCookie("auth_token");
-
-    axios
-      .post(
-        API_URL,
-        {
-          action: "generarPazYSalvo",
-          ...form,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((response) => {
-        if (response.data.success) {
-          alert("Paz y salvo generado con éxito");
-          setSalvos([...Salvos, form]);
-        } else {
-          alert("No se pudo generar el paz y salvo");
-        }
-      })
-      .catch(() => {
-        alert("Error al generar el paz y salvo");
-      });
+    try {
+      const res = await generarPazYSalvo(form);
+      if (res.success) {
+        alert("Paz y salvo generado con éxito");
+        setSalvos([...Salvos, form]);
+      } else {
+        alert("No se pudo generar el paz y salvo");
+      }
+    } catch {
+      alert("Error al generar el paz y salvo");
+    }
   };
 
   const columns = [
@@ -183,13 +115,8 @@ const TablaPazYSalvo = () => {
     },
   ];
 
-  if (loading) {
-    return <div>Cargando paz y salvo...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Cargando paz y salvo...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="container mt-5">
