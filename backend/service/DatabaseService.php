@@ -61,7 +61,7 @@ class DatabaseService {
         }
     }
 
-    public function ejecutarUpdate(string $sql, array $params = []): array {
+    public function ejecutarUpdate(string $sql, array $params = []): bool|array {
         try {
             $stmt = $this->db->prepare($sql);
             if ($stmt === false) {
