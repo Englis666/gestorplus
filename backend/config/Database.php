@@ -8,28 +8,29 @@ namespace Config;
 use PDO;
 use PDOException;
 
-class DataBase {
-    private $host = "gestorplus-db"; //Usando Docker
-    private $db_name = "gestorplus"; 
-    private $username = "root"; 
-    private $password = "gestorplustfu";  // Contraseña definida en docker-compose.yml  
-    private $conn;
+class Database {
+    private PDO $connection;
 
-    public function getConnection(): ?PDO {
-        $this->conn = null;
+    public function __construct() {
+        $host = $_ENV['DB_HOST'] ?? 'localhost';
+        $dbname = $_ENV['DB_NAME'] ?? 'gestorplus';
+        $port = $_ENV['DB_PORT'] ?? '';
+        $user = $_ENV['DB_USER'] ?? '';
+        $pass = $_ENV['DB_PASS'] ?? '';
 
         try {
-            $dsn = "mysql:host=$this->host;dbname=$this->db_name;charset=utf8mb4";
-            $this->conn = new PDO($dsn, $this->username, $this->password, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
-            ]);
-        } catch (PDOException $exception) {
-            echo "Connection error: " . $exception->getMessage();
+            $this->connection = new PDO(
+                "mysql:host=$host;dbname=$dbname;port=$port;charset=utf8mb4",
+                $user,
+                $pass
+            );
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Connection error: " . $e->getMessage());
         }
+    }
 
-        return $this->conn;
+    public function getConnection(): PDO {
+        return $this->connection;
     }
 }
-?>
