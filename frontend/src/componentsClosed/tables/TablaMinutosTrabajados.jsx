@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { decodedTokenWithRol } from "../../utils/Auth";
 import { calcularMinutosTrabajados } from "../../services/HoraExtraService";
+import MinutosTrabajadosExtraChart from "../Graphics/MinutosTrabajadosExtraChart";
 
 const TablaMinutosTrabajados = () => {
   const [jornadas, setJornadas] = useState([]);
@@ -17,7 +18,6 @@ const TablaMinutosTrabajados = () => {
         const obtenerRol = decodedTokenWithRol();
         setRol(obtenerRol);
         const data = await calcularMinutosTrabajados(obtenerRol);
-        // Aseguramos que data sea un array
         setJornadas(
           Array.isArray(data.minutosTrabajados) ? data.minutosTrabajados : []
         );
@@ -87,39 +87,29 @@ const TablaMinutosTrabajados = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center text-dark fw-bold mb-4">
-        Minutos Extra trabajados por empleados
-      </h2>
-      <p>
-        El propósito de esta consulta es obtener detalles sobre las jornadas
-        laborales de los empleados, incluyendo la fecha, hora de entrada, hora
-        de salida, tiempo total trabajado (minutos_trabajados) y, si
-        corresponde, los minutos extra trabajados (minutos_extra), todo
-        relacionado con el empleado (nombre, apellidos, número de documento).
-      </p>
-
-      <div className="row mb-3">
-        <div className="col-md-4">
-          <label>Filtrar por fecha</label>
-          <input
-            type="date"
-            className="form-control"
-            value={filtroFecha}
-            onChange={(e) => setFiltroFecha(e.target.value)}
-          />
-        </div>
-        <div className="col-md-4">
-          <label>Buscar empleado</label>
+      <div className="mb-5">
+        <MinutosTrabajadosExtraChart datos={jornadasFiltradas} />
+      </div>
+      {/* Filtros con separación */}
+      <div className="mb-4 row">
+        <div className="col-md-6 mb-2">
           <input
             type="text"
-            className="form-control"
-            placeholder="Nombre del empleado"
+            placeholder="Filtrar por empleado"
             value={empleadoFiltro}
             onChange={(e) => setEmpleadoFiltro(e.target.value)}
+            className="form-control"
+          />
+        </div>
+        <div className="col-md-6 mb-2">
+          <input
+            type="date"
+            value={filtroFecha}
+            onChange={(e) => setFiltroFecha(e.target.value)}
+            className="form-control"
           />
         </div>
       </div>
-
       <DataTable
         columns={columns}
         data={jornadasFiltradas}

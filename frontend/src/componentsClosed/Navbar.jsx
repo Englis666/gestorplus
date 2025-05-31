@@ -10,7 +10,6 @@ import { jwtDecode } from "jwt-decode";
 import logo from "../assets/Gestorplus.png";
 
 const NavbarClosed = ({ activeLink }) => {
-  const { logout } = useUser();
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [rol, setRol] = useState(null);
@@ -45,7 +44,15 @@ const NavbarClosed = ({ activeLink }) => {
   }, []);
 
   const handleLogout = () => {
-    logout();
+    document.cookie = "auth_token=; Max-Age=0; path=/;";
+    document.cookie =
+      "auth_token=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;";
+    document.cookie = "auth_token=; Max-Age=0; path=/; domain=localhost";
+    document.cookie =
+      "auth_token=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/; domain=localhost";
+    localStorage.removeItem("rol");
+    localStorage.removeItem("jornadaFinalizada");
+    navigate("/Login");
   };
 
   const toggleCollapse = () => {
@@ -251,64 +258,89 @@ const NavbarClosed = ({ activeLink }) => {
       </div>
 
       <nav>
-        {menuItems.map((item, index) => (
-          <div
-            key={index}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-          >
+        {menuItems
+          .filter((item) => !item.isLogout)
+          .map((item, index) => (
             <div
-              style={{
-                ...styles.menuItem,
-                ...(isMenuItemActive(item) ? styles.activeMenu : {}),
-              }}
-              title={isCollapsed ? item.label : ""}
-              onClick={() =>
-                item.subMenu ? handleDoubleClick(index) : handleClick(item)
-              }
+              key={index}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <div
+                style={{
+                  ...(item.isLogout ? styles.logout : styles.menuItem),
+                  ...(isMenuItemActive(item) && !item.isLogout
+                    ? styles.activeMenu
+                    : {}),
+                }}
+                title={isCollapsed ? item.label : ""}
+                onClick={() =>
+                  item.onClick
+                    ? item.onClick()
+                    : item.subMenu
+                    ? handleDoubleClick(index)
+                    : handleClick(item)
+                }
+              >
+                <span className="material-icons">{item.icon}</span>
+                {!isCollapsed && <span>{item.label}</span>}
+                {item.subMenu && !isCollapsed && (
+                  <span
+                    className="material-icons"
+                    style={{ marginLeft: "auto" }}
+                  >
+                    {openSubMenu === index ? "expand_less" : "expand_more"}
+                  </span>
+                )}
+              </div>
+
+              {/* Submenú normal (expandido) */}
+              {item.subMenu && openSubMenu === index && !isCollapsed && (
+                <div style={styles.subMenu}>
+                  {item.subMenu.map((sub, i) => (
+                    <div
+                      key={i}
+                      style={styles.subItem}
+                      onClick={() => navigate(sub.path)}
+                    >
+                      <span className="material-icons">{sub.icon}</span>
+                      <span>{sub.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Submenú flotante en colapsado */}
+              {item.subMenu && isCollapsed && hoveredIndex === index && (
+                <div style={{ ...styles.floatingMenu, top: index * 60 + 80 }}>
+                  {item.subMenu.map((sub, i) => (
+                    <div
+                      key={i}
+                      style={styles.subItem}
+                      onClick={() => navigate(sub.path)}
+                    >
+                      <span className="material-icons">{sub.icon}</span>
+                      <span>{sub.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        {/* Renderiza el logout al final */}
+        {menuItems
+          .filter((item) => item.isLogout)
+          .map((item, index) => (
+            <div
+              key={"logout"}
+              style={styles.logout}
+              title={isCollapsed ? "Cerrar sesión" : ""}
+              onClick={item.onClick}
             >
               <span className="material-icons">{item.icon}</span>
               {!isCollapsed && <span>{item.label}</span>}
-              {item.subMenu && !isCollapsed && (
-                <span className="material-icons" style={{ marginLeft: "auto" }}>
-                  {openSubMenu === index ? "expand_less" : "expand_more"}
-                </span>
-              )}
             </div>
-
-            {/* Submenú normal (expandido) */}
-            {item.subMenu && openSubMenu === index && !isCollapsed && (
-              <div style={styles.subMenu}>
-                {item.subMenu.map((sub, i) => (
-                  <div
-                    key={i}
-                    style={styles.subItem}
-                    onClick={() => navigate(sub.path)}
-                  >
-                    <span className="material-icons">{sub.icon}</span>
-                    <span>{sub.label}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Submenú flotante en colapsado */}
-            {item.subMenu && isCollapsed && hoveredIndex === index && (
-              <div style={{ ...styles.floatingMenu, top: index * 60 + 80 }}>
-                {item.subMenu.map((sub, i) => (
-                  <div
-                    key={i}
-                    style={styles.subItem}
-                    onClick={() => navigate(sub.path)}
-                  >
-                    <span className="material-icons">{sub.icon}</span>
-                    <span>{sub.label}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+          ))}
       </nav>
     </aside>
   );
