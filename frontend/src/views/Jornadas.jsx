@@ -1,6 +1,5 @@
 import NavbarClosed from "../componentsClosed/Navbar";
 import TablaJornadas from "../componentsClosed/tables/TablaJornadas";
-import FinalizarJornada from "../componentsClosed/FinalizarJornada";
 
 const Jornadas = () => {
   return (
@@ -16,13 +15,6 @@ const Jornadas = () => {
         <div className="d-flex flex-column flex-lg-row" style={{ gap: "1rem" }}>
           <div className="flex-fill mb-3 mb-lg-0" style={{ flex: 2 }}>
             <TablaJornadas />
-          </div>
-
-          <div
-            className="flex-fill d-flex justify-content-center align-items-center"
-            style={{ flex: 1 }}
-          >
-            <FinalizarJornada />
           </div>
         </div>
       </div>
