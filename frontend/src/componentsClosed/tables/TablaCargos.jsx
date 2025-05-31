@@ -34,7 +34,10 @@ const TablaCargos = () => {
 
   const desactivarCargo = async (idCargo) => {
     try {
-      await axios.patch(API_URL + "?action=desactivarCargo", { idCargo });
+      await axios.patch(API_URL, {
+        params: { action: "desactivarCargo" },
+        data: { idCargo },
+      });
       await fetchCargos();
     } catch (err) {
       const mensaje =
