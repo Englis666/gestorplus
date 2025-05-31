@@ -52,7 +52,7 @@ RUN docker-php-ext-install iconv
 # Cambiar a la carpeta de trabajo donde está tu código PHP (ajusta según corresponda)
 WORKDIR /var/www/html
 
-COPY composer.json composer.lock /var/www/html/
+COPY composer.json /var/www/html/
 
 RUN composer install --no-dev --optimize-autoloader
 
