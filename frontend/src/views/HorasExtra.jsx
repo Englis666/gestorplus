@@ -23,7 +23,7 @@ const HorasExtra = () => {
             justifyContent: "center",
           }}
         >
-          <div style={{ flex: 1, minWidth: "400px" }}>
+          <div style={{ flex: 1, minWidth: "400px", marginBottom: "1rem" }}>
             <TablaHorasExtra />
           </div>
           <div style={{ flex: 1, minWidth: "400px" }}>
