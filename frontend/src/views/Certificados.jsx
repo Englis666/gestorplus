@@ -210,11 +210,14 @@ Este certificado se emite para los fines que el interesado estime convenientes.`
 
   return (
     <div
-      className="bg-light min-vh-100 d-flex"
+      className="bg-light min-vh-100 d-flex main-layout"
       style={{ transition: "all 3s ease" }}
     >
       <NavbarClosed />
-      <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
+      <div
+        className="flex-grow-1 p-4 main-content"
+        style={{ backgroundColor: "#ECF0F1" }}
+      >
         <div className="card shadow-lg border-0 rounded-3">
           <div className="card-header bg-primary text-white text-center py-4">
             <h1 className="mb-0">
