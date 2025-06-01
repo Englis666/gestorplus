@@ -1,41 +1,38 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
-import { calcularHorasExtra } from "../../services/HoraExtraService";
+import { obtenerHorasExtra } from "../../services/HoraExtraService";
 import HoraExtraChart from "../Graphics/HoraExtraChart";
+import { decodedTokenWithRol } from "../../utils/Auth";
 
 const TablaHorasExtra = () => {
   const [horasExtra, setHorasExtra] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const fetchHorasExtra = async () => {
     try {
-      const data = await calcularHorasExtra();
-      if (data?.calculo?.length > 0) {
-        const datos = data.calculo.map((item, index) => ({
-          id: index,
-          fecha: new Date().toLocaleDateString(),
-          horasExtra: item.horasExtra,
-          numDoc: item.num_doc,
-          nombres: item.nombres,
-          rol: item.nombreRol,
-        }));
-        setHorasExtra(datos);
-      } else {
-        setHorasExtra([]);
-      }
-
-      setLoading(false);
+      const obtenerRol = decodedTokenWithRol();
+      const data = await obtenerHorasExtra(obtenerRol);
+      const datos = (data?.calculo || []).map((item) => ({
+        ...item,
+        numDoc: item.num_doc,
+        nombres: item.nombres,
+        rol: item.nombreRol || "",
+      }));
+      setHorasExtra(datos);
       setError(null);
     } catch (err) {
       console.error(err);
       setError("Error al cargar datos.");
+      setHorasExtra([]);
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchHorasExtra();
-    const interval = setInterval(fetchHorasExtra, 5000);
+    const interval = setInterval(fetchHorasExtra, 10000);
     return () => clearInterval(interval);
   }, []);
 
