@@ -105,6 +105,139 @@ class HojadevidaController extends BaseController{
         }
     }
     
+
+    public function analizarHojaDeVidaPorNumDoc(): void {
+        try {
+            if (!isset($_GET['num_doc']) || !is_numeric($_GET['num_doc'])) {
+                $this->jsonResponseService->responder([
+                    'status' => 'error',
+                    'visualMessage' => 'El número de documento es inválido. Por favor verifica e intenta de nuevo.'
+                ], 400);
+                return;
+            }
+            $num_doc = $_GET['num_doc'];
+            if ($num_doc <= 0) {
+                $this->jsonResponseService->responder([
+                    'status' => 'error',
+                    'visualMessage' => 'El número de documento debe ser un entero positivo.'
+                ], 400);
+                return;
+            }
+
+            // 1. Datos personales + experiencia y estudios
+            $datos = $this->hojadevida->obtenerHojaDeVidaParaAnalizar((int) $num_doc);
+            if (!$datos) {
+                $this->jsonResponseService->responder([
+                    'status' => 'error',
+                    'visualMessage' => 'No se encontró la hoja de vida para el número de documento proporcionado.'
+                ], 404);
+                return;
+            }
+
+            // 2. Validar cargo y convocatoria
+            if (empty($datos['idCargo']) || empty($datos['idConvocatoria'])) {
+                $this->jsonResponseService->responder([
+                    'status' => 'error',
+                    'visualMessage' => 'No se encontró información de cargo o convocatoria para analizar la hoja de vida. El usuario debe estar postulado a una convocatoria.'
+                ], 404);
+                return;
+            }
+
+            // 3. Armar arrays para el microservicio Python
+            $hoja = [
+                'idHojadevida' => $datos['idHojadevida'],
+                'fechaNacimiento' => $datos['fechaNacimiento'],
+                'direccion' => $datos['direccion'],
+                'ciudad' => $datos['ciudad'],
+                'ciudadNacimiento' => $datos['ciudadNacimiento'],
+                'telefono' => strval($datos['telefono']),
+                'telefonoFijo' => strval($datos['telefonoFijo']),
+                'estadohojadevida' => $datos['estadohojadevida'],
+                'estadoCivil' => $datos['estadoCivil'],
+                'genero' => $datos['genero'],
+                'habilidades' => $datos['habilidades'],
+                'portafolio' => $datos['portafolio'],
+                'experiencia' => array_map(function($exp) {
+                    return [
+                        'profesion' => $exp['profesion'] ?? '',
+                        'descripcionPerfil' => $exp['descripcionPerfil'] ?? '',
+                        'fechaInicioExp' => $exp['fechaInicioExp'] ?? '',
+                        'fechaFinExp' => $exp['fechaFinExp'] ?? '',
+                        'cargo' => $exp['cargo'] ?? '',
+                        'empresa' => $exp['empresa'] ?? '',
+                        'ubicacionEmpresa' => $exp['ubicacionEmpresa'] ?? '',
+                        'tipoContrato' => $exp['tipoContrato'] ?? '',
+                        'salario' => $exp['salario'] ?? '',
+                        'logros' => $exp['logros'] ?? '',
+                        'referenciasLaborales' => $exp['referenciasLaborales'] ?? '',
+                    ];
+                }, $datos['experiencia'] ?? []),
+                'estudios' => array_map(function($est) {
+                    return [
+                        'nivelEstudio' => $est['nivelEstudio'] ?? '',
+                        'areaEstudio' => $est['areaEstudio'] ?? '',
+                        'estadoEstudio' => $est['estadoEstudio'] ?? '',
+                        'fechaInicioEstudio' => $est['fechaInicioEstudio'] ?? '',
+                        'fechaFinEstudio' => $est['fechaFinEstudio'] ?? '',
+                        'tituloEstudio' => $est['tituloEstudio'] ?? '',
+                        'institucionEstudio' => $est['institucionEstudio'] ?? '',
+                        'ubicacionEstudio' => $est['ubicacionEstudio'] ?? '',
+                        'modalidad' => $est['modalidad'] ?? '',
+                        'paisInstitucion' => $est['paisInstitucion'] ?? '',
+                        'duracionEstudio' => $est['duracionEstudio'] ?? '',
+                        'materiasDestacadas' => $est['materiasDestacadas'] ?? '',
+                    ];
+                }, $datos['estudios'] ?? [])
+            ];
+
+            $cargo = [
+                'idcargo' => $datos['idCargo'],
+                'nombreCargo' => $datos['nombreCargo'],
+            ];
+            $convocatoria = [
+                'idconvocatoria' => $datos['idConvocatoria'],
+                'nombreConvocatoria' => $datos['nombreConvocatoria'],
+                'requisitos' => $datos['requisitos'],
+            ];
+
+            $payload = json_encode([
+                'hoja' => $hoja,
+                'cargo' => $cargo,
+                'convocatoria' => $convocatoria
+            ]);
+
+            $ch = curl_init("http://gestorplus-backend-python:5000/analizar-hojadevida");
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($payload)
+            ]);
+            $response = curl_exec($ch);
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpcode !== 200 || !$response) {
+                $this->jsonResponseService->responder([
+                    'status' => 'error',
+                    'visualMessage' => 'Ocurrió un error al analizar la hoja de vida. Intenta nuevamente más tarde.',
+                    'payloadEnviado' => json_decode($payload, true) // <-- Agrega esto
+                ], 500);
+                return;
+            }
+
+            $this->jsonResponseService->responder([
+                'status' => 'success',
+                'data' => json_decode($response, true)
+            ]);
+        } catch (Exception $e) {
+            $this->jsonResponseService->responder([
+                'status' => 'error',
+                'visualMessage' => 'Error inesperado: ' . $e->getMessage()
+            ], $e->getCode() ?: 500);
+        }
+    }
     
 
 
