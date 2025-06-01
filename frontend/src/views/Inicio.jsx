@@ -4,14 +4,11 @@
  */
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import TablaEmpleado from "../componentsClosed/tables/TablaEmpleado";
 import NavbarClosed from "../componentsClosed/Navbar";
 import { decodedTokenWithRol, getCookie } from "../utils/Auth";
 
 const Inicio = () => {
-  const navigate = useNavigate();
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
@@ -35,37 +32,29 @@ const Inicio = () => {
   }, []);
 
   return (
-    <div
-      className="min-vh-100 "
-      style={{
-        transition: "all 3s ease",
-        display: "flex",
-        backgroundColor: "#ECF0F1",
-      }}
-    >
-      <NavbarClosed />
-      <div
-        className="flex-grow-1"
-        style={{ backgroundColor: "#ECF0F1", padding: "10px" }}
-      >
-        {showBanner && (
-          <div
-            style={{
-              background: "#ffcccc",
-              color: "#a94442",
-              padding: "5px",
-              borderRadius: "5px",
-              top: "0",
-              textAlign: "center",
-              fontWeight: "bold",
-              zIndex: 9999,
-              marginBottom: "16px",
-            }}
-          >
-            ⚠️ Debes finalizar la jornada antes de salir del sistema.
-          </div>
-        )}
-        <TablaEmpleado />
+    <div style={{ minHeight: "100vh", display: "flex", background: "#ECF0F1" }}>
+      <div className="main-layout">
+        <NavbarClosed />
+        <div className="main-content">
+          {showBanner && (
+            <div
+              style={{
+                background: "#ffcccc",
+                color: "#a94442",
+                padding: "5px",
+                borderRadius: "5px",
+                top: "0",
+                textAlign: "center",
+                fontWeight: "bold",
+                zIndex: 9999,
+                marginBottom: "16px",
+              }}
+            >
+              ⚠️ Debes finalizar la jornada antes de salir del sistema.
+            </div>
+          )}
+          <TablaEmpleado />
+        </div>
       </div>
     </div>
   );
