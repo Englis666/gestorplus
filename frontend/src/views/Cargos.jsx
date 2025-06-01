@@ -10,11 +10,14 @@ import TablaCargos from "../componentsClosed/tables/TablaCargos";
 const Cargos = () => {
   return (
     <div
-      className="bg-light min-vh-100"
+      className="bg-light min-vh-100 main-layout"
       style={{ transition: "all 3s ease", display: "flex" }}
     >
       <NavbarClosed />
-      <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
+      <div
+        className="flex-grow-1 p-4 main-content"
+        style={{ backgroundColor: "#ECF0F1" }}
+      >
         <TablaCargos />
       </div>
     </div>
