@@ -19,7 +19,11 @@ class HorasExtra {
     }
 
     public function obtenerTodasLasHorasExtra() {
-        $sql = "SELECT * FROM horaextra";
+        $sql = "SELECT h.*, u.nombres, u.apellidos, u.num_doc, r.nombreRol
+                FROM horaextra as h
+                JOIN usuario as u ON h.usuario_num_doc = u.num_doc
+                LEFT JOIN vinculacion as v ON u.num_doc = v.usuario_num_doc
+                LEFT JOIN rol as r ON u.rol_idrol = r.idrol";
         return $this->dbService->ejecutarConsulta($sql);
     }
 
