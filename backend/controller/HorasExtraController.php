@@ -22,7 +22,11 @@ class HorasExtraController extends BaseController{
 
     public function obtenerTodasLasHorasExtra()
     {
-        $this->jsonResponseService->responder($this->horasExtra->obtenerTodasLasHorasExtra());
+        $datos = $this->horasExtra->obtenerTodasLasHorasExtra();
+        $this->jsonResponseService->responder([
+            'status' => 'success',
+            'calculo' => $datos
+        ]);
     }
 
     public function consultarHorasExtra(){
@@ -35,7 +39,7 @@ class HorasExtraController extends BaseController{
 
     public function calcularHorasExtra($frame){
         $response = $this->horasExtraService->calcularHorasExtra($frame);
-        return $response;
+       return $response;
     }
 
 
