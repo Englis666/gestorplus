@@ -53,6 +53,7 @@ return [
     'buscarIdEvaluacion'         => ['evaluacion', 'buscarIdEvaluacion'],
     'obtenerTodosLosPermisos'    => ['permiso', 'obtenerTodosLosPermisos'],
     'obtenerHojadevidaPorNumDoc' => ['hojadevida', 'obtenerHojadevidaPorNumDoc'],
+    'analizarHojaDeVidaPorNumDoc' => ['hojadevida', 'analizarHojaDeVidaPorNumDoc'],
 
     // ─── Cálculo ────────────────────────────────────────
     'calcularPostulacionesEnConvocatorias' => ['calculo', 'calcularPostulacionesEnConvocatorias'],
