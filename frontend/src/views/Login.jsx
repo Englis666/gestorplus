@@ -4,7 +4,7 @@
  */
 
 import { useState } from "react";
-import imagen from "../assets/1.png";
+import imagen from "../assets/2.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUser } from "../context/userContext";
