@@ -1,0 +1,3 @@
+# Ignorar archivos de configuración sensibles
+/config/.env
+/backend/config/.env
