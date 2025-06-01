@@ -83,14 +83,6 @@ Esto levantará el backend en modo desarrollo con recarga automática en [http:/
 
 - Todos los modelos deben tener los mismos nombres de campos (y mayúsculas/minúsculas) que los datos enviados desde el frontend o PHP.
 - Si ves errores 422, revisa que el JSON enviado coincida exactamente con los modelos.
-- Puedes extender la API agregando más rutas y servicios según tus necesidades.
-
----
-
-## 👨‍💻 Desarrollo
-
-- El código se recarga automáticamente al guardar cambios.
-- Puedes agregar tests en una carpeta `tests/` si lo deseas.
 
 ---
 
