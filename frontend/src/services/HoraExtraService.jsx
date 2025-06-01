@@ -2,6 +2,30 @@ import axios from "axios";
 import API_URL from "../config";
 import { getCookie } from "../utils/Auth";
 
+export const obtenerHorasExtra = async (obtenerRol) => {
+  const token = getCookie("auth_token");
+  if (!token) throw new Error("Token No Encontrado");
+  const action = {
+    1: "obtenerTodasLasHorasExtra",
+    2: "obtenerTodasLasHorasExtra",
+    3: "obtenerMisHorasExtra",
+  };
+  if (!action[obtenerRol]) throw new Error("Rol inválido");
+  try {
+    const response = await axios.get(API_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { action: action[obtenerRol] },
+    });
+    const data = response.data;
+    if (!data) throw new Error("No se encontraron datos");
+    console.log("Datos de horas extra:", data);
+    return data;
+  } catch (error) {
+    console.error("Error al obtener horas extra:", error);
+    throw error;
+  }
+};
+
 export const calcularHorasExtra = async () => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
