@@ -16,14 +16,21 @@ const COLORS = [
   "#FF6666",
 ];
 
-const HoraExtraChart = ({ datos }) => {
-  // Suma total de horas extra
+const HoraExtraChart = ({ data }) => {
+  // data debe ser un array plano
+  const datos = Array.isArray(data)
+    ? data.map((item) => ({
+        ...item,
+        nombres: item.nombres || `ID ${item.numDoc || item.num_doc || ""}`,
+        horasExtra: Number(item.horasExtra),
+      }))
+    : [];
+
   const totalHoras = datos.reduce(
     (acc, curr) => acc + Number(curr.horasExtra),
     0
   );
 
-  // Si todas son 0, muestra un gráfico especial o un mensaje
   if (totalHoras === 0) {
     return (
       <div style={{ width: "100%", height: 300 }}>
@@ -50,7 +57,6 @@ const HoraExtraChart = ({ datos }) => {
     );
   }
 
-  // Si hay datos normales, muestra el gráfico real
   return (
     <div style={{ width: "100%", height: 300 }}>
       <h4 className="text-center">Distribución de Horas Extra</h4>
