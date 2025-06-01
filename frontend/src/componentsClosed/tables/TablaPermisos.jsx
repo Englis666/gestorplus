@@ -7,6 +7,7 @@ import {
   permisoAceptado,
   permisoRechazado,
 } from "../../services/PermisosService";
+import PermisosLineChart from "../Graphics/PermisoLineChart";
 
 const TablaPermisos = () => {
   const [permisos, setPermisos] = useState([]);
@@ -69,6 +70,36 @@ const TablaPermisos = () => {
     }
   };
 
+  const agruparPermisosPorMes = (permisos) => {
+    const meses = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
+    ];
+    const conteo = {};
+
+    permisos.forEach((permiso) => {
+      const fecha = new Date(permiso.fechaInicio);
+      const mes = meses[fecha.getMonth()];
+      conteo[mes] = (conteo[mes] || 0) + 1;
+    });
+
+    // Devuelve un array ordenado por mes
+    return meses.map((mes) => ({
+      mes,
+      cantidad: conteo[mes] || 0,
+    }));
+  };
+
   const columns = [
     {
       name: "Nombre Empleado",
@@ -108,12 +139,14 @@ const TablaPermisos = () => {
       cell: (row) => (
         <div>
           <button
+            type="button"
             className="btn btn-success btn-sm mt-2"
             onClick={() => handleAceptar(row.idPermisos)}
           >
             Aceptar
           </button>
           <button
+            type="button"
             className="btn btn-danger btn-sm mt-2"
             onClick={() => handleRechazar(row.idPermisos)}
           >
@@ -134,6 +167,8 @@ const TablaPermisos = () => {
   return (
     <div className="container mt-5">
       <h2 className="mb-4 text-center text-dark font-weight-bold">Permisos</h2>
+      {/* Gráfica de permisos por mes */}
+      <PermisosLineChart data={agruparPermisosPorMes(permisos)} />
       <div className="row">
         <div className="col-md-8 mb-4">
           <div
