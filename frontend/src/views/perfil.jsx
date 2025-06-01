@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import NavbarClosed from "../componentsClosed/Navbar";
 import ModalHojaDeVida from "../componentsClosed/modals/ModalHojadevida";
 import Estudios from "../componentsClosed/modals/ModalEstudios";
 import Experiencia from "../componentsClosed/modals/ModalExperienciaLaboral";
@@ -346,96 +347,99 @@ const Perfil = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row">
-        {/* Contenedor principal a la izquierda */}
-        <div className="col-md-6 mb-4">
-          <div className="card shadow animated fadeIn">
-            <div className="card-body">
-              <h2 className="card-title text-primary text-center mb-4">
-                Configuración de Perfil
-              </h2>
-              <p className="text-center mb-4">
-                Actualiza tu información personal y profesional.
-              </p>
+    <div className="main-layout">
+      <NavbarClosed />
+      <div className="main-content">
+        <div className="container mt-5">
+          <div className="row">
+            {/* Contenedor principal a la izquierda */}
+            <div className="col-md-6 mb-4">
+              <div className="card shadow animated fadeIn">
+                <div className="card-body">
+                  <h2 className="card-title text-primary text-center mb-4">
+                    Configuración de Perfil
+                  </h2>
+                  <p className="text-center mb-4">
+                    Actualiza tu información personal y profesional.
+                  </p>
 
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="num_doc" className="form-label">
-                    Número de documento
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    name="num_doc"
-                    id="num_doc"
-                    value={formData.num_doc}
-                    readOnly
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="nombres" className="form-label">
-                    Nombres
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="nombres"
-                    id="nombres"
-                    value={formData.nombres}
-                    readOnly
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="apellidos" className="form-label">
-                    Apellidos
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="apellidos"
-                    id="apellidos"
-                    value={formData.apellidos}
-                    readOnly
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
-                    Correo electrónico
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    name="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="tipodDoc" className="form-label">
-                    Tipo de documento
-                  </label>
-                  <select
-                    name="tipodDoc"
-                    id="tipodDoc"
-                    className="form-select"
-                    value={formData.tipodDoc}
-                    onChange={handleChange}
-                  >
-                    <option value="cedula de ciudadania">
-                      Cédula de ciudadanía
-                    </option>
-                    <option value="tarjeta de identidad">
-                      Tarjeta de identidad
-                    </option>
-                    <option value="cedula de extranjeria">
-                      Cédula de extranjería
-                    </option>
-                    <option value="pasaporte">Pasaporte</option>
-                  </select>
-                </div>
-                {/* <div className="mb-3">
+                  <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                      <label htmlFor="num_doc" className="form-label">
+                        Número de documento
+                      </label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="num_doc"
+                        id="num_doc"
+                        value={formData.num_doc}
+                        readOnly
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="nombres" className="form-label">
+                        Nombres
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="nombres"
+                        id="nombres"
+                        value={formData.nombres}
+                        readOnly
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="apellidos" className="form-label">
+                        Apellidos
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="apellidos"
+                        id="apellidos"
+                        value={formData.apellidos}
+                        readOnly
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="email" className="form-label">
+                        Correo electrónico
+                      </label>
+                      <input
+                        type="email"
+                        className="form-control"
+                        name="email"
+                        id="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="tipodDoc" className="form-label">
+                        Tipo de documento
+                      </label>
+                      <select
+                        name="tipodDoc"
+                        id="tipodDoc"
+                        className="form-select"
+                        value={formData.tipodDoc}
+                        onChange={handleChange}
+                      >
+                        <option value="cedula de ciudadania">
+                          Cédula de ciudadanía
+                        </option>
+                        <option value="tarjeta de identidad">
+                          Tarjeta de identidad
+                        </option>
+                        <option value="cedula de extranjeria">
+                          Cédula de extranjería
+                        </option>
+                        <option value="pasaporte">Pasaporte</option>
+                      </select>
+                    </div>
+                    {/* <div className="mb-3">
                   <label htmlFor="password" className="form-label">Contraseña</label>
                   <input
                     type="password"
@@ -446,183 +450,194 @@ const Perfil = () => {
                     onChange={handleChange}
                   />
                 </div> */}
-                <button
-                  type="submit"
-                  className="btn btn-primary w-100 mb-3 shadow-sm"
-                >
-                  Actualizar datos
-                </button>
-              </form>
+                    <button
+                      type="submit"
+                      className="btn btn-primary w-100 mb-3 shadow-sm"
+                    >
+                      Actualizar datos
+                    </button>
+                  </form>
 
-              <div className="mt-4 d-grid gap-2">
-                <button
-                  onClick={toggleModalHojaDeVida}
-                  className="btn btn-outline-primary animated fadeInUp"
-                >
-                  <i className="material-icons me-2">description</i> Hoja de
-                  Vida
-                </button>
-                <button
-                  onClick={toggleModalEstudios}
-                  className="btn btn-outline-primary animated fadeInUp"
-                >
-                  <i className="material-icons me-2">school</i> Estudios
-                </button>
-                <button
-                  onClick={toggleModalExperiencia}
-                  className="btn btn-outline-primary animated fadeInUp"
-                >
-                  <i className="material-icons me-2">work</i> Experiencia
-                  Laboral
-                </button>
+                  <div className="mt-4 d-grid gap-2">
+                    <button
+                      onClick={toggleModalHojaDeVida}
+                      className="btn btn-outline-primary animated fadeInUp"
+                    >
+                      <i className="material-icons me-2">description</i> Hoja de
+                      Vida
+                    </button>
+                    <button
+                      onClick={toggleModalEstudios}
+                      className="btn btn-outline-primary animated fadeInUp"
+                    >
+                      <i className="material-icons me-2">school</i> Estudios
+                    </button>
+                    <button
+                      onClick={toggleModalExperiencia}
+                      className="btn btn-outline-primary animated fadeInUp"
+                    >
+                      <i className="material-icons me-2">work</i> Experiencia
+                      Laboral
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => window.history.back()}
+                    className="btn btn-secondary w-100 mt-3 animated fadeInUp"
+                  >
+                    <i className="material-icons me-2">arrow_back</i> Volver
+                  </button>
+                </div>
               </div>
-
-              <button
-                onClick={() => window.history.back()}
-                className="btn btn-secondary w-100 mt-3 animated fadeInUp"
-              >
-                <i className="material-icons me-2">arrow_back</i> Volver
-              </button>
             </div>
-          </div>
-        </div>
 
-        {/* Contenedor de estudios y experiencia  */}
-        <div className="col-md-6">
-          <div className="card shadow animated fadeIn">
-            <div className="card-body">
-              <div className="nav nav-tabs">
-                <select
-                  value={seleccionado}
-                  onChange={(e) => setSeleccionado(e.target.value)}
-                  className="form-select animated fadeInUp"
-                >
-                  <option value="Estudios">Estudios</option>
-                  <option value="Experiencias">Experiencia Laboral</option>
-                </select>
-              </div>
+            {/* Contenedor de estudios y experiencia  */}
+            <div className="col-md-6">
+              <div className="card shadow animated fadeIn">
+                <div className="card-body">
+                  <div className="nav nav-tabs">
+                    <select
+                      value={seleccionado}
+                      onChange={(e) => setSeleccionado(e.target.value)}
+                      className="form-select animated fadeInUp"
+                    >
+                      <option value="Estudios">Estudios</option>
+                      <option value="Experiencias">Experiencia Laboral</option>
+                    </select>
+                  </div>
 
-              <div className="mt-4">
-                {seleccionado === "Estudios" ? (
-                  estudios.length > 0 ? (
-                    estudios.map((estudio, index) => (
-                      <div key={index} className="card mb-3 animated fadeInUp">
-                        <div className="card-body">
-                          <h5 className="card-title text-primary">
-                            {estudio.tituloEstudio}
-                          </h5>
-                          <p className="card-text">
-                            <strong>Institución:</strong>{" "}
-                            {estudio.institucionEstudio} <br />
-                            <strong>Nivel:</strong> {estudio.nivelEstudio}{" "}
-                            <br />
-                            <strong>Área:</strong> {estudio.areaEstudio} <br />
-                            <strong>Estado:</strong> {estudio.estadoEstudio}{" "}
-                            <br />
-                            <strong>Fecha de inicio:</strong>{" "}
-                            {estudio.fechaInicioEstudio} <br />
-                            <strong>Fecha de fin:</strong>{" "}
-                            {estudio.fechaFinEstudio} <br />
-                            <strong>Ubicación:</strong>{" "}
-                            {estudio.ubicacionEstudio}
-                          </p>
-                          <div className="d-flex justify-content-end">
-                            <button
-                              className="btn btn-sm btn-primary me-2"
-                              onClick={() => editarEstudioHandler(estudio)}
-                            >
-                              <i className="material-icons">edit</i>
-                            </button>
-                            <button
-                              className="btn btn-sm btn-danger"
-                              onClick={() =>
-                                eliminarEstudioHandler(estudio.idestudio)
-                              }
-                            >
-                              <i className="material-icons">delete</i>
-                            </button>
+                  <div className="mt-4">
+                    {seleccionado === "Estudios" ? (
+                      estudios.length > 0 ? (
+                        estudios.map((estudio, index) => (
+                          <div
+                            key={index}
+                            className="card mb-3 animated fadeInUp"
+                          >
+                            <div className="card-body">
+                              <h5 className="card-title text-primary">
+                                {estudio.tituloEstudio}
+                              </h5>
+                              <p className="card-text">
+                                <strong>Institución:</strong>{" "}
+                                {estudio.institucionEstudio} <br />
+                                <strong>Nivel:</strong> {estudio.nivelEstudio}{" "}
+                                <br />
+                                <strong>Área:</strong> {estudio.areaEstudio}{" "}
+                                <br />
+                                <strong>Estado:</strong> {estudio.estadoEstudio}{" "}
+                                <br />
+                                <strong>Fecha de inicio:</strong>{" "}
+                                {estudio.fechaInicioEstudio} <br />
+                                <strong>Fecha de fin:</strong>{" "}
+                                {estudio.fechaFinEstudio} <br />
+                                <strong>Ubicación:</strong>{" "}
+                                {estudio.ubicacionEstudio}
+                              </p>
+                              <div className="d-flex justify-content-end">
+                                <button
+                                  className="btn btn-sm btn-primary me-2"
+                                  onClick={() => editarEstudioHandler(estudio)}
+                                >
+                                  <i className="material-icons">edit</i>
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() =>
+                                    eliminarEstudioHandler(estudio.idestudio)
+                                  }
+                                >
+                                  <i className="material-icons">delete</i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-center">
+                          No hay estudios disponibles.
+                        </p>
+                      )
+                    ) : experiencia.length > 0 ? (
+                      experiencia.map((experiencia, index) => (
+                        <div
+                          key={index}
+                          className="card mb-3 animated fadeInUp"
+                        >
+                          <div className="card-body">
+                            <h5 className="card-title text-primary">
+                              {experiencia.profesion}
+                            </h5>
+                            <p className="card-text">
+                              <strong>Descripción del perfil:</strong>{" "}
+                              {experiencia.descripcionPerfil} <br />
+                              <strong>Fecha de inicio:</strong>{" "}
+                              {experiencia.fechaInicioExp} <br />
+                              <strong>Fecha de fin:</strong>{" "}
+                              {experiencia.fechaFinExp}
+                            </p>
+                            <div className="d-flex justify-content-end">
+                              <button
+                                className="btn btn-sm btn-primary me-2"
+                                onClick={() =>
+                                  editarExperienciaHandler(experiencia)
+                                }
+                              >
+                                <i className="material-icons">edit</i>
+                              </button>
+                              <button
+                                className="btn btn-sm btn-danger"
+                                onClick={() =>
+                                  eliminarExperienciaHandler(
+                                    experiencia.idexperienciaLaboral
+                                  )
+                                }
+                              >
+                                <i className="material-icons">delete</i>
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-center">No hay estudios disponibles.</p>
-                  )
-                ) : experiencia.length > 0 ? (
-                  experiencia.map((experiencia, index) => (
-                    <div key={index} className="card mb-3 animated fadeInUp">
-                      <div className="card-body">
-                        <h5 className="card-title text-primary">
-                          {experiencia.profesion}
-                        </h5>
-                        <p className="card-text">
-                          <strong>Descripción del perfil:</strong>{" "}
-                          {experiencia.descripcionPerfil} <br />
-                          <strong>Fecha de inicio:</strong>{" "}
-                          {experiencia.fechaInicioExp} <br />
-                          <strong>Fecha de fin:</strong>{" "}
-                          {experiencia.fechaFinExp}
-                        </p>
-                        <div className="d-flex justify-content-end">
-                          <button
-                            className="btn btn-sm btn-primary me-2"
-                            onClick={() =>
-                              editarExperienciaHandler(experiencia)
-                            }
-                          >
-                            <i className="material-icons">edit</i>
-                          </button>
-                          <button
-                            className="btn btn-sm btn-danger"
-                            onClick={() =>
-                              eliminarExperienciaHandler(
-                                experiencia.idexperienciaLaboral
-                              )
-                            }
-                          >
-                            <i className="material-icons">delete</i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center">
-                    No hay experiencia laboral disponible.
-                  </p>
-                )}
+                      ))
+                    ) : (
+                      <p className="text-center">
+                        No hay experiencia laboral disponible.
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+
+          <ModalHojaDeVida
+            modalHojaDeVida={modalHojaDeVida}
+            toggleModalHojaDeVida={toggleModalHojaDeVida}
+          />
+          <Estudios
+            modalEstudios={modalEstudios}
+            toggleModalEstudios={toggleModalEstudios}
+            onAgregarEstudio={agregarEstudio}
+          />
+          <Experiencia
+            modalExperiencia={modalExperiencia}
+            toggleModalExperiencia={toggleModalExperiencia}
+            onAgregarExperiencia={agregarExperiencia}
+          />
+          <EditarEstudio
+            modalEditarEstudio={modalEditarEstudio}
+            toggleModalEditarEstudio={toggleModalEditarEstudio}
+            onEditarEstudio={editarEstudio}
+            estudioSeleccionado={estudioSeleccionado}
+          />
+          <EditarExperiencia
+            modalEditarExperiencia={modalEditarExperiencia}
+            toggleModalEditarExperiencia={toggleModalEditarExperiencia}
+            onEditarExperiencia={editarExperiencia}
+            experienciaSeleccionada={experienciaSeleccionada}
+          />
         </div>
       </div>
-
-      <ModalHojaDeVida
-        modalHojaDeVida={modalHojaDeVida}
-        toggleModalHojaDeVida={toggleModalHojaDeVida}
-      />
-      <Estudios
-        modalEstudios={modalEstudios}
-        toggleModalEstudios={toggleModalEstudios}
-        onAgregarEstudio={agregarEstudio}
-      />
-      <Experiencia
-        modalExperiencia={modalExperiencia}
-        toggleModalExperiencia={toggleModalExperiencia}
-        onAgregarExperiencia={agregarExperiencia}
-      />
-      <EditarEstudio
-        modalEditarEstudio={modalEditarEstudio}
-        toggleModalEditarEstudio={toggleModalEditarEstudio}
-        onEditarEstudio={editarEstudio}
-        estudioSeleccionado={estudioSeleccionado}
-      />
-      <EditarExperiencia
-        modalEditarExperiencia={modalEditarExperiencia}
-        toggleModalEditarExperiencia={toggleModalEditarExperiencia}
-        onEditarExperiencia={editarExperiencia}
-        experienciaSeleccionada={experienciaSeleccionada}
-      />
     </div>
   );
 };
