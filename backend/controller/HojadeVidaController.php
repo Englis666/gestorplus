@@ -206,7 +206,7 @@ class HojadevidaController extends BaseController{
                 'convocatoria' => $convocatoria
             ]);
 
-            $ch = curl_init("http://gestorplus-backend-python:5000/analizar-hojadevida");
+            $ch = curl_init("http://gestorplus-backend-python:5000/api/analizar-hojadevida");
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
