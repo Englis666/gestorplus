@@ -41,10 +41,10 @@ const Quejas = () => {
   }, [navigate, token]);
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div className="main-layout d-flex justify-content-center align-items-center vh-100 bg-light">
       <NavbarClosed />
       <div
-        className="container shadow-lg rounded-4 overflow-hidden"
+        className="main-content container shadow-lg rounded-4 overflow-hidden"
         style={{ maxWidth: "1200px", height: "85vh", backgroundColor: "#fff" }}
       >
         <div className="row h-100 g-0">
