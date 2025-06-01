@@ -9,12 +9,9 @@ import TablaMinutosTrabajados from "../componentsClosed/tables/TablaMinutosTraba
 
 const HorasExtra = () => {
   return (
-    <div className=" min-vh-100 d-flex" style={{ overflow: "hidden" }}>
-      <div style={{ width: "250px", minWidth: "250px" }}>
-        <NavbarClosed />
-      </div>
-
-      <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
+    <div className="main-layout">
+      <NavbarClosed />
+      <div className="main-content">
         <div
           style={{
             display: "flex",
