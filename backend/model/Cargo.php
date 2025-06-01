@@ -46,7 +46,7 @@ class Cargo
      * @return bool
      * @throws Exception
      */
-    public function desactivarCargo(int $idCargo): bool
+    public function desactivarCargo(int $idCargo): bool|array
     {
         $relCount = $this->verificarCargosRelacionadosEnConvocatorias($idCargo);
         if ($relCount > 0) {
