@@ -85,4 +85,48 @@ class Hojadevida {
 
         return ['message' => $success ? 'Hoja de vida actualizada' : 'No se actualizó la hoja de vida'];
     }
+
+    public function obtenerHojaDeVidaParaAnalizar(int $num_doc): ?array {
+        if ($num_doc <= 0) {
+            throw new Exception('El número de documento no es válido', 400);
+        }
+
+        $sql = "SELECT h.*, u.* FROM usuario u
+                INNER JOIN hojadevida h ON u.hojadevida_idHojadevida = h.idHojadevida
+                WHERE u.num_doc = :num_doc";
+        $datos = $this->dbService->ejecutarConsulta($sql, ['num_doc' => $num_doc], true);
+        if (!$datos) return null;
+
+        $idHojadevida = $datos['idHojadevida'];
+
+        $sqlExp = "SELECT * FROM experiencialaboral WHERE hojadevida_idHojadevida = :id";
+        $experiencia = $this->dbService->ejecutarConsulta($sqlExp, ['id' => $idHojadevida]);
+
+        $sqlEst = "SELECT * FROM estudio WHERE hojadevida_idHojadevida = :id";
+        $estudios = $this->dbService->ejecutarConsulta($sqlEst, ['id' => $idHojadevida]);
+
+        $sqlPost = "SELECT c.idConvocatoria, c.nombreConvocatoria, c.requisitos,
+                           ca.idCargo, ca.nombreCargo
+                    FROM postulacion p
+                    INNER JOIN convocatoria c ON p.convocatoria_idConvocatoria = c.idconvocatoria
+                    INNER JOIN cargo ca ON c.cargo_idCargo = ca.idcargo
+                    INNER JOIN usuario u ON p.usuario_num_doc = u.num_doc
+                    WHERE u.hojadevida_idHojadevida = :id
+                    ORDER BY p.idPostulacion DESC LIMIT 1";
+        $postulacion = $this->dbService->ejecutarConsulta($sqlPost, ['id' => $idHojadevida], true);
+
+        return [
+            ...$datos,
+            'experiencia' => $experiencia ?: [],
+            'estudios' => $estudios ?: [],
+            'idCargo' => $postulacion['idCargo'] ?? null,
+            'nombreCargo' => $postulacion['nombreCargo'] ?? null,
+            'idConvocatoria' => $postulacion['idConvocatoria'] ?? null,
+            'nombreConvocatoria' => $postulacion['nombreConvocatoria'] ?? null,
+            'requisitos' => $postulacion['requisitos'] ?? null,
+        ];
+    }
+
 }
+
+
