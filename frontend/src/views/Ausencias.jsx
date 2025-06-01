@@ -9,12 +9,9 @@ import TablaAusencias from "../componentsClosed/tables/TablaAusencias";
 
 const Ausencias = () => {
   return (
-    <div
-      className="bg-light min-vh-100"
-      style={{ transition: "all 3s ease", display: "flex" }}
-    >
+    <div className="main-layout">
       <NavbarClosed />
-      <div className="flex-grow-1 p-4" style={{ backgroundColor: "#ECF0F1" }}>
+      <div className="main-content">
         <TablaAusencias />
       </div>
     </div>
