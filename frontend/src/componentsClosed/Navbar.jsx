@@ -3,15 +3,15 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../context/userContext";
 import { jwtDecode } from "jwt-decode";
 import logo from "../assets/Gestorplus.png";
+import "./css/NavbarClosed.css";
 
 const NavbarClosed = ({ activeLink }) => {
   const navigate = useNavigate();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(window.innerWidth <= 900);
   const [rol, setRol] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [openSubMenu, setOpenSubMenu] = useState(null);
@@ -76,177 +76,111 @@ const NavbarClosed = ({ activeLink }) => {
     return false;
   };
 
-  const styles = {
-    navbar: {
-      display: "flex",
-      flexDirection: "column",
-      height: "auto",
-      width: isCollapsed ? "80px" : "260px",
-      background: "linear-gradient(to bottom, #ffffff, #eaf4ff)",
-      backgroundColor: "linear-gradient(to bottom, #ffffff, #eaf4ff)",
-      transition: "width 0.3s ease",
-      boxShadow: "2px 0 10px rgba(0, 0, 0, 0.1)",
+  // Usa useMemo para evitar duplicados y recalcular solo cuando cambia el rol
+  const menuItems = useMemo(() => {
+    const items = [
+      { label: "Inicio", icon: "home", path: "/Inicio" },
+      {
+        label: "Sección de jornadas",
+        icon: "event",
+        subMenu: [
+          { label: "Jornadas", icon: "event", path: "/Jornadas" },
+          { label: "Horas Extra", icon: "timeline", path: "/HorasExtra" },
+        ],
+      },
+      {
+        label: "Sección Novedades",
+        icon: "hourglass_empty",
+        subMenu: [
+          { label: "Permisos", icon: "event_available", path: "/Permisos" },
+          { label: "Vacaciones", icon: "beach_access", path: "/Vacaciones" },
+          { label: "Ausencias", icon: "event_busy", path: "/Ausencias" },
+        ],
+      },
+      { label: "Paz y salvos", icon: "check_circle", path: "/PazYsalvo" },
+      { label: "Publicaciones", icon: "library_books", path: "/Publicaciones" },
+      { label: "PQRS", icon: "report_problem", path: "/Quejas" },
+      { label: "Mi perfil", icon: "person", path: "/Perfil" },
+      { label: "Certificados", icon: "description", path: "/Certificados" },
+    ];
 
-      position: "relative",
-      zIndex: 1000,
-    },
+    if (rol === "1" || rol === "2") {
+      items.push({ label: "Empleados", icon: "people", path: "/Empleados" });
+      items.push({ label: "Contratos", icon: "work", path: "/Contratos" });
+      items.push({
+        label: "Seccion Entrevistas",
+        icon: "event_note",
+        subMenu: [
+          { label: "Entrevistas", icon: "event_note", path: "/Entrevistas" },
+          {
+            label: "Sistema de Gestión",
+            icon: "work",
+            path: "/SistemaDeGestion",
+          },
+        ],
+      });
+      items.push({
+        label: "Seccion Convocatorias",
+        icon: "people",
+        subMenu: [
+          { label: "Convocatorias", icon: "people", path: "/Convocatorias" },
+          {
+            label: "Postulaciones",
+            icon: "assignment",
+            path: "/Postulaciones",
+          },
+          { label: "Cargos", icon: "work", path: "/Cargos" },
+        ],
+      });
+    }
 
-    toggleBtn: {
-      border: "none",
-      background: "none",
-      cursor: "pointer",
-      fontSize: "1.8rem",
-      margin: "1rem",
-      alignSelf: "flex-end",
-    },
-    logoContainer: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      transition: "all 0.3s ease",
-    },
-    logoImage: {
-      height: isCollapsed ? "40px" : "60px",
-      marginBottom: isCollapsed ? "0" : "10px",
-      width: isCollapsed ? "40px" : "60px",
-      maxWidth: "100%",
-      maxHeight: "100%",
-      borderRadius: "16px",
-      objectFit: "contain",
-      transition: "all 0.3s ease",
-    },
-    logoText: {
-      fontSize: isCollapsed ? "1rem" : "1.4rem",
-      fontWeight: "bold",
-      color: "#3498db",
-      textAlign: "center",
-      transition: "all 0.3s ease",
-    },
-    menuItem: {
-      display: "flex",
-      alignItems: "center",
-      gap: "1rem",
-      padding: "1rem",
-      cursor: "pointer",
-      transition: "0.2s",
-      color: "#2c3e50",
-    },
-    activeMenu: {
-      background: "#dff0ff",
-      borderLeft: "4px solid #3498db",
-      color: "#3498db",
-    },
-    subMenu: {
-      maxHeight: "300px",
-      paddingLeft: isCollapsed ? "1.5rem" : "2.8rem",
-      transition: "max-height 0.3s ease",
-    },
-    subItem: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.8rem",
-      padding: "0.5rem 1rem",
-      cursor: "pointer",
-      color: "#5d6d7e",
-      borderRadius: "6px",
-    },
-    floatingMenu: {
-      position: "absolute",
-      left: "80px",
-      background: "#fff",
-      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-      borderRadius: "8px",
-      padding: "0.5rem",
-      zIndex: 100,
-    },
-    logout: {
-      marginTop: "auto",
-      padding: "1rem",
-      display: "flex",
-      alignItems: "center",
-      gap: "1rem",
-      color: "#e74c3c",
-      cursor: "pointer",
-      fontWeight: "bold",
-      borderTop: "1px solid #ccc",
-    },
-  };
-
-  const menuItems = [
-    { label: "Inicio", icon: "home", path: "/Inicio" },
-    {
-      label: "Sección de jornadas",
-      icon: "event",
-      subMenu: [
-        { label: "Jornadas", icon: "event", path: "/Jornadas" },
-        { label: "Horas Extra", icon: "timeline", path: "/HorasExtra" },
-      ],
-    },
-    {
-      label: "Sección Novedades",
-      icon: "hourglass_empty",
-      subMenu: [
-        { label: "Permisos", icon: "event_available", path: "/Permisos" },
-        { label: "Vacaciones", icon: "beach_access", path: "/Vacaciones" },
-        { label: "Ausencias", icon: "event_busy", path: "/Ausencias" },
-      ],
-    },
-    { label: "Paz y salvos", icon: "check_circle", path: "/PazYsalvo" },
-    { label: "Publicaciones", icon: "library_books", path: "/Publicaciones" },
-    { label: "PQRS", icon: "report_problem", path: "/Quejas" },
-    { label: "Mi perfil", icon: "person", path: "/Perfil" },
-    { label: "Certificados", icon: "description", path: "/Certificados" },
-    {
+    // SIEMPRE agrega el logout al final
+    items.push({
       label: "Cerrar sesión",
-      icon: "logout",
+      icon: "exit_to_app",
       path: "/",
       onClick: handleLogout,
-      style: styles.logout,
       isLogout: true,
-    },
-  ];
+    });
 
-  if (rol === "1" || rol === "2") {
-    menuItems.push({ label: "Empleados", icon: "people", path: "/Empleados" });
-    menuItems.push({ label: "Contratos", icon: "work", path: "/Contratos" });
-    menuItems.push({
-      label: "Seccion Entrevistas",
-      icon: "event_note",
-      subMenu: [
-        { label: "Entrevistas", icon: "event_note", path: "/Entrevistas" },
-        {
-          label: "Sistema de Gestión",
-          icon: "work",
-          path: "/SistemaDeGestion",
-        },
-      ],
-    });
-    menuItems.push({
-      label: "Seccion Convocatorias",
-      icon: "people",
-      subMenu: [
-        { label: "Convocatorias", icon: "people", path: "/Convocatorias" },
-        { label: "Postulaciones", icon: "assignment", path: "/Postulaciones" },
-        { label: "Cargos", icon: "work", path: "/Cargos" },
-      ],
-    });
-  }
+    return items;
+    // eslint-disable-next-line
+  }, [rol]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 900) {
+        setIsCollapsed(false); // Siempre abierta en desktop
+      } else {
+        setIsCollapsed(true); // Siempre cerrada en mobile
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <aside style={styles.navbar}>
-      <button style={styles.toggleBtn} onClick={toggleCollapse}>
+    <aside className={`navbar-closed${isCollapsed ? " collapsed" : ""}`}>
+      <button
+        className="navbar-toggle-btn"
+        onClick={() => {
+          if (window.innerWidth > 900) toggleCollapse();
+        }}
+        title={isCollapsed ? "Abrir menú" : "Cerrar menú"}
+        disabled={window.innerWidth <= 900}
+      >
         <span className="material-icons">
           {isCollapsed ? "menu_open" : "menu"}
         </span>
       </button>
 
-      <div style={styles.logoContainer}>
-        <img src={logo} alt="GestorPlus Logo" style={styles.logoImage} />
-        <span style={styles.logoText}>Gestorplus</span>
+      <div className="logo-container">
+        <img src={logo} alt="GestorPlus Logo" className="logo-image" />
+        <span className="logo-text">Gestorplus</span>
       </div>
 
       <nav>
+        {/* Renderiza todos los items menos el logout */}
         {menuItems
           .filter((item) => !item.isLogout)
           .map((item, index) => (
@@ -256,12 +190,9 @@ const NavbarClosed = ({ activeLink }) => {
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <div
-                style={{
-                  ...(item.isLogout ? styles.logout : styles.menuItem),
-                  ...(isMenuItemActive(item) && !item.isLogout
-                    ? styles.activeMenu
-                    : {}),
-                }}
+                className={`menu-item${
+                  isMenuItemActive(item) && !item.isLogout ? " active" : ""
+                }`}
                 title={isCollapsed ? item.label : ""}
                 onClick={() =>
                   item.onClick
@@ -283,13 +214,13 @@ const NavbarClosed = ({ activeLink }) => {
                 )}
               </div>
 
-              {/* Submenú normal (expandido) */}
+              {/* Submenús */}
               {item.subMenu && openSubMenu === index && !isCollapsed && (
-                <div style={styles.subMenu}>
+                <div className="sub-menu">
                   {item.subMenu.map((sub, i) => (
                     <div
                       key={i}
-                      style={styles.subItem}
+                      className="sub-item"
                       onClick={() => navigate(sub.path)}
                     >
                       <span className="material-icons">{sub.icon}</span>
@@ -299,13 +230,12 @@ const NavbarClosed = ({ activeLink }) => {
                 </div>
               )}
 
-              {/* Submenú flotante en colapsado */}
               {item.subMenu && isCollapsed && hoveredIndex === index && (
-                <div style={{ ...styles.floatingMenu, top: index * 60 + 80 }}>
+                <div className="floating-menu" style={{ top: index * 60 + 80 }}>
                   {item.subMenu.map((sub, i) => (
                     <div
                       key={i}
-                      style={styles.subItem}
+                      className="sub-item"
                       onClick={() => navigate(sub.path)}
                     >
                       <span className="material-icons">{sub.icon}</span>
@@ -316,20 +246,18 @@ const NavbarClosed = ({ activeLink }) => {
               )}
             </div>
           ))}
-        {/* Renderiza el logout al final */}
-        {menuItems
-          .filter((item) => item.isLogout)
-          .map((item, index) => (
-            <div
-              key={"logout"}
-              style={styles.logout}
-              title={isCollapsed ? "Cerrar sesión" : ""}
-              onClick={item.onClick}
-            >
-              <span className="material-icons">{item.icon}</span>
-              {!isCollapsed && <span>{item.label}</span>}
-            </div>
-          ))}
+
+        {/* Logout SIEMPRE al final */}
+        <div
+          className="logout"
+          title={isCollapsed ? "Cerrar sesión" : ""}
+          onClick={menuItems[menuItems.length - 1].onClick}
+        >
+          <span className="material-icons">
+            {menuItems[menuItems.length - 1].icon}
+          </span>
+          {!isCollapsed && <span>{menuItems[menuItems.length - 1].label}</span>}
+        </div>
       </nav>
     </aside>
   );
