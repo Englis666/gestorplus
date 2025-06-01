@@ -102,6 +102,21 @@ services:
     profiles:
       - prod
 
+  backend-python:
+    build:
+      context: ./backend-python
+    volumes:
+      - ./backend-python/app:/app
+      - ./backend-python/app/requirements.txt:/app/requirements.txt
+    command: uvicorn main:app --host 0.0.0.0 --port 5000 --reload
+    container_name: gestorplus-backend-python
+    ports:
+      - "5000:5000"
+    networks:
+      - gestorplus-network
+    environment:
+      - TZ=America/Bogota
+
 networks:
   gestorplus-network:
     driver: bridge
