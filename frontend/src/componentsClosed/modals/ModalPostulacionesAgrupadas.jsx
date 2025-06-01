@@ -17,6 +17,8 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
   const [modalHoja, setModalHoja] = useState(false);
   const [hojaData, setHojaData] = useState(null);
   const [loadingHoja, setLoadingHoja] = useState(false);
+  const [analizando, setAnalizando] = useState(false);
+  const [analisis, setAnalisis] = useState(null);
 
   const [showAsignar, setShowAsignar] = useState(false);
   const [selectedPostulacion, setSelectedPostulacion] = useState(null);
@@ -58,7 +60,6 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
         },
       })
       .then(({ data }) => {
-        console.log(data);
         if (data.status === "error") {
           throw new Error(data.message);
         }
@@ -84,6 +85,32 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
     setShowAsignar(false);
     setSelectedPostulacion(null);
   };
+
+  const handleAnalizarHoja = (hoja) => {
+    setAnalizando(true);
+    axios
+      .get(API_URL, {
+        params: {
+          action: "analizarHojaDeVidaPorNumDoc",
+          num_doc: hoja.num_doc,
+        },
+      })
+      .then(({ data }) => {
+        if (data.status === "success" && data.data) {
+          setAnalisis(data.data);
+        } else if (data.visualMessage) {
+          setAnalisis({ error: data.visualMessage });
+        } else {
+          setAnalisis({ error: "No se pudo analizar la hoja de vida." });
+        }
+      })
+      .catch(() => {
+        setAnalisis({ error: "Error al analizar la hoja de vida." });
+      })
+      .finally(() => setAnalizando(false));
+  };
+
+  const closeAnalisis = () => setAnalisis(null);
 
   return (
     <>
@@ -188,36 +215,45 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
                   {loadingHoja ? (
                     <div className="text-center py-4">Cargando hoja…</div>
                   ) : hojaData ? (
-                    <div className="row g-3">
-                      <div className="col-md-6">
-                        <strong>Fecha de nacimiento:</strong>
-                        <p>{hojaData.fechaNacimiento}</p>
+                    <>
+                      <div className="row g-3">
+                        <div className="col-md-6">
+                          <strong>Fecha de nacimiento:</strong>
+                          <p>{hojaData.fechaNacimiento}</p>
+                        </div>
+                        <div className="col-md-6">
+                          <strong>Dirección:</strong>
+                          <p>{hojaData.direccion}</p>
+                        </div>
+                        <div className="col-md-6">
+                          <strong>Ciudad:</strong>
+                          <p>{hojaData.ciudad}</p>
+                        </div>
+                        <div className="col-md-6">
+                          <strong>Ciudad de nacimiento:</strong>
+                          <p>{hojaData.ciudadNacimiento}</p>
+                        </div>
+                        <div className="col-md-6">
+                          <strong>Teléfono móvil:</strong>
+                          <p>{hojaData.telefono}</p>
+                        </div>
+                        <div className="col-md-6">
+                          <strong>Teléfono fijo:</strong>
+                          <p>{hojaData.telefonoFijo}</p>
+                        </div>
+                        <div className="col-md-6">
+                          <strong>Estado de HV:</strong>
+                          <p>{hojaData.estadohojadevida}</p>
+                        </div>
                       </div>
-                      <div className="col-md-6">
-                        <strong>Dirección:</strong>
-                        <p>{hojaData.direccion}</p>
-                      </div>
-                      <div className="col-md-6">
-                        <strong>Ciudad:</strong>
-                        <p>{hojaData.ciudad}</p>
-                      </div>
-                      <div className="col-md-6">
-                        <strong>Ciudad de nacimiento:</strong>
-                        <p>{hojaData.ciudadNacimiento}</p>
-                      </div>
-                      <div className="col-md-6">
-                        <strong>Teléfono móvil:</strong>
-                        <p>{hojaData.telefono}</p>
-                      </div>
-                      <div className="col-md-6">
-                        <strong>Teléfono fijo:</strong>
-                        <p>{hojaData.telefonoFijo}</p>
-                      </div>
-                      <div className="col-md-6">
-                        <strong>Estado de HV:</strong>
-                        <p>{hojaData.estadohojadevida}</p>
-                      </div>
-                    </div>
+                      <button
+                        className="btn btn-warning my-2"
+                        onClick={() => handleAnalizarHoja(hojaData)}
+                        disabled={analizando}
+                      >
+                        {analizando ? "Analizando..." : "Analizar hoja de vida"}
+                      </button>
+                    </>
                   ) : (
                     <p className="text-center">No hay datos para mostrar.</p>
                   )}
@@ -226,6 +262,74 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
                   <button
                     className="btn btn-outline-secondary"
                     onClick={toggleModalHoja}
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="modal-backdrop fade show" />
+        </>
+      )}
+
+      {/* Modal para mostrar el análisis */}
+      {analisis && (
+        <>
+          {console.log("ANALISIS:", analisis)}
+          <div
+            className="modal fade show d-block"
+            tabIndex={-1}
+            role="dialog"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
+            <div className="modal-dialog" role="document">
+              <div className="modal-content shadow-lg rounded-4">
+                <div className="modal-header bg-info text-dark">
+                  <h5 className="modal-title">Resultado del análisis</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={closeAnalisis}
+                  />
+                </div>
+                <div className="modal-body">
+                  {analisis.error ? (
+                    <div className="alert alert-danger">{analisis.error}</div>
+                  ) : (
+                    <>
+                      <p>
+                        <strong>Puntaje:</strong> {analisis.puntaje}
+                      </p>
+                      <p>
+                        <strong>Mensaje:</strong> {analisis.mensaje}
+                      </p>
+                      <pre
+                        style={{
+                          background: "#f8f9fa",
+                          padding: 10,
+                          borderRadius: 6,
+                        }}
+                      >
+                        {JSON.stringify(analisis.detalle, null, 2)}
+                      </pre>
+                      {analisis.razones && analisis.razones.length > 0 && (
+                        <div>
+                          <strong>Por qué:</strong>
+                          <ul>
+                            {analisis.razones.map((r, i) => (
+                              <li key={i}>{r}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-outline-secondary"
+                    onClick={closeAnalisis}
                   >
                     Cerrar
                   </button>
