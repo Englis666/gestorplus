@@ -8,6 +8,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import DataTable from "react-data-table-component";
 import API_URL from "../../config";
+import EmpleadosPorCargoBarChart from "../Graphics/EmpleadosPorCargoBarChart";
 
 const TablaEmpleados = () => {
   const [empleados, setEmpleados] = useState([]);
@@ -64,6 +65,19 @@ const TablaEmpleados = () => {
     }
   }, []);
 
+  // Agrupa empleados por cargo
+  const agruparEmpleadosPorCargo = (empleados) => {
+    const conteo = {};
+    empleados.forEach((emp) => {
+      const cargo = emp.nombreCargo || "Sin cargo";
+      conteo[cargo] = (conteo[cargo] || 0) + 1;
+    });
+    return Object.entries(conteo).map(([cargo, cantidad]) => ({
+      cargo,
+      cantidad,
+    }));
+  };
+
   const columns = [
     {
       name: "Nombre y Apellido",
@@ -110,6 +124,8 @@ const TablaEmpleados = () => {
       <h2 className="mb-4 text-center text-dark font-weight-bold mt-4">
         Empleados (Control de Información)
       </h2>
+      {/* Gráfica de empleados por cargo */}
+      <EmpleadosPorCargoBarChart data={agruparEmpleadosPorCargo(empleados)} />
       <DataTable
         columns={columns}
         data={empleados}
