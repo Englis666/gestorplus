@@ -15,21 +15,21 @@ use Exception;
 use Firebase\JWT\JWT;
 
 class AuthController extends BaseController{
-    private Auth $auth;
-    private TokenService $tokenService;
-    private AntiAttackForce $antiAttackForce;
+    protected Auth $auth;
+    protected TokenService $tokenService;
+    protected AntiAttackForce $antiAttackForce;
 
-    public function __construct() {
+    public function __construct($auth = null, $tokenService = null, $antiAttackForce = null) {
         parent::__construct();
-        $this->auth = new Auth($this->dbService);
-        $this->tokenService = new TokenService();
-
-        $redis = new RedisClient([
-            'scheme' => 'tcp',
-            'host' => 'gestorplus-redis',
-            'port' => 6379
-        ]);
-        $this->antiAttackForce = new AntiAttackForce($redis);
+        $this->auth = $auth ?? new Auth($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
+        $this->antiAttackForce = $antiAttackForce ?? new AntiAttackForce(
+            new RedisClient([
+                'scheme' => 'tcp',
+                'host' => 'gestorplus-redis',
+                'port' => 6379
+            ])
+        );
 
     }
 
@@ -157,4 +157,3 @@ class AuthController extends BaseController{
     
 
 }
-    
