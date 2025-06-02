@@ -12,8 +12,8 @@ use Service\TokenService;
 use Exception;
 
 class PostulacionController extends BaseController{
-    private Postulacion $postulacion;
-    private TokenService $tokenService;
+    protected Postulacion $postulacion;
+    protected TokenService $tokenService;
 
     public function __construct($postulacion = null, $tokenService = null) {
         parent::__construct();
