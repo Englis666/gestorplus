@@ -42,7 +42,9 @@ class PostulacionControllerTest extends TestCase
         $prop->setAccessible(true);
         $prop->setValue($this->controller, $this->tokenServiceMock);
 
-        $prop = $reflection->getProperty('jsonResponseService');
+        // jsonResponseService está en la clase padre BaseController
+        $baseRef = $reflection->getParentClass();
+        $prop = $baseRef->getProperty('jsonResponseService');
         $prop->setAccessible(true);
         $prop->setValue($this->controller, $this->jsonResponseServiceMock);
     }
