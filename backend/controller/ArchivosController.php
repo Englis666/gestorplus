@@ -12,12 +12,11 @@ use Service\ServicioArchivos;
 use Config\Database;
 
 class ArchivosController extends BaseController {
-    private $servicioArchivos;
+    private ServicioArchivos $servicioArchivos;
 
-    public function __construct() {
+    public function __construct($servicioArchivos = null) {
         parent::__construct();
-        $db = (new Database())->getConnection();
-        $this->servicioArchivos = new ServicioArchivos($db);
+        $this->servicioArchivos = $servicioArchivos ?? new ServicioArchivos($this->dbService);
     }
 
     public function subirContrato() {
