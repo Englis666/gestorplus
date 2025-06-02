@@ -25,7 +25,7 @@ class ControllerFactory {
         'notificacion' => \Controller\NotificacionController::class,
         'jornada' => \Controller\JornadaController::class,
         'horaExtra' => \Controller\HorasExtraController::class,
-        'hojadevida' => \Controller\HojadeVidaController::class,
+        'hojadevida' => \Controller\HojadevidaController::class,
         'permiso' => \Controller\PermisoController::class,
         'pazysalvo' => \Controller\PazySalvoController::class,
         'vacaciones' => \Controller\VacacionesController::class,
