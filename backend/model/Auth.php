@@ -19,6 +19,9 @@ class Auth {
 
     public function registrar($data) {
         try {
+            $this->verificarNumDocRegistrado($data['num_doc']);
+
+
             $this->dbService->iniciarTransaccion();
 
             // Insertar hoja de vida vacía, ajusta columnas si es necesario
@@ -59,6 +62,8 @@ class Auth {
         } catch (PDOException $e) {
             $this->dbService->revertirTransaccion();
             return json_encode(['message' => 'Error al registrar: ' . $e->getMessage()]);
+        } catch (\Exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
         }
     }
 
@@ -163,4 +168,14 @@ class Auth {
         $sql = "UPDATE usuario SET password = ? WHERE num_doc = ?";
         return $this->dbService->ejecutarAccion($sql, [$hash, $num_doc]);
     }
+
+    public function verificarNumDocRegistrado(string $num_doc): void {
+        $sql = "SELECT num_doc FROM usuario WHERE num_doc = ?";
+        $resultado = $this->dbService->ejecutarConsulta($sql, [$num_doc], true);
+
+        if ($resultado) {
+            throw new \Exception("El número de documento ya está registrado.");
+        }
+    }
+
 }
