@@ -21,7 +21,7 @@ class Ausencia {
         try {
             $sql = "SELECT * FROM ausencia WHERE usuario_num_doc = :num_doc ORDER BY idausencia DESC;";
             $params = [':num_doc' => $num_doc];
-            return $this->dbService->ejecutarConsulta($sql, $params, false);
+            return $this->dbService->ejecutarConsulta($sql, $params, true);
         } catch (PDOException $e) {
             error_log("Error en obtenerAusencias: " . $e->getMessage());
             http_response_code(500);
@@ -40,6 +40,7 @@ class Ausencia {
             $params = [':idausencia' => $idausencia];
             $resultado = $this->dbService->ejecutarConsulta($sql, $params);
             
+            // Cambia aquí: el test espera un array de arrays
             if (!empty($resultado) && isset($resultado[0]['usuario_num_doc'])) {
                 $usuario_num_doc = $resultado[0]['usuario_num_doc'];
 
@@ -49,8 +50,7 @@ class Ausencia {
 
                 // Insertar notificación
                 $descripcionNotificacion = "Tu solicitud de ausencia ha sido aceptada.";
-                $notificationSql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) 
-                                    VALUES (?, 'No leída', 'General', ?)";
+                $notificationSql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, num_doc) VALUES (?, 'No leída', 'General', ?)";
                 $notificationParams = [$descripcionNotificacion, $usuario_num_doc];
                 $this->dbService->ejecutarInsert($notificationSql, $notificationParams);
 
