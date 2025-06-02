@@ -25,22 +25,22 @@ class UsuarioControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        // Creamos el mock para Usuario
         $this->usuarioMock = $this->createMock(Usuario::class);
-
-        // Creamos el mock para JsonResponseService
         $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
 
-        // Creamos la instancia del controlador pasando los mocks
-        $this->ctrl = new UsuarioController();
+        // Crea el controlador SIN ejecutar el constructor real
+        $this->ctrl = $this->getMockBuilder(UsuarioController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+
         $reflection = new \ReflectionClass(UsuarioController::class);
 
-        // Inyectamos el mock de Usuario en el controlador
+        // Inyecta los mocks
         $usuarioProperty = $reflection->getProperty('usuario');
         $usuarioProperty->setAccessible(true);
         $usuarioProperty->setValue($this->ctrl, $this->usuarioMock);
 
-        // Inyectamos el mock de JsonResponseService
         $jsonResponseServiceProperty = $reflection->getProperty('jsonResponseService');
         $jsonResponseServiceProperty->setAccessible(true);
         $jsonResponseServiceProperty->setValue($this->ctrl, $this->jsonResponseServiceMock);
