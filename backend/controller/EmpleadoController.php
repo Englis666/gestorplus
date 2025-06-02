@@ -16,10 +16,10 @@ class EmpleadoController extends BaseController{
     private Empleado $empleado;
     private TokenService $tokenService;
     
-    public function __construct() {
+    public function __construct($empleado = null, $tokenService = null) {
         parent::__construct();
-        $this->empleado = new Empleado($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->empleado = $empleado ?? new Empleado($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerEmpleados(): void
