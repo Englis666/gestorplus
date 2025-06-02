@@ -16,11 +16,11 @@ class CertificadoController extends BaseController{
     private Certificado $certificado;
     private TokenService $tokenService;
 
-   public function __construct()
+   public function __construct($certificado = null, $tokenService = null)
     {
         parent::__construct();
-        $this->certificado = New certificado($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->certificado = $certificado ?? new Certificado($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerDatosParaCertificado(){
