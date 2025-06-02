@@ -17,11 +17,11 @@ class ConvocatoriaController extends BaseController{
     private Convocatoria $convocatoria;
     private TokenService $tokenService;
 
-    public function __construct()
+    public function __construct($convocatoria = null, $tokenService = null)
     {
         parent::__construct();
-        $this->convocatoria = new Convocatoria($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->convocatoria = $convocatoria ?? new Convocatoria($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function agregarConvocatoria(array $data): void
@@ -77,11 +77,35 @@ class ConvocatoriaController extends BaseController{
             ]), $e->getCode() ?: 500);
         }
     }
-    public function activarConvocatoria(): void{
+    public function activarConvocatoria($data): void{
+        $required = ['idconvocatoria'];
 
+        if(!this->parametrosRequeridos($data, $required)){
+            return;
+        }
+
+        $resultado = $this->convocatoria->activarConvocatoria($data['idconvocatoria']);
+        if ($resultado){
+            $this->jsonResponseService->responder(['success' => true, 'message' => 'Convocatoria Activada Correctamente']);
+        } else {
+            $this->jsonResponseService->responderError(json_encode(['error' => 'No se pudo activar la convocatoria']), 500);
+            return;
+        }
     }
-    public function desactivarConvocatoria(): void{
-        
+
+    public function desactivarConvocatoria($data): void{
+        $required = ['idconvocatoria'];
+
+        if(!this->parametrosRequeridos($data, $required)){
+            return;
+        }
+        $resultado = $this->convocatoria->desactivarConvocatoria($data['idconvocatoria']);
+        if ($resultado){
+            $this->jsonResponseService->responder(['success' => true, 'message' => 'Convocatoria Desactivada Correctamente']);
+        } else {
+            $this->jsonResponseService->responderError(json_encode(['error' => 'No se pudo desactivar la convocatoria']), 500);
+            return;
+        }
     }
 
 }
