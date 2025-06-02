@@ -17,10 +17,10 @@ class NotificacionController extends BaseController {
     private Notificacion $notificacion;
     private TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct($notificacion = null, $tokenService = null) {
         parent::__construct();
-        $this->notificacion = new Notificacion($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->notificacion = $notificacion ?? new Notificacion($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerNotificaciones(): void {
