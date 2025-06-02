@@ -18,11 +18,11 @@ class PazySalvoController extends BaseController
     private PazySalvo $pazysalvo;
     private TokenService $tokenService;
 
-    public function __construct()
+    public function __construct($pazysalvo = null, $tokenService = null)
     {
         parent::__construct();
-        $this->pazysalvo = new PazySalvo($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->pazysalvo = $pazysalvo ?? new PazySalvo($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerPazYSalvos(): void
