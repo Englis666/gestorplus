@@ -17,10 +17,10 @@ class PermisoController extends BaseController {
     private Permiso $permiso;
     private TokenService $tokenService;
 
-    public function __construct() {
+    public function __construct($permiso = null, $tokenService = null) {
         parent::__construct();
-        $this->permiso = new Permiso($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->permiso = $permiso ?? new Permiso($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerPermisos(): void {
