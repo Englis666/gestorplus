@@ -15,10 +15,10 @@ class EntrevistaController extends BaseController{
     private Entrevista $entrevista; 
     private TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct($entrevista = null, $tokenService = null){
         parent::__construct();
-        $this->entrevista = new Entrevista($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->entrevista = $entrevista ?? new Entrevista($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function responder(array $data , int $httpCode = 200): void{
