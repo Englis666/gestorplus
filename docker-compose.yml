@@ -5,70 +5,89 @@ services:
       dockerfile: Dockerfile
     container_name: gestorplus-php
     volumes:
-      - ./backend:/var/www/html
-      - ./backend/config/.env:/var/www/html/.env
-    ports:
-      - "9000:9000"
+      - ./backend/config/.env:/var/www/html/.env:ro # Monta tu .env, solo lectura
+    expose:
+      - 9000 # Solo accesible desde la red interna (otros contenedores)
     networks:
       - gestorplus-network
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - TZ=America/Bogota
-      - MAIL_HOST=smtp-relay.brevo.com
-      - MAIL_PORT=587
-      - MAIL_USERNAME=scrimsdiscord2@gmail.com
-      - MAIL_PASSWORD=JLANaUHRTcVs3b0t
-      - MAIL_FROM=no-reply@gestorplus.com
-      - MAIL_FROM_NAME=Gestorplus
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_FROM=${MAIL_FROM}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME}
     command:
       ["sh", "-c", "until nc -z gestorplus-db 3306; do sleep 1; done; php-fpm"]
+    restart: unless-stopped
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.25-alpine
     container_name: gestorplus-nginx
     volumes:
-      - ./backend:/var/www/html
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./backend:/var/www/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
       - "80:80"
     networks:
       - gestorplus-network
+    depends_on:
+      gestorplus-php:
+        condition: service_started
     environment:
       - TZ=America/Bogota
-    depends_on:
-      - gestorplus-php
+    restart: unless-stopped
 
   db:
-    image: mariadb:latest
+    image: mariadb:10.11
     container_name: gestorplus-db
     environment:
-      MYSQL_ROOT_PASSWORD: "gestorplustfu"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "gestorplus"
       TZ: America/Bogota
     volumes:
-      # Esto es para inicializar la base de datos dependiendo el orden de los archivos
-      #- ./bd:/docker-entrypoint-initdb.d
-      - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql
-
-    # Los puertos no se usan en produccion, solo para desarrollo
-    # ya que el contenedor de php se conecta a la base de datos a traves de la red interna
-    #
-    ports:
-      - "3306:3306"
+      - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql:ro
+      - mariadb_data:/var/lib/mysql
     networks:
       - gestorplus-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p$MYSQL_ROOT_PASSWORD",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   redis:
-    image: redis:alpine
+    image: redis:7-alpine
     container_name: gestorplus-redis
     ports:
-      - "6379:6379"
+      - "6379:6379" # Puedes quitar si no es necesario acceso externo
     networks:
       - gestorplus-network
     environment:
       - TZ=America/Bogota
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   frontend-dev:
     build:
@@ -89,6 +108,7 @@ services:
       - TZ=America/Bogota
     profiles:
       - dev
+    restart: unless-stopped
 
   frontend-prod:
     build:
@@ -101,13 +121,14 @@ services:
       - gestorplus-network
     profiles:
       - prod
+    restart: unless-stopped
 
   backend-python:
     build:
       context: ./backend-python
     volumes:
       - ./backend-python/app:/app
-      - ./backend-python/app/requirements.txt:/app/requirements.txt
+      - ./backend-python/app/requirements.txt:/app/requirements.txt:ro
     command: uvicorn main:app --host 0.0.0.0 --port 5000 --reload
     container_name: gestorplus-backend-python
     ports:
@@ -116,7 +137,11 @@ services:
       - gestorplus-network
     environment:
       - TZ=America/Bogota
+    restart: unless-stopped
 
 networks:
   gestorplus-network:
     driver: bridge
+
+volumes:
+  mariadb_data:
