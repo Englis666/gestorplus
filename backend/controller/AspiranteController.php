@@ -16,10 +16,10 @@ class AspiranteController extends BaseController {
     private Aspirante $aspirante;
     private TokenService $tokenService;
 
-    public function __construct() {
+    public function __construct($aspirante = null, $tokenService = null) {
         parent::__construct();
-        $this->aspirante = new Aspirante($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->aspirante = $aspirante ?? new Aspirante($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
     
     public function aplicacionDeAspirante($data) {
