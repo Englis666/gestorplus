@@ -17,10 +17,10 @@ class JornadaController extends BaseController {
     private Jornada $jornada;
     private TokenService $tokenService;
 
-    public function __construct() {
+    public function __construct($jornada = null, $tokenService = null) {
         parent::__construct();
-        $this->jornada = new Jornada($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->jornada = $jornada ?? new Jornada($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerTodasLasJornadas(): void {
