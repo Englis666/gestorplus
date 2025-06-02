@@ -13,10 +13,10 @@ class VacacionesController extends BaseController {
     private Vacaciones $vacaciones;
     private TokenService $tokenService;
 
-    public function __construct() {
+    public function __construct($vacaciones = null, $tokenService = null) {
         parent::__construct();
-        $this->vacaciones = new Vacaciones($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->vacaciones = $vacaciones ?? new Vacaciones($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerTodasLasVacaciones(): void {

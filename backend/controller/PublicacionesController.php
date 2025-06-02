@@ -17,10 +17,10 @@ class PublicacionesController extends BaseController {
     private Publicaciones $publicaciones;
     private TokenService $tokenService;
 
-    public function __construct() {
+    public function __construct($publicaciones = null, $tokenService = null) {
         parent::__construct();
-        $this->publicaciones = new Publicaciones($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->publicaciones = $publicaciones ?? new Publicaciones($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerPublicacionPorTipoDeContrato() {

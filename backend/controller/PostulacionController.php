@@ -15,10 +15,10 @@ class PostulacionController extends BaseController{
     private Postulacion $postulacion;
     private TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct($postulacion = null, $tokenService = null) {
         parent::__construct();
-        $this->postulacion = new Postulacion($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->postulacion = $postulacion ?? new Postulacion($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerPostulaciones() {

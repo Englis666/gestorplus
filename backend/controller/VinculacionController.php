@@ -12,9 +12,9 @@ use Exception;
 class VinculacionController extends BaseController {
     private Vinculacion $vinculacion;
 
-    public function __construct(){
+    public function __construct($vinculacion = null) {
         parent::__construct();
-        $this->vinculacion = new Vinculacion($this->dbService);
+        $this->vinculacion = $vinculacion ?? new Vinculacion($this->dbService);
     }
 
     public function asignarVinculacion(array $data): void {

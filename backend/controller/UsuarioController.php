@@ -19,7 +19,7 @@ use Exception;
 class UsuarioController extends BaseController {
     private Usuario $usuario;
 
-    public function __construct() {
+    public function __construct($usuario = null) {
         parent::__construct();
         $this->usuario = new Usuario($this->dbService);
     }
