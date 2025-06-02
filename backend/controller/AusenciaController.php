@@ -16,10 +16,10 @@ class AusenciaController extends BaseController {
     private Ausencia $ausencia;
     private TokenService $tokenService;
 
-    public function __construct() {
+    public function __construct($ausencia = null, $tokenService = null) {
         parent::__construct();
-        $this->ausencia = new Ausencia($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->ausencia = $ausencia ?? new Ausencia($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();  
     }
 
     public function obtenerTodasLasAusencias(): void {
