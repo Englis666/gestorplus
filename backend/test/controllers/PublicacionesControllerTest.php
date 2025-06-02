@@ -1,9 +1,4 @@
 <?php
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
 
 use PHPUnit\Framework\TestCase;
 use Controller\PublicacionesController;
@@ -11,148 +6,157 @@ use Model\Publicaciones;
 use Service\TokenService;
 use Service\JsonResponseService;
 
-class PublicacionesControllerTest extends TestCase{
-    private $controller;
-    private $tokenServiceMock;
+class PublicacionesControllerTest extends TestCase
+{
     private $publicacionesMock;
+    private $tokenServiceMock;
     private $jsonResponseServiceMock;
+    private $controller;
 
     protected function setUp(): void
     {
-        $this->tokenServiceMock = $this->createMock(TokenService::class);
         $this->publicacionesMock = $this->createMock(Publicaciones::class);
+        $this->tokenServiceMock = $this->createMock(TokenService::class);
         $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
 
-        $this->controller = new PublicacionesController();
+        // Crea el controlador SIN ejecutar el constructor real
+        $this->controller = $this->getMockBuilder(PublicacionesController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
 
-        $reflection = new ReflectionClass($this->controller);
+        // Inyección por Reflection
+        $reflection = new \ReflectionClass($this->controller);
+        $prop = $reflection->getProperty('publicaciones');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->publicacionesMock);
 
-        $reflection->getProperty('tokenService')->setAccessible(true);
-        $reflection->getProperty('tokenService')->setValue($this->controller, $this->tokenServiceMock);
+        $prop = $reflection->getProperty('tokenService');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->tokenServiceMock);
 
-        $reflection->getProperty('publicaciones')->setAccessible(true);
-        $reflection->getProperty('publicaciones')->setValue($this->controller, $this->publicacionesMock);
-
-        $reflection->getProperty('jsonResponseService')->setAccessible(true);
-        $reflection->getProperty('jsonResponseService')->setValue($this->controller, $this->jsonResponseServiceMock);
+        // jsonResponseService puede estar en BaseController
+        $base = $reflection->getParentClass();
+        $prop = $base->getProperty('jsonResponseService');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->jsonResponseServiceMock);
     }
 
     public function testObtenerPublicacionPorTipoDeContrato()
     {
-        $numDoc = '123456';
-        $resultado = [['titulo' => 'Publicación 1']];
-
-        $this->tokenServiceMock->expects($this->once())
-            ->method('validarToken')
-            ->willReturn($numDoc);
-
+        $this->tokenServiceMock->method('validarToken')->willReturn('123');
+        $publicaciones = [['id' => 1, 'titulo' => 'Test']];
         $this->publicacionesMock->expects($this->once())
             ->method('obtenerPublicacionPorTipoDeContrato')
-            ->with($numDoc)
-            ->willReturn($resultado);
-
+            ->with(123)
+            ->willReturn($publicaciones);
         $this->jsonResponseServiceMock->expects($this->once())
             ->method('responder')
-            ->with(['Publicaciones' => $resultado]);
-
+            ->with(['Publicaciones' => $publicaciones]);
         $this->controller->obtenerPublicacionPorTipoDeContrato();
     }
 
     public function testAgregarPublicacionExitoso()
     {
         $data = ['titulo' => 'Nueva publicación'];
-        $numDoc = '123456';
-
-        $this->tokenServiceMock->expects($this->once())
-            ->method('validarToken')
-            ->willReturn($numDoc);
-
+        $this->tokenServiceMock->method('validarToken')->willReturn('123');
         $this->publicacionesMock->expects($this->once())
             ->method('agregarPublicacion')
-            ->with($data, $numDoc)
+            ->with($data, 123)
             ->willReturn(true);
-
         $this->jsonResponseServiceMock->expects($this->once())
             ->method('responder')
             ->with(['mensaje' => 'Publicación agregada exitosamente'], 201);
-
         $this->controller->agregarPublicacion($data);
     }
 
     public function testAgregarPublicacionFallo()
     {
-        $data = ['titulo' => 'Fallida'];
-        $numDoc = '123456';
-
-        $this->tokenServiceMock->method('validarToken')->willReturn($numDoc);
-
-        $this->publicacionesMock->method('agregarPublicacion')->willReturn(false);
-
+        $data = ['titulo' => 'Nueva publicación'];
+        $this->tokenServiceMock->method('validarToken')->willReturn('123');
+        $this->publicacionesMock->expects($this->once())
+            ->method('agregarPublicacion')
+            ->with($data, 123)
+            ->willReturn(false);
         $this->jsonResponseServiceMock->expects($this->once())
             ->method('responderError')
             ->with(['error' => 'Error al agregar la publicación'], 500);
-
         $this->controller->agregarPublicacion($data);
     }
 
     public function testActualizarPublicacionSinId()
     {
-        $data = [];
-
-        $this->tokenServiceMock->method('validarToken')->willReturn('123456');
-
+        $data = ['titulo' => 'Nueva publicación'];
+        $this->tokenServiceMock->method('validarToken')->willReturn('123');
         $this->jsonResponseServiceMock->expects($this->once())
             ->method('responderError')
             ->with(['error' => 'ID de publicación no proporcionado'], 400);
-
         $this->controller->actualizarPublicacion($data);
     }
 
     public function testActualizarPublicacionExitoso()
     {
-        $data = ['idPublicacion' => 1, 'titulo' => 'Editado'];
-
-        $this->tokenServiceMock->method('validarToken')->willReturn('123456');
-
-        $this->publicacionesMock->method('actualizarPublicacion')
+        $data = ['idPublicacion' => 1, 'titulo' => 'Editada'];
+        $this->tokenServiceMock->method('validarToken')->willReturn('123');
+        $this->publicacionesMock->expects($this->once())
+            ->method('actualizarPublicacion')
             ->with($data)
             ->willReturn(true);
-
         $this->jsonResponseServiceMock->expects($this->once())
             ->method('responder')
             ->with(['mensaje' => 'Publicación actualizada exitosamente'], 200);
-
         $this->controller->actualizarPublicacion($data);
     }
 
-    public function testEliminarPublicacionFalloPorFaltaDeID()
+    public function testActualizarPublicacionFallo()
+    {
+        $data = ['idPublicacion' => 1, 'titulo' => 'Editada'];
+        $this->tokenServiceMock->method('validarToken')->willReturn('123');
+        $this->publicacionesMock->expects($this->once())
+            ->method('actualizarPublicacion')
+            ->with($data)
+            ->willReturn(false);
+        $this->jsonResponseServiceMock->expects($this->once())
+            ->method('responderError')
+            ->with(['error' => 'Error al actualizar la publicación'], 500);
+        $this->controller->actualizarPublicacion($data);
+    }
+
+    public function testEliminarPublicacionSinId()
     {
         $data = [];
-
-        $this->tokenServiceMock->method('validarToken')->willReturn('123456');
-
+        $this->tokenServiceMock->method('validarToken')->willReturn('123');
         $this->jsonResponseServiceMock->expects($this->once())
             ->method('responderError')
             ->with(['error' => 'ID de publicación no proporcionado'], 400);
-
         $this->controller->eliminarPublicacion($data);
     }
 
     public function testEliminarPublicacionExitoso()
     {
         $data = ['idPublicacion' => 1];
-
-        $this->tokenServiceMock->method('validarToken')->willReturn('123456');
-
+        $this->tokenServiceMock->method('validarToken')->willReturn('123');
         $this->publicacionesMock->expects($this->once())
             ->method('eliminarPublicacion')
             ->with(1)
             ->willReturn(true);
-
         $this->jsonResponseServiceMock->expects($this->once())
             ->method('responder')
             ->with(['mensaje' => 'Publicación eliminada exitosamente'], 200);
+        $this->controller->eliminarPublicacion($data);
+    }
 
+    public function testEliminarPublicacionFallo()
+    {
+        $data = ['idPublicacion' => 1];
+        $this->tokenServiceMock->method('validarToken')->willReturn('123');
+        $this->publicacionesMock->expects($this->once())
+            ->method('eliminarPublicacion')
+            ->with(1)
+            ->willReturn(false);
+        $this->jsonResponseServiceMock->expects($this->once())
+            ->method('responderError')
+            ->with(['error' => 'Error al eliminar la publicación'], 500);
         $this->controller->eliminarPublicacion($data);
     }
 }
