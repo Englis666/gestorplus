@@ -17,10 +17,10 @@ class HojadevidaController extends BaseController{
     private Hojadevida $hojadevida;
     private TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct($hojadevida = null, $tokenService = null) {
         parent::__construct();
-        $this->hojadevida = new Hojadevida($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->hojadevida = $hojadevida ?? new Hojadevida($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerHojadevida(): void {
