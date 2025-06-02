@@ -16,7 +16,7 @@ class PerfilController extends BaseController {
     private Perfil $perfil;
     private TokenService $tokenService;
 
-    public function __construct() {
+    public function __construct($perfil = null, $tokenService = null) {
         parent::__construct();
         $this->perfil = $perfil ?? new Perfil($this->dbService); 
         $this->tokenService = $tokenService ?? new TokenService();  
