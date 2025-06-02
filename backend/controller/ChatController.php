@@ -14,10 +14,10 @@ class ChatController extends BaseController {
     private Chat $chat;
     private TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct($chat = null, $tokenService = null) {
         parent::__construct();
-        $this->chat = new Chat($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->chat = $chat ?? new Chat($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function enviarMensaje($data) {
