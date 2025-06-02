@@ -10,16 +10,18 @@ namespace Controller;
 use Core\Controllers\BaseController;
 use Model\Calculo;
 use Service\TokenService;
+use Service\JsonResponseService;
 use Exception;
 
 class CalculoController extends BaseController {
-    private Calculo $calculo;
-    private TokenService $tokenService;
+    protected TokenService $tokenService;
+    protected Calculo $calculo;
+    protected JsonResponseService $jsonResponseService;
 
-    public function __construct(){
+    public function __construct($calculo = null, $tokenService = null) {
         parent::__construct();
-        $this->calculo = new Calculo($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->calculo = $calculo ?? new Calculo($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function calcularPostulacionesEnConvocatorias(): void {
