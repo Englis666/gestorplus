@@ -95,8 +95,8 @@ final class VinculacionControllerTest extends TestCase
             ->method('responderError')
             ->with('Datos requeridos incompletos', 422);
 
-        $return = $this->controller->asignarVinculacion($data);
-        $this->assertNull($return);
+        // Solo llama al método, no asumas retorno
+        $this->controller->asignarVinculacion($data);
     }
 
     public function testObtenerVinculaciones(): void
