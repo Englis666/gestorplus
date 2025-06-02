@@ -47,7 +47,7 @@ class TokenService {
     }
 
     // Método para validar el token
-    public function validarToken(): string {
+    public function validarToken(): ?string {
         $token = $this->obtenerToken();
         try {
             // Decodifica el token usando la clave secreta

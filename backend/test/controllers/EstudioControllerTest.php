@@ -24,28 +24,26 @@ class EstudioControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        // Crear mocks para dependencias
         $this->mockTokenService = $this->createMock(TokenService::class);
         $this->mockEstudio = $this->createMock(Estudio::class);
         $this->mockJsonResponseService = $this->createMock(JsonResponseService::class);
 
-        // Instanciar controlador real
-        $this->controller = new EstudioController();
+        // Crea el controlador SIN ejecutar el constructor real
+        $this->controller = $this->getMockBuilder(EstudioController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
 
-        // Inyectar mocks en propiedades privadas mediante Reflection
-        $refClass = new \ReflectionClass(EstudioController::class);
+        $refClass = new \ReflectionClass($this->controller);
 
-        // tokenService
         $prop = $refClass->getProperty('tokenService');
         $prop->setAccessible(true);
         $prop->setValue($this->controller, $this->mockTokenService);
 
-        // estudio
         $prop = $refClass->getProperty('estudio');
         $prop->setAccessible(true);
         $prop->setValue($this->controller, $this->mockEstudio);
 
-        // jsonResponseService (propiedad heredada de BaseController)
         $baseRef = $refClass->getParentClass();
         $prop = $baseRef->getProperty('jsonResponseService');
         $prop->setAccessible(true);

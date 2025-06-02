@@ -22,8 +22,11 @@ class HojadevidaControllerTest extends TestCase
         $this->hojadevidaMock = $this->createMock(Hojadevida::class);
         $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
 
-        // Instancia real del controller
-        $this->controller = new HojadevidaController();
+        // Crea el controlador SIN ejecutar el constructor real
+        $this->controller = $this->getMockBuilder(HojadevidaController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
 
         // Inyección por Reflection
         $reflection = new ReflectionClass($this->controller);

@@ -12,14 +12,13 @@ use Service\DatabaseService;
 use PDO;
 
 class ServicioArchivos extends BaseController {
-   
     protected DatabaseService $dbService; 
     private Archivo $archivo;
 
-    public function __construct() {
+    public function __construct($dbService = null, $archivo = null) {
         parent::__construct();
-        $this->dbService = new DatabaseService($this->db); 
-        $this->archivo = new Archivo($this->dbService); 
+        $this->dbService = $dbService ?? new DatabaseService($this->db); 
+        $this->archivo = $archivo ?? new Archivo($this->dbService); 
     }
 
     public function subirContrato($pdfFile, $idvinculacion, $num_doc) {
@@ -29,7 +28,7 @@ class ServicioArchivos extends BaseController {
         }
 
         $nombreArchivo = basename($pdfFile["name"]);
-        $directorioDestino = "uploads/";
+        $directorioDestino = "uploads/contratos/";
 
         $tipoArchivo = strtolower(pathinfo($nombreArchivo, PATHINFO_EXTENSION));
         if ($tipoArchivo !== "pdf") {
@@ -67,4 +66,6 @@ class ServicioArchivos extends BaseController {
 
         return $contrato;
     }
+
+    
 }

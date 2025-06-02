@@ -93,7 +93,7 @@ class JornadaControllerTest extends TestCase
         $data = [];
         $this->controller->expects($this->once())
             ->method('parametrosRequeridos')
-            ->with($data, ['data' => ['idJornada']])
+            ->with($data, ['idJornada'])
             ->willReturn(false);
         $this->mockJornada->expects($this->never())->method('corroborarJornada');
         $this->mockJsonResponseService->expects($this->never())->method('responder');

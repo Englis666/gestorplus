@@ -66,5 +66,32 @@ class Convocatoria {
             return null;
         }
     }
+    public function activarConvocatoria($idconvocatoria){
+        try{
+            $sql = "UPDATE convocatoria SET estado = 'activo' WHERE idconvocatoria = :idconvocatoria";
+            $params = [':idconvocatoria' => $idconvocatoria];
+            $this->dbService->ejecutarConsulta($sql, $params);
+            return true;
+        } catch (PDOException $e){
+            echo json_encode(['error' => 'Error al activar la convocatoria: ' . $e->getMessage()]);
+            http_response_code(500);
+            return false;
+        }
+    }
+
+    public function desactivarConvocatoria($idconvocatoria){
+        try{
+            $sql = "UPDATE convocatoria SET estado = 'inactivo' WHERE idconvocatoria = :idconvocatoria";
+            $params = [':idconvocatoria' => $idconvocatoria];
+            $this->dbService->ejecutarConsulta($sql, $params);
+            return true;
+        } catch (PDOException $e){
+            echo json_encode(['error' => 'Error al desactivar la convocatoria:' . $e->getMessage()]);
+            http_response_code(500);
+            return false;
+        }
+    }
+
+
 }
 ?>

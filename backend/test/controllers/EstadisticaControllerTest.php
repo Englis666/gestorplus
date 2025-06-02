@@ -29,11 +29,14 @@ class EstadisticaControllerTest extends TestCase
         $this->estadisticaMock = $this->createMock(Estadistica::class);
         $this->tokenServiceMock = $this->createMock(TokenService::class);
 
-        $dbServiceMock = $this->createMock(DatabaseService::class);
-
-        $this->estadisticaController = new EstadisticaController();
+        // Crea el controlador SIN ejecutar el constructor real
+        $this->estadisticaController = $this->getMockBuilder(EstadisticaController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
 
         $reflection = new \ReflectionClass($this->estadisticaController);
+
         $property = $reflection->getProperty('estadistica');
         $property->setAccessible(true);
         $property->setValue($this->estadisticaController, $this->estadisticaMock);

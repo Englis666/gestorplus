@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Controller\PermisoController;
 use Model\Permiso;
 use Service\TokenService;
-use Service\jsonResponseService;
+use Service\JsonResponseService;
 use PDO;
 use ReflectionClass;
 
@@ -30,7 +30,7 @@ class PermisoControllerTest extends TestCase
         // Crear mocks
         $this->permisoMock = $this->createMock(Permiso::class);
         $this->tokenServiceMock = $this->createMock(TokenService::class);
-        $this->jsonResponseServiceMock = $this->createMock(jsonResponseService::class);
+        $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
         $this->dbMock = $this->createMock(PDO::class);
 
         // Instanciar controlador sin constructor para inyectar dependencias

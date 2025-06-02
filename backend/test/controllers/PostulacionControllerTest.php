@@ -25,24 +25,26 @@ class PostulacionControllerTest extends TestCase
         $this->tokenServiceMock = $this->createMock(TokenService::class);
         $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
 
-        // Instancia real del controlador (esto sí crea las propiedades)
-        $this->controller = new PostulacionController();
+        // Crea el controlador SIN ejecutar el constructor real
+        $this->controller = $this->getMockBuilder(PostulacionController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
 
-        // Reemplazamos las propiedades privadas del controlador con nuestros mocks
-        $reflection = new ReflectionClass($this->controller);
-        $properties = [
-            'postulacion' => $this->postulacionMock,
-            'tokenService' => $this->tokenServiceMock,
-            'jsonResponseService' => $this->jsonResponseServiceMock,
-        ];
+        // Inyecta los mocks usando Reflection
+        $reflection = new \ReflectionClass($this->controller);
 
-        foreach ($properties as $name => $mock) {
-            if ($reflection->hasProperty($name)) {
-                $prop = $reflection->getProperty($name);
-                $prop->setAccessible(true);
-                $prop->setValue($this->controller, $mock);
-            }
-        }
+        $prop = $reflection->getProperty('postulacion');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->postulacionMock);
+
+        $prop = $reflection->getProperty('tokenService');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->tokenServiceMock);
+
+        $prop = $reflection->getProperty('jsonResponseService');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->jsonResponseServiceMock);
     }
 
     public function testObtenerPostulaciones()
@@ -89,5 +91,15 @@ class PostulacionControllerTest extends TestCase
             ->with('No hay postulaciones', 404);
 
         $this->controller->obtenerPostulacionesAspirante();
+    }
+
+    public function testObtenerPostulacionesAgrupadasPorConvocatoriaSinId()
+    {
+        $_GET = [];
+        $this->jsonResponseServiceMock->expects($this->once())
+            ->method('responderError')
+            ->with('Parámetro idconvocatoria requerido', 400);
+
+        $this->controller->obtenerPostulacionesAgrupadasPorConvocatoria();
     }
 }

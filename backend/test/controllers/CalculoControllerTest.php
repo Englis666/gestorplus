@@ -22,19 +22,25 @@ class CalculoControllerTest extends TestCase {
         $this->calculoMock = $this->createMock(Calculo::class);
         $this->jsonResponseServiceMock = $this->createMock(JsonResponseService::class);
 
-        $this->controller = new CalculoController();
+        // Crea el controlador SIN ejecutar el constructor real
+        $this->controller = $this->getMockBuilder(CalculoController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
 
-        $reflection = new ReflectionClass($this->controller);
+        $reflection = new \ReflectionClass($this->controller);
 
-        // Establecer las propiedades privadas
-        $reflection->getProperty('tokenService')->setAccessible(true);
-        $reflection->getProperty('tokenService')->setValue($this->controller, $this->tokenServiceMock);
+        $prop = $reflection->getProperty('tokenService');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->tokenServiceMock);
 
-        $reflection->getProperty('calculo')->setAccessible(true);
-        $reflection->getProperty('calculo')->setValue($this->controller, $this->calculoMock);
+        $prop = $reflection->getProperty('calculo');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->calculoMock);
 
-        $reflection->getProperty('jsonResponseService')->setAccessible(true);
-        $reflection->getProperty('jsonResponseService')->setValue($this->controller, $this->jsonResponseServiceMock);
+        $prop = $reflection->getProperty('jsonResponseService');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->jsonResponseServiceMock);
     }
 
     public function testCalcularPostulacionesEnConvocatorias(): void {

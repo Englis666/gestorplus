@@ -26,11 +26,14 @@ class EvaluacionControllerTest extends TestCase
                                                ->onlyMethods(['responder'])
                                                ->getMock();
 
-        // Crear una instancia real del controlador
-        $this->controller = new EvaluacionController();
+        // Crea el controlador SIN ejecutar el constructor real
+        $this->controller = $this->getMockBuilder(EvaluacionController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
 
         // Reemplazar propiedades protegidas con Reflection
-        $reflection = new ReflectionClass($this->controller);
+        $reflection = new \ReflectionClass($this->controller);
 
         $evaluacionProp = $reflection->getProperty('evaluacion');
         $evaluacionProp->setAccessible(true);
@@ -39,6 +42,13 @@ class EvaluacionControllerTest extends TestCase
         $jsonServiceProp = $reflection->getProperty('jsonResponseService');
         $jsonServiceProp->setAccessible(true);
         $jsonServiceProp->setValue($this->controller, $this->jsonResponseServiceMock);
+
+        $validatorMock = $this->createMock(\Core\Validators\Validator::class); // Usa el namespace correcto
+
+        $baseRef = $reflection->getParentClass();
+        $validatorProp = $baseRef->getProperty('validator');
+        $validatorProp->setAccessible(true);
+        $validatorProp->setValue($this->controller, $validatorMock);
     }
 
     public function testObtenerSistemaDeGestion()

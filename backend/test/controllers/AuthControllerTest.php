@@ -7,68 +7,84 @@
 use PHPUnit\Framework\TestCase;
 use Controller\AuthController;
 use Model\Auth;
+use Service\TokenService;
+use Service\AntiAttackForce;
 use Service\JsonResponseService;
 
 class AuthControllerTest extends TestCase
 {
-    // Test para el método registrar
+    private $controller;
+    private $mockAuth;
+    private $mockTokenService;
+    private $mockAntiAttackForce;
+    private $mockResponse;
+
+    protected function setUp(): void
+    {
+        $this->mockAuth = $this->createMock(Auth::class);
+        $this->mockTokenService = $this->createMock(TokenService::class);
+        $this->mockAntiAttackForce = $this->createMock(AntiAttackForce::class);
+        $this->mockResponse = $this->getMockBuilder(JsonResponseService::class)
+            ->onlyMethods(['responder', 'responderError'])
+            ->getMock();
+
+        // Crea el controlador SIN ejecutar el constructor real
+        $this->controller = $this->getMockBuilder(AuthController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+
+        // Inyecta los mocks usando Reflection
+        $ref = new \ReflectionClass($this->controller);
+
+        $prop = $ref->getProperty('auth');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->mockAuth);
+
+        $prop = $ref->getProperty('tokenService');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->mockTokenService);
+
+        $prop = $ref->getProperty('antiAttackForce');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->mockAntiAttackForce);
+
+        $prop = $ref->getProperty('jsonResponseService');
+        $prop->setAccessible(true);
+        $prop->setValue($this->controller, $this->mockResponse);
+    }
+
     public function testRegistrar()
     {
-        // Datos simulados para el registro de un usuario
         $datosSimulados = [
             'num_doc' => '7891011',
             'nombres' => 'Ana López',
-            'password' => 'passwordSegura',
-            'estado' => 1,
-            'rol_idrol' => 4
+            'password' => '1234'
         ];
 
-        // Mock del modelo Auth
-        $mockAuth = $this->createMock(Auth::class);
-        $mockAuth->method('registrar')
-            ->willReturn(true);  // Simulamos que el registro fue exitoso
+        $this->mockAuth->expects($this->once())
+            ->method('registrar')
+            ->with($this->callback(function ($data) {
+                return isset($data['password']) && password_verify('1234', $data['password']);
+            }))
+            ->willReturn(true);
 
-        // Mock del servicio jsonResponseService
-        $mockResponse = $this->getMockBuilder(JsonResponseService::class)
-            ->onlyMethods(['responder'])
-            ->getMock();
-
-        // Esperamos que el mock de responder sea llamado una vez con los datos adecuados
-        $mockResponse->expects($this->once())
+        $this->mockResponse->expects($this->once())
             ->method('responder')
             ->with($this->callback(function ($response) {
-                return $response['status'] === 'success'
-                    && $response['message'] === true;  // Cambiado a true, que es lo que retorna el método registrar
+                return $response['status'] === 'success' && $response['message'] === true;
             }));
 
-        // Crear una instancia real del controlador
-        $controller = new AuthController();
-
-        // Reemplazamos la propiedad privada $auth y $jsonResponseService usando Reflection
-        $reflected = new \ReflectionClass($controller);
-        
-        $propAuth = $reflected->getProperty('auth');
-        $propAuth->setAccessible(true);
-        $propAuth->setValue($controller, $mockAuth);
-
-        $propResponse = $reflected->getProperty('jsonResponseService');
-        $propResponse->setAccessible(true);
-        $propResponse->setValue($controller, $mockResponse);
-
-        // Ejecutamos el método registrar
-        $controller->registrar($datosSimulados);
+        $this->controller->registrar($datosSimulados);
     }
 
-    // Test para el método iniciar con credenciales correctas
     public function testIniciarConCredencialesCorrectas()
     {
-        // Datos de prueba
         $datosLogin = [
             'num_doc' => '1014736',
             'password' => '123'
         ];
 
-        // Usuario simulado
         $usuarioSimulado = [
             'num_doc' => '1014736',
             'nombres' => 'Englis Barros',
@@ -76,18 +92,12 @@ class AuthControllerTest extends TestCase
             'hojadevida_idHojadevida' => 10
         ];
 
-        // Mock del modelo Auth
-        $mockAuth = $this->createMock(Auth::class);
-        $mockAuth->method('inicioSesion')
-            ->willReturn($usuarioSimulado);
+        $this->mockAntiAttackForce->expects($this->once())->method('detectSuspiciousUserAgent');
+        $this->mockAntiAttackForce->expects($this->once())->method('checkLoginAttempts')->with('1014736');
+        $this->mockAuth->method('inicioSesion')->willReturn($usuarioSimulado);
+        $this->mockAntiAttackForce->expects($this->once())->method('registerLoginAttempt')->with('1014736', true);
 
-        // Mock del servicio jsonResponseService
-        $mockResponse = $this->getMockBuilder(JsonResponseService::class)
-            ->onlyMethods(['responder'])
-            ->getMock();
-
-        // Esperamos que el mock de responder sea llamado una vez con los datos adecuados
-        $mockResponse->expects($this->once())
+        $this->mockResponse->expects($this->once())
             ->method('responder')
             ->with($this->callback(function ($response) {
                 return $response['status'] === 'success'
@@ -95,66 +105,28 @@ class AuthControllerTest extends TestCase
                     && isset($response['data']['token']);
             }));
 
-        // Crear una instancia real del controlador
-        $controller = new AuthController();
-
-        // Reemplazamos la propiedad privada $auth y $jsonResponseService usando Reflection
-        $reflected = new \ReflectionClass($controller);
-        
-        $propAuth = $reflected->getProperty('auth');
-        $propAuth->setAccessible(true);
-        $propAuth->setValue($controller, $mockAuth);
-
-        $propResponse = $reflected->getProperty('jsonResponseService');
-        $propResponse->setAccessible(true);
-        $propResponse->setValue($controller, $mockResponse);
-
-        // Ejecutamos el método iniciar
-        $controller->iniciar($datosLogin);
+        $this->controller->iniciar($datosLogin);
     }
 
-    // Test para el método iniciar con credenciales incorrectas
     public function testIniciarConCredencialesIncorrectas()
     {
-        // Datos de prueba con credenciales incorrectas
         $datosLogin = [
             'num_doc' => '123456',
             'password' => 'passwordIncorrecta'
         ];
 
-        // Mock del modelo Auth
-        $mockAuth = $this->createMock(Auth::class);
-        $mockAuth->method('inicioSesion')
-            ->willReturn(null);  // Simulamos que las credenciales son incorrectas
+        $this->mockAntiAttackForce->expects($this->once())->method('detectSuspiciousUserAgent');
+        $this->mockAntiAttackForce->expects($this->once())->method('checkLoginAttempts')->with('123456');
+        $this->mockAuth->method('inicioSesion')->willReturn(null);
+        $this->mockAntiAttackForce->expects($this->once())->method('registerLoginAttempt')->with('123456', false);
 
-        // Mock del servicio jsonResponseService
-        $mockResponse = $this->getMockBuilder(JsonResponseService::class)
-            ->onlyMethods(['responder'])
-            ->getMock();
-
-        // Esperamos que el mock de responder sea llamado con el mensaje de error adecuado
-        $mockResponse->expects($this->once())
+        $this->mockResponse->expects($this->once())
             ->method('responder')
             ->with($this->callback(function ($response) {
                 return $response['status'] === 'error'
                     && $response['message'] === 'Credenciales incorrectas';
-            }));
+            }), 401);
 
-        // Crear una instancia real del controlador
-        $controller = new AuthController();
-
-        // Reemplazamos la propiedad privada $auth y $jsonResponseService usando Reflection
-        $reflected = new \ReflectionClass($controller);
-        
-        $propAuth = $reflected->getProperty('auth');
-        $propAuth->setAccessible(true);
-        $propAuth->setValue($controller, $mockAuth);
-
-        $propResponse = $reflected->getProperty('jsonResponseService');
-        $propResponse->setAccessible(true);
-        $propResponse->setValue($controller, $mockResponse);
-
-        // Ejecutamos el método iniciar
-        $controller->iniciar($datosLogin);
+        $this->controller->iniciar($datosLogin);
     }
 }
