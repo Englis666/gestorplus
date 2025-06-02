@@ -89,15 +89,25 @@ const Registro = () => {
         try {
           serverMessage = JSON.parse(serverMessage);
         } catch {}
-        if (serverMessage?.message === "Usuario registrado Correctamente") {
+        if (serverMessage?.message === "Usuario registrado correctamente") {
           alert("Usuario Registrado Correctamente");
           navigate("/Login");
         } else {
-          alert("Hubo un error al registrar");
+          // Mostrar el mensaje de error específico del backend
+          alert(serverMessage?.message || "Hubo un error al registrar");
         }
       })
-      .catch(() => {
-        alert("Error en el registro, por favor intenta de nuevo");
+      .catch((error) => {
+        // Si el backend responde con un mensaje de error, muéstralo
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          alert(error.response.data.message);
+        } else {
+          alert("Error en el registro, por favor intenta de nuevo");
+        }
       })
       .finally(() => setIsSubmitting(false));
   };
