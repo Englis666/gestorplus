@@ -34,6 +34,7 @@ export const aceptarAusencia = async (idausencia) => {
       { action: "ausenciaAceptada", idausencia },
       { headers: { Authorization: `Bearer ${token}` } }
     );
+    console.log(response);
     if (response.status !== 200) throw new Error("Error al aceptar ausencia");
     return response.data;
   } catch (error) {
