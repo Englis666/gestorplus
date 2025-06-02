@@ -13,13 +13,13 @@ use Service\DatabaseService;
 use Exception;
 
  class EstadisticaController extends BaseController{
-    private Estadistica $estadistica;
-    private TokenService $tokenService;
+    protected Estadistica $estadistica;
+    protected TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct($estadistica = null, $tokenService = null){
         parent::__construct();
-        $this->estadistica = new Estadistica($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->estadistica = $estadistica ?? new Estadistica($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerTotalEstadisticas(){
@@ -46,4 +46,4 @@ use Exception;
 
 
 
- }  
+ }
