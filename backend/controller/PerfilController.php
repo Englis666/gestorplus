@@ -13,8 +13,8 @@ use Service\TokenService;
 use Exception;
 
 class PerfilController extends BaseController {
-    private Perfil $perfil;
-    private TokenService $tokenService;
+    protected Perfil $perfil;
+    protected TokenService $tokenService;
 
     public function __construct($perfil = null, $tokenService = null) {
         parent::__construct();
