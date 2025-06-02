@@ -32,6 +32,7 @@ export const corroborarJornada = async (idJornada) => {
       headers: { Authorization: `Bearer ${token}` },
     }
   );
+  console.log(response);
   if (response.status !== 200) {
     throw new Error("Error al corroborar la jornada");
   }
