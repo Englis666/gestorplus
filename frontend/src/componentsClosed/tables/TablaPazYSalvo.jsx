@@ -3,7 +3,7 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import DataTable from "react-data-table-component";
 import GenerarPazYSalvo from "../form/GenerarPazYSalvo";

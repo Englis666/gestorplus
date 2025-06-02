@@ -89,13 +89,10 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost/gestorplus/backend/",
-        {
-          action: "asignarVinculacion",
-          ...formData,
-        }
-      );
+      const response = await axios.post(API_URL, {
+        action: "asignarVinculacion",
+        ...formData,
+      });
 
       if (response.data.Vinculacion) {
         alert("Vinculación asignada con éxito");
