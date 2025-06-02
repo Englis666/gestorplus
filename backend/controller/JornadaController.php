@@ -14,8 +14,8 @@ use Service\DatabaseService;
 use Exception;
 
 class JornadaController extends BaseController {
-    private Jornada $jornada;
-    private TokenService $tokenService;
+    protected Jornada $jornada;
+    protected TokenService $tokenService;
 
     public function __construct($jornada = null, $tokenService = null) {
         parent::__construct();
