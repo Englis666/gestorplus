@@ -43,7 +43,8 @@ class EvaluacionControllerTest extends TestCase
         $jsonServiceProp->setAccessible(true);
         $jsonServiceProp->setValue($this->controller, $this->jsonResponseServiceMock);
 
-        $validatorMock = $this->createMock(\Core\Validators\Validator::class); // Usa el namespace correcto
+        $validatorMock = $this->createMock(\Service\ValidationService::class);
+        $validatorMock->method('verificarDatosRequeridos')->willReturn(true);
 
         $baseRef = $reflection->getParentClass();
         $validatorProp = $baseRef->getProperty('validator');
