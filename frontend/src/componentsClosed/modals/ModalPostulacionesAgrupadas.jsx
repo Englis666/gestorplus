@@ -135,8 +135,6 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
                         <th>Nombre</th>
                         <th>Email</th>
                         <th>Cargo</th>
-                        <th>Puntaje</th>
-                        <th>Rendimiento</th>
                         <th>Hoja de Vida</th>
                         <th>Acciones</th>
                       </tr>
@@ -148,8 +146,6 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
                             <td>{p.nombres}</td>
                             <td>{p.email}</td>
                             <td>{p.cargo}</td>
-                            <td>{p.puntaje}</td>
-                            <td>{p.rendimiento}</td>
                             <td>
                               <button
                                 className="btn btn-outline-primary btn-sm"
