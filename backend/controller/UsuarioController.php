@@ -14,7 +14,7 @@ use Exception;
 
 /**
  * @OA\Info(title="GestorPlus API", version="1.0", description="Documentación de la API de GestorPlus")
- * @OA\Server(url="http://localhost/gestorplus/backend")
+ * @OA\Server(url="http://localhost/api/")
  */
 class UsuarioController extends BaseController {
     private Usuario $usuario;

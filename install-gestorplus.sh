@@ -1,4 +1,7 @@
-
+#
+ # Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ # Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+#
 # Este script automatiza la instalación y configuración de GestorPlus,
 # una aplicación que utiliza Docker, Docker Compose, Git, Node.js y PHP.
 # ¡Hecho para que sea súper fácil y amigable!

@@ -1,4 +1,7 @@
-#!/bin/bash
+# EjecutarPruebasUnitarias.sh
+ # Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+ # Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+#
 RELATIVE_DIR="controllers"
 PHPUNIT="docker exec -ti gestorplus-php ./vendor/bin/phpunit --testdox"
 
