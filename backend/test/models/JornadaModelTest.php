@@ -17,10 +17,8 @@ class JornadaModelTest extends TestCase
 
     protected function setUp(): void
     {
-        // Creamos un mock de la clase DatabaseService
         $this->dbServiceMock = $this->createMock(DatabaseService::class);
         
-        // Instanciamos la clase Jornada con el mock de DatabaseService
         $this->jornada = new Jornada($this->dbServiceMock);
     }
 
