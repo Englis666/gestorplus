@@ -17,7 +17,6 @@ class PerfilControllerTest extends TestCase
         $mockTokenService = $this->createMock(TokenService::class);
         $mockTokenService->method('validarToken')->willReturn('123456');
 
-        // Mock Perfil
         $mockPerfil = $this->createMock(Perfil::class);
         $mockPerfil->method('datosPerfil')->with('123456')->willReturn([
             'nombres' => 'Juan',
@@ -42,10 +41,10 @@ class PerfilControllerTest extends TestCase
                 ]
             ]);
 
-        // Instanciar el controller sin pasar dependencias
-        $controller = new PerfilController();
-
-        // Inyectar dependencias con reflexión
+        $controller = $this->getMockBuilder(PerfilController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
         $this->injectPrivate($controller, 'tokenService', $mockTokenService);
         $this->injectPrivate($controller, 'perfil', $mockPerfil);
         $this->injectPrivate($controller, 'jsonResponseService', $mockJsonResponseService);
@@ -82,13 +81,16 @@ class PerfilControllerTest extends TestCase
                 'message' => 'Perfil actualizado correctamente',
             ]);
 
-        $controller = new PerfilController();
+        $controller = $this->getMockBuilder(PerfilController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
         $this->injectPrivate($controller, 'tokenService', $mockTokenService);
         $this->injectPrivate($controller, 'perfil', $mockPerfil);
         $this->injectPrivate($controller, 'jsonResponseService', $mockJsonResponseService);
 
         $controller->actualizarPerfil($data);
-    }
+    } 
 
     public function testActualizarPerfilFaltanDatos()
     {
@@ -98,11 +100,9 @@ class PerfilControllerTest extends TestCase
             // Faltan 'email' y 'tipodDoc'
         ];
 
-        // Mock TokenService
         $mockTokenService = $this->createMock(TokenService::class);
         $mockTokenService->method('validarToken')->willReturn('123456');
 
-        // Mock JsonResponseService
         $mockJsonResponseService = $this->getMockBuilder(JsonResponseService::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['responderError'])
@@ -115,12 +115,13 @@ class PerfilControllerTest extends TestCase
                 400
             );
 
-        // Instanciar el controller
-        $controller = new PerfilController();
+        $controller = $this->getMockBuilder(PerfilController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
         $this->injectPrivate($controller, 'tokenService', $mockTokenService);
         $this->injectPrivate($controller, 'jsonResponseService', $mockJsonResponseService);
 
-        // Ejecutar el método
         $controller->actualizarPerfil($data);
     }
 
@@ -129,15 +130,13 @@ class PerfilControllerTest extends TestCase
         $data = [
             'nombres' => 'Juan',
             'apellidos' => 'Pérez',
-            'email' => 'juan@invalid-email', // Email no válido
+            'email' => 'juan@invalid-email',
             'tipodDoc' => 'CC'
         ];
 
-        // Mock TokenService
         $mockTokenService = $this->createMock(TokenService::class);
         $mockTokenService->method('validarToken')->willReturn('123456');
 
-        // Mock JsonResponseService
         $mockJsonResponseService = $this->getMockBuilder(JsonResponseService::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['responderError'])
@@ -150,12 +149,13 @@ class PerfilControllerTest extends TestCase
                 400
             );
 
-        // Instanciar el controller
-        $controller = new PerfilController();
+        $controller = $this->getMockBuilder(PerfilController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
         $this->injectPrivate($controller, 'tokenService', $mockTokenService);
         $this->injectPrivate($controller, 'jsonResponseService', $mockJsonResponseService);
 
-        // Ejecutar el método
         $controller->actualizarPerfil($data);
     }
 
@@ -168,17 +168,14 @@ class PerfilControllerTest extends TestCase
             'tipodDoc' => 'CC'
         ];
 
-        // Mock TokenService
         $mockTokenService = $this->createMock(TokenService::class);
         $mockTokenService->method('validarToken')->willReturn('123456');
 
-        // Mock Perfil
         $mockPerfil = $this->createMock(Perfil::class);
         $mockPerfil->method('actualizarPerfil')
             ->with('123456', $data)
-            ->willReturn(false); // Falla la actualización
+            ->willReturn(false);
 
-        // Mock JsonResponseService
         $mockJsonResponseService = $this->getMockBuilder(JsonResponseService::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['responderError'])
@@ -191,13 +188,14 @@ class PerfilControllerTest extends TestCase
                 500
             );
 
-        // Instanciar el controller
-        $controller = new PerfilController();
+        $controller = $this->getMockBuilder(PerfilController::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
         $this->injectPrivate($controller, 'tokenService', $mockTokenService);
         $this->injectPrivate($controller, 'perfil', $mockPerfil);
         $this->injectPrivate($controller, 'jsonResponseService', $mockJsonResponseService);
 
-        // Ejecutar el método
         $controller->actualizarPerfil($data);
     }
 
