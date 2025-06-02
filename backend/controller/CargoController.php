@@ -15,10 +15,10 @@ class CargoController extends BaseController {
     private Cargo $cargo;
     private TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct($cargo = null, $tokenService = null) {
         parent::__construct();
-        $this->cargo = new Cargo($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->cargo = $cargo ?? new Cargo($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerCargos(){
