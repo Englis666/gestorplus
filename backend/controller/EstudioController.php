@@ -14,14 +14,14 @@ use Service\DatabaseService;
 use Exception;
 
 class EstudioController extends BaseController {
-    private Estudio $estudio;
-    private TokenService $tokenService;
+    protected TokenService $tokenService;
+    protected Estudio $estudio;
 
-    public function __construct()
+    public function __construct($estudio = null, $tokenService = null)
     {
         parent::__construct();
-        $this->estudio = new Estudio($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->estudio = $estudio ?? new Estudio($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerEstudio(): void
