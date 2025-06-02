@@ -106,7 +106,7 @@ final class PazySalvoControllerTest extends TestCase
 
         $this->mockJsonResponse->expects($this->once())
             ->method('responder')
-            ->with(['mensaje' => 'Paz y Salvo generado exitosamente']);
+            ->with(['mensaje' => 'Paz y Salvo generado exitosamente', 'success' => true]);
 
         $this->controller->generarPazYSalvo($data);
     }
