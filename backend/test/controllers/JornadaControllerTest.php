@@ -42,9 +42,9 @@ class JornadaControllerTest extends TestCase
         $prop->setAccessible(true);
         $prop->setValue($this->controller, $this->mockJornada);
         // tokenService
-        $prop = $ref->getProperty('tokenService');
-        $prop->setAccessible(true);
-        $prop->setValue($this->controller, $this->mockTokenService);
+        $tokenServiceProp = $ref->getProperty('tokenService');
+        $tokenServiceProp->setAccessible(true);
+        $tokenServiceProp->setValue($this->controller, $this->mockTokenService);
         // jsonResponseService desde BaseController
         $base = $ref->getParentClass();
         $prop = $base->getProperty('jsonResponseService');
@@ -103,10 +103,10 @@ class JornadaControllerTest extends TestCase
 
     public function testCorroborarJornadaSuccess(): void
     {
-        $data = ['data' => ['idJornada' => 7]];
+        $data = ['idJornada' => 7]; // o el valor que corresponda
         $this->controller->expects($this->once())
             ->method('parametrosRequeridos')
-            ->with($data, ['data' => ['idJornada']])
+            ->with($data, ['idJornada'])
             ->willReturn(true);
         $this->mockJornada->expects($this->once())
             ->method('corroborarJornada')
@@ -124,7 +124,7 @@ class JornadaControllerTest extends TestCase
         $data = [];
         $this->controller->expects($this->once())
             ->method('parametrosRequeridos')
-            ->with($data, ['data' => ['idJornada']])
+            ->with($data, ['idJornada'])
             ->willReturn(false);
         $this->mockJornada->expects($this->never())->method('noCorroborarJornada');
         $this->mockJsonResponseService->expects($this->never())->method('responder');
@@ -134,10 +134,10 @@ class JornadaControllerTest extends TestCase
 
     public function testNoCorroborarJornadaSuccess(): void
     {
-        $data = ['data' => ['idJornada' => 8]];
+        $data = ['idJornada' => 8];
         $this->controller->expects($this->once())
             ->method('parametrosRequeridos')
-            ->with($data, ['data' => ['idJornada']])
+            ->with($data, ['idJornada'])
             ->willReturn(true);
         $this->mockJornada->expects($this->once())
             ->method('noCorroborarJornada')
