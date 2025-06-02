@@ -14,13 +14,14 @@ use Service\DatabaseService;
 use Exception;
 
 class PublicacionesController extends BaseController {
-    private Publicaciones $publicaciones;
-    private TokenService $tokenService;
+    protected Publicaciones $publicaciones;
+    protected TokenService $tokenService;
 
     public function __construct($publicaciones = null, $tokenService = null) {
         parent::__construct();
         $this->publicaciones = $publicaciones ?? new Publicaciones($this->dbService);
         $this->tokenService = $tokenService ?? new TokenService();
+        $this->jsonResponseService = $this->jsonResponseService ?? new \Service\JsonResponseService();
     }
 
     public function obtenerPublicacionPorTipoDeContrato() {
