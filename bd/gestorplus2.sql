@@ -1398,7 +1398,7 @@ CREATE TABLE `vinculacion` (
 LOCK TABLES `vinculacion` WRITE;
 /*!40000 ALTER TABLE `vinculacion` DISABLE KEYS */;
 INSERT INTO `vinculacion` VALUES
-(6,'2025-03-31','2025-03-31','Prestacion de Servicios',1800000.00,'Activo','2025-03-31','uploads/1743565552_contrato_trabajo_ejemplo.pdf',14,1141114912);
+(6,'2025-03-31','2025-03-31','Prestacion de Servicios',1800000.00,'Activo','2025-03-31','uploads/contratos/1748806736_contrato_ejemplo.pdf',14,1141114912);
 /*!40000 ALTER TABLE `vinculacion` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
