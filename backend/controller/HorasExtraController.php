@@ -14,10 +14,10 @@ class HorasExtraController extends BaseController{
     private HorasExtra $horasExtra;
     private TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct($horasExtra = null, $tokenService = null) {
         parent::__construct();
-        $this->horasExtra = new HorasExtra($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->horasExtra = $horasExtra ?? new HorasExtra($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function obtenerTodasLasHorasExtra()
