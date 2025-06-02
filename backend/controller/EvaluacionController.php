@@ -13,13 +13,13 @@ use Service\TokenService;
 use Exception;
 
 class EvaluacionController extends BaseController{
-    private Evaluacion $evaluacion;
-    private TokenService $tokenService;
+    protected Evaluacion $evaluacion;
+    protected TokenService $tokenService;
 
-    public function __construct(){
+    public function __construct($evaluacion = null, $tokenService = null){
         parent::__construct();
-        $this->evaluacion = new Evaluacion($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->evaluacion = $evaluacion ?? new Evaluacion($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     public function responder(array $data, int $httpCode = 200):void{
