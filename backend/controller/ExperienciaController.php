@@ -17,10 +17,10 @@ class ExperienciaController extends BaseController {
     private Experiencia $experiencia;
     private TokenService $tokenService;
 
-    public function __construct() {
+    public function __construct($experiencia = null, $tokenService = null) {
         parent::__construct();
-        $this->experiencia = new Experiencia($this->dbService);
-        $this->tokenService = new TokenService();
+        $this->experiencia = $experiencia ?? new Experiencia($this->dbService);
+        $this->tokenService = $tokenService ?? new TokenService();
     }
     
     public function obtenerExperiencia() {
