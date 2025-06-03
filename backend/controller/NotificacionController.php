@@ -23,6 +23,22 @@ class NotificacionController extends BaseController {
         $this->tokenService = $tokenService ?? new TokenService();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/notificaciones",
+     *     tags={"Notificacion"},
+     *     summary="Obtener notificaciones del usuario autenticado",
+     *     description="Devuelve las notificaciones del usuario autenticado usando el token JWT.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Notificaciones obtenidas",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="Notificaciones", type="array", @OA\Items(type="object"))
+     *         )
+     *     )
+     * )
+     */
     public function obtenerNotificaciones(): void {
         $num_doc = (int) $this->tokenService->validarToken();
         $this->jsonResponseService->responder([
@@ -30,12 +46,49 @@ class NotificacionController extends BaseController {
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/notificaciones/todas",
+     *     tags={"Notificacion"},
+     *     summary="Obtener todas las notificaciones",
+     *     description="Devuelve todas las notificaciones del sistema.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Notificaciones obtenidas",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="Notificaciones", type="array", @OA\Items(type="object"))
+     *         )
+     *     )
+     * )
+     */
     public function obtenerTodasLasNotificaciones(): void {
         $this->jsonResponseService->responder([
             'Notificaciones' => $this->notificacion->obtenerTodasLasNotificaciones()
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/notificaciones/aspirante",
+     *     tags={"Notificacion"},
+     *     summary="Obtener notificaciones de aspirante",
+     *     description="Devuelve las notificaciones para el usuario aspirante autenticado (token).",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Notificaciones encontradas",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Notificaciones"),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No hay notificaciones"
+     *     )
+     * )
+     */
     public function obtenerNotificacionesAspirante(): void {
         $num_doc = (int) $this->tokenService->validarToken();
 
