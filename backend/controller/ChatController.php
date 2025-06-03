@@ -20,6 +20,39 @@ class ChatController extends BaseController {
         $this->tokenService = $tokenService ?? new TokenService();
     }
 
+    /**
+     * @OA\Post(
+     *     path="/chat/mensaje",
+     *     tags={"Chat"},
+     *     summary="Enviar mensaje",
+     *     description="Envía un mensaje en un chat existente.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"idChat", "mensaje"},
+     *             @OA\Property(property="idChat", type="integer", example=1),
+     *             @OA\Property(property="mensaje", type="string", example="Hola, ¿cómo estás?")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mensaje enviado correctamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Mensaje enviado correctamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Faltan parámetros requeridos"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al guardar el mensaje"
+     *     )
+     * )
+     */
     public function enviarMensaje($data) {
         $num_doc_emisor = (int) $this->tokenService->validarToken();
     
@@ -60,6 +93,31 @@ class ChatController extends BaseController {
     }
     
 
+    /**
+     * @OA\Get(
+     *     path="/chat/id",
+     *     tags={"Chat"},
+     *     summary="Obtener idChat del usuario autenticado",
+     *     description="Obtiene el idChat asociado al usuario autenticado (token).",
+     *     @OA\Response(
+     *         response=200,
+     *         description="idChat encontrado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="idChat", type="integer", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Token inválido"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No se encontró el idChat para el usuario"
+     *     )
+     * )
+     */
     public function obtenerIdChat() {
         $num_doc = $this->tokenService->validarToken();
         if (!$num_doc) {
@@ -77,6 +135,39 @@ class ChatController extends BaseController {
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/chat/obtener-o-crear",
+     *     tags={"Chat"},
+     *     summary="Obtener o crear chat",
+     *     description="Obtiene el idChat entre dos usuarios o lo crea si no existe.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"num_doc_emisor", "num_doc_receptor"},
+     *             @OA\Property(property="num_doc_emisor", type="integer", example=1014736),
+     *             @OA\Property(property="num_doc_receptor", type="integer", example=1014737)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="idChat obtenido o creado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="idChat", type="integer", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="num_doc_emisor y num_doc_receptor son requeridos"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al obtener o crear el chat"
+     *     )
+     * )
+     */
     public function obtenerOcrearChat($data){
         $num_doc_emisor = $data['num_doc_emisor'] ?? null;
         $num_doc_receptor = $data['num_doc_receptor'] ?? null;
@@ -97,6 +188,42 @@ class ChatController extends BaseController {
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/chat/mensajes",
+     *     tags={"Chat"},
+     *     summary="Obtener mensajes de un chat",
+     *     description="Obtiene los mensajes de un chat por idChat (query param).",
+     *     @OA\Parameter(
+     *         name="idChat",
+     *         in="query",
+     *         required=true,
+     *         description="ID del chat",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Mensajes obtenidos",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="mensajes", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="idChat es requerido"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Token inválido o no proporcionado"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al obtener los mensajes"
+     *     )
+     * )
+     */
     public function obtenerMensajes($data = []) {
         $num_doc = $this->tokenService->validarToken();
         if (!$num_doc) {
