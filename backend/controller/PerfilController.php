@@ -23,6 +23,28 @@ class PerfilController extends BaseController {
     }
     
 
+    /**
+     * @OA\Get(
+     *     path="/perfil",
+     *     tags={"Perfil"},
+     *     summary="Obtener datos del perfil",
+     *     description="Devuelve los datos del perfil del usuario autenticado (token).",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Datos del perfil obtenidos",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example=""),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al obtener los datos del perfil"
+     *     )
+     * )
+     */
     public function datosPerfil(): void {
         try {
             $num_doc = (int) $this->tokenService->validarToken();
@@ -41,6 +63,41 @@ class PerfilController extends BaseController {
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/perfil",
+     *     tags={"Perfil"},
+     *     summary="Actualizar perfil",
+     *     description="Actualiza los datos del perfil del usuario autenticado (token).",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nombres", "apellidos", "email", "tipodDoc"},
+     *             @OA\Property(property="nombres", type="string", example="Juan"),
+     *             @OA\Property(property="apellidos", type="string", example="Pérez"),
+     *             @OA\Property(property="email", type="string", example="juan.perez@email.com"),
+     *             @OA\Property(property="tipodDoc", type="string", example="CEDULA")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Perfil actualizado correctamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Perfil actualizado correctamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Faltan datos requeridos o email inválido"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="No se pudo actualizar el perfil"
+     *     )
+     * )
+     */
     public function actualizarPerfil(array $data): void {
         try {
             $num_doc = (int) $this->tokenService->validarToken();
