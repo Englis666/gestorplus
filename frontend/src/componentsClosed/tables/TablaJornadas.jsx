@@ -81,7 +81,7 @@ const TablaJornadas = () => {
       setJornadas((prev) =>
         prev.map((j) =>
           j.idJornada === idJornada
-            ? { ...j, estadoJornada: "Jornada Rechazada" }
+            ? { ...j, estadoJornada: "Jornada rechazada" }
             : j
         )
       );
