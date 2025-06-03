@@ -43,6 +43,38 @@ class AuthController extends BaseController{
         }
     }
  
+    /**
+     * @OA\Post(
+     *     path="/auth/registrar",
+     *     tags={"Auth"},
+     *     summary="Registrar usuario",
+     *     description="Registra un nuevo usuario en el sistema.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"num_doc", "nombres", "apellidos", "email", "password"},
+     *             @OA\Property(property="num_doc", type="integer", example=1014736),
+     *             @OA\Property(property="nombres", type="string", example="Juan"),
+     *             @OA\Property(property="apellidos", type="string", example="Pérez"),
+     *             @OA\Property(property="email", type="string", example="juan@email.com"),
+     *             @OA\Property(property="password", type="string", example="123456")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Usuario registrado correctamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Usuario registrado correctamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Datos inválidos o faltantes"
+     *     )
+     * )
+     */
     public function registrar($data) {
         $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
         $data['estado'] = 1;
@@ -52,6 +84,36 @@ class AuthController extends BaseController{
         $this->jsonResponseService->responder(['status' => 'success', 'message' => $resultado]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/auth/iniciar",
+     *     tags={"Auth"},
+     *     summary="Iniciar sesión",
+     *     description="Inicia sesión y retorna un token JWT si las credenciales son correctas.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"num_doc", "password"},
+     *             @OA\Property(property="num_doc", type="integer", example=1014736),
+     *             @OA\Property(property="password", type="string", example="123456")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Inicio de sesión exitoso",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Credenciales correctas"),
+     *             @OA\Property(property="data", type="object", @OA\Property(property="token", type="string", example="jwt.token.aqui"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Credenciales incorrectas"
+     *     )
+     * )
+     */
     public function iniciar($data) {
         $this->antiAttackForce->detectSuspiciousUserAgent();
         if (empty($data['num_doc']) || empty($data['password'])) {
@@ -97,6 +159,34 @@ class AuthController extends BaseController{
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/auth/recuperar-password",
+     *     tags={"Auth"},
+     *     summary="Recuperar contraseña",
+     *     description="Envía un correo para recuperar la contraseña del usuario.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", example="juan@email.com")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Correo de recuperación enviado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Se ha enviado un correo para recuperar tu contraseña")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="El correo es requerido o no registrado"
+     *     )
+     * )
+     */
     public function recuperarPassword($data) {
         if (empty($data['email'])) {
             $this->jsonResponseService->responderError('El correo es requerido');
@@ -127,6 +217,35 @@ class AuthController extends BaseController{
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/auth/restablecer-password",
+     *     tags={"Auth"},
+     *     summary="Restablecer contraseña",
+     *     description="Permite restablecer la contraseña usando un token de recuperación.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"token", "password"},
+     *             @OA\Property(property="token", type="string", example="token_de_recuperacion"),
+     *             @OA\Property(property="password", type="string", example="nueva_contraseña")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Contraseña restablecida",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Contraseña restablecida")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Token o nueva contraseña requeridos, o token inválido"
+     *     )
+     * )
+     */
     public function restablecerPassword($data) {
         if (empty($data['token']) || empty($data['password'])) {
             $this->jsonResponseService->responderError('Token y nueva contraseña son requeridos');
