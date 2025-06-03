@@ -23,7 +23,27 @@ class HojadevidaController extends BaseController{
         $this->tokenService = $tokenService ?? new TokenService();
     }
 
-
+    /**
+     * @OA\Get(
+     *     path="/hojadevida",
+     *     tags={"HojaDeVida"},
+     *     summary="Obtener hoja de vida del usuario autenticado",
+     *     description="Obtiene la hoja de vida usando el ID extraído del token JWT.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Hoja de vida encontrada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No se encontró la hoja de vida"
+     *     )
+     * )
+     */
     public function obtenerHojadevida(): void {
         try {
             $decoded = $this->tokenService->obtenerPayload();
@@ -42,6 +62,34 @@ class HojadevidaController extends BaseController{
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/hojadevida/por-numdoc",
+     *     tags={"HojaDeVida"},
+     *     summary="Obtener hoja de vida por número de documento",
+     *     description="Obtiene la hoja de vida usando el parámetro num_doc en query string.",
+     *     @OA\Parameter(
+     *         name="num_doc",
+     *         in="query",
+     *         required=true,
+     *         description="Número de documento del usuario",
+     *         @OA\Schema(type="integer", example=1014736)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Hoja de vida encontrada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No se encontró la hoja de vida"
+     *     )
+     * )
+     */
     public function obtenerHojadevidaPorNumDoc(): void {
         try {
             // Validar parámetro num_doc
@@ -71,8 +119,45 @@ class HojadevidaController extends BaseController{
             $this->jsonResponseService->responderError(['error' => $e->getMessage()], $e->getCode());
         }
     }
-    
-    
+
+    /**
+     * @OA\Put(
+     *     path="/hojadevida",
+     *     tags={"HojaDeVida"},
+     *     summary="Actualizar hoja de vida",
+     *     description="Actualiza la hoja de vida del usuario autenticado.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"fechaNacimiento", "direccion", "ciudad", "ciudadNacimiento", "telefono", "telefonoFijo", "estadohojadevida", "estadoCivil", "genero", "habilidades", "portafolio"},
+     *             @OA\Property(property="fechaNacimiento", type="string", example="1990-01-01"),
+     *             @OA\Property(property="direccion", type="string", example="Calle 123 #45-67"),
+     *             @OA\Property(property="ciudad", type="string", example="Bogotá"),
+     *             @OA\Property(property="ciudadNacimiento", type="string", example="Medellín"),
+     *             @OA\Property(property="telefono", type="string", example="3001234567"),
+     *             @OA\Property(property="telefonoFijo", type="string", example="1234567"),
+     *             @OA\Property(property="estadohojadevida", type="string", example="Completa"),
+     *             @OA\Property(property="estadoCivil", type="string", example="Soltero"),
+     *             @OA\Property(property="genero", type="string", example="Masculino"),
+     *             @OA\Property(property="habilidades", type="string", example="PHP, JavaScript"),
+     *             @OA\Property(property="portafolio", type="string", example="https://miportafolio.com")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Hoja de vida actualizada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No se encontró la hoja de vida"
+     *     )
+     * )
+     */
     public function actualizacionHojaDevida($data): void {
         try {
             if (!$this->parametrosRequeridos($data, [
@@ -105,8 +190,35 @@ class HojadevidaController extends BaseController{
             $this->jsonResponseService->responderError($e->getMessage());
         }
     }
-    
 
+    /**
+     * @OA\Get(
+     *     path="/hojadevida/analizar",
+     *     tags={"HojaDeVida"},
+     *     summary="Analizar hoja de vida por número de documento",
+     *     description="Analiza la hoja de vida usando el parámetro num_doc en query string y retorna el análisis del microservicio Python.",
+     *     @OA\Parameter(
+     *         name="num_doc",
+     *         in="query",
+     *         required=true,
+     *         description="Número de documento del usuario",
+     *         @OA\Schema(type="integer", example=1014736)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Análisis exitoso",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No se encontró la hoja de vida para analizar"
+     *     )
+     * )
+     */
     public function analizarHojaDeVidaPorNumDoc(): void {
         try {
             if (!isset($_GET['num_doc']) || !is_numeric($_GET['num_doc'])) {
