@@ -1,3 +1,4 @@
+#!/bin/bash
 #
  # Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
  # Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
@@ -135,6 +136,7 @@ function intro() {
 function check_docker_permissions() {
   echo -e "${YELLOW}🚀 Paso 1: ¡Verificando si Docker puede volar sin 'sudo'!${RESET}"
   echo "Necesitamos que Docker funcione sin pedirte la clave a cada rato. ¡Es más cómodo así!"
+  sudo usermod -aG docker $USER
 
   if docker ps >/dev/null 2>&1; then
     echo -e "${GREEN}🥳 ¡Genial! Docker ya tiene sus permisos listos para despegar sin 'sudo'.${RESET}"
@@ -452,9 +454,9 @@ function final_messages() {
 
 show_banner             
 intro                   
-check_docker_permissions 
 detect_distro           
 install_dependencies    
+check_docker_permissions 
 clone_or_use_repo       
 install_frontend       
 choose_profile_and_run  
