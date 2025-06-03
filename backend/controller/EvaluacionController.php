@@ -26,11 +26,62 @@ class EvaluacionController extends BaseController{
         $this->jsonResponseService->responder($data, $httpCode);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/evaluacion/sistema-gestion",
+     *     tags={"Evaluacion"},
+     *     summary="Obtener sistema de gestión",
+     *     description="Obtiene el sistema de gestión para evaluación.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Sistema de gestión obtenido",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="sistemaDeGestion", type="object")
+     *         )
+     *     )
+     * )
+     */
     public function obtenerSistemaDeGestion()
     {
         $this->responder(['sistemaDeGestion' => $this->evaluacion->obtenerSistemaDeGestion()]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/evaluacion/sistema-gestion",
+     *     tags={"Evaluacion"},
+     *     summary="Guardar resultados del sistema de gestión",
+     *     description="Guarda los resultados del sistema de gestión para una evaluación.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"identrevista", "idpostulacion", "estado_salud", "evaluacionRiesgos", "recomendaciones", "aptitudLaboral", "comentarios", "estadoEvaluacion"},
+     *             @OA\Property(property="identrevista", type="integer", example=1),
+     *             @OA\Property(property="idpostulacion", type="integer", example=2),
+     *             @OA\Property(property="estado_salud", type="string", example="Bueno"),
+     *             @OA\Property(property="evaluacionRiesgos", type="string", example="Sin riesgos"),
+     *             @OA\Property(property="recomendaciones", type="string", example="Ninguna"),
+     *             @OA\Property(property="aptitudLaboral", type="string", example="Apto"),
+     *             @OA\Property(property="comentarios", type="string", example="Sin comentarios"),
+     *             @OA\Property(property="estadoEvaluacion", type="string", example="Completada")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Resultados guardados con éxito",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Resultados guardados con éxito.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="No se pudo guardar en la base de datos"
+     *     )
+     * )
+     */
     public function guardarResultadosSistemaDeGestion(array $data)
     {
         $required = ['identrevista', 'idpostulacion', 'estado_salud', 'evaluacionRiesgos', 'recomendaciones', 'aptitudLaboral', 'comentarios', 'estadoEvaluacion'];
@@ -46,6 +97,34 @@ class EvaluacionController extends BaseController{
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/evaluacion/buscar-id",
+     *     tags={"Evaluacion"},
+     *     summary="Buscar ID de evaluación por entrevista",
+     *     description="Busca el ID de evaluación usando el parámetro identrevista en query string.",
+     *     @OA\Parameter(
+     *         name="identrevista",
+     *         in="query",
+     *         required=true,
+     *         description="Identificador de la entrevista",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="ID de evaluación encontrado o no encontrado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="encontrada", type="boolean", example=true),
+     *             @OA\Property(property="idevaluacion", type="integer", example=5)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Identificador de entrevista no encontrado"
+     *     )
+     * )
+     */
     public function buscarIdEvaluacion()
     {
         $identrevista = $_GET['identrevista'] ?? null;
