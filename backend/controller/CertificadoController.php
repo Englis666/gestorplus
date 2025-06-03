@@ -23,6 +23,26 @@ class CertificadoController extends BaseController{
         $this->tokenService = $tokenService ?? new TokenService();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/certificado/datos",
+     *     tags={"Certificado"},
+     *     summary="Obtener datos para certificado",
+     *     description="Obtiene los datos necesarios para generar el certificado del usuario autenticado (token).",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Datos del certificado obtenidos",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="Certificado", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error al obtener los datos del certificado"
+     *     )
+     * )
+     */
     public function obtenerDatosParaCertificado(){
         try{
          $num_doc = $this->tokenService->validarToken();
