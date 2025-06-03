@@ -10,6 +10,8 @@ use Symfony\Component\Finder\Finder;
 
 /**
  * Convenient utility functions that don't neatly fit anywhere else.
+ *
+ * @deprecated
  */
 class Util
 {
@@ -21,7 +23,7 @@ class Util
      * is always a chance it was a valid relative path to begin with.
      *
      * It should be noted that these are "relative paths" primarily in Finder's sense of them,
-     * and conform specifically to what is expected by functions like `exclude()` and `notPath()`.
+     * and conform specifically to what is expected by functions like <code>exclude()</code> and <code>notPath()</code>.
      * In particular, leading and trailing slashes are removed.
      *
      * @param array|string $basePaths

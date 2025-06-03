@@ -37,6 +37,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'doctrine/annotations' => array(
+            'pretty_version' => '2.0.2',
+            'version' => '2.0.2.0',
+            'reference' => '901c2ee5d26eb64ff43c47976e114bf00843acf7',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../doctrine/annotations',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'doctrine/cache' => array(
             'pretty_version' => '2.2.0',
             'version' => '2.2.0.0',
@@ -1157,9 +1166,9 @@
             'dev_requirement' => false,
         ),
         'zircote/swagger-php' => array(
-            'pretty_version' => '5.0.6',
-            'version' => '5.0.6.0',
-            'reference' => 'ea60f1439aa4fefba230a4386a403eeb1ee52f08',
+            'pretty_version' => '5.1.3',
+            'version' => '5.1.3.0',
+            'reference' => 'b8ba6bd99805c0ae09a38d1b26c1c92820509bd0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../zircote/swagger-php',
             'aliases' => array(),
