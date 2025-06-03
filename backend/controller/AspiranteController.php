@@ -22,6 +22,42 @@ class AspiranteController extends BaseController {
         $this->tokenService = $tokenService ?? new TokenService();
     }
     
+    /**
+     * @OA\Post(
+     *     path="/aspirante/aplicar",
+     *     tags={"Aspirante"},
+     *     summary="Aplicar a una convocatoria",
+     *     description="Permite a un aspirante autenticado aplicar a una convocatoria. El número de documento se obtiene del token.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"idconvocatoria"},
+     *             @OA\Property(property="idconvocatoria", type="integer", example=7)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Aplicación exitosa",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="success"),
+     *             @OA\Property(property="data", type="boolean", example=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Faltan parámetros requeridos"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Token inválido"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="No se pudo completar la aplicación"
+     *     )
+     * )
+     */
     public function aplicacionDeAspirante($data) {
         $num_doc = $this->tokenService->validarToken();
         if ($num_doc === null){
