@@ -67,7 +67,7 @@ class JornadaController extends BaseController {
     }
 
     /**
-     * @OA\Post(
+     * @OA\Patch(
      *     path="/jornadas/corroborar",
      *     tags={"Jornada"},
      *     summary="Corroborar jornada",
@@ -102,7 +102,7 @@ class JornadaController extends BaseController {
     }
 
     /**
-     * @OA\Post(
+     * @OA\Patch(
      *     path="/jornadas/no-corroborar",
      *     tags={"Jornada"},
      *     summary="No corroborar jornada",
@@ -137,7 +137,7 @@ class JornadaController extends BaseController {
     }
 
     /**
-     * @OA\Post(
+     * @OA\Patch(
      *     path="/jornadas/finalizar",
      *     tags={"Jornada"},
      *     summary="Finalizar jornada",

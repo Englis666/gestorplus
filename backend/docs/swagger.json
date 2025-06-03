@@ -2840,13 +2840,13 @@
             }
         },
         "/jornadas/corroborar": {
-            "post": {
+            "patch": {
                 "tags": [
                     "Jornada"
                 ],
                 "summary": "Corroborar jornada",
                 "description": "Corrobora una jornada por idJornada.",
-                "operationId": "d3cc5f8b761770289944c19003e60061",
+                "operationId": "d08e1879c0634c729b4ba6609580b367",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2890,13 +2890,13 @@
             }
         },
         "/jornadas/no-corroborar": {
-            "post": {
+            "patch": {
                 "tags": [
                     "Jornada"
                 ],
                 "summary": "No corroborar jornada",
                 "description": "Marca una jornada como no corroborada por idJornada.",
-                "operationId": "0706355fea227cfc28d6cd06b7868f16",
+                "operationId": "c3f533899d28b9345ecb569ee1749490",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2940,13 +2940,13 @@
             }
         },
         "/jornadas/finalizar": {
-            "post": {
+            "patch": {
                 "tags": [
                     "Jornada"
                 ],
                 "summary": "Finalizar jornada",
                 "description": "Finaliza una jornada por fechaBogota (en el body) y usuario autenticado (token).",
-                "operationId": "c8ee018b44b6fd077a35caa1811cd050",
+                "operationId": "1aa4160eec8b42296f180fc7989bc1f6",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3426,13 +3426,13 @@
             }
         },
         "/permisos/aceptar": {
-            "post": {
+            "patch": {
                 "tags": [
                     "Permiso"
                 ],
                 "summary": "Aceptar permisos",
                 "description": "Acepta uno o varios permisos por sus IDs.",
-                "operationId": "f3b3d71ae1af710501d843fbc7da2e42",
+                "operationId": "f22e4d82d875d0f5d91ac79b95f7f9e4",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3479,13 +3479,13 @@
             }
         },
         "/permisos/rechazar": {
-            "post": {
+            "patch": {
                 "tags": [
                     "Permiso"
                 ],
                 "summary": "Rechazar permisos",
                 "description": "Rechaza uno o varios permisos por sus IDs.",
-                "operationId": "1f2c44646b1ed3aa231cba9c463eb7a3",
+                "operationId": "db22e91f2406a87d1b3db563abac0191",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -4310,13 +4310,13 @@
             }
         },
         "/vacaciones/aceptar": {
-            "post": {
+            "patch": {
                 "tags": [
                     "Vacaciones"
                 ],
                 "summary": "Aceptar solicitud de vacaciones",
                 "description": "Permite aceptar una solicitud de vacaciones por idvacacion.",
-                "operationId": "5efb5a4a8654d5eb5959057cdeaa3cd3",
+                "operationId": "c6eacb53c48763aaa305880e5b44747c",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -4360,13 +4360,13 @@
             }
         },
         "/vacaciones/rechazar": {
-            "post": {
+            "patch": {
                 "tags": [
                     "Vacaciones"
                 ],
                 "summary": "Rechazar solicitud de vacaciones",
                 "description": "Permite rechazar una solicitud de vacaciones por idvacacion.",
-                "operationId": "bd43ce3b28860a04808d2a5717a7a4ac",
+                "operationId": "5378b803355c4022981a16fd2469c39f",
                 "requestBody": {
                     "required": true,
                     "content": {

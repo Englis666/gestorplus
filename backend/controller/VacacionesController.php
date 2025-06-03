@@ -99,7 +99,7 @@ class VacacionesController extends BaseController {
     }
 
     /**
-     * @OA\Post(
+     * @OA\Patch(
      *     path="/vacaciones/aceptar",
      *     tags={"Vacaciones"},
      *     summary="Aceptar solicitud de vacaciones",
@@ -132,7 +132,7 @@ class VacacionesController extends BaseController {
     }
 
     /**
-     * @OA\Post(
+     * @OA\Patch(
      *     path="/vacaciones/rechazar",
      *     tags={"Vacaciones"},
      *     summary="Rechazar solicitud de vacaciones",

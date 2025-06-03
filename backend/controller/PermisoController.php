@@ -83,7 +83,7 @@ class PermisoController extends BaseController {
     }
 
     /**
-     * @OA\Post(
+     * @OA\Patch(
      *     path="/permisos/aceptar",
      *     tags={"Permiso"},
      *     summary="Aceptar permisos",
@@ -126,7 +126,7 @@ class PermisoController extends BaseController {
     }
     
     /**
-     * @OA\Post(
+     * @OA\Patch(
      *     path="/permisos/rechazar",
      *     tags={"Permiso"},
      *     summary="Rechazar permisos",
