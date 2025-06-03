@@ -25,6 +25,26 @@ class PazySalvoController extends BaseController
         $this->tokenService = $tokenService ?? new TokenService();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/pazysalvo/todos",
+     *     tags={"PazySalvo"},
+     *     summary="Obtener todos los Paz y Salvo",
+     *     description="Devuelve todos los Paz y Salvo registrados en el sistema.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Paz y Salvo obtenidos",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="Salvos", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al obtener Paz y Salvos"
+     *     )
+     * )
+     */
     public function obtenerPazYSalvos(): void
     {
         try {
@@ -35,6 +55,26 @@ class PazySalvoController extends BaseController
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/pazysalvo/mio",
+     *     tags={"PazySalvo"},
+     *     summary="Obtener mi Paz y Salvo",
+     *     description="Devuelve el Paz y Salvo del usuario autenticado (token).",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Paz y Salvo obtenido",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="Salvos", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al obtener el Paz y Salvo"
+     *     )
+     * )
+     */
     public function obtenerMipazYSalvo(): void
     {
         try {
@@ -46,6 +86,41 @@ class PazySalvoController extends BaseController
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/pazysalvo/generar",
+     *     tags={"PazySalvo"},
+     *     summary="Generar Paz y Salvo",
+     *     description="Genera un nuevo Paz y Salvo para un empleado.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"motivo", "fechaEmision", "estado", "empleado"},
+     *             @OA\Property(property="motivo", type="string", example="Finalización de contrato"),
+     *             @OA\Property(property="fechaEmision", type="string", example="2024-06-01"),
+     *             @OA\Property(property="estado", type="string", example="Emitido"),
+     *             @OA\Property(property="empleado", type="integer", example=1014736)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Paz y Salvo generado exitosamente",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="mensaje", type="string", example="Paz y Salvo generado exitosamente"),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Empleado no especificado correctamente en los datos"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al generar el Paz y Salvo"
+     *     )
+     * )
+     */
     public function generarPazYSalvo(array $data): void
     {
         try {
