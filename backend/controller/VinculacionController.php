@@ -17,6 +17,43 @@ class VinculacionController extends BaseController {
         $this->vinculacion = $vinculacion ?? new Vinculacion($this->dbService);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/vinculaciones/asignar",
+     *     tags={"Vinculacion"},
+     *     summary="Asignar vinculación",
+     *     description="Asigna una nueva vinculación a un usuario.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"num_doc", "fechaInicio", "fechaFin", "tipoContrato", "salario", "estadoContrato", "fechaFirma"},
+     *             @OA\Property(property="num_doc", type="integer", example=1014736),
+     *             @OA\Property(property="fechaInicio", type="string", example="2025-03-31"),
+     *             @OA\Property(property="fechaFin", type="string", example="2025-03-31"),
+     *             @OA\Property(property="tipoContrato", type="string", example="Prestacion de Servicios"),
+     *             @OA\Property(property="salario", type="string", example="1800000.00"),
+     *             @OA\Property(property="estadoContrato", type="string", example="Activo"),
+     *             @OA\Property(property="fechaFirma", type="string", example="2025-03-31")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vinculación asignada",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="Vinculacion", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Datos requeridos incompletos"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al asignar la vinculación"
+     *     )
+     * )
+     */
     public function asignarVinculacion(array $data): void {
         $required = ['num_doc', 'fechaInicio', 'fechaFin', 'tipoContrato', 'salario', 'estadoContrato', 'fechaFirma'];
 
@@ -34,6 +71,26 @@ class VinculacionController extends BaseController {
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/vinculaciones",
+     *     tags={"Vinculacion"},
+     *     summary="Obtener todas las vinculaciones",
+     *     description="Devuelve todas las vinculaciones registradas en el sistema.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vinculaciones obtenidas",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="Vinculaciones", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al obtener las vinculaciones"
+     *     )
+     * )
+     */
     public function obtenerVinculaciones(): void {
         try {
             $resultado = $this->vinculacion->obtenerVinculaciones();
