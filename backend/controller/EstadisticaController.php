@@ -22,6 +22,28 @@ use Exception;
         $this->tokenService = $tokenService ?? new TokenService();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/estadisticas/total",
+     *     tags={"Estadistica"},
+     *     summary="Obtener totales de estadísticas",
+     *     description="Obtiene el total de jornadas, generales y actualizaciones para el usuario autenticado (requiere token JWT).",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Totales obtenidos",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="totalJornadas", type="integer", example=10),
+     *             @OA\Property(property="totalGenerales", type="integer", example=5),
+     *             @OA\Property(property="totalActualizaciones", type="integer", example=3)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Token inválido o faltan datos"
+     *     )
+     * )
+     */
     public function obtenerTotalEstadisticas(){
     $payload = $this->tokenService->obtenerPayload();
 
