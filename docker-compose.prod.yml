@@ -35,7 +35,7 @@ services:
       - ./backend:/var/www/html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
-      - "80:80"
+      - "8080:80"
     networks:
       - gestorplus-network
     depends_on:
@@ -88,27 +88,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
-
-  frontend-dev:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: gestorplus-frontend-dev
-    command: npm start
-    volumes:
-      - ./frontend:/app
-      - ./frontend/node_modules:/app/node_modules
-    ports:
-      - "3000:3000"
-    networks:
-      - gestorplus-network
-    depends_on:
-      - gestorplus-php
-    environment:
-      - TZ=America/Bogota
-    profiles:
-      - dev
     restart: unless-stopped
 
   frontend-prod:

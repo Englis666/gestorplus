@@ -1,0 +1,145 @@
+services:
+  gestorplus-php:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gestorplus-php
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/config/.env:/var/www/html/.env:ro
+    expose:
+      - 9000
+    networks:
+      - gestorplus-network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - TZ=America/Bogota
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_FROM=${MAIL_FROM}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME}
+    command:
+      ["sh", "-c", "until nc -z gestorplus-db 3306; do sleep 1; done; php-fpm"]
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: gestorplus-nginx
+    volumes:
+      - ./backend:/var/www/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    networks:
+      - gestorplus-network
+    depends_on:
+      gestorplus-php:
+        condition: service_started
+    environment:
+      - TZ=America/Bogota
+    restart: unless-stopped
+
+  db:
+    image: mariadb:10.11
+    container_name: gestorplus-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "gestorplus"
+      TZ: America/Bogota
+    volumes:
+      - ./bd/gestorplus2.sql:/docker-entrypoint-initdb.d/gestorplus2.sql:ro
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - gestorplus-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p$MYSQL_ROOT_PASSWORD",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: gestorplus-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - gestorplus-network
+    environment:
+      - TZ=America/Bogota
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: gestorplus-frontend-dev
+    command: npm start
+    volumes:
+      - ./frontend:/app
+      - ./frontend/node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    networks:
+      - gestorplus-network
+    depends_on:
+      - gestorplus-php
+    environment:
+      - TZ=America/Bogota
+    profiles:
+      - dev
+    restart: unless-stopped
+
+  backend-python:
+    build:
+      context: ./backend-python
+    volumes:
+      - ./backend-python/app:/app
+      - ./backend-python/app/requirements.txt:/app/requirements.txt:ro
+    command: uvicorn main:app --host 0.0.0.0 --port 5000 --reload
+    container_name: gestorplus-backend-python
+    ports:
+      - "5000:5000"
+    networks:
+      - gestorplus-network
+    environment:
+      - TZ=America/Bogota
+    restart: unless-stopped
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: gestorplus-swagger
+    ports:
+      - "8081:8080"
+    environment:
+      SWAGGER_JSON: /docs/swagger.json
+    volumes:
+      - ./backend/docs/swagger.json:/docs/swagger.json
+
+networks:
+  gestorplus-network:
+    driver: bridge
+
+volumes:
+  mariadb_data:
