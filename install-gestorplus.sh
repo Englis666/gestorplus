@@ -309,7 +309,7 @@ function install_frontend() {
 }
 
 # 7. Despertando los motores (levantar servicios Docker Compose)
-ffunction choose_profile_and_run() {
+function choose_profile_and_run() {
   echo -e "${YELLOW}⚙️ Paso 6: ¡Es hora de decidir cómo quieres que GestorPlus funcione!${RESET}"
   echo "  ${BLUE}1) Desarrollo${RESET} (Ideal para probar cosas o si eres un desarrollador curioso.)"
   echo "  ${BLUE}2) Producción${RESET} (Si quieres usar GestorPlus para trabajar de verdad, ¡esta es tu opción!)"
