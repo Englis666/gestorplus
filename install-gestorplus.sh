@@ -299,6 +299,13 @@ function install_frontend() {
       echo -e "${RED}¡Problemas al instalar las dependencias del frontend! ¿npm está bien?${RESET}"
       exit 1
     }
+    echo -e "Ejecutando ${CYAN}npm run build${RESET} para compilar el frontend..."
+    npm run build || {
+      echo -e "${RED}¡Problemas al compilar el frontend!${RESET}"
+      exit 1
+    }
+    echo -e "Copiando el build al backend..."
+    cp -r build/* ../backend/public/
     cd ../.. # ¡Volvemos a casa!
     echo -e "${GREEN}✨ ¡El frontend de GestorPlus está listo para brillar!${RESET}"
   else
