@@ -94,6 +94,11 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
     container_name: gestorplus-frontend-prod
+    command: npm run build && npx serve -s build
+    volumes:
+      - ./frontend/build:/usr/src/app/build:ro
+    expose:
+      - "80"
     ports:
       - "80:80"
     networks:
