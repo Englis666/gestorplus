@@ -11,6 +11,7 @@ source lib/repo.sh
 source lib/frontend.sh
 source lib/docker.sh
 source lib/env.sh
+source lib/testUnitarios.sh
 source lib/migrate.sh
 source lib/final.sh
 

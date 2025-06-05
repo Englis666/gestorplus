@@ -57,9 +57,9 @@ function select_and_copy_env() {
 function reload_dockers(){
   echo "Vamos a reiniciar el contenedor PHP para aplicar los cambios."
   if command -v docker compose >/dev/null 2>&1; then
-    docker compose restart php
+    docker compose restart gestorplus-php
   elif command -v docker-compose >/dev/null 2>&1; then
-    docker-compose restart php
+    docker-compose restart gestorplus-php
   else
     docker restart gestorplus-php
   fi
