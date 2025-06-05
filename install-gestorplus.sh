@@ -14,7 +14,7 @@ source lib/env.sh
 source lib/migrate.sh
 source lib/final.sh
 
-# Ejecución principal
+
 show_banner
 intro
 detect_distro
