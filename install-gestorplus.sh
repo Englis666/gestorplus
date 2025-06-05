@@ -371,8 +371,32 @@ function find_php_container() {
   pause
 }
 
+
+# --- Selección y copia del archivo .env al contenedor PHP ---
+function select_and_copy_env() {
+  echo -e "${YELLOW}🌱 Selecciona el archivo .env que usará GestorPlus en el contenedor PHP.${RESET}"
+  local env_path=""
+  if command -v zenity >/dev/null 2>&1; then
+    env_path=$(zenity --file-selection --title="Selecciona tu archivo .env para GestorPlus")
+  else
+    read -rp "$(echo -e "${CYAN}Por favor, introduce la RUTA COMPLETA de tu archivo .env: ${RESET}")" env_path
+  fi
+
+  if [ -z "$env_path" ] || [ ! -f "$env_path" ]; then
+    echo -e "${RED}¡No se seleccionó un archivo .env válido! Cancela esta parte del proceso.${RESET}"
+    pause
+    return 1
+  fi
+
+  docker cp "$env_path" "$php_container":/var/www/html/backend/.env
+  echo -e "${GREEN}✅ Archivo .env copiado correctamente al contenedor PHP.${RESET}"
+  return 0
+}
+
 # 9. La gran migración (importar datos Excel/CSV)
 function migrate_excel() {
+  echo "${YELLOW}🗂️ Paso 8: ¡Hora de traer tus datos a GestorPlus!${RESET}"
+
   echo -e "${YELLOW}📊 Paso 8: ¿Tienes datos en Excel o CSV que quieras traer a GestorPlus?${RESET}"
   echo "Este paso es opcional. Si no tienes nada que importar, ¡no hay problema!"
   echo "  ${BLUE}1) Sí, quiero importar un archivo.${RESET}"
@@ -446,10 +470,10 @@ function final_messages() {
   echo ""
 
   local ip=$(hostname -I | awk '{print $1}')
-  local url="http://localhost:3000" 
+  local url="http://localhost" 
 
   if [[ -n "$ip" && "$ip" != "127.0.0.1" ]]; then
-    url="http://$ip:3000"
+    url="http://$ip"
   fi
 
   echo -e "Puedes abrir GestorPlus en tu navegador favorito en esta dirección:"
@@ -478,6 +502,7 @@ clone_or_use_repo
 install_frontend       
 choose_profile_and_run  
 find_php_container      
+select_and_copy_env
 migrate_excel           
 create_admin_user       
 final_messages          
