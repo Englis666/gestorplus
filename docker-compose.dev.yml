@@ -106,8 +106,7 @@ services:
       - gestorplus-php
     environment:
       - TZ=America/Bogota
-    profiles:
-      - dev
+
     restart: unless-stopped
 
   backend-python:

@@ -25,6 +25,7 @@ const Convocatoria = () => {
         params: { action: "obtenerConvocatorias" },
       })
       .then((response) => {
+        console.log("Convocatorias response:", response);
         console.log(response);
         if (Array.isArray(response.data.convocatorias)) {
           setConvocatorias(response.data.convocatorias);
