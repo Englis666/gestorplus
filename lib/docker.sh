@@ -3,7 +3,8 @@ function choose_profile_and_run() {
   echo "  ${BLUE}1) Desarrollo${RESET} (Ideal para probar cosas o si eres un desarrollador curioso.)"
   echo "  ${BLUE}2) Producción${RESET} (Si quieres usar GestorPlus para trabajar de verdad, ¡esta es tu opción!)"
   read -rp "$(echo -e "${CYAN}¿Qué perfil prefieres? (1 o 2): ${RESET}")" profile_choice
-  script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+  script_dir="$( cd "$( dirname "$0" )" && pwd )"
   cd "$script_dir"
 
   local compose_file="docker-compose.dev.yml"
@@ -15,7 +16,6 @@ function choose_profile_and_run() {
   fi
 
   echo "¡Levantando los servicios de GestorPlus con Docker Compose! Esto puede tardar un momento..."
-
 
   if command -v docker compose >/dev/null 2>&1; then
     docker compose -f "$compose_file" up -d || {
@@ -34,7 +34,6 @@ function choose_profile_and_run() {
     exit 1
   fi
 
-  cd .. # ¡Regreso al directorio original!
   echo -e "${GREEN}🚀 ¡Los servicios de GestorPlus están en marcha en segundo plano!${RESET}"
   pause
 }
