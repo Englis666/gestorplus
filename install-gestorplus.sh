@@ -304,9 +304,6 @@ function install_frontend() {
       echo -e "${RED}¡Problemas al compilar el frontend!${RESET}"
       exit 1
     }
-    echo -e "Copiando el build al backend..."
-    cp -r build/* ../backend/public/
-    cd ../.. # ¡Volvemos a casa!
     echo -e "${GREEN}✨ ¡El frontend de GestorPlus está listo para brillar!${RESET}"
   else
     echo -e "${RED}¡No encuentro la carpeta 'frontend' dentro de 'gestorplus'! ¿Se descargó todo bien?${RESET}"
