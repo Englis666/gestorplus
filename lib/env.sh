@@ -77,7 +77,7 @@ function select_and_copy_env() {
     return 1
   fi
 
-  docker cp "$env_path" "$php_container":/var/www/html/backend/.env
+  docker cp "$env_path" "$php_container":/var/www/html/.env
   echo -e "${GREEN}✅ Archivo .env copiado correctamente al contenedor PHP.${RESET}"
   return 0
 }
