@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: gestorplus-php
     volumes:
-      - ./backend:/var/www/html
+      - ./backend:/var/www/html:ro
     expose:
       - 9000
     networks:
