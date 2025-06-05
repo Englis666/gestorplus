@@ -38,22 +38,15 @@ EOF
 }
 
 function select_and_copy_env() {
-  echo -e "${YELLOW}🌱 Selecciona el archivo .env que usará GestorPlus en el contenedor PHP.${RESET}"
-  local env_path=""
+  prompt_env_values
 
-  if command -v zenity >/dev/null 2>&1 && [ -n "$DISPLAY" ]; then
-    env_path=$(zenity --file-selection --title="Selecciona tu archivo .env para GestorPlus")
-  else
-    select_env_file
-  fi
-
-  if [ -z "$env_path" ] || [ ! -f "$env_path" ]; then
-    echo -e "${RED}¡No se seleccionó un archivo .env válido! Cancela esta parte del proceso.${RESET}"
+  if [ ! -f "./.env" ]; then
+    echo -e "${RED}¡No se pudo crear el archivo .env! Cancela esta parte del proceso.${RESET}"
     pause
     return 1
   fi
 
-  docker cp "$env_path" "$php_container":/var/www/html/.env
+  docker cp "./.env" "$php_container":/var/www/html/.env
   echo -e "${GREEN}✅ Archivo .env copiado correctamente al contenedor PHP.${RESET}"
 
   reload_dockers
@@ -61,30 +54,14 @@ function select_and_copy_env() {
   return 0
 }
 
-function select_and_copy_env() {
-  echo -e "${YELLOW}🌱 Selecciona el archivo .env que usará GestorPlus en el contenedor PHP.${RESET}"
-  local env_path=""
-
-  if command -v zenity >/dev/null 2>&1 && [ -n "$DISPLAY" ]; then
-    env_path=$(zenity --file-selection --title="Selecciona tu archivo .env para GestorPlus")
-  else
-    select_env_file
-  fi
-
-  if [ -z "$env_path" ] || [ ! -f "$env_path" ]; then
-    echo -e "${RED}¡No se seleccionó un archivo .env válido! Cancela esta parte del proceso.${RESET}"
-    pause
-    return 1
-  fi
-
-  docker cp "$env_path" "$php_container":/var/www/html/.env
-  echo -e "${GREEN}✅ Archivo .env copiado correctamente al contenedor PHP.${RESET}"
-  return 0
-}
-
 function reload_dockers(){
-  echo "Vamos a reinciar los contenedores de Docker para aplicar los cambios."
-  docker-compose down
-  docker-compose up -d
-  echo -e "${GREEN}Contenedores reiniciados correctamente.${RESET}"
+  echo "Vamos a reiniciar el contenedor PHP para aplicar los cambios."
+  if command -v docker compose >/dev/null 2>&1; then
+    docker compose restart php
+  elif command -v docker-compose >/dev/null 2>&1; then
+    docker-compose restart php
+  else
+    docker restart gestorplus-php
+  fi
+  echo -e "${GREEN}Contenedor PHP reiniciado correctamente.${RESET}"
 }
