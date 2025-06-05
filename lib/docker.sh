@@ -36,3 +36,24 @@ function choose_profile_and_run() {
   echo -e "${GREEN}🚀 ¡Los servicios de GestorPlus están en marcha en segundo plano!${RESET}"
   pause
 }
+
+function find_php_container() {
+
+  echo -e "${YELLOW}🔍 Paso 7: ¡Buscando al cerebro de GestorPlus, el contenedor PHP!${RESET}"
+  echo "Necesitamos encontrarlo para poder hablar con él y hacer algunas configuraciones."
+  php_container=$(docker ps --filter "name=gestorplus" --format "{{.Names}}" | grep php)
+
+  if [ -z "$php_container" ]; then
+    echo -e "${RED}¡Ay! No encuentro el contenedor PHP activo de GestorPlus.${RESET}"
+    echo "Asegúrate de que el paso anterior (`docker compose up`) haya funcionado sin problemas."
+    exit 1
+  else
+    echo "¡Lo encontré! Tu contenedor PHP se llama: ${GREEN}$php_container${RESET}"
+  fi
+  pause
+}
+
+
+
+
+
