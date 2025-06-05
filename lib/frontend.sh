@@ -11,20 +11,42 @@ function install_frontend() {
       echo -e "${RED}¡Problemas al instalar las dependencias del frontend! ¿npm está bien?${RESET}"
       exit 1
     }
-    echo -e "Ejecutando ${CYAN}npm run build${RESET} para compilar el frontend..."
-    npm run build || {
-      echo -e "${RED}¡Problemas al compilar el frontend!${RESET}"
+
+    echo -e "${YELLOW}¿Para qué entorno quieres compilar el frontend?${RESET}"
+    echo "  ${BLUE}1) Producción${RESET} (optimizado, minificado, listo para usuarios finales)"
+    echo "  ${BLUE}2) Desarrollo${RESET} (más rápido, con mapas de fuente y debugging)"
+    read -rp "$(echo -e "${CYAN}Elige una opción (1 o 2): ${RESET}")" build_choice
+
+    if [[ "$build_choice" == "2" ]]; then
+      build_cmd="npm run start"
+      echo -e "Ejecutando ${CYAN}${build_cmd}${RESET} para entorno de desarrollo..."
+      $build_cmd || {
+        echo -e "${RED}¡Problemas al iniciar el frontend en desarrollo!${RESET}"
+        exit 1
+      }
+      cd ..
+      echo -e "${GREEN}✨ ¡El frontend de GestorPlus está corriendo en modo desarrollo!${RESET}"
+    elif [[ "$build_choice" == "1" ]]; then
+      build_cmd="npm run build"
+      echo -e "Ejecutando ${CYAN}${build_cmd}${RESET} para compilar el frontend..."
+      $build_cmd || {
+        echo -e "${RED}¡Problemas al compilar el frontend!${RESET}"
+        exit 1
+      }
+      mkdir -p ../backend/public
+      cp -r build/* ../backend/public/ || {
+        echo -e "${RED}¡No pude copiar los archivos compilados al backend! ¿Todo bien con las rutas?${RESET}"
+        exit 1
+      }
+      cd ..
+      echo -e "${GREEN}✨ ¡El frontend de GestorPlus está listo para producción!${RESET}"
+    else
+      echo -e "${RED}Opción inválida. Cancela la compilación del frontend.${RESET}"
+      cd ..
       exit 1
-    }
-    mkdir -p ../backend/public
-    cp -r build/* ../backend/public/ || {
-      echo -e "${RED}¡No pude copiar los archivos compilados al backend! ¿Todo bien con las rutas?${RESET}"
-      exit 1
-    }
-    cd ..
-    echo -e "${GREEN}✨ ¡El frontend de GestorPlus está listo para brillar!${RESET}"
+    fi
   else
-    echo -e "${RED}¡No encuentro la carpeta 'frontend' dentro de 'gestorplus'! ¿Se descargó todo bien?${RESET}"
+    echo -e "${RED}¡No encuentro la carpeta 'frontend'! ¿Se descargó todo bien?${RESET}"
     exit 1
   fi
   pause
