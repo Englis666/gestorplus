@@ -13,8 +13,8 @@ function install_frontend() {
     }
 
     echo -e "${YELLOW}¿Para qué entorno quieres compilar el frontend?${RESET}"
-    echo "  ${BLUE}1) Producción${RESET} (optimizado, minificado, listo para usuarios finales)"
-    echo "  ${BLUE}2) Desarrollo${RESET} (más rápido, con mapas de fuente y debugging)"
+    echo "  ${BLUE}1) Desarrollo${RESET} (más rápido, con mapas de fuente y debugging)"
+    echo "  ${BLUE}2) Producción${RESET} (optimizado, minificado, listo para usuarios finales)"
     read -rp "$(echo -e "${CYAN}Elige una opción (1 o 2): ${RESET}")" build_choice
 
     # ...existing code...
