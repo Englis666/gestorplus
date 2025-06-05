@@ -55,11 +55,22 @@ function select_and_copy_env() {
 }
 
 function reload_dockers(){
+  echo "¿En qué entorno quieres reiniciar el contenedor PHP?"
+  echo "  1) Desarrollo"
+  echo "  2) Producción"
+  read -rp "Elige una opción (1 o 2): " env_choice
+
+  if [[ "$env_choice" == "2" ]]; then
+    local compose_file="../docker-compose.prod.yml"
+  else
+    local compose_file="../docker-compose.dev.yml"
+  fi
+
   echo "Vamos a reiniciar el contenedor PHP para aplicar los cambios."
   if command -v docker compose >/dev/null 2>&1; then
-    docker compose restart gestorplus-php
+    docker compose -f "$compose_file" restart gestorplus-php
   elif command -v docker-compose >/dev/null 2>&1; then
-    docker-compose restart gestorplus-php
+    docker-compose -f "$compose_file" restart gestorplus-php
   else
     docker restart gestorplus-php
   fi
