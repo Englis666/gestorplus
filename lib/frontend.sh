@@ -1,8 +1,8 @@
 function install_frontend() {
   echo -e "${YELLOW}💻 Paso 5: ¡Preparando la parte visual de GestorPlus (el frontend)!${RESET}"
   echo "Esto es como armar un rompecabezas, ¡con muchas piezas (paquetes de Node.js)!"
-  if [ -d "gestorplus/frontend" ]; then
-    cd gestorplus/frontend || {
+  if [ -d "frontend" ]; then
+    cd frontend || {
       echo -e "${RED}¡No pude entrar a la carpeta 'frontend'! ¿El código está completo?${RESET}"
       exit 1
     }
