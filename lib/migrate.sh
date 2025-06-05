@@ -9,7 +9,6 @@ function migrate_excel() {
 
   if [[ "$migrate_choice" == "1" ]]; then
     local file_path=""
-    # Si tienes Zenity, ¡usamos una ventana gráfica para que sea más fácil!
     if command -v zenity >/dev/null 2>&1; then
       echo "¡Se abrirá una ventanita mágica para que elijas tu archivo Excel o CSV!"
       file_path=$(zenity --file-selection --title="¡Elige tu archivo Excel o CSV para la migración!")

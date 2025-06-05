@@ -18,11 +18,11 @@ function install_frontend() {
     read -rp "$(echo -e "${CYAN}Elige una opción (1 o 2): ${RESET}")" build_choice
 
     # ...existing code...
-    if [[ "$build_choice" == "2" ]]; then
+    if [[ "$build_choice" == "1" ]]; then
       echo -e "${YELLOW}No se ejecuta 'npm run start' porque el frontend se levanta con Docker.${RESET}"
       cd ..
       echo -e "${GREEN}✨ ¡Listo! El frontend se levantará con Docker en el siguiente paso.${RESET}"
-    elif [[ "$build_choice" == "1" ]]; then
+    elif [[ "$build_choice" == "2" ]]; then
       build_cmd="npm run build"
       echo -e "Ejecutando ${CYAN}${build_cmd}${RESET} para compilar el frontend..."
       $build_cmd || {

@@ -7,12 +7,12 @@ function final_messages() {
   echo ""
 
   local ip=$(hostname -I | awk '{print $1}')
-  local url="http://localhost" 
+  local url="http://localhost:3000" 
 
   if [[ -n "$ip" && "$ip" != "127.0.0.1" ]]; then
-    url="http://$ip"
+    url="http://$ip:3000"
   fi
-
+  
   echo -e "Puedes abrir GestorPlus en tu navegador favorito en esta dirección:"
   echo -e "${CYAN}  ${url}${RESET}"
   echo ""

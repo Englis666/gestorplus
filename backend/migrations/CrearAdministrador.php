@@ -69,5 +69,11 @@ class AdminCreate {
     }
 }
 
-require_once __DIR__ . '/../config/Database.php'; 
+require_once __DIR__ . '/../vendor/autoload.php';
+$dotenvPath = __DIR__ . '/../';
+if (file_exists($dotenvPath . '.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable($dotenvPath);
+    $dotenv->load();
+}
+require_once __DIR__ . '/../config/Database.php';
 (new AdminCreate())->crearAdministrador();
