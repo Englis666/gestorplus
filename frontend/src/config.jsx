@@ -3,10 +3,7 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-// Usar solo la ruta relativa para la API:
-const API_URL = "/api/"; 
-
-// Si quieres flexibilidad para otros entornos:
-// const API_URL = process.env.REACT_APP_API_URL || "/api/";
+const API_URL =
+  process.env.NODE_ENV === "production" ? "/api/" : "http://localhost/api/";
 
 export default API_URL;

@@ -17,15 +17,11 @@ function install_frontend() {
     echo "  ${BLUE}2) Desarrollo${RESET} (más rápido, con mapas de fuente y debugging)"
     read -rp "$(echo -e "${CYAN}Elige una opción (1 o 2): ${RESET}")" build_choice
 
+    # ...existing code...
     if [[ "$build_choice" == "2" ]]; then
-      build_cmd="npm run start"
-      echo -e "Ejecutando ${CYAN}${build_cmd}${RESET} para entorno de desarrollo..."
-      $build_cmd || {
-        echo -e "${RED}¡Problemas al iniciar el frontend en desarrollo!${RESET}"
-        exit 1
-      }
+      echo -e "${YELLOW}No se ejecuta 'npm run start' porque el frontend se levanta con Docker.${RESET}"
       cd ..
-      echo -e "${GREEN}✨ ¡El frontend de GestorPlus está corriendo en modo desarrollo!${RESET}"
+      echo -e "${GREEN}✨ ¡Listo! El frontend se levantará con Docker en el siguiente paso.${RESET}"
     elif [[ "$build_choice" == "1" ]]; then
       build_cmd="npm run build"
       echo -e "Ejecutando ${CYAN}${build_cmd}${RESET} para compilar el frontend..."
