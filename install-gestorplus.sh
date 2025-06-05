@@ -26,5 +26,6 @@ choose_profile_and_run
 find_php_container
 select_and_copy_env
 migrate_excel
+test_unitarios
 create_admin_user
 final_messages
