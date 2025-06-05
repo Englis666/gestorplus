@@ -4,7 +4,7 @@
  */
 
 // Usar solo la ruta relativa para la API:
-const API_URL = "/api/"; 
+const API_URL = "ttp://localhost/api/";
 
 // Si quieres flexibilidad para otros entornos:
 // const API_URL = process.env.REACT_APP_API_URL || "/api/";
