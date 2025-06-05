@@ -12,7 +12,7 @@ class Database {
     private PDO $connection;
 
     public function __construct() {
-        $host = $_ENV['DB_HOST'] ?? 'localhost';
+        $host = $_ENV['DB_HOST'] ?? 'gestorplus-db';
         $dbname = $_ENV['DB_NAME'] ?? 'gestorplus';
         $port = $_ENV['DB_PORT'] ?? '';
         $user = $_ENV['DB_USER'] ?? '';
