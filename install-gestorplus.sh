@@ -328,10 +328,13 @@ function choose_profile_and_run() {
   fi
 
   echo "¡Levantando los servicios de GestorPlus con Docker Compose! Esto puede tardar un momento..."
-  cd gestorplus || {
-    echo -e "${RED}¡No pude entrar a la carpeta 'gestorplus'! Algo no salió bien antes.${RESET}"
-    exit 1
-  }
+  # Solo hacer cd gestorplus si el archivo docker-compose no está aquí pero sí existe la carpeta
+  if [ ! -f "$compose_file" ] && [ -d "gestorplus" ]; then
+    cd gestorplus || {
+      echo -e "${RED}¡No pude entrar a la carpeta 'gestorplus'! Algo no salió bien antes.${RESET}"
+      exit 1
+    }
+  fi
 
   if command -v docker compose >/dev/null 2>&1; then
     docker compose -f "$compose_file" up -d || {
