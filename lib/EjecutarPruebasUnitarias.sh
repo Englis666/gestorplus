@@ -2,16 +2,16 @@
  # Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
  # Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
 #
+cd "$(dirname "$0")/.." || exit 1
 RELATIVE_DIR="test/controllers"
 PHPUNIT="docker exec -ti gestorplus-php ./vendor/bin/phpunit --testdox"
-
 ALL_OK=true
 
 for testfile in $RELATIVE_DIR/*Test.php; do
   if [ -f "$testfile" ]; then
     BASENAME=$(basename "$testfile")
     REL_PATH="test/controllers/$BASENAME"
-    sleep 1.5
+    sleep 4
     echo "=========================================================="
     echo "Ejecutando: $REL_PATH"
     $PHPUNIT "$REL_PATH"
@@ -54,6 +54,7 @@ fi
 echo "Ahora se procedera a ejecutar los modelos de pruebas unitarias"
 
 echo "Ejecutando pruebas unitarias de modelos..."
+cd "$(dirname "$0")/.." || exit 1
 RELATIVE_DIR="test/models"
 PHPUNIT="docker exec -ti gestorplus-php ./vendor/bin/phpunit --testdox"
 
