@@ -6,6 +6,13 @@
 
 namespace Migrations;
 
+require_once __DIR__ . '/../vendor/autoload.php';
+use Dotenv\Dotenv;
+$dotenvPath = __DIR__ . '/../';
+if (file_exists($dotenvPath . '.env')) {
+    $dotenv = Dotenv::createImmutable($dotenvPath); // <-- corregido aquí
+    $dotenv->load();
+}
 use PDO;
 
 class AdminCreate {
@@ -69,11 +76,5 @@ class AdminCreate {
     }
 }
 
-require_once __DIR__ . '/../vendor/autoload.php';
-$dotenvPath = __DIR__ . '/../';
-if (file_exists($dotenvPath . '.env')) {
-    $dotenv = Dotenv\Dotenv::createImmutable($dotenvPath);
-    $dotenv->load();
-}
 require_once __DIR__ . '/../config/Database.php';
 (new AdminCreate())->crearAdministrador();

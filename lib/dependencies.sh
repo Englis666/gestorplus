@@ -23,7 +23,7 @@ function detect_distro() {
   echo "Esto nos ayuda a saber qué herramientas usar para instalar todo lo que necesitamos."
 
   if [ -f /etc/os-release ]; then
-    . /etc/os-release # ¡Leemos su "acta de nacimiento"!
+    . /etc/os-release 
     echo "¡Tu sistema es ${GREEN}$NAME${RESET}! ¡Qué buena elección!"
     if [[ "$ID" == "ubuntu" || "$ID_LIKE" == *"debian"* ]]; then
       PKG_MANAGER="apt"
