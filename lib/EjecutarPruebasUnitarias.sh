@@ -1,11 +1,13 @@
 # EjecutarPruebasUnitarias.sh
- # Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- # Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
-#
+# Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
+# Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
+
 cd "$(dirname "$0")/.." || exit 1
+
+# === PRUEBAS DE CONTROLADORES ===
 RELATIVE_DIR="test/controllers"
 PHPUNIT="docker exec -ti gestorplus-php ./vendor/bin/phpunit --testdox"
-ALL_OK=true
+ALL_OK=0
 
 for testfile in $RELATIVE_DIR/*Test.php; do
   if [ -f "$testfile" ]; then
@@ -16,19 +18,19 @@ for testfile in $RELATIVE_DIR/*Test.php; do
     echo "Ejecutando: $REL_PATH"
     $PHPUNIT "$REL_PATH"
     if [ $? -ne 0 ]; then
-      ALL_OK=false
+      ALL_OK=1
     fi
     echo ""
     echo "Controladores Finalizados" 
     echo "=========================================================="
   else
     echo "No se encontró el archivo de prueba: $testfile"
-    ALL_OK=false
+    ALL_OK=1
   fi
 done
 
-if [ $ALL_OK ]; then
-clear
+if [ $ALL_OK -eq 0 ]; then
+  clear
   cat <<'EOF'
  ____ ___   _   _ _____ ____   ___  _     _     _____ ____  ____
 / ___ / _ \| \ | |_   _|  _ \ / _ \| |   | |   | ____|  _ \/ ___|
@@ -43,7 +45,7 @@ clear
 |_|    \___/|_| \_|\____|___\___/|_| \_/_/   \_\_____|_____|____/
 
 EOF
-sleep 2
+  sleep 2
 else
   echo "Algunos controladores no pasaron las pruebas unitarias."
   echo "Por favor, revisa los errores y vuelve a intentarlo."
@@ -53,35 +55,35 @@ fi
 
 echo "Ahora se procedera a ejecutar los modelos de pruebas unitarias"
 
+# === PRUEBAS DE MODELOS ===
 echo "Ejecutando pruebas unitarias de modelos..."
-cd "$(dirname "$0")/.." || exit 1
 RELATIVE_DIR="test/models"
-PHPUNIT="docker exec -ti gestorplus-php ./vendor/bin/phpunit --testdox"
+ALL_OK=0
 
 for testfile in $RELATIVE_DIR/*Test.php; do
-    if [ -f "$testfile" ]; then
-        BASENAME=$(basename "$testfile")
-        REL_PATH="test/models/$BASENAME"
-        sleep 3 
-        echo "=========================================================="
-        echo "Ejecutando: $REL_PATH"
-        $PHPUNIT "$REL_PATH"
-        if [ $? -ne 0 ]; then
-            ALL_OK=false
-        fi
-        echo ""
-        echo "Models Finalizado"
-        echo "====================================="
-    else 
-        echo "No se encontro el archivo de Model De Pueba Unitaria llamado: $testfile"
-        ALL_OK=false
+  if [ -f "$testfile" ]; then
+    BASENAME=$(basename "$testfile")
+    REL_PATH="test/models/$BASENAME"
+    sleep 3 
+    echo "=========================================================="
+    echo "Ejecutando: $REL_PATH"
+    $PHPUNIT "$REL_PATH"
+    if [ $? -ne 0 ]; then
+      ALL_OK=1
     fi
+    echo ""
+    echo "Models Finalizado"
+    echo "====================================="
+  else 
+    echo "No se encontro el archivo de Model De Pueba Unitaria llamado: $testfile"
+    ALL_OK=1
+  fi
 done
 
-if [ $ALL_OK ]; then
-sleep 2
-    clear
-    cat <<'EOF'
+if [ $ALL_OK -eq 0 ]; then
+  sleep 2
+  clear
+  cat <<'EOF'
  __  __  ___  ____  _____ _     ____
 |  \/  |/ _ \|  _ \| ____| |   / ___|
 | |\/| | | | | | | |  _| | |   \___ \
@@ -94,13 +96,9 @@ sleep 2
 |  _| | |_| | |\  | |___ | | |_| | |\  |/ ___ \| |___| |___ ___) |
 |_|    \___/|_| \_|\____|___\___/|_| \_/_/   \_\_____|_____|____/
 EOF
-fi
-echo "Pruebas de modelos finalizadas."
-sleep 3
-clear
-# Verificar si todas las pruebas de modelos pasaron
-sleep 2
-if [ $ALL_OK ]; then
+  sleep 3
+  clear
+  sleep 2
   cat <<'EOF'
  ____  ____  __    ____ ___  _   __     _    ____  ____ ____     _____ _   _
 |  ___| ____| |   |_ _/ ___|_ _|  _ \  / \  |  _ \| ____/ ___|  |_   _| | | |
@@ -126,8 +124,7 @@ if [ $ALL_OK ]; then
 |  __/|  _ <| |_| | |_| | |_| | |__| |___ | | |_| | |\  |
 |_|   |_| \_\\___/|____/ \___/ \____\____|___\___/|_| \_|
 EOF
-sleep 6
-
+  sleep 6
 else
   echo "Algunas pruebas unitarias de modelos no han pasado. Por favor, revisa los errores."
   exit 1

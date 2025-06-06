@@ -66,6 +66,12 @@ function reload_dockers(){
     local compose_file="docker-compose.dev.yml"
   fi
 
+  local project_root="$(dirname "$(dirname "$0")")"
+  cd "$project_root" || {
+    echo -e "${RED}No se pudo acceder al directorio del proyecto: $project_root${RESET}"
+    return 1
+  }
+
   echo "Vamos a reiniciar el contenedor PHP para aplicar los cambios."
   if command -v docker compose >/dev/null 2>&1; then
     docker compose -f "$compose_file" restart gestorplus-php
