@@ -130,5 +130,5 @@ sleep 6
 
 else
   echo "Algunas pruebas unitarias de modelos no han pasado. Por favor, revisa los errores."
-
+  exit 1
 fi

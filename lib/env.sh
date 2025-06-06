@@ -61,9 +61,9 @@ function reload_dockers(){
   read -rp "Elige una opción (1 o 2): " env_choice
 
   if [[ "$env_choice" == "2" ]]; then
-    local compose_file="./docker-compose.prod.yml"
+    local compose_file="docker-compose.prod.yml"
   else
-    local compose_file="./docker-compose.dev.yml"
+    local compose_file="docker-compose.dev.yml"
   fi
 
   echo "Vamos a reiniciar el contenedor PHP para aplicar los cambios."
