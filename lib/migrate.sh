@@ -35,7 +35,7 @@ function migrate_excel() {
       return
     }
 
-    local basefile=$(basename "$file_path") # Solo el nombre del archivo, sin la ruta
+    local basefile=$(basename "$file_path") 
     echo "¡Ejecutando la migración dentro del contenedor PHP! ¡Un poco de magia de datos!"
     docker exec "$php_container" php migrations/MigrarExcelRunner.php "/var/www/html/public/uploads/$basefile" || {
       echo -e "${RED}¡La migración falló dentro del contenedor! Revisa los logs de Docker.${RESET}"
