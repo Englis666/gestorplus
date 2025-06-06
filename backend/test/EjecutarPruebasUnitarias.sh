@@ -125,6 +125,8 @@ if [ $ALL_OK ]; then
 |  __/|  _ <| |_| | |_| | |_| | |__| |___ | | |_| | |\  |
 |_|   |_| \_\\___/|____/ \___/ \____\____|___\___/|_| \_|
 EOF
+docker exec -ti gestorplus-php ./vendor/bin/phpunit --testdox-html=test/html/report.html
+"Se genero un html con la informacion de los controladores y modelos"
 sleep 6
 exit 0
 
