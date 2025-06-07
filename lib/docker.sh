@@ -17,13 +17,15 @@ function choose_profile_and_run() {
   echo "¡Levantando los servicios de GestorPlus con Docker Compose! Esto puede tardar un momento..."
 
   if command -v docker compose >/dev/null 2>&1; then
+    # docker compose v2 soporta --profile
     docker compose -f "$compose_file" $compose_profiles up -d || {
       echo "¡Error al levantar los servicios de Docker! ¿Docker está corriendo?"
       echo "Revisa los mensajes de error de Docker Compose para más pistas."
       exit 1
     }
   elif command -v docker-compose >/dev/null 2>&1; then
-    docker-compose -f "$compose_file" $compose_profiles up -d || {
+    # docker-compose clásico NO soporta --profile
+    docker-compose -f "$compose_file" up -d || {
       echo "¡Error al levantar los servicios de Docker! ¿Docker está corriendo?"
       echo "Revisa los mensajes de error de Docker Compose para más pistas."
       exit 1
