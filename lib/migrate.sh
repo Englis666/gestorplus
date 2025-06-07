@@ -1,5 +1,5 @@
 function migrate_excel() {
-  echo "${YELLOW}🗂️ Paso 8: ¡Hora de traer tus datos a GestorPlus!${RESET}"
+  echo -e "${YELLOW}🗂️ Paso 8: ¡Hora de traer tus datos a GestorPlus!${RESET}"
 
   echo -e "${YELLOW}📊 Paso 8: ¿Tienes datos en Excel o CSV que quieras traer a GestorPlus?${RESET}"
   echo "Este paso es opcional. Si no tienes nada que importar, ¡no hay problema!"
@@ -28,24 +28,31 @@ function migrate_excel() {
       return
     fi
 
-  
     php_container=$(docker ps --filter "name=gestorplus-php" --format "{{.Names}}")
+    if [ -z "$php_container" ]; then
+      echo -e "${RED}❌ No se encontró el contenedor PHP. ¿Está corriendo Docker correctamente?${RESET}"
+      pause
+      return
+    fi
 
+    docker exec "$php_container" mkdir -p /var/www/html/public/uploads
+
+    echo "¡Copiando tu archivo '${file_path}' al contenedor PHP! Casi listo..."
+    docker cp "$file_path" "$php_container":/var/www/html/public/uploads/ || {
+      echo -e "${RED}¡Problemas al copiar el archivo al contenedor! ¿Está corriendo el contenedor?${RESET}"
+      pause
+      return
+    }
+  fi
+}
+
+function create_admin_user() {
+  php_container=$(docker ps --filter "name=gestorplus-php" --format "{{.Names}}")
   if [ -z "$php_container" ]; then
     echo -e "${RED}❌ No se encontró el contenedor PHP. ¿Está corriendo Docker correctamente?${RESET}"
     pause
     return
   fi
-
-  docker exec "$php_container" mkdir -p /var/www/html/public/uploads
-
-  echo "¡Copiando tu archivo '${file_path}' al contenedor PHP! Casi listo..."
-  docker cp "$file_path" "$php_container":/var/www/html/public/uploads/ || {
-    echo -e "${RED}¡Problemas al copiar el archivo al contenedor! ¿Está corriendo el contenedor?${RESET}"
-  pause
-  return
-}
-function create_admin_user() {
   echo -e "${YELLOW}👑 Paso 9: ¡Creando a tu primer súper administrador de GestorPlus!${RESET}"
   echo "Este usuario tendrá control total sobre la aplicación. ¡Elige bien sus datos!"
   echo "Se te pedirán los detalles para este nuevo usuario."
@@ -57,4 +64,3 @@ function create_admin_user() {
   echo -e "${GREEN}✅ ¡Usuario administrador creado con éxito! ¡Eres el jefe!${RESET}"
   pause
 }
-
