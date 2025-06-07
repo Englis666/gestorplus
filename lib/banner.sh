@@ -91,9 +91,7 @@ function pause() {
   echo "" 
 }
 
-# --- Pasos de Instalación (la aventura comienza) ---
 
-# 1. Introducción mágica al instalador
 function intro() {
   echo "¡Hola! Soy tu asistente personal para instalar GestorPlus."
   echo "Este script hará todo el trabajo pesado por ti, automatizando la instalación"
