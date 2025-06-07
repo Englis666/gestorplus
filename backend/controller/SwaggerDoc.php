@@ -23,7 +23,7 @@ use OpenApi\Annotations as OA;
  *     description="Servidor local"
  * )
  * @OA\Server(
- *     url="https://api.tudominio.com/",
+ *     url="https://metres-richardson-unemployment-folders.trycloudflare.com/api/",
  *     description="Servidor producción"
  * )
  */
