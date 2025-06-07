@@ -1,3 +1,6 @@
+
+GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"
+CYAN="\033[1;36m"; BLUE="\033[1;34m"; MAGENTA="\033[1;35m"; RESET="\033[0m"
 function migrate_excel() {
   echo -e "${YELLOW}🗂️ Paso 8: ¡Hora de traer tus datos a GestorPlus!${RESET}"
 

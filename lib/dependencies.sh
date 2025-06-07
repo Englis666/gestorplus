@@ -1,3 +1,6 @@
+
+GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"
+CYAN="\033[1;36m"; BLUE="\033[1;34m"; MAGENTA="\033[1;35m"; RESET="\033[0m"
 function check_docker_permissions() {
   echo -e "${YELLOW}🚀 Paso 1: ¡Verificando si Docker puede volar sin 'sudo'!${RESET}"
   echo "Necesitamos que Docker funcione sin pedirte la clave a cada rato. ¡Es más cómodo así!"

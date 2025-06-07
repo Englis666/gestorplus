@@ -1,3 +1,6 @@
+
+GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"
+CYAN="\033[1;36m"; BLUE="\033[1;34m"; MAGENTA="\033[1;35m"; RESET="\033[0m"
 function prompt_env_values() {
   echo -e "${CYAN}Vamos a crear un nuevo archivo .env. Por favor, ingresa los siguientes valores:${RESET}"
   read -rp "MYSQL_ROOT_PASSWORD: " MYSQL_ROOT_PASSWORD
