@@ -54,39 +54,31 @@ function install_dependencies() {
 
   case "$PKG_MANAGER" in
     apt)
-      echo "Ejecutando: sudo apt update && sudo apt install -y docker.io docker-compose git npm figlet"
-      sudo apt update && sudo apt install -y docker.io docker-compose git npm figlet || {
+      echo "Ejecutando: sudo apt update && sudo apt install -y docker.io docker-compose git npm figlet cloudflared"
+      sudo apt update && sudo apt install -y docker.io docker-compose git npm figlet cloudflared || {
         echo "Hubo un problema instalando las dependencias con apt."
         echo "Asegúrate de que tus repositorios estén bien configurados."
         exit 1
       }
-      if ! sudo ufw status | grep -q "Status: active"; then
-        echo "Activando el firewall UFW..."
-        sudo ufw enable
-      fi
       ;;
     pacman)
-      echo "Ejecutando: sudo pacman -Syu --noconfirm docker docker-compose git npm figlet"
-      sudo pacman -Syu --noconfirm docker docker-compose git npm figlet ufw || {
+      echo "Ejecutando: sudo pacman -Syu --noconfirm docker docker-compose git npm figlet cloudflared"
+      sudo pacman -Syu --noconfirm docker docker-compose git npm figlet cloudflared || {
         echo "Hubo un problema instalando las dependencias con pacman."
         echo "Revisa tu conexión o los repositorios de Arch."
         exit 1
       }
-      if ! sudo ufw status | grep -q "Status: active"; then
-        echo "Activando el firewall UFW..."
-        sudo ufw enable
-      fi
       ;;
     yay|paru)
-      echo "Ejecutando: $PKG_MANAGER -Syu --noconfirm docker docker-compose git npm figlet"
-      $PKG_MANAGER -Syu --noconfirm docker docker-compose git npm figlet || {
+      echo "Ejecutando: $PKG_MANAGER -Syu --noconfirm docker docker-compose git npm figlet cloudflared"
+      $PKG_MANAGER -Syu --noconfirm docker docker-compose git npm figlet cloudflared || {
         echo "Hubo un problema instalando las dependencias con $PKG_MANAGER."
         echo "Intenta instalar los paquetes manualmente o revisa los mirrors."
         exit 1
       }
       ;;
     manual)
-      echo "ATENCIÓN: Debes instalar docker, docker-compose, git, npm y figlet por tu cuenta."
+      echo "ATENCIÓN: Debes instalar docker, docker-compose, git, npm , figlet y cloudflared por tu cuenta."
       echo "Por favor, asegúrate de tenerlas listas antes de seguir."
       ;;
     *)
