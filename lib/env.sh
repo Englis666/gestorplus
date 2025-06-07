@@ -1,8 +1,6 @@
 
-GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"
-CYAN="\033[1;36m"; BLUE="\033[1;34m"; MAGENTA="\033[1;35m"; RESET="\033[0m"
 function prompt_env_values() {
-  echo -e "${CYAN}Vamos a crear un nuevo archivo .env. Por favor, ingresa los siguientes valores:${RESET}"
+  echo -e "Vamos a crear un nuevo archivo .env. Por favor, ingresa los siguientes valores:"
   read -rp "MYSQL_ROOT_PASSWORD: " MYSQL_ROOT_PASSWORD
   read -rp "DB_HOST: " DB_HOST
   read -rp "DB_NAME: " DB_NAME
@@ -37,20 +35,20 @@ MAIL_PASSWORD=$MAIL_PASSWORD
 MAIL_FROM=$MAIL_FROM
 MAIL_FROM_NAME=$MAIL_FROM_NAME
 EOF
-  echo -e "${GREEN}Archivo .env creado en $env_path${RESET}"
+  echo -e "Archivo .env creado en $env_path"
 }
 
 function select_and_copy_env() {
   prompt_env_values
 
   if [ ! -f "./.env" ]; then
-    echo -e "${RED}¡No se pudo crear el archivo .env! Cancela esta parte del proceso.${RESET}"
+    echo -e "¡No se pudo crear el archivo .env! Cancela esta parte del proceso."
     pause
     return 1
   fi
 
   docker cp "./.env" "$php_container":/var/www/html/.env
-  echo -e "${GREEN}✅ Archivo .env copiado correctamente al contenedor PHP.${RESET}"
+  echo -e "✅ Archivo .env copiado correctamente al contenedor PHP."
 
   reload_dockers
 
@@ -71,7 +69,7 @@ function reload_dockers(){
 
   local project_root="$(dirname "$(dirname "$0")")"
   cd "$project_root" || {
-    echo -e "${RED}No se pudo acceder al directorio del proyecto: $project_root${RESET}"
+    echo -e "No se pudo acceder al directorio del proyecto: $project_root"
     return 1
   }
 
@@ -83,5 +81,5 @@ function reload_dockers(){
   else
     docker restart gestorplus-php
   fi
-  echo -e "${GREEN}Contenedor PHP reiniciado correctamente.${RESET}"
+  echo -e "Contenedor PHP reiniciado correctamente."
 }

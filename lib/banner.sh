@@ -1,7 +1,3 @@
-
-
-GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"
-CYAN="\033[1;36m"; BLUE="\033[1;34m"; MAGENTA="\033[1;35m"; RESET="\033[0m"
 # Función para limpiar la pantalla y mostrar nuestros increíbles banners
 function show_banner() {
   clear 
@@ -36,7 +32,6 @@ function show_banner() {
   )
 
   local dev_team_info=(
-
   "  EQUIPO DE DESARROLLO 👾"
   "  ✦ Englis (Acnth)"
   "  ✦ Juan Becerra (stemansote)"
@@ -45,6 +40,8 @@ function show_banner() {
   "  ─────────────────────────────────────────────────────────"
   )
 
+  # Si tienes un banner de CodeAdvance, agrégalo aquí
+  local codeadvance_banner=()
 
   local total_banner_lines=$(( ${#gestorplus_banner[@]} + ${#created_by_banner[@]} + ${#codeadvance_banner[@]} + ${#dev_team_info[@]} + 6 )) # +6 por los espacios entre banners
   local start_line=$(( (lines - total_banner_lines) / 2 ))
@@ -53,65 +50,54 @@ function show_banner() {
   for (( i=0; i<start_line; i++ )); do echo; done
 
   # Imprimir banner de GestorPlus
-  echo -e "${GREEN}"
   for line in "${gestorplus_banner[@]}"; do
     local padding=$(( (columns - ${#line}) / 2 ))
     printf "%*s%s\n" "$padding" "" "$line"
   done
-  echo -e "${RESET}"
   echo "" # Espacio
 
   # Imprimir banner "Software Creado Por:"
-  echo -e "${BLUE}"
   for line in "${created_by_banner[@]}"; do
     local padding=$(( (columns - ${#line}) / 2 ))
     printf "%*s%s\n" "$padding" "" "$line"
   done
-  echo -e "${RESET}"
   echo ""
 
-  # Imprimir banner de CodeAdvance
-  echo -e "${MAGENTA}"
+  # Imprimir banner de CodeAdvance (si existe)
   for line in "${codeadvance_banner[@]}"; do
     local padding=$(( (columns - ${#line}) / 2 ))
     printf "%*s%s\n" "$padding" "" "$line"
   done
-  echo -e "${RESET}"
   echo "" # Espacio
 
-   # Imprimir banner de CodeAdvance
-  echo -e "${MAGENTA}"
+  # Imprimir banner de developers
   for line in "${developers_banner[@]}"; do
     local padding=$(( (columns - ${#line}) / 2 ))
-      printf "%*s%s\n" "$padding" "" "$line"
+    printf "%*s%s\n" "$padding" "" "$line"
   done
-  echo -e "${RESET}"
   echo "" 
 
   # Imprimir información del equipo de desarrollo
-  echo -e "${CYAN}"
   for line in "${dev_team_info[@]}"; do
     local padding=$(( (columns - ${#line}) / 2 ))
     printf "%*s%s\n" "$padding" "" "$line"
   done
-  echo -e "${RESET}"
   echo "" # Espacio final
 }
 
 function pause() {
   echo "" 
-  read -rp "$(echo -e "${CYAN}¡Listo! Presiona ${MAGENTA}Enter${CYAN} para continuar con el siguiente paso...${RESET}")"
+  read -rp "¡Listo! Presiona Enter para continuar con el siguiente paso..."
   echo "" 
 }
-
 
 # --- Pasos de Instalación (la aventura comienza) ---
 
 # 1. Introducción mágica al instalador
 function intro() {
-  echo -e "${CYAN}¡Hola! Soy tu asistente personal para instalar GestorPlus.${RESET}"
+  echo "¡Hola! Soy tu asistente personal para instalar GestorPlus."
   echo "Este script hará todo el trabajo pesado por ti, automatizando la instalación"
   echo "y guiándote paso a paso. No te preocupes, en cada fase te explicaré qué está pasando."
-  echo -e "${BLUE}¡Prepárate para una instalación sin complicaciones!${RESET}"
+  echo "¡Prepárate para una instalación sin complicaciones!"
   pause
 }

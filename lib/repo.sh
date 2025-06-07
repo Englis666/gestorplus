@@ -1,16 +1,14 @@
 
-GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"
-CYAN="\033[1;36m"; BLUE="\033[1;34m"; MAGENTA="\033[1;35m"; RESET="\033[0m"
 function clone_or_use_repo() {
-  echo -e "${YELLOW}📦 Paso 4: Verificando el código fuente de GestorPlus en tu equipo...${RESET}"
+  echo -e "📦 Paso 4: Verificando el código fuente de GestorPlus en tu equipo..."
 
   if [ -d "frontend" ] && [ -d "backend" ]; then
-    echo -e "${GREEN}✔️  El código fuente ya está presente en la carpeta actual. No es necesario clonar nada.${RESET}"
+    echo -e "✔️  El código fuente ya está presente en la carpeta actual. No es necesario clonar nada."
     pause
     return
   fi
 
-  echo -e "${RED}❌ No se encontraron las carpetas necesarias (frontend/backend) en la carpeta actual.${RESET}"
-  echo -e "${RED}Por favor, descarga el código fuente manualmente o usa el instalador completo.${RESET}"
+  echo -e "❌ No se encontraron las carpetas necesarias (frontend/backend) en la carpeta actual."
+  echo -e "Por favor, descarga el código fuente manualmente o usa el instalador completo."
   exit 1
 }
