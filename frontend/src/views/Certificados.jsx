@@ -3,12 +3,11 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import NavbarClosed from "../componentsClosed/Navbar";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
-import API_URL from "../config";
+import { obtenerDatosParaCertificado } from "../services/CertficiadoService";
 
 const Certificados = () => {
   const fechaEmision = new Date().toLocaleDateString("es-ES");
@@ -30,7 +29,10 @@ const Certificados = () => {
   useEffect(() => {
     const getUserData = async () => {
       setLoading(true);
-      const token = getCookie("auth_token");
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("auth_token="))
+        ?.split("=")[1];
       if (!token) {
         alert("No se encontró un token de autenticación");
         setLoading(false);
@@ -45,22 +47,8 @@ const Certificados = () => {
           return;
         }
 
-        const response = await axios.get(API_URL, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { action: "obtenerDatosParaCertificado" },
-        });
-
-        console.log(response.data);
-
-        if (
-          response.data?.Certificado &&
-          response.data.Certificado.length > 0
-        ) {
-          setUserData(response.data.Certificado);
-        } else {
-          console.error("Los datos del usuario no están en la respuesta");
-          setUserData([]);
-        }
+        const datos = await obtenerDatosParaCertificado();
+        setUserData(datos);
       } catch (err) {
         console.error("Error al obtener los datos para el certificado", err);
         setUserData([]);
