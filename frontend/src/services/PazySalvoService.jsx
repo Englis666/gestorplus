@@ -19,9 +19,8 @@ export const obtenerPazYSalvos = async (rol) => {
       throw new Error("Rol no reconocido");
   }
 
-  const response = await axios.get(API_URL, {
+  const response = await axios.get(`${API_URL}${action}`, {
     headers: { Authorization: `Bearer ${token}` },
-    params: { action },
   });
   return response.data?.Salvos || [];
 };
@@ -31,9 +30,8 @@ export const generarPazYSalvo = async (form) => {
   if (!token) throw new Error("Token no encontrado");
 
   const response = await axios.post(
-    API_URL,
+    `${API_URL}generarPazYSalvo`,
     {
-      action: "generarPazYSalvo",
       ...form,
     },
     {
