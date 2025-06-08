@@ -3,11 +3,14 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import AsignarEntrevistaModal from "../form/AsignarEntrevistaModal";
-import API_URL from "../../config";
+import { obtenerPostulacionesAgrupadasPorConvocatoria } from "../../services/Postulaciones";
+import {
+  obtenerHojadevidaPorNumDoc,
+  analizarHojaDeVidaPorNumDoc,
+} from "../../services/HojadevidaService";
 
 const ModalPostulantes = ({ convocatoria, onClose }) => {
   const [postulantes, setPostulantes] = useState([]);
@@ -28,18 +31,9 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
     setLoading(true);
     setError(null);
 
-    axios
-      .get(API_URL, {
-        params: {
-          action: "obtenerPostulacionesAgrupadasPorConvocatoria",
-          idconvocatoria: convocatoria.idconvocatoria,
-        },
-      })
-      .then(({ data }) => {
-        if (data.status === "error") {
-          throw new Error(data.message);
-        }
-        setPostulantes(Array.isArray(data.data) ? data.data : []);
+    obtenerPostulacionesAgrupadasPorConvocatoria(convocatoria.idconvocatoria)
+      .then((data) => {
+        setPostulantes(Array.isArray(data) ? data : []);
       })
       .catch((err) => {
         setError(err.message || "Error al cargar los postulantes");
@@ -52,18 +46,9 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
     setHojaData(null);
     setModalHoja(true);
 
-    axios
-      .get(API_URL, {
-        params: {
-          action: "obtenerHojadevidaPorNumDoc",
-          num_doc: p.num_doc,
-        },
-      })
-      .then(({ data }) => {
-        if (data.status === "error") {
-          throw new Error(data.message);
-        }
-        setHojaData(data.data);
+    obtenerHojadevidaPorNumDoc(p.num_doc)
+      .then((data) => {
+        setHojaData(data);
       })
       .catch((err) => {
         setError(err.message || "Error al cargar la hoja de vida");
@@ -88,21 +73,9 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
 
   const handleAnalizarHoja = (hoja) => {
     setAnalizando(true);
-    axios
-      .get(API_URL, {
-        params: {
-          action: "analizarHojaDeVidaPorNumDoc",
-          num_doc: hoja.num_doc,
-        },
-      })
-      .then(({ data }) => {
-        if (data.status === "success" && data.data) {
-          setAnalisis(data.data);
-        } else if (data.visualMessage) {
-          setAnalisis({ error: data.visualMessage });
-        } else {
-          setAnalisis({ error: "No se pudo analizar la hoja de vida." });
-        }
+    analizarHojaDeVidaPorNumDoc(hoja.num_doc)
+      .then((data) => {
+        setAnalisis(data);
       })
       .catch(() => {
         setAnalisis({ error: "Error al analizar la hoja de vida." });
@@ -272,7 +245,6 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
       {/* Modal para mostrar el análisis */}
       {analisis && (
         <>
-          {console.log("ANALISIS:", analisis)}
           <div
             className="modal fade show d-block"
             tabIndex={-1}
