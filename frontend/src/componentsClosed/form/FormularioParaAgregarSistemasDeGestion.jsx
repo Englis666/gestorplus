@@ -5,8 +5,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import API_URL from "../../config";
+import { asignarSistemaDeGestion } from "../../services/SistemaDeGestion";
 
 const FormularioParaAgregarSistemasDeGestion = ({
   num_doc,
@@ -48,12 +47,8 @@ const FormularioParaAgregarSistemasDeGestion = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(API_URL, {
-        action: "guardarResultadosSistemaDeGestion",
-        ...formData,
-      });
-
-      if (response.data && response.data.success) {
+      const response = await asignarSistemaDeGestion(formData);
+      if (response && (response.success || response.status === "success")) {
         alert("✅ Resultados guardados con éxito.");
         if (formData.estadoEvaluacion === "Apto") {
           navigate("/contratos", {
@@ -66,7 +61,7 @@ const FormularioParaAgregarSistemasDeGestion = ({
           });
         }
       } else {
-        console.warn("Respuesta inesperada del backend:", response.data);
+        console.warn("Respuesta inesperada del backend:", response);
         alert("❌ Error al guardar los resultados.");
       }
     } catch (error) {
