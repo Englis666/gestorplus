@@ -42,9 +42,8 @@ const ModalEditarPublicacion = ({
     e.preventDefault();
     try {
       const response = await axios.patch(
-        API_URL,
+        `${API_URL}actualizarPublicacion`,
         {
-          action: "actualizarPublicacion",
           ...publicacionEditada,
           data: { idPublicacion: publicacionEditada.idPublicacion },
         },
