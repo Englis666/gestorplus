@@ -28,9 +28,7 @@ const RecuperarPassword = () => {
     }
     setIsSubmitting(true);
     axios
-      .post(API_URL, formData, {
-        params: { action: "recuperarPassword" },
-      })
+      .post(`${API_URL}recuperarPassword`, formData)
       .then((response) => {
         const res = response.data;
         if (res?.status === "success") {
