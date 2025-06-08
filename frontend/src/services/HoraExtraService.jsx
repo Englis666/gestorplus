@@ -12,9 +12,8 @@ export const obtenerHorasExtra = async (obtenerRol) => {
   };
   if (!action[obtenerRol]) throw new Error("Rol inválido");
   try {
-    const response = await axios.get(API_URL, {
+    const response = await axios.get(`${API_URL}${action[obtenerRol]}`, {
       headers: { Authorization: `Bearer ${token}` },
-      params: { action: action[obtenerRol] },
     });
     const data = response.data;
     if (!data) throw new Error("No se encontraron datos");
@@ -30,9 +29,8 @@ export const calcularHorasExtra = async () => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   try {
-    const response = await axios.get(API_URL, {
+    const response = await axios.get(`${API_URL}calcularHorasExtra`, {
       headers: { Authorization: `Bearer ${token}` },
-      params: { action: "calcularHorasExtra" },
     });
     const data = response.data;
     console.log("Datos de horas extra:", data);
@@ -56,9 +54,8 @@ export const calcularMinutosTrabajados = async (obtenerRol) => {
   if (!action) throw new Error("Rol inválido");
 
   try {
-    const response = await axios.get(API_URL, {
+    const response = await axios.get(`${API_URL}${action}`, {
       headers: { Authorization: `Bearer ${token}` },
-      params: { action },
     });
     const data = response.data;
     if (!data) throw new Error("No se encontraron datos");
