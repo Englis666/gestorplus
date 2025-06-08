@@ -33,11 +33,8 @@ const Quejas = () => {
             <h5 className="fw-bold text-primary mb-4">Chats</h5>
             <SidebarChat onChatSelect={setSelectedChatId} />
           </div>
-          <div className="col-md-8 d-flex flex-column">
-            <div
-              className="flex-grow-1 overflow-auto px-4 py-3"
-              style={{ backgroundColor: "#f8f9fa" }}
-            >
+          <div className="col-md-8">
+            <div className="" style={{ backgroundColor: "#f8f9fa" }}>
               {selectedChatId && (
                 <ChatContainer selectedChat={{ idChat: selectedChatId }} />
               )}
