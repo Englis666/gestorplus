@@ -10,9 +10,8 @@ export const obtenerJornadasDependiendoRol = async (rolObtenido) => {
     2: "obtenerTodasLasJornadas",
     3: "obtenerJornadas",
   };
-  const response = await axios.get(API_URL, {
+  const response = await axios.get(`${API_URL}${actionMap[rolObtenido]}`, {
     headers: { Authorization: `Bearer ${token}` },
-    params: { action: actionMap[rolObtenido] },
   });
   const data = response.data;
   if (!data) throw new Error("No se encontraron datos");
@@ -23,9 +22,8 @@ export const corroborarJornada = async (idJornada) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   const response = await axios.post(
-    API_URL,
+    `${API_URL}corroborarJornada`,
     {
-      action: "corroborarJornada",
       idJornada,
     },
     {
@@ -42,9 +40,8 @@ export const noCorroborarJornada = async (idJornada) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   const response = await axios.post(
-    API_URL,
+    `${API_URL}noCorroborarJornada`,
     {
-      action: "noCorroborarJornada",
       idJornada,
     },
     {
@@ -64,9 +61,8 @@ export const finalizarJornada = async (fechaBogota) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   const response = await axios.post(
-    API_URL,
+    `${API_URL}finalizarJornada`,
     {
-      action: "finalizarJornada",
       data: { fechaBogota },
     },
     {
