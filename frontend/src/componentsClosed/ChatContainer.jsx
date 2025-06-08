@@ -40,8 +40,8 @@ const ChatContainer = ({ selectedChat }) => {
     if (selectedChat?.idChat && token) {
       setLoading(true);
       try {
-        const response = await axios.get(API_URL, {
-          params: { idChat: selectedChat.idChat, action: "obtenerMensajes" },
+        const response = await axios.get(`${API_URL}obtenerMensajes`, {
+          params: { idChat: selectedChat.idChat },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -67,7 +67,7 @@ const ChatContainer = ({ selectedChat }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchMessages();
-    }, 3000); // Actualización cada 3 segundos
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [selectedChat]);
@@ -88,7 +88,7 @@ const ChatContainer = ({ selectedChat }) => {
 
     try {
       const response = await axios.post(
-        API_URL,
+        `${API_URL}enviarMensaje`,
         {
           idChat: selectedChat.idChat,
           mensaje: message,
@@ -96,9 +96,6 @@ const ChatContainer = ({ selectedChat }) => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-          },
-          params: {
-            action: "enviarMensaje",
           },
         }
       );
@@ -125,8 +122,8 @@ const ChatContainer = ({ selectedChat }) => {
 
   return (
     <div
-      className="chat-container d-flex flex-column"
-      style={{ height: "80vh" }}
+      className=" d-flex flex-column"
+      style={{ height: "50%", maxHeight: "100vh" }}
     >
       <div
         className="message-container flex-grow-1 overflow-auto px-3"
