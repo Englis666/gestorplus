@@ -26,7 +26,9 @@ class Chat {
                 ':mensaje' => $mensaje
             ];
 
-            return $this->dbService->ejecutarConsulta($query, $params);
+            $result = $this->dbService->ejecutarConsulta($query, $params);
+            // Si no hubo excepción, consideramos éxito
+            return $result !== false;
         } catch (PDOException $e) {
             error_log("Excepción PDO: " . $e->getMessage());
             return false;
