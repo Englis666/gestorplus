@@ -68,10 +68,9 @@ const EditarExperiencia = ({
       if (!token) return alert("No se encontró el token de autenticación.");
 
       const response = await axios.patch(
-        API_URL,
+        `${API_URL}actualizarExperiencia`,
         {
           ...formData,
-          action: "actualizarExperiencia",
         },
         {
           headers: {
