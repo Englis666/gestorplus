@@ -1,93 +1,85 @@
-/* Estilos generales del contenedor de chat */
-.chat-container {
-    display: flex;
-    flex-direction: column;
-    height: 80vh;
-  }
-  
+.message-container {
+  flex-grow: 1;
+  overflow: auto;
+  padding: 16px;
+  scroll-behavior: smooth;
+}
+
+.message {
+  max-width: 75%;
+  word-break: break-word;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.sent-message {
+  background-color: #94bfec;
+  color: white;
+  text-align: right;
+  margin-left: auto;
+}
+
+.received-message {
+  background-color: #f1f1f1;
+  color: black;
+  text-align: left;
+  margin-right: auto;
+}
+
+.send-message-form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px solid #ddd;
+  padding-top: 16px;
+  padding-right: 16px;
+  padding-left: 16px;
+  margin-top: 16px;
+}
+
+.send-message-form input {
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 16px;
+}
+
+.send-message-form button {
+  padding: 12px 24px;
+  border-radius: 50px;
+}
+
+.send-message-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.message .small {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* Estilo para el icono de enviar */
+.bi-send-fill {
+  font-size: 1.2rem;
+}
+
+/* Diseño móvil: Asegurar que el mensaje se acomode bien en dispositivos pequeños */
+@media (max-width: 768px) {
   .message-container {
-    flex-grow: 1;
-    overflow: auto;
-    padding: 16px;
-    scroll-behavior: smooth;
+    padding: 8px;
   }
-  
+
   .message {
-    max-width: 75%;
-    word-break: break-word;
-    padding: 8px 16px;
-    border-radius: 20px;
+    padding: 6px 12px;
+    max-width: 90%;
   }
-  
-  .sent-message {
-    background-color: #94bfec;
-    color: white;
-    text-align: right;
-    margin-left: auto;
-  }
-  
-  .received-message {
-    background-color: #f1f1f1;
-    color: black;
-    text-align: left;
-    margin-right: auto;
-  }
-  
-  .send-message-form {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    border-top: 1px solid #ddd;
-    padding-top: 16px;
-    padding-right: 16px;
-    padding-left: 16px;
-    margin-top: 16px;
-  }
-  
+
   .send-message-form input {
-    padding: 12px 24px;
-    border-radius: 50px;
-    font-size: 16px;
+    padding: 10px 20px;
   }
-  
+
   .send-message-form button {
-    padding: 12px 24px;
-    border-radius: 50px;
+    padding: 10px 20px;
   }
-  
-  .send-message-form button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .message .small {
-    font-size: 0.8rem;
-    color: #888;
-    margin-top: 4px;
-  }
-  
-  /* Estilo para el icono de enviar */
-  .bi-send-fill {
-    font-size: 1.2rem;
-  }
-  
-  /* Diseño móvil: Asegurar que el mensaje se acomode bien en dispositivos pequeños */
-  @media (max-width: 768px) {
-    .message-container {
-      padding: 8px;
-    }
-  
-    .message {
-      padding: 6px 12px;
-      max-width: 90%;
-    }
-  
-    .send-message-form input {
-      padding: 10px 20px;
-    }
-  
-    .send-message-form button {
-      padding: 10px 20px;
-    }
-  }
-  
+}
