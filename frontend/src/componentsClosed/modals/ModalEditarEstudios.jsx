@@ -84,10 +84,9 @@ const EditarEstudio = ({
       if (!token) return alert("No se encontró el token de autenticación.");
 
       const response = await axios.patch(
-        API_URL,
+        `${API_URL}actualizarEstudio`,
         {
           ...formData,
-          action: "actualizarEstudio",
         },
         {
           headers: {
