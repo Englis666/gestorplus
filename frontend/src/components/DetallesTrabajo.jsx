@@ -1,11 +1,9 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import API_URL from "../config";
+import {
+  obtenerDetalleConvocatoria,
+  verificarPostulacion,
+  aplicarAConvocatoria,
+} from "../services/ConvocatoriasService";
 
 const DetallesTrabajo = ({ idconvocatoria }) => {
   const [detalleConvocatoria, setDetalleConvocatoria] = useState(null);
@@ -17,118 +15,57 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
   useEffect(() => {
     const fetchConvocatoriaDetails = async () => {
       try {
-        const response = await axios.get(API_URL, {
-          params: {
-            action: "obtenerDetalleConvocatoria",
-            idconvocatoria: idconvocatoria,
-          },
-        });
-
-        if (
-          response.data &&
-          response.data.message === "DetalleConvocatoria" &&
-          response.data.data
-        ) {
-          setDetalleConvocatoria(response.data.data);
-        } else {
-          console.error("Detalle de convocatoria no encontrado", response.data);
-          setDetalleConvocatoria(null);
-          setError("No se encontró la convocatoria seleccionada.");
-        }
-        setLoading(false);
+        const data = await obtenerDetalleConvocatoria(idconvocatoria);
+        setDetalleConvocatoria(data);
+        setError(null);
       } catch (err) {
-        console.error("Error al cargar el detalle: ", err);
-        setError("Error al cargar el detalle de la convocatoria");
+        setDetalleConvocatoria(null);
+        setError("No se encontró la convocatoria seleccionada.");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchConvocatoriaDetails();
-
     const checkIfApplied = async () => {
       try {
-        const token = getCookie("auth_token");
-
-        const response = await axios.get(API_URL, {
-          params: {
-            action: "verificarPostulacion",
-            idconvocatoria: idconvocatoria,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log(
-          "Respuesta de la API (verificarPostulacion):",
-          response.data
-        );
+        const response = await verificarPostulacion(idconvocatoria);
         if (
+          response &&
+          response.status === "PostulacionVerificada" &&
           response.data &&
-          response.data.status === "PostulacionVerificada" &&
-          Object.keys(response.data.data).length > 0
+          Object.keys(response.data).length > 0
         ) {
           setAplicado(true);
         } else {
           setAplicado(false);
         }
       } catch (err) {
-        console.error("Error al verificar la aplicación: ", err);
+        setAplicado(false);
       }
     };
 
+    fetchConvocatoriaDetails();
     checkIfApplied();
   }, [idconvocatoria]);
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  };
-
-  const handleApply = () => {
-    const token = getCookie("auth_token");
-
-    const data = {
-      action: "aplicacionDeAspirante",
-      idconvocatoria: idconvocatoria,
-    };
-
+  const handleApply = async () => {
     setAplicado(true);
-
-    axios
-      .post(API_URL, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log(
-          "Respuesta de la API (aplicacionDeAspirante):",
-          response.data
-        );
-        if (response.data && response.data.message === "success") {
-          alert("Has aplicado a la convocatoria");
-          setSuccessMessage(response.data.message);
-        } else if (response.data && response.data.error) {
-          console.error(
-            "Error en la respuesta del servidor: ",
-            response.data.error
-          );
-          setError(response.data.error);
-          setAplicado(false);
-        } else {
-          console.error("Respuesta inesperada del servidor: ", response.data);
-          setError("Error al aplicar a la convocatoria.");
-          setAplicado(false);
-        }
-      })
-      .catch((err) => {
-        console.error("Error al enviar la aplicación: ", err);
-        setError("Error al enviar la aplicación.");
+    try {
+      const response = await aplicarAConvocatoria(idconvocatoria);
+      if (response && response.message === "success") {
+        alert("Has aplicado a la convocatoria");
+        setSuccessMessage(response.message);
+      } else if (response && response.error) {
+        setError(response.error);
         setAplicado(false);
-      });
+      } else {
+        setError("Error al aplicar a la convocatoria.");
+        setAplicado(false);
+      }
+    } catch (err) {
+      setError("Error al enviar la aplicación.");
+      setAplicado(false);
+    }
   };
 
   if (loading) {
