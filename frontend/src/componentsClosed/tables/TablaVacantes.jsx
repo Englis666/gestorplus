@@ -4,10 +4,13 @@
  */
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import DataTable from "react-data-table-component";
 import FormularioAgregarConvocatoria from "../form/agregarConvocatoria";
-import API_URL from "../../config";
+import { obtenerCargos } from "../../services/Cargos";
+import {
+  obtenerConvocatorias,
+  agregarConvocatoria,
+} from "../../services/ConvocatoriasService";
 
 const TablaVacantes = () => {
   const [convocatorias, setConvocatorias] = useState([]);
@@ -24,12 +27,8 @@ const TablaVacantes = () => {
   });
 
   useEffect(() => {
-    axios
-      .get(API_URL, {
-        params: { action: "obtenerCargos" },
-      })
-      .then((response) => {
-        const cargosData = response.data?.cargos;
+    obtenerCargos()
+      .then((cargosData) => {
         setCargos(Array.isArray(cargosData) ? cargosData : []);
       })
       .catch((err) => {
@@ -39,12 +38,9 @@ const TablaVacantes = () => {
   }, []);
 
   useEffect(() => {
-    axios
-      .get(API_URL, {
-        params: { action: "obtenerConvocatorias" },
-      })
-      .then((response) => {
-        const convocatoriasData = response.data?.convocatorias;
+    setLoading(true);
+    obtenerConvocatorias()
+      .then((convocatoriasData) => {
         setConvocatorias(
           Array.isArray(convocatoriasData) ? convocatoriasData : []
         );
@@ -56,23 +52,19 @@ const TablaVacantes = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleAgregar = (e) => {
+  const handleAgregar = async (e) => {
     e.preventDefault();
-    axios
-      .post(API_URL, {
-        action: "agregarConvocatoria",
-        ...agregar,
-      })
-      .then((response) => {
-        const convocatoriasData = response.data?.convocatorias;
-        setConvocatorias(
-          Array.isArray(convocatoriasData) ? convocatoriasData : []
-        );
-      })
-      .catch((err) => {
-        console.error("Error al agregar convocatoria:", err);
-        setError("Hubo un problema al agregar la convocatoria");
-      });
+    try {
+      await agregarConvocatoria(agregar);
+      alert("Convocatoria agregada exitosamente");
+      const nuevasConvocatorias = await obtenerConvocatorias();
+      setConvocatorias(
+        Array.isArray(nuevasConvocatorias) ? nuevasConvocatorias : []
+      );
+    } catch (err) {
+      console.error("Error al agregar convocatoria:", err);
+      setError("Hubo un problema al agregar la convocatoria");
+    }
   };
 
   const columns = [
