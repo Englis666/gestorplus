@@ -27,9 +27,7 @@ const SidebarChat = ({ onChatSelect }) => {
 
   const fetchUsuarios = useCallback(async (action) => {
     try {
-      const { data } = await axios.get(API_URL, {
-        params: { action },
-      });
+      const { data } = await axios.get(`${API_URL}${action}`);
 
       console.log(data);
       if (data?.RRHH && Array.isArray(data.RRHH)) {
@@ -67,8 +65,7 @@ const SidebarChat = ({ onChatSelect }) => {
       if (!num_doc_emisor)
         return handleError("No se pudo obtener el ID del usuario.");
 
-      const { data } = await axios.post(API_URL, {
-        action: "obtenerOcrearChat",
+      const { data } = await axios.post(`${API_URL}obtenerOcrearChat`, {
         num_doc_emisor,
         num_doc_receptor,
       });
