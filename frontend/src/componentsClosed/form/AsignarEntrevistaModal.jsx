@@ -4,8 +4,7 @@
  */
 
 import React, { useState } from "react";
-import axios from "axios";
-import API_URL from "../../config";
+import { asignarEntrevista } from "../../services/EntrevistasService";
 
 const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
   const [formData, setFormData] = useState({
@@ -25,12 +24,8 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(API_URL, {
-        action: "asignarEntrevista",
-        ...formData,
-      });
-      console.log(response.data);
-      if (response.data.Entrevista) {
+      const response = await asignarEntrevista(formData);
+      if (response?.Entrevista) {
         alert("✅ Entrevista asignada exitosamente");
         handleClose();
       } else {
