@@ -61,9 +61,8 @@ const ModalHojaDeVida = ({
       const token = getCookie("auth_token");
       if (!token) return alert("No se encontró el token de autenticación.");
 
-      const { data } = await axios.get(API_URL, {
+      const { data } = await axios.get(`${API_URL}datosPerfil`, {
         headers: { Authorization: `Bearer ${token}` },
-        params: { action: "datosPerfil", num_doc },
       });
 
       if (data.status === "success" && data.data) {
@@ -129,8 +128,8 @@ const ModalHojaDeVida = ({
       if (!token) return alert("No se encontró el token de autenticación.");
 
       const response = await axios.patch(
-        API_URL,
-        { ...formDataToSend, action: "actualizacionHojaDevida", num_doc },
+        `${API_URL}actualizacionHojaDevida`,
+        { ...formDataToSend, num_doc },
         {
           headers: {
             Authorization: `Bearer ${token}`,
