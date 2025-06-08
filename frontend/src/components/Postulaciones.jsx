@@ -1,54 +1,21 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import PostulacionIndividual from "./PostulacionIndividual";
-import API_URL from "../config";
+import { obtenerPostulacionesAspirante } from "../services/Postulaciones";
 
 const Postulaciones = () => {
   const [postulaciones, setPostulaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  };
-
   useEffect(() => {
     const fetchPostulaciones = async () => {
       try {
-        const token = getCookie("auth_token");
-        if (!token) {
-          setError("No se encontró el token de autenticación.");
-          setLoading(false);
-          return;
-        }
-
-        const response = await axios.get(API_URL, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            action: "obtenerPostulacionesAspirante",
-          },
-        });
-
-        console.log("Respuesta de la API:", response.data);
-
-        if (Array.isArray(response.data.data)) {
-          setPostulaciones(response.data.data);
-        } else {
-          setPostulaciones([]);
-        }
-        setLoading(false);
+        const data = await obtenerPostulacionesAspirante();
+        setPostulaciones(Array.isArray(data) ? data : []);
+        setError(null);
       } catch (error) {
         setError("Error al cargar las postulaciones");
+      } finally {
         setLoading(false);
       }
     };
