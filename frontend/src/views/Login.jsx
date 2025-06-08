@@ -1,32 +1,18 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
 import { useState } from "react";
 import imagen from "../assets/2.png";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useUser } from "../context/userContext";
-import API_URL from "../config";
+import { logearse } from "../services/Auth";
 import "../css/forms/login.css";
 
 const Login = () => {
   const [formData, setFormData] = useState({ num_doc: "", password: "" });
-  const [registerData, setRegisterData] = useState({
-    num_doc: "",
-    password: "",
-    email: "",
-    nombres: "",
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [showRegister, setShowRegister] = useState(false);
   const navigate = useNavigate();
   const { login } = useUser();
 
-  // Login handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "num_doc" && !/^\d{0,10}$/.test(value)) return;
@@ -34,7 +20,7 @@ const Login = () => {
     setErrorMsg("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.num_doc || !formData.password) {
       setErrorMsg("Por favor complete todos los campos.");
@@ -42,44 +28,28 @@ const Login = () => {
     }
     setIsSubmitting(true);
     setErrorMsg("");
-    axios
-      .post(API_URL, {
-        action: "login",
-        num_doc: formData.num_doc,
-        password: formData.password,
-      })
-      .then((response) => {
-        const res = response.data;
-        if (res?.status === "success") {
-          const token = res?.data?.token;
-          document.cookie = `auth_token=${token}; path=/; domain=localhost;`;
-          login({ token });
-          const decoded = decodeToken(token);
-          const role = decoded?.data?.rol;
-          localStorage.setItem("rol", role);
-          localStorage.setItem("jornadaFinalizada", "false");
-          if (["1", "2", "3"].includes(role)) {
-            navigate("/Inicio");
-          } else {
-            navigate("/aspirante/inicio");
-          }
-        } else {
-          setErrorMsg(res?.message || "Error en el inicio de sesión");
-          setIsSubmitting(false);
-        }
-      })
-      .catch(() => {
-        setErrorMsg("Error al iniciar sesión. Intenta de nuevo.");
-        setIsSubmitting(false);
-      });
-  };
-
-  const decodeToken = (token) => {
     try {
-      const payload = token.split(".")[1];
-      return JSON.parse(atob(payload));
-    } catch (e) {
-      return null;
+      const res = await logearse(formData.num_doc, formData.password);
+      if (res.status === "success") {
+        login({ token: res.token });
+        // Decodifica el token para obtener el rol
+        const payload = res.token.split(".")[1];
+        const decoded = JSON.parse(atob(payload));
+        const role = decoded?.data?.rol;
+        localStorage.setItem("rol", role);
+        localStorage.setItem("jornadaFinalizada", "false");
+        if (["1", "2", "3"].includes(role)) {
+          navigate("/Inicio");
+        } else {
+          navigate("/aspirante/inicio");
+        }
+      } else {
+        setErrorMsg(res.message || "Error en el inicio de sesión");
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      setErrorMsg("Error al iniciar sesión. Intenta de nuevo.");
+      setIsSubmitting(false);
     }
   };
 
@@ -94,11 +64,9 @@ const Login = () => {
             <span>La Fayette</span>
           </p>
         </div>
-        <div
-          className={`login-form-wrap ${showRegister ? "show-register" : ""}`}
-        >
+        <div className="login-form-wrap">
           <form
-            className={`login-form ${showRegister ? "form-hide" : "form-show"}`}
+            className="login-form form-show"
             onSubmit={handleSubmit}
             autoComplete="off"
           >
@@ -175,7 +143,6 @@ const Login = () => {
               </button>
             </div>
           </form>
-
           <div className="login-copyright">
             © {new Date().getFullYear()} GestorPlus - La Fayette
           </div>
