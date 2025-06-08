@@ -9,7 +9,6 @@ import API_URL from "../../config";
 
 const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
   const [formData, setFormData] = useState({
-    action: "agregarEstudio",
     nivelEstudio: "",
     areaEstudio: "",
     estadoEstudio: "",
@@ -32,7 +31,6 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
     if (!modalEstudios) {
       setErrors({});
       setFormData({
-        action: "agregarEstudio",
         nivelEstudio: "",
         areaEstudio: "",
         estadoEstudio: "",
@@ -113,7 +111,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
     setIsSubmitting(true);
 
     axios
-      .post(API_URL, formData, {
+      .post(`${API_URL}agregarEstudio`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
