@@ -4,8 +4,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import API_URL from "../../config";
+import { agregarPublicacion } from "../../services/Publicaciones";
 
 const getCookie = (name) => {
   const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
@@ -91,14 +90,8 @@ const FormularioPublicacion = () => {
     }
 
     try {
-      const response = await axios.post(API_URL, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        params: { action: "agregarPublicacion" },
-      });
-      if (response.data?.status === "success") {
-        console.log("Publicación agregada:", response);
+      const response = await agregarPublicacion(formData);
+      if (response?.status === "success") {
         setEnviado(true);
         setForm({
           titulo: "",
@@ -109,7 +102,7 @@ const FormularioPublicacion = () => {
           estado: "activo",
         });
       } else {
-        setErrorApi(response.data?.message || "Error al agregar publicación.");
+        setErrorApi(response?.message || "Error al agregar publicación.");
       }
     } catch (error) {
       setErrorApi("Error al conectar con la API.");
@@ -169,8 +162,9 @@ const FormularioPublicacion = () => {
             <label className="form-label fw-semibold">Imagen (opcional)</label>
             <input
               type="file"
-              name="imagen"
               className="form-control"
+              id="imagen"
+              name="imagen"
               onChange={handleChange}
               accept="image/*"
             />
