@@ -4,8 +4,7 @@
  */
 
 import React, { useState } from "react";
-import axios from "axios";
-import API_URL from "../../config";
+import { subirContratoPDF } from "../../services/Contratos";
 
 const UploadContractModal = ({
   isOpen,
@@ -31,23 +30,14 @@ const UploadContractModal = ({
       });
       return;
     }
-
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append("pdf_file", selectedFile);
-    formData.append("idvinculacion", idvinculacion);
-    formData.append("num_doc", num_doc);
-
     try {
-      // Enviar la solicitud con el parámetro 'action' en la URL
-      const response = await axios.post(API_URL, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        params: { action: "subirContrato" },
-      });
-
-      console.log(response.data);
-      // Por si se necesita depurar la subida del contrato
-      if (response.data.success) {
+      const response = await subirContratoPDF(
+        selectedFile,
+        idvinculacion,
+        num_doc
+      );
+      if (response && (response.success || response.status === "success")) {
         setUploadStatus({
           type: "success",
           message: "Contrato subido con éxito",
