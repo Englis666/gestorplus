@@ -4,11 +4,10 @@
  */
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import DataTable from "react-data-table-component";
-import API_URL from "../../config";
+import { obtenerEmpleados } from "../../services/EmpleadosService";
 import EmpleadosPorCargoBarChart from "../Graphics/EmpleadosPorCargoBarChart";
+import API_URL from "../../config";
 
 const TablaEmpleados = () => {
   const [empleados, setEmpleados] = useState([]);
@@ -16,53 +15,19 @@ const TablaEmpleados = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    };
-
-    const token = getCookie("auth_token");
-
-    if (token) {
+    const fetchEmpleados = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const decodedToken = jwtDecode(token);
-        const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
-        if (isTokenExpired) {
-          setError("El token ha expirado.");
-          setLoading(false);
-          return;
-        }
-
-        axios
-          .get(API_URL, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: { action: "obtenerEmpleados" },
-          })
-          .then((response) => {
-            const empleados = response.data?.empleados;
-            if (Array.isArray(empleados)) {
-              setEmpleados(empleados);
-            } else {
-              setEmpleados([]);
-            }
-            setLoading(false);
-          })
-          .catch(() => {
-            setError("Hubo un problema al cargar los empleados.");
-            setLoading(false);
-          });
-      } catch {
-        setError("Token inválido o malformado.");
+        const empleadosData = await obtenerEmpleados();
+        setEmpleados(Array.isArray(empleadosData) ? empleadosData : []);
+      } catch (err) {
+        setError("Hubo un problema al cargar los empleados.");
+      } finally {
         setLoading(false);
       }
-    } else {
-      setError("Token no encontrado.");
-      setLoading(false);
-    }
+    };
+    fetchEmpleados();
   }, []);
 
   // Agrupa empleados por cargo
