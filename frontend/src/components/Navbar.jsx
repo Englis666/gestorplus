@@ -25,10 +25,12 @@ const Navbar = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get(API_URL, {
-          params: { action: "obtenerNotificacionesAspirante" },
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          `${API_URL}obtenerNotificacionesAspirante`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setNotifications(response.data.data || []);
       } catch (error) {
         console.error("Error al obtener las notificaciones:", error);
