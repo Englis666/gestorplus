@@ -3,42 +3,13 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import ChatContainer from "../componentsClosed/ChatContainer";
 import SidebarChat from "../componentsClosed/sidebarChat";
-import { jwtDecode } from "jwt-decode";
 import NavbarClosed from "../componentsClosed/Navbar";
 
 const Quejas = () => {
   const [selectedChatId, setSelectedChatId] = useState(null);
-  const socket = useRef(null);
-  const navigate = useNavigate();
-
-  // Leer cookies
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  };
-
-  const token = getCookie("auth_token");
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    const decodedToken = jwtDecode(token);
-    const isTokenExpired = decodedToken?.exp * 1000 < Date.now();
-
-    if (isTokenExpired) {
-      navigate("/login");
-      return;
-    }
-  }, [navigate, token]);
 
   return (
     <div className="main-layout">
@@ -68,10 +39,7 @@ const Quejas = () => {
               style={{ backgroundColor: "#f8f9fa" }}
             >
               {selectedChatId && (
-                <ChatContainer
-                  selectedChat={{ idChat: selectedChatId }}
-                  socket={socket}
-                />
+                <ChatContainer selectedChat={{ idChat: selectedChatId }} />
               )}
             </div>
           </div>
