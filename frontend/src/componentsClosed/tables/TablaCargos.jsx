@@ -3,16 +3,20 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import FormularioCargo from "../form/FormularioAgregarCargo";
-import API_URL from "../../config";
+import {
+  obtenerCargos,
+  desactivarCargo as desactivarCargoService,
+  activarCargo as activarCargoService,
+} from "../../services/Cargos";
 
 const TablaCargos = () => {
   const [cargos, setCargos] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Cargar cargos al montar
   useEffect(() => {
     fetchCargos();
   }, []);
@@ -20,10 +24,7 @@ const TablaCargos = () => {
   const fetchCargos = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(API_URL, {
-        params: { action: "obtenerCargos" },
-      });
-      const lista = response.data?.cargos;
+      const lista = await obtenerCargos();
       setCargos(Array.isArray(lista) ? lista : []);
     } catch (err) {
       console.error("[fetchCargos] Error al obtener los cargos:", err);
@@ -34,11 +35,8 @@ const TablaCargos = () => {
 
   const desactivarCargo = async (idCargo) => {
     try {
-      const response = await axios.patch(API_URL + "?action=desactivarCargo", {
-        idCargo,
-      });
+      await desactivarCargoService(idCargo);
       await fetchCargos();
-      console.log(response.data);
     } catch (err) {
       const mensaje =
         err?.response?.data?.error ??
@@ -49,15 +47,15 @@ const TablaCargos = () => {
 
   const activarCargo = async (idCargo) => {
     try {
-      await axios.patch(API_URL + "?action=activarCargo", { idCargo });
+      await activarCargoService(idCargo);
       await fetchCargos();
     } catch (err) {
       console.error("[activarCargo] error al activar el cargo:", err);
     }
   };
 
-  const agregarCargo = (nuevoCargo) => {
-    setCargos((prev) => [...prev, nuevoCargo]);
+  const agregarCargo = () => {
+    fetchCargos();
   };
 
   // Definir columnas para DataTable
