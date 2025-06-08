@@ -87,3 +87,23 @@ export const aplicarAConvocatoria = async (idconvocatoria) => {
     throw error;
   }
 };
+
+export const agregarConvocatoria = async (formData) => {
+  const token = getCookie("auth_token");
+  if (!token) throw new Error("Token No encontrado");
+
+  try {
+    const response = await axios.post(
+      `${API_URL}agregarConvocatoria`,
+      formData,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error("Error al agregar la convocatoria:", error);
+    throw error;
+  }
+};
