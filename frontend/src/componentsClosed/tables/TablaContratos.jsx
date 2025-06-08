@@ -3,13 +3,16 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import ModalSubirContratoPdf from "../modals/ModalSubirContratoPdf";
 import ModalVerContratoPdf from "../modals/ModalVerContrato";
-
 import FormularioVinculacion from "../form/FormularioAsignacionVinculacion";
-import API_URL from "../../config";
+import {
+  obtenerVinculaciones,
+  asignarVinculacion,
+  buscarIdEvaluacion,
+  obtenerContratos,
+} from "../../services/Contratos";
 
 const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [vinculaciones, setVinculaciones] = useState([]);
@@ -19,7 +22,7 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [modalContratoAbierto, setModalContratoAbierto] = useState(false);
   const [modalVerContratoAbierto, setModalVerContratoAbierto] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
-  const [selectedVinculacion, setSelectedVinculacion] = useState(null); // Estado para la vinculacion seleccionada
+  const [selectedVinculacion, setSelectedVinculacion] = useState(null);
 
   const isFormDataAvailable =
     num_doc && nombres && identrevista && idpostulacion;
@@ -37,49 +40,40 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   });
 
   useEffect(() => {
-    axios
-      .get(API_URL, {
-        params: { action: "obtenerVinculaciones" },
-      })
-      .then((response) => {
-        console.log(response);
-        if (Array.isArray(response.data.Vinculaciones)) {
-          setVinculaciones(response.data.Vinculaciones);
-        } else {
-          setError("No hay vinculaciones disponibles");
-          setVinculaciones([]);
-        }
-      })
-      .catch((err) => {
-        setError(`Error al obtener vinculaciones: ${err.message}`);
-      })
-      .finally(() => setLoading(false));
+    const fetchVinculaciones = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await obtenerVinculaciones();
+        setVinculaciones(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError("Error al obtener vinculaciones");
+        setVinculaciones([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVinculaciones();
   }, []);
 
   useEffect(() => {
     if (!identrevista && !idpostulacion) return;
-
-    axios
-      .get(API_URL, {
-        params: {
-          action: "buscarIdEvaluacion",
-          identrevista: identrevista,
-          idpostulacion: idpostulacion,
-        },
-      })
-      .then((response) => {
-        if (response.data.idevaluacion) {
+    const fetchIdEvaluacion = async () => {
+      try {
+        const result = await buscarIdEvaluacion(identrevista, idpostulacion);
+        if (result && result.encontrada && result.idevaluacion) {
           setFormData((prevData) => ({
             ...prevData,
-            idevaluacion: response.data.idevaluacion,
+            idevaluacion: result.idevaluacion,
           }));
         } else {
           console.warn("No se encontró el ID de evaluación.");
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error al buscar ID de evaluación:", err);
-      });
+      }
+    };
+    fetchIdEvaluacion();
   }, [identrevista, idpostulacion]);
 
   const handleChange = (e) => {
@@ -88,13 +82,15 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.idevaluacion) {
+      alert(
+        "No se encontró el ID de evaluación. No se puede asignar la vinculación."
+      );
+      return;
+    }
     try {
-      const response = await axios.post(API_URL, {
-        action: "asignarVinculacion",
-        ...formData,
-      });
-
-      if (response.data.Vinculacion) {
+      const response = await asignarVinculacion(formData);
+      if (response && response.Vinculacion) {
         alert("Vinculación asignada con éxito");
         setFormData({
           num_doc,
@@ -116,32 +112,19 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
     }
   };
 
-  const handleSearch = async (e, num_doc) => {
-    e.preventDefault();
+  const handleVerContrato = async (num_doc) => {
     try {
-      const response = await axios.get(API_URL, {
-        params: { action: "obtenerContrato", num_doc },
-        responseType: "blob",
-      });
-
-      const contentType = response.headers["content-type"];
-
-      if (contentType !== "application/pdf") {
-        const text = await response.data.text();
-        const jsonError = JSON.parse(text);
-        throw new Error(jsonError.error || "Error inesperado del servidor");
+      if (!num_doc || isNaN(Number(num_doc))) {
+        alert("Número de documento inválido");
+        return;
       }
-
-      const file = new Blob([response.data], { type: "application/pdf" });
-      const fileURL = URL.createObjectURL(file);
-      setPdfUrl(fileURL);
+      const url = await obtenerContratos(num_doc);
+      setPdfUrl(url);
       setModalVerContratoAbierto(true);
-    } catch (err) {
-      console.error("Error al obtener contrato:", err.message);
-      setErrorMessage(err.message || "Hubo un error al obtener el contrato.");
+    } catch (error) {
+      alert("No se pudo obtener el contrato.");
     }
   };
-
   const closeModal = () => {
     setModalContratoAbierto(false);
     setModalVerContratoAbierto(false); // Cierra el modal
@@ -171,6 +154,7 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                   <thead className="text-center">
                     <tr>
                       <th>Número de documento</th>
+
                       <th>Nombre y Apellido</th>
                       <th>Fecha de inicio</th>
                       <th>Fecha de fin</th>
@@ -209,7 +193,7 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                           <td>
                             <button
                               className="btn btn-primary"
-                              onClick={() => openModal(vinculacion)} // Abre el modal de subida de contrato
+                              onClick={() => openModal(vinculacion)}
                             >
                               Subir contrato físico
                             </button>
@@ -222,8 +206,8 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
                           <td>
                             <button
                               className="btn btn-primary"
-                              onClick={(e) =>
-                                handleSearch(e, vinculacion.usuario_num_doc)
+                              onClick={() =>
+                                handleVerContrato(vinculacion.usuario_num_doc)
                               }
                             >
                               Revisar Contrato
