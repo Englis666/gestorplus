@@ -3,12 +3,10 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
-import API_URL from "../../config";
+import { obtenerSistemaDeGestion } from "../../services/SistemaDeGestion";
 
 const TablaSistemaDeGestion = () => {
   const [loading, setLoading] = useState(true);
@@ -17,46 +15,19 @@ const TablaSistemaDeGestion = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      return parts.length === 2 ? parts.pop().split(";").shift() : null;
-    };
-
-    const token = getCookie("auth_token");
-
-    if (!token) {
-      setError("El token no fue encontrado");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const decodedToken = jwtDecode(token);
-      if (decodedToken?.exp * 1000 < Date.now()) {
-        setError("El token ha expirado");
+    const fetchSistema = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await obtenerSistemaDeGestion();
+        setSistemaDeGestion(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError("Hubo un problema al cargar el sistema de gestión");
+      } finally {
         setLoading(false);
-        return;
       }
-
-      axios
-        .get(API_URL, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { action: "obtenerSistemaDeGestion" },
-        })
-        .then((response) => {
-          const data = response.data?.sistemaDeGestion;
-          setSistemaDeGestion(Array.isArray(data) ? data : []);
-        })
-        .catch(() => {
-          setError("Hubo un problema al cargar el sistema de gestión");
-        })
-        .finally(() => setLoading(false));
-    } catch (err) {
-      console.error("Error al decodificar el token", err);
-      setError("Token inválido o malformado");
-      setLoading(false);
-    }
+    };
+    fetchSistema();
   }, []);
 
   // Definir columnas para DataTable
