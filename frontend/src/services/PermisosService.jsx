@@ -12,9 +12,8 @@ export const obtenerPermisosDependiendoRol = async (rolObtenido) => {
     3: "obtenerPermisos",
   };
 
-  const response = await axios.get(API_URL, {
+  const response = await axios.get(`${API_URL}${actionMap[rolObtenido]}`, {
     headers: { Authorization: `Bearer ${token}` },
-    params: { action: actionMap[rolObtenido] },
   });
 
   const data = response.data;
@@ -29,9 +28,8 @@ export const permisoAceptado = async (idPermisos) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   const response = await axios.post(
-    API_URL,
+    `${API_URL}permisoAceptado`,
     {
-      action: "permisoAceptado",
       idPermisos,
     },
     {
@@ -48,9 +46,8 @@ export const permisoRechazado = async (idPermisos) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   const response = await axios.post(
-    API_URL,
+    `${API_URL}permisoRechazado`,
     {
-      action: "permisoRechazado",
       idPermisos,
     },
     {
@@ -67,9 +64,8 @@ export const solicitarPermiso = async (datosPermiso) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   const response = await axios.post(
-    API_URL,
+    `${API_URL}solicitarPermiso`,
     {
-      action: "solicitarPermiso",
       ...datosPermiso,
     },
     {
