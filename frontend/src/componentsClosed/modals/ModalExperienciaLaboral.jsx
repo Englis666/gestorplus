@@ -3,7 +3,6 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React from "react";
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -57,8 +56,8 @@ const Experiencia = ({
         return;
       }
       try {
-        const payload = { action: "agregarExp", ...values };
-        const res = await axios.post(API_URL, payload, {
+        const payload = {  ...values };
+        const res = await axios.post(`${API_URL}agregarExp`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const nuevaExp = res.data?.data || values;
