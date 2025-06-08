@@ -26,18 +26,8 @@ function final_messages() {
       echo "En Ubuntu/Debian: sudo apt install cloudflared"
       echo "En Arch: sudo pacman -S cloudflared"
     else
-      LOG_PATH="/tmp/cloudflared.log"
-      echo "Iniciando Cloudflare Tunnel en segundo plano..."
-      nohup cloudflared tunnel --url http://localhost:80 > "$LOG_PATH" 2>&1 &
-      echo "Túnel iniciado. Consulta $LOG_PATH para la URL pública."
-      sleep 5
-      url_cloudflare=$(grep -m1 -o 'https://[a-zA-Z0-9.-]*\.trycloudflare\.com' "$LOG_PATH")
-      if [[ -n "$url_cloudflare" ]]; then
-        echo "Accede desde cualquier lugar usando:"
-        echo "  $url_cloudflare"
-      else
-        echo "La URL pública aún no está disponible. Consulta $LOG_PATH en unos segundos."
-      fi
+      echo "Iniciando Cloudflare Tunnel. Espera la URL pública aquí abajo (Ctrl+C para salir del túnel cuando termines):"
+      cloudflared tunnel --url http://localhost:80
     fi
   fi
 
