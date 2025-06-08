@@ -4,11 +4,14 @@
  */
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import DataTable from "react-data-table-component";
 import CalendarioDeEntrevistas from "../CalendarioDeEntrevistas";
 import ModalHojadeVidaEntrevistado from "../modals/ModalHojadeVidaEntrevistado";
-import API_URL from "../../config";
+import {
+  obtenerEntrevistas,
+  enviarAsistenciaEntrevista,
+  enviarNoAsistenciaEntrevista,
+} from "../../services/EntrevistasService";
 
 const TablaEntrevistas = () => {
   const [entrevistas, setEntrevistas] = useState([]);
@@ -18,12 +21,33 @@ const TablaEntrevistas = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
+    const fetchEntrevistas = obtenerEntrevistas();
+    fetchEntrevistas
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setEntrevistas(data);
+        } else {
+          setEntrevistas([]);
+        }
+      })
+      .catch((err) => {
+        setError("Hubo un problema al cargar las entrevistas");
+        console.error(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    setLoading(true);
+    setError(null);
+    setSelectedInterview(null);
+    setModalOpen(false);
+  }, []);
+  useEffect(() => {
     const fetchEntrevistas = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const response = await axios.get(API_URL, {
-          params: { action: "obtenerEntrevistas" },
-        });
-        const data = response.data.Entrevista;
+        const data = await obtenerEntrevistas();
         setEntrevistas(Array.isArray(data) ? data : []);
       } catch (err) {
         setError("Hubo un problema al cargar las entrevistas");
@@ -31,17 +55,16 @@ const TablaEntrevistas = () => {
         setLoading(false);
       }
     };
-
     fetchEntrevistas();
   }, []);
 
   const enviarAsistencia = async (asistencia, identrevista) => {
     try {
-      await axios.patch(API_URL, {
-        action: asistencia ? "asistenciaConfirmada" : "asistenciaNoConfirmada",
-        identrevista,
-      });
-
+      if (asistencia) {
+        await enviarAsistenciaEntrevista(identrevista, true);
+      } else {
+        await enviarNoAsistenciaEntrevista(identrevista, "No asistió");
+      }
       setEntrevistas((prev) =>
         prev.map((e) =>
           e.identrevista === identrevista
