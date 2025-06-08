@@ -62,9 +62,8 @@ const Perfil = () => {
         return;
       }
 
-      const response = await axios.get(API_URL, {
+      const response = await axios.get(`${API_URL}datosPerfil`, {
         headers: { Authorization: `Bearer ${token}` },
-        params: { action: "datosPerfil" },
       });
       console.log(response);
       if (response.status === 200) {
@@ -107,9 +106,8 @@ const Perfil = () => {
 
     const fetchEstudios = async () => {
       try {
-        const responseEstudios = await axios.get(API_URL, {
+        const responseEstudios = await axios.get(`${API_URL}obtenerEstudio`, {
           headers: { Authorization: `Bearer ${token}` },
-          params: { action: "obtenerEstudio" },
         });
         const data = responseEstudios.data?.obtenerEstudio || [];
         setEstudios(Array.isArray(data) ? data : []);
@@ -121,10 +119,12 @@ const Perfil = () => {
 
     const fetchExperienciaLaboral = async () => {
       try {
-        const responseExperiencia = await axios.get(API_URL, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { action: "obtenerExperiencia" },
-        });
+        const responseExperiencia = await axios.get(
+          `${API_URL}obtenerExperiencia`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const data = responseExperiencia.data?.obtenerExperiencia || [];
         setExperiencia(Array.isArray(data) ? data : []);
       } catch (error) {
@@ -154,12 +154,11 @@ const Perfil = () => {
       );
       if (!confirmDelete) return;
 
-      const response = await axios.delete(API_URL, {
+      const response = await axios.delete(`${API_URL}eliminarEstudio`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "x-estudio-id": idestudio,
         },
-        params: { action: "eliminarEstudio" },
       });
 
       if (response.status === 200) {
@@ -185,12 +184,11 @@ const Perfil = () => {
       );
       if (!confirmDelete) return;
 
-      const response = await axios.delete(API_URL, {
+      const response = await axios.delete(`${API_URL}eliminarExperiencia`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "x-experiencia-id": idexperienciaLaboral,
         },
-        params: { action: "eliminarExperiencia" },
       });
 
       if (response.status === 200) {
@@ -311,9 +309,8 @@ const Perfil = () => {
       const token = getCookie("auth_token");
       if (token) {
         axios
-          .get(API_URL, {
+          .get(`${API_URL}obtenerExperiencia`, {
             headers: { Authorization: `Bearer ${token}` },
-            params: { action: "obtenerExperiencia" },
           })
           .then((response) => {
             const data = response.data?.obtenerExperiencia || [];
