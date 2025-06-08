@@ -11,9 +11,8 @@ export const obtenerNotificacionesDependiendoRol = async (rolObtenido) => {
     2: "obtenerTodasLasNotificaciones",
     3: "obtenerNotificaciones",
   };
-  const response = await axios.get(API_URL, {
+  const response = await axios.get(`${API_URL}${actionMap[rolObtenido]}`, {
     headers: { Authorization: `Bearer ${token}` },
-    params: { action: actionMap[rolObtenido] },
   });
   const data = response.data;
   const lista = data?.Notificaciones || data?.message || [];
