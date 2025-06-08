@@ -3,11 +3,10 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import axios from "axios";
 import imagen from "../assets/1.png";
-import API_URL from "../config";
+import { restablecerPassword } from "../services/Auth";
 
 const RestablecerPassword = () => {
   const [formData, setFormData] = useState({
@@ -20,14 +19,13 @@ const RestablecerPassword = () => {
   const [token, setToken] = useState("");
 
   useEffect(() => {
-    // Extraer token de la URL ?token=abc123
     const params = new URLSearchParams(location.search);
     const tokenFromUrl = params.get("token");
     if (tokenFromUrl) {
       setToken(tokenFromUrl);
     } else {
       alert("Token no válido o no proporcionado");
-      navigate("/login"); // Redirige si no hay token válido
+      navigate("/login");
     }
   }, [location.search, navigate]);
 
@@ -51,15 +49,12 @@ const RestablecerPassword = () => {
 
     setIsSubmitting(true);
     try {
-      const data = { action: "restablecerPassword", token, password };
-      const response = await axios.post(API_URL, data);
-      console.log(response);
-      if (response.data?.status === "success") {
-        console.log(response.data);
+      const response = await restablecerPassword(token, password);
+      if (response?.status === "success") {
         alert("Contraseña restablecida con éxito.");
         navigate("/login");
       } else {
-        alert(response.data?.message || "Error al restablecer la contraseña");
+        alert(response?.message || "Error al restablecer la contraseña");
       }
     } catch (error) {
       console.error("Error en la petición:", error);
