@@ -1,15 +1,14 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import API_URL from "../../config";
+import {
+  obtenerVacacionesDependiendoRol,
+  aceptarVacacion,
+  rechazarVacacion,
+  solicitarVacacion,
+} from "../../services/VacacionesService";
 
 const localizer = momentLocalizer(moment);
 
@@ -27,26 +26,26 @@ const TablaVacaciones = () => {
     return null;
   };
 
-  const fetchVacaciones = (token, action) => {
+  const fetchVacaciones = async (rolActual) => {
     setLoading(true);
     setError(null);
-    axios
-      .get(API_URL, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { action },
-      })
-      .then((response) => {
-        const vacacionesData = Array.isArray(response.data)
-          ? response.data
-          : response.data.Vacaciones || [];
-        setVacaciones(vacacionesData);
-      })
-      .catch(() => {
-        setError("Hubo un problema al cargar las vacaciones.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const data = await obtenerVacacionesDependiendoRol(rolActual);
+      // El service puede devolver {Vacaciones: [...]}, {vacaciones: [...]}, o el array directo
+      let vacacionesData = [];
+      if (Array.isArray(data)) {
+        vacacionesData = data;
+      } else if (Array.isArray(data.Vacaciones)) {
+        vacacionesData = data.Vacaciones;
+      } else if (Array.isArray(data.vacaciones)) {
+        vacacionesData = data.vacaciones;
+      }
+      setVacaciones(vacacionesData);
+    } catch (err) {
+      setError("Hubo un problema al cargar las vacaciones.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -68,20 +67,7 @@ const TablaVacaciones = () => {
       const Rol = decodedToken?.data?.rol;
       setRol(Rol);
 
-      const action =
-        Rol === "1" || Rol === "2"
-          ? "obtenerTodasLasVacaciones"
-          : Rol === "3"
-          ? "obtenerMisVacaciones"
-          : null;
-
-      if (!action) {
-        setError("Rol no válido.");
-        setLoading(false);
-        return;
-      }
-
-      fetchVacaciones(token, action);
+      fetchVacaciones(Rol);
     } catch {
       setError("Token inválido o malformado.");
       setLoading(false);
@@ -92,108 +78,49 @@ const TablaVacaciones = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = getCookie("auth_token");
-    if (!token) {
-      setError("Token no encontrado.");
-      return;
-    }
-
-    axios
-      .post(
-        API_URL,
-        {
-          action: "solicitarVacaciones",
-          fechaInicio: form.fechaInicio,
-          fechaFin: form.fechaFin,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
-      .then(() => {
-        alert("Vacaciones solicitadas correctamente.");
-        setForm({ fechaInicio: "", fechaFin: "" });
-        const decodedToken = jwtDecode(token);
-        const rolActual = decodedToken?.data?.rol;
-        const action =
-          rolActual === "1" || rolActual === "2"
-            ? "obtenerTodasLasVacaciones"
-            : rolActual === "3"
-            ? "obtenerMisVacaciones"
-            : null;
-        if (action) fetchVacaciones(token, action);
-      })
-      .catch(() => {
-        alert("Error al solicitar vacaciones.");
+    try {
+      await solicitarVacacion({
+        fechaInicio: form.fechaInicio,
+        fechaFin: form.fechaFin,
       });
+      alert("Vacaciones solicitadas correctamente.");
+      setForm({ fechaInicio: "", fechaFin: "" });
+      fetchVacaciones(rol);
+    } catch {
+      alert("Error al solicitar vacaciones.");
+    }
   };
 
-  const aceptarVacacion = (idvacacion) => {
-    const token = getCookie("auth_token");
-    if (!token) {
-      setError("Token no proporcionado");
-      return;
+  const handleAceptarVacacion = async (idvacacion) => {
+    try {
+      await aceptarVacacion(idvacacion);
+      alert("Vacación aceptada.");
+      setVacaciones((prev) =>
+        prev.map((v) =>
+          v.idvacacion === idvacacion ? { ...v, estadoVacacion: "Aceptada" } : v
+        )
+      );
+    } catch {
+      alert("Error al aceptar la vacación.");
     }
-
-    axios
-      .post(
-        API_URL,
-        {
-          action: "aceptarVacacion",
-          idvacacion,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
-      .then(() => {
-        alert("Vacación aceptada.");
-        setVacaciones((prev) =>
-          prev.map((v) =>
-            v.idvacacion === idvacacion
-              ? { ...v, estadoVacacion: "Aceptada" }
-              : v
-          )
-        );
-      })
-      .catch(() => {
-        alert("Error al aceptar la vacación.");
-      });
   };
 
-  const rechazarVacacion = (idvacacion) => {
-    const token = getCookie("auth_token");
-    if (!token) {
-      setError("Token no proporcionado");
-      return;
+  const handleRechazarVacacion = async (idvacacion) => {
+    try {
+      await rechazarVacacion(idvacacion);
+      alert("Vacación rechazada.");
+      setVacaciones((prev) =>
+        prev.map((v) =>
+          v.idvacacion === idvacacion
+            ? { ...v, estadoVacacion: "Rechazada" }
+            : v
+        )
+      );
+    } catch {
+      alert("Error al rechazar la vacación.");
     }
-
-    axios
-      .post(
-        API_URL,
-        {
-          action: "rechazarVacacion",
-          idvacacion,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
-      .then(() => {
-        alert("Vacación rechazada.");
-        setVacaciones((prev) =>
-          prev.map((v) =>
-            v.idvacacion === idvacacion
-              ? { ...v, estadoVacacion: "Rechazada" }
-              : v
-          )
-        );
-      })
-      .catch(() => {
-        alert("Error al rechazar la vacación.");
-      });
   };
 
   if (loading) return <div>Cargando Vacaciones...</div>;
@@ -280,7 +207,9 @@ const TablaVacaciones = () => {
                       <td>
                         <button
                           className="btn btn-success btn-sm"
-                          onClick={() => aceptarVacacion(vacacion.idvacacion)}
+                          onClick={() =>
+                            handleAceptarVacacion(vacacion.idvacacion)
+                          }
                           disabled={vacacion.estadoVacacion === "aceptada"}
                         >
                           Aceptar
@@ -289,7 +218,9 @@ const TablaVacaciones = () => {
                       <td>
                         <button
                           className="btn btn-danger btn-sm"
-                          onClick={() => rechazarVacacion(vacacion.idvacacion)}
+                          onClick={() =>
+                            handleRechazarVacacion(vacacion.idvacacion)
+                          }
                           disabled={vacacion.estadoVacacion === "rechazada"}
                         >
                           Rechazar
