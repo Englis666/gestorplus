@@ -44,11 +44,16 @@ class Publicaciones {
             (:titulo, :descripcion, :imagen, :fecha, :usuario_num_doc, :tipo_contrato, :estado)
         ";
 
+        $fecha = $data['fechaPublicacion'] ?? null;
+        if (!$fecha) {
+            $fecha = date('Y-m-d H:i:s');
+        }
+
         return $this->dbService->ejecutarAccion($sql, [
             ':titulo'          => $data['titulo'],
             ':descripcion'     => $data['descripcion'],
             ':imagen'          => $data['imagen'],
-            ':fecha'           => $data['fechaPublicacion'],
+            ':fecha'           => $fecha,
             ':usuario_num_doc' => $num_doc,
             ':tipo_contrato'   => $data['tipo_contrato'],
             ':estado'          => $data['estado'],
