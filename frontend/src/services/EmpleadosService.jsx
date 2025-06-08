@@ -6,9 +6,8 @@ export const obtenerEmpleados = async () => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token no encontrado");
 
-  const response = await axios.get(API_URL, {
+  const response = await axios.get(`${API_URL}obtenerEmpleados`, {
     headers: { Authorization: `Bearer ${token}` },
-    params: { action: "obtenerEmpleados" },
   });
   return response.data?.empleados || [];
 };
