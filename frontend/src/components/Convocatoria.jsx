@@ -1,15 +1,9 @@
-/*
- * Copyright (c) 2024 CodeAdvance. Todos los derechos reservados.
- * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
- */
-
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "./Footer";
 import Banner from "./Banner";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import logoGP from "../assets/GestorplusXFayette.png";
-import API_URL from "../config";
+import { obtenerConvocatorias } from "../services/ConvocatoriasService";
 
 const Convocatoria = () => {
   const navigate = useNavigate();
@@ -20,33 +14,20 @@ const Convocatoria = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
-    axios
-      .get(API_URL, {
-        params: { action: "obtenerConvocatorias" },
-      })
-      .then((response) => {
-        console.log("Convocatorias response:", response);
-        console.log(response);
-        if (Array.isArray(response.data.convocatorias)) {
-          setConvocatorias(response.data.convocatorias);
-        } else {
-          setConvocatorias([]);
-        }
+    const fetchConvocatorias = async () => {
+      try {
+        const data = await obtenerConvocatorias();
+        setConvocatorias(data);
         setLoading(false);
-      })
-      .catch(() => {
+      } catch (err) {
         setError("Error al cargar las convocatorias");
         setLoading(false);
-      });
+      }
+    };
+    fetchConvocatorias();
   }, []);
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  };
-
+  // Filtrar convocatorias según la categoría seleccionada y el término de búsqueda
   const filteredConvocatorias = convocatorias.filter(
     (convocatoria) =>
       (selectedCategory
@@ -65,14 +46,9 @@ const Convocatoria = () => {
   };
 
   const handleDetailsClick = (convocatoria) => {
-    const token = getCookie("auth_token");
-    if (token) {
-      navigate("/aspirante/DetallesDeTrabajo", {
-        state: { idconvocatoria: convocatoria.idconvocatoria },
-      });
-    } else {
-      navigate("/Login");
-    }
+    navigate("/aspirante/DetallesDeTrabajo", {
+      state: { idconvocatoria: convocatoria.idconvocatoria },
+    });
   };
 
   if (loading)
