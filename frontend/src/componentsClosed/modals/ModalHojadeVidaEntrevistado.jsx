@@ -3,10 +3,10 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import API_URL from "../../config";
+import { obtenerDatosDelEntrevistado } from "../../services/HojadevidaService";
+import { rechazarEntrevistado } from "../../services/EntrevistasService";
 
 const ModalHojaDeVidaEntrevistado = ({ num_doc, identrevista, onClose }) => {
   const [formData, setFormData] = useState({});
@@ -22,15 +22,7 @@ const ModalHojaDeVidaEntrevistado = ({ num_doc, identrevista, onClose }) => {
 
   const fetchHojaDeVida = async () => {
     try {
-      const response = await axios.get(API_URL, {
-        params: {
-          action: "obtenerDatosDelEntrevistado",
-          num_doc: num_doc,
-        },
-      });
-
-      const data = response.data.Entrevistado ?? null;
-
+      const data = await obtenerDatosDelEntrevistado(num_doc);
       if (data) {
         setFormData(data);
         setHasData(true);
@@ -48,17 +40,14 @@ const ModalHojaDeVidaEntrevistado = ({ num_doc, identrevista, onClose }) => {
     }
   };
 
-  const rechazarEntrevistado = async () => {
+  const handleRechazar = async () => {
     try {
-      const response = await axios.post("http://localhost/gestorplus/backend", {
-        params: {
-          action: "rechazarEntrevistado",
-          num_doc: num_doc,
-        },
-      });
+      await rechazarEntrevistado(num_doc);
+      alert("Aspirante rechazado correctamente.");
+      onClose();
     } catch (error) {
-      console.error("error al rechazar al entreevistado", error);
-      alert("Ocurrio un error en el catch");
+      console.error("Error al rechazar al entrevistado", error);
+      alert("Ocurrió un error al rechazar al entrevistado.");
     }
   };
 
@@ -193,7 +182,7 @@ const ModalHojaDeVidaEntrevistado = ({ num_doc, identrevista, onClose }) => {
             )}
           </div>
           <div className="modal-footer d-flex justify-content-between">
-            <button className="btn btn-outline-danger" onClick={onClose}>
+            <button className="btn btn-outline-danger" onClick={handleRechazar}>
               ❌ Rechazar
             </button>
             <button className="btn btn-outline-secondary" onClick={onClose}>
