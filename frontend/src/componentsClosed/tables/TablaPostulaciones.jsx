@@ -4,10 +4,9 @@
  */
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import DataTable from "react-data-table-component";
 import AsignarEntrevistaModal from "../form/AsignarEntrevistaModal";
-import API_URL from "../../config";
+import { obtenerPostulaciones } from "../../services/Postulaciones";
 
 const TablaPostulaciones = () => {
   const [postulaciones, setPostulaciones] = useState([]);
@@ -19,20 +18,13 @@ const TablaPostulaciones = () => {
   useEffect(() => {
     const fetchPostulaciones = async () => {
       try {
-        const response = await axios.get(API_URL, {
-          params: { action: "obtenerPostulaciones" },
-        });
-        const data = response.data.Postulaciones;
+        const data = await obtenerPostulaciones();
         if (Array.isArray(data)) {
           setPostulaciones(data);
         } else {
-          console.error(
-            "Las postulaciones no están en un arreglo o está vacía la consulta"
-          );
           setPostulaciones([]);
         }
       } catch (err) {
-        console.error("Error al obtener las postulaciones");
         setError("Error al obtener las postulaciones");
       } finally {
         setLoading(false);
