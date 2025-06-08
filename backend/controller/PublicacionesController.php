@@ -78,8 +78,22 @@ class PublicacionesController extends BaseController {
      *     )
      * )
      */
+
     public function agregarPublicacion($data) {
         $num_doc = (int) $this->tokenService->validarToken();
+
+        if ($data === null && !empty($_POST)) {
+            $data = $_POST;
+            if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = __DIR__ . '/../../uploads/imgPublicaciones/';
+                $fileName = uniqid() . '_' . basename($_FILES['imagen']['name']);
+                $filePath = $uploadDir . $fileName;
+                move_uploaded_file($_FILES['imagen']['tmp_name'], $filePath);
+                $data['imagen'] = '/uploads/imgPublicaciones/' . $fileName;
+            } else {
+                $data['imagen'] = '';
+            }
+        }
 
         if ($this->publicaciones->agregarPublicacion($data, $num_doc)) {
             $this->jsonResponseService->responder(['mensaje' => 'Publicación agregada exitosamente'], 201);
