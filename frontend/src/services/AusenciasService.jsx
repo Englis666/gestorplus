@@ -12,9 +12,8 @@ export const obtenerAusencias = async (obtenerRol) => {
   }[obtenerRol];
   if (!action) throw new Error("Rol inválido");
   try {
-    const response = await axios.get(API_URL, {
+    const response = await axios.get(`${API_URL}${action}`, {
       headers: { Authorization: `Bearer ${token}` },
-      params: { action },
     });
     const data = response.data;
     if (!data) throw new Error("No se encontraron datos");
@@ -30,8 +29,8 @@ export const aceptarAusencia = async (idausencia) => {
   if (!token) throw new Error("Token No Encontrado");
   try {
     const response = await axios.post(
-      API_URL,
-      { action: "ausenciaAceptada", idausencia },
+      `${API_URL}ausenciaAceptada`,
+      { idausencia },
       { headers: { Authorization: `Bearer ${token}` } }
     );
     console.log(response);
@@ -47,8 +46,8 @@ export const rechazarAusencia = async (idausencia) => {
   if (!token) throw new Error("Token No Encontrado");
   try {
     const response = await axios.post(
-      API_URL,
-      { action: "ausenciaRechazada", idausencia },
+      `${API_URL}ausenciaRechazada`,
+      { idausencia },
       { headers: { Authorization: `Bearer ${token}` } }
     );
     if (response.status !== 200) throw new Error("Error al rechazar ausencia");
@@ -63,9 +62,8 @@ export const solicitarAusencia = async (solicitud) => {
   if (!token) throw new Error("Token no encontrado");
 
   const response = await axios.post(
-    API_URL,
+    `${API_URL}solicitarAusencia`,
     {
-      action: "solicitarAusencia",
       ...solicitud,
     },
     {
