@@ -7,11 +7,10 @@ export const obtenerEstadisticas = async () => {
 
   if (!token) throw new Error("Token no encontrado");
 
-  const response = await axios.get(API_URL, {
+  const response = await axios.get(`${API_URL}obtenerTotalEstadisticas`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    params: { action: "obtenerTotalEstadisticas" },
   });
 
   return response.data;
