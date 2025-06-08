@@ -3,13 +3,9 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState } from "react";
-import axios from "axios";
-
 const PostulacionesEnConvocatorias = ({
   modalEstudios,
   toggleModalEstudios,
-  onAgregarEstudio,
 }) => {
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
