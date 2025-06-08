@@ -12,11 +12,14 @@ $dotenv->load();
 
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents('php://input'), true);
-$action = $_GET['action'] ?? ($data['action'] ?? null);
 
-if (!$action) {
+$action = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$action = preg_replace('/^\/api\//', '', $action);
+
+
+if (!$action || $action === '/' || $action === '') {
     http_response_code(400);
-    echo json_encode(['message' => 'Se encontro el recurso.']);
+    echo json_encode(['message' => 'Recurso no especificado.']);
     exit;
 }
 
