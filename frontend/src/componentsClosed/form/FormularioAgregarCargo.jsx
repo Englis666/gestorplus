@@ -4,8 +4,7 @@
  */
 
 import React, { useState } from "react";
-import axios from "axios";
-import API_URL from "../../config";
+import { agregarCargo } from "../../services/Cargos";
 
 const FormularioCargo = ({ onCargoAgregado }) => {
   const [nombreCargo, setNombreCargo] = useState("");
@@ -17,36 +16,26 @@ const FormularioCargo = ({ onCargoAgregado }) => {
     setNombreCargo(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMensaje(null);
-
-    axios
-      .post(API_URL, {
-        action: "agregarCargo",
-        nombreCargo: nombreCargo,
-      })
-      .then((response) => {
-        console.log(response);
-        if (response.data.success) {
-          onCargoAgregado({ nombreCargo, estadoCargo: "Activo" });
-          setNombreCargo("");
-          setTipoMensaje("success");
-          setMensaje("✅ Cargo agregado con éxito.");
-        } else {
-          setTipoMensaje("danger");
-          setMensaje("❌ No se pudo agregar el cargo.");
-        }
-      })
-      .catch((err) => {
-        console.error("Error al agregar el cargo", err);
-        setTipoMensaje("danger");
-        setMensaje("❌ Error de conexión al agregar el cargo.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    setTipoMensaje("success");
+    try {
+      await agregarCargo({ nombreCargo });
+      setMensaje("Cargo agregado correctamente.");
+      setTipoMensaje("success");
+      setNombreCargo("");
+      if (onCargoAgregado) onCargoAgregado();
+    } catch (error) {
+      setMensaje(
+        error?.response?.data?.error ||
+          "Error al agregar el cargo. Intenta de nuevo."
+      );
+      setTipoMensaje("danger");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
