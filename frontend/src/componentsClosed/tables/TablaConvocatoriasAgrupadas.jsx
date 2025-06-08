@@ -4,10 +4,9 @@
  */
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import DataTable from "react-data-table-component";
 import ModalPostulantes from "../modals/ModalPostulacionesAgrupadas";
-import API_URL from "../../config";
+import { calcularPostulacionesEnConvocatorias } from "../../services/Postulaciones";
 
 const TablaConvocatoriasAgrupadas = () => {
   const [convocatorias, setConvocatorias] = useState([]);
@@ -18,19 +17,19 @@ const TablaConvocatoriasAgrupadas = () => {
   const [selectedConvocatoria, setSelectedConvocatoria] = useState(null);
 
   useEffect(() => {
-    axios
-      .get(API_URL, {
-        params: { action: "calcularPostulacionesEnConvocatorias" },
-      })
-      .then((response) => {
-        const data = response.data?.convocatorias;
+    const fetchCalculo = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await calcularPostulacionesEnConvocatorias();
         setConvocatorias(Array.isArray(data) ? data : []);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("Error al cargar las convocatorias");
-      })
-      .finally(() => setLoading(false));
+      } catch (err) {
+        setError("Error al cargar las convocatorias agrupadas.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCalculo();
   }, []);
 
   const handleOpenModal = (convocatoria) => {
