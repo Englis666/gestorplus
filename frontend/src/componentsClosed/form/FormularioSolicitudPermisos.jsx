@@ -49,7 +49,7 @@ const SolicitudPermiso = ({ onSuccess }) => {
       setErrors({});
 
       if (onSuccess) {
-        onSuccess(nuevoPermiso); // Avisar al padre para actualizar tabla
+        onSuccess(nuevoPermiso);
       }
     } catch (error) {
       setErrors({
