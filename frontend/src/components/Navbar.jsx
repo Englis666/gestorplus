@@ -3,24 +3,21 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../context/userContext";
 import axios from "axios";
 import logo from "../assets/Gestorplus.png";
 import "./css/Navbar.css";
 import API_URL from "../config";
-
+import { getCookie } from "../utils/Auth";
+import { UserContext, useUser } from "../context/userContext";
 const Navbar = () => {
-  const { logout, user } = useUser();
   const navigate = useNavigate();
+  const { user } = useUser();
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("auth_token="))
-    ?.split("=")[1];
+  const token = getCookie("auth_token");
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -37,14 +34,19 @@ const Navbar = () => {
       }
     };
 
-    if (user) fetchNotifications();
+    if (user && token) fetchNotifications();
   }, [user, token]);
 
   const handleLogout = () => {
+    document.cookie = "auth_token=; Max-Age=0; path=/;";
     document.cookie =
-      "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    logout();
-    navigate("/");
+      "auth_token=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;";
+    document.cookie = "auth_token=; Max-Age=0; path=/; domain=localhost";
+    document.cookie =
+      "auth_token=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/; domain=localhost";
+    localStorage.removeItem("rol");
+    localStorage.removeItem("jornadaFinalizada");
+    navigate("/layout");
   };
 
   return (
@@ -97,7 +99,7 @@ const Navbar = () => {
           >
             Trabajos
           </button>
-          {user && (
+          {user ? (
             <>
               <button
                 className="btn-modern"
@@ -107,7 +109,7 @@ const Navbar = () => {
               </button>
               <button
                 className="btn-modern"
-                onClick={() => navigate("/Perfil")}
+                onClick={() => navigate("/aspirante/Perfil")}
               >
                 Perfil
               </button>
@@ -153,8 +155,7 @@ const Navbar = () => {
                 Cerrar sesión
               </button>
             </>
-          )}
-          {!user && (
+          ) : (
             <button className="btn-modern" onClick={() => navigate("/login")}>
               Iniciar Sesión
             </button>
