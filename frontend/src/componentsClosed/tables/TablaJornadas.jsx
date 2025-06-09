@@ -9,6 +9,7 @@ import { decodedTokenWithRol } from "../../utils/Auth";
 import JornadaChart from "../Graphics/JornadaChart";
 import FinalizarJornada from "../FinalizarJornada";
 import JornadaEstadosChart from "../Graphics/JornadaEstadosChart";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const TablaJornadas = () => {
   const [jornadas, setJornadas] = useState([]);
@@ -61,7 +62,7 @@ const TablaJornadas = () => {
   const handleCorroborar = async (idJornada) => {
     try {
       await corroborarJornada(idJornada);
-      alert("Jornada corroborada con éxito.");
+      notificarExito("Jornada corroborada con éxito.");
       setJornadas((prev) =>
         prev.map((j) =>
           j.idJornada === idJornada
@@ -70,14 +71,14 @@ const TablaJornadas = () => {
         )
       );
     } catch {
-      alert("Hubo un problema al corroborar la jornada.");
+      notificarError("Hubo un problema al corroborar la jornada.");
     }
   };
 
   const handleNoCorroborar = async (idJornada) => {
     try {
       await noCorroborarJornada(idJornada);
-      alert("Jornada rechazada con éxito.");
+      notificarExito("Jornada rechazada con éxito.");
       setJornadas((prev) =>
         prev.map((j) =>
           j.idJornada === idJornada
@@ -86,7 +87,7 @@ const TablaJornadas = () => {
         )
       );
     } catch {
-      alert("Hubo un problema al rechazar la jornada.");
+      notificarError("Hubo un problema al rechazar la jornada.");
     }
   };
 
