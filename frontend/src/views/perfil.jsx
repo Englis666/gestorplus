@@ -13,6 +13,8 @@ import EditarEstudio from "../componentsClosed/modals/ModalEditarEstudios";
 import EditarExperiencia from "../componentsClosed/modals/ModalEditarExperiencia";
 import axios from "axios";
 import API_URL from "../config";
+import { decodedTokenWithRol } from "../utils/Auth";
+import Navbar from "../components/Navbar";
 
 const Perfil = () => {
   const [formData, setFormData] = useState({
@@ -50,18 +52,8 @@ const Perfil = () => {
 
   const getUserData = async () => {
     const token = getCookie("auth_token");
-    if (!token) {
-      alert("No se encontró el token de autenticación.");
-      return;
-    }
 
     try {
-      const decodedToken = jwtDecode(token);
-      if (isTokenExpired(decodedToken)) {
-        alert("El token ha expirado.");
-        return;
-      }
-
       const response = await axios.get(`${API_URL}datosPerfil`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -346,9 +338,11 @@ const Perfil = () => {
     );
   };
 
+  const rol = decodedTokenWithRol();
+
   return (
-    <div className="main-layout">
-      <NavbarClosed />
+    <div>
+      {rol === "4" ? <Navbar /> : <NavbarClosed />}
       <div className="main-content">
         <div className="container mt-5">
           <div className="row">
