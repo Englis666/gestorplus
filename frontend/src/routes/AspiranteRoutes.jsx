@@ -4,6 +4,7 @@ import InicioAspirante from "../views/aspirante/InicioAspirante";
 import Trabajo from "../views/aspirante/Trabajo";
 import DetallesDeTrabajo from "../views/aspirante/DetallesTrabajo";
 import MisPostulaciones from "../views/aspirante/MisPostulaciones";
+import Perfil from "../views/perfil";
 
 const aspiranteRoutes = [
   <Route
@@ -26,6 +27,7 @@ const aspiranteRoutes = [
     element={<MisPostulaciones />}
     key="/aspirante/MisPostulaciones"
   />,
+  <Route path="/aspirante/Perfil" element={<Perfil />} key="/Perfil" />,
 ];
 
 export default aspiranteRoutes;
