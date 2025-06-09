@@ -27,8 +27,8 @@ class Experiencia {
 
     public function agregarExp(array $data, int $hojadevida_idHojadevida): string {
         $sql = "INSERT INTO experiencialaboral 
-                (profesion, descripcionPerfil, fechaInicioExp, fechaFinExp, cargo, empresa, ubicacionEmpresa, tipoContrato, salario, logros, referenciasLaborales, fechaIngreso, fechaSalida, hojadevida_idHojadevida) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                (profesion, descripcionPerfil, fechaInicioExp, fechaFinExp, cargo, empresa, ubicacionEmpresa, tipoContrato, salario, logros, referenciasLaborales, hojadevida_idHojadevida) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $params = [
             $data['profesion'],
             $data['descripcionPerfil'],
@@ -49,7 +49,7 @@ class Experiencia {
         return $insertId ? json_encode(['message' => 'Experiencia agregada', 'id' => $insertId]) : json_encode(['message' => 'Error al agregar experiencia']);
     }
 
-    public function actualizarExperiencia(array $data): bool {
+    public function actualizarExperiencia(array $data): bool| array {
         $sql = 'UPDATE experiencialaboral SET profesion = ?, descripcionPerfil = ?, fechaInicioExp = ?, fechaFinExp = ? WHERE idexperienciaLaboral = ?';
         $params = [
             $data['profesion'],
