@@ -5,6 +5,7 @@
 
 import React, { useState } from "react";
 import { subirContratoPDF } from "../../services/Contratos";
+import { notificarExito } from "../../utils/notificaciones";
 
 const UploadContractModal = ({
   isOpen,
@@ -38,6 +39,7 @@ const UploadContractModal = ({
         num_doc
       );
       if (response && (response.success || response.status === "success")) {
+        notificarExito("Contrato subido con éxito");
         setUploadStatus({
           type: "success",
           message: "Contrato subido con éxito",
