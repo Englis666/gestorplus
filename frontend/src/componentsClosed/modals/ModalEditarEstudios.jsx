@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import API_URL from "../../config";
+import { notificarExito, notificarError } from "../../utils/notificaciones";
 
 const EditarEstudio = ({
   modalEditarEstudio,
@@ -67,7 +68,7 @@ const EditarEstudio = ({
 
     for (let field of requiredFields) {
       if (!formData[field]?.trim()) {
-        alert(`El campo ${field} es obligatorio.`);
+        notificarError(`El campo ${field} es obligatorio.`);
         return false;
       }
     }
@@ -81,7 +82,10 @@ const EditarEstudio = ({
 
     try {
       const token = getCookie("auth_token");
-      if (!token) return alert("No se encontró el token de autenticación.");
+      if (!token) {
+        notificarError("No se encontró el token de autenticación.");
+        return;
+      }
 
       const response = await axios.patch(
         `${API_URL}actualizarEstudio`,
@@ -96,7 +100,7 @@ const EditarEstudio = ({
         }
       );
       if (response.data.status === "success") {
-        alert("Estudio actualizado correctamente");
+        notificarExito("Estudio actualizado correctamente");
         onEditarEstudio(
           response.data.data || {
             ...formData,
@@ -105,14 +109,14 @@ const EditarEstudio = ({
         );
         toggleModalEditarEstudio();
       } else {
-        alert("Error al actualizar el estudio.");
+        notificarError("Error al actualizar el estudio.");
       }
     } catch (error) {
       console.error(
         "Error al actualizar:",
         error.response?.data || error.message
       );
-      alert(
+      notificarError(
         "Error del servidor: " +
           (error.response?.data?.message || "Inténtalo nuevamente.")
       );
