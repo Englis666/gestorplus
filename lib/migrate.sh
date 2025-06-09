@@ -41,13 +41,13 @@ function migrate_excel() {
     docker cp "$file_path" "$php_container":/var/www/html/uploads/migraciones || {
       echo -e "¡Problemas al copiar el archivo al contenedor! ¿Está corriendo el contenedor?"
       pause
-      return
+      returnz
     }
 
     # 🚀 Ejecutar migración PHP dentro del contenedor
     basefile=$(basename "$file_path")
     echo "📥 Ejecutando la migración en el contenedor..."
-    docker exec "$php_container" php migrations/MigrarExcelRunner.php "/var/www/html/uploads/migraciones/$basefile" || {
+    docker exec "$php_container" php gestorplus/backend/migrations/MigrarExcelRunner.php "/var/www/html/public/uploads/$basefile" || {
       echo -e "❌ Error al ejecutar la migración en el contenedor."
       pause
       return
