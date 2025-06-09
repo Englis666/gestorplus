@@ -6,7 +6,7 @@
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { toast, ToastContainer } from "react-toastify";
+import { notificarExito, notificarError } from "../../utils/notificaciones";
 import API_URL from "../../config";
 
 const getCookie = (name) => {
@@ -52,11 +52,11 @@ const Experiencia = ({
     }),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       if (!token) {
-        toast.error("❌ No se encontró el token de autenticación.");
+        notificarError("❌ No se encontró el token de autenticación.");
         return;
       }
       try {
-        const payload = {  ...values };
+        const payload = { ...values };
         const res = await axios.post(`${API_URL}agregarExp`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -64,12 +64,12 @@ const Experiencia = ({
         onAgregarExperiencia(nuevaExp);
         resetForm();
         toggleModalExperiencia();
-        toast.success("✅ Experiencia agregada correctamente.");
+        notificarExito("✅ Experiencia agregada correctamente.");
       } catch (error) {
         console.error(error);
         const msg =
           error.response?.data?.message || "Error al guardar la experiencia.";
-        toast.error(`❌ ${msg}`);
+        notificarError(`❌ ${msg}`);
       } finally {
         setSubmitting(false);
       }
@@ -132,7 +132,6 @@ const Experiencia = ({
 
   return (
     <>
-      <ToastContainer />
       <div
         className={`modal fade ${
           modalExperiencia ? "show animate__animated animate__fadeInDown" : ""
