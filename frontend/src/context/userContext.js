@@ -32,6 +32,7 @@ export const UserProvider = ({ children }) => {
         setUser(decodedUser);
         console.log("User decoded from token:", decodedUser);
       } catch (error) {
+        console.log("Error decoding token:", error);
         console.error("Error decoding token:", error);
       }
     } else {
