@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import API_URL from "../../config";
+import { notificarExito, notificarError } from "../../utils/notificaciones";
 
 const EditarExperiencia = ({
   modalEditarExperiencia,
@@ -51,7 +52,7 @@ const EditarExperiencia = ({
     const requiredFields = ["profesion", "descripcionPerfil", "fechaInicioExp"];
     for (let field of requiredFields) {
       if (!formData[field]?.trim()) {
-        alert(`El campo ${field} es obligatorio.`);
+        notificarError(`El campo ${field} es obligatorio.`);
         return false;
       }
     }
@@ -65,7 +66,10 @@ const EditarExperiencia = ({
 
     try {
       const token = getCookie("auth_token");
-      if (!token) return alert("No se encontró el token de autenticación.");
+      if (!token) {
+        notificarError("No se encontró el token de autenticación.");
+        return;
+      }
 
       const response = await axios.patch(
         `${API_URL}actualizarExperiencia`,
@@ -81,7 +85,7 @@ const EditarExperiencia = ({
       );
 
       if (response.data.status === "success") {
-        alert("Experiencia laboral actualizada correctamente");
+        notificarExito("Experiencia laboral actualizada correctamente");
         onEditarExperiencia(
           response.data.data || {
             ...formData,
@@ -90,14 +94,14 @@ const EditarExperiencia = ({
         );
         toggleModalEditarExperiencia();
       } else {
-        alert("Error al actualizar la experiencia laboral.");
+        notificarError("Error al actualizar la experiencia laboral.");
       }
     } catch (error) {
       console.error(
         "Error al actualizar:",
         error.response?.data || error.message
       );
-      alert(
+      notificarError(
         "Error del servidor: " +
           (error.response?.data?.message || "Inténtalo nuevamente.")
       );
