@@ -4,13 +4,14 @@ import {
   verificarPostulacion,
   aplicarAConvocatoria,
 } from "../services/ConvocatoriasService";
+import { notificarExito, notificarError } from "../utils/notificaciones";
 
 const DetallesTrabajo = ({ idconvocatoria }) => {
   const [detalleConvocatoria, setDetalleConvocatoria] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [aplicado, setAplicado] = useState(false);
+  const [estadoAplicacion, setEstadoAplicacion] = useState("puedeAplicar"); // nuevo estado
 
   useEffect(() => {
     const fetchConvocatoriaDetails = async () => {
@@ -29,42 +30,71 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
     const checkIfApplied = async () => {
       try {
         const response = await verificarPostulacion(idconvocatoria);
-        if (
-          response &&
-          response.status === "PostulacionVerificada" &&
-          response.data &&
-          Object.keys(response.data).length > 0
-        ) {
-          setAplicado(true);
+        console.log("Respuesta de verificarPostulacion:", response);
+        if (response?.status === "SinHojaDeVida") {
+          notificarError(
+            "Debes registrar tu hoja de vida antes de postularte."
+          );
+          setEstadoAplicacion("sinHojaDeVida");
+          return;
+        }
+        if (response?.status === "PostulacionVerificada" && response.data) {
+          // Aquí deberías tener una bandera para saber si YA aplicó
+          if (response.data.yaAplicado) {
+            setEstadoAplicacion("yaAplicado");
+          } else {
+            setEstadoAplicacion("puedeAplicar");
+          }
+          const { tieneEstudio, tieneExperiencia } = response.data;
+          if (!tieneEstudio && !tieneExperiencia) {
+            notificarError(
+              "No tienes estudios ni experiencia registrados. Completa tu perfil para tener mas posibilidades de ser seleccionado."
+            );
+          } else if (!tieneEstudio) {
+            notificarError(
+              "No tienes estudios registrados. Completa tu perfil para tener mas posibilidades de ser seleccionado."
+            );
+          } else if (!tieneExperiencia) {
+            notificarError(
+              "No tienes experiencia registrada. Completa tu perfil para tener mas posibilidades de ser seleccionado."
+            );
+          }
         } else {
-          setAplicado(false);
+          setEstadoAplicacion("puedeAplicar");
         }
       } catch (err) {
-        setAplicado(false);
+        setEstadoAplicacion("puedeAplicar");
       }
     };
 
     fetchConvocatoriaDetails();
-    checkIfApplied();
+    checkIfApplied(); // <-- Esto debe ejecutarse
   }, [idconvocatoria]);
 
   const handleApply = async () => {
-    setAplicado(true);
+    setEstadoAplicacion("yaAplicado");
     try {
       const response = await aplicarAConvocatoria(idconvocatoria);
+      if (response && response.status === "SinHojaDeVida") {
+        notificarError("Debes registrar tu hoja de vida antes de postularte.");
+        setEstadoAplicacion("sinHojaDeVida");
+        return;
+      }
+      console.log("Response from applying:", response);
+
       if (response && response.message === "success") {
-        alert("Has aplicado a la convocatoria");
+        notificarExito("Has aplicado a la convocatoria");
         setSuccessMessage(response.message);
       } else if (response && response.error) {
         setError(response.error);
-        setAplicado(false);
+        setEstadoAplicacion("puedeAplicar");
       } else {
         setError("Error al aplicar a la convocatoria.");
-        setAplicado(false);
+        setEstadoAplicacion("puedeAplicar");
       }
     } catch (err) {
       setError("Error al enviar la aplicación.");
-      setAplicado(false);
+      setEstadoAplicacion("puedeAplicar");
     }
   };
 
@@ -153,15 +183,13 @@ const DetallesTrabajo = ({ idconvocatoria }) => {
                         transition: "all 0.3s ease-in-out",
                       }}
                       onClick={handleApply}
-                      disabled={aplicado}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#007bff")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#0d6efd")
-                      }
+                      disabled={estadoAplicacion !== "puedeAplicar"}
                     >
-                      {aplicado ? "Ya aplicado" : "Aplicar ahora"}
+                      {estadoAplicacion === "sinHojaDeVida"
+                        ? "Registrar Hoja de vida"
+                        : estadoAplicacion === "yaAplicado"
+                        ? "Ya aplicado"
+                        : "Aplicar ahora"}
                     </button>
                   </div>
                 </div>
