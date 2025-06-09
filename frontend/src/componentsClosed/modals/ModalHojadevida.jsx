@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import API_URL from "../../config";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const ModalHojaDeVida = ({
   modalHojaDeVida,
@@ -139,17 +140,17 @@ const ModalHojaDeVida = ({
       );
       console.log(response);
       if (response.data.status === "success") {
-        alert("Hoja de vida actualizada correctamente");
+        notificarExito("Hoja de vida actualizada correctamente");
         toggleModalHojaDeVida();
       } else {
-        alert("Error al actualizar la hoja de vida.");
+        notificarError("Error al actualizar la hoja de vida.");
       }
     } catch (error) {
       console.error(
         "Error al actualizar:",
         error.response?.data || error.message
       );
-      alert(
+      notificarError(
         "Error del servidor: " +
           (error.response?.data?.message || "Inténtalo nuevamente.")
       );
