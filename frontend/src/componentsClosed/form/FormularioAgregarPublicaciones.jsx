@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from "react";
 import { agregarPublicacion } from "../../services/Publicaciones";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const getCookie = (name) => {
   const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
@@ -92,6 +93,7 @@ const FormularioPublicacion = () => {
     try {
       const response = await agregarPublicacion(formData);
       if (response?.status === "success") {
+        notificarExito("Publicación agregada correctamente.");
         setEnviado(true);
         setForm({
           titulo: "",
@@ -102,6 +104,7 @@ const FormularioPublicacion = () => {
           estado: "activo",
         });
       } else {
+        notificarError("Error al agregar publicación.");
         setErrorApi(response?.message || "Error al agregar publicación.");
       }
     } catch (error) {
