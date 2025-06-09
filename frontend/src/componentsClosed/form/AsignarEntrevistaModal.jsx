@@ -5,6 +5,7 @@
 
 import React, { useState } from "react";
 import { asignarEntrevista } from "../../services/EntrevistasService";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
   const [formData, setFormData] = useState({
@@ -26,14 +27,14 @@ const AsignarEntrevistaModal = ({ show, handleClose, postulacion }) => {
     try {
       const response = await asignarEntrevista(formData);
       if (response?.Entrevista) {
-        alert("✅ Entrevista asignada exitosamente");
+        notificarExito("✅ Entrevista asignada exitosamente");
         handleClose();
       } else {
-        alert("❌ Error al asignar la entrevista");
+        notificarError("❌ Error al asignar la entrevista");
       }
     } catch (error) {
       console.error("Error al asignar la entrevista", error);
-      alert("⚠️ Error al conectar con el servidor");
+      notificarError("⚠️ Error al conectar con el servidor");
     }
   };
 
