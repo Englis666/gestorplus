@@ -11,6 +11,7 @@ import {
   desactivarCargo as desactivarCargoService,
   activarCargo as activarCargoService,
 } from "../../services/Cargos";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const TablaCargos = () => {
   const [cargos, setCargos] = useState([]);
@@ -36,26 +37,33 @@ const TablaCargos = () => {
   const desactivarCargo = async (idCargo) => {
     try {
       await desactivarCargoService(idCargo);
+      notificarExito("Cargo desactivado correctamente.");
       await fetchCargos();
     } catch (err) {
       const mensaje =
         err?.response?.data?.error ??
         "No se pudo desactivar el cargo. Inténtalo de nuevo.";
-      alert(mensaje);
+      notificarError(mensaje);
     }
   };
 
   const activarCargo = async (idCargo) => {
     try {
       await activarCargoService(idCargo);
+      notificarExito("Cargo activado correctamente.");
       await fetchCargos();
     } catch (err) {
+      notificarError(
+        err?.response?.data?.error ??
+          "No se pudo activar el cargo. Inténtalo de nuevo."
+      );
       console.error("[activarCargo] error al activar el cargo:", err);
     }
   };
 
   const agregarCargo = () => {
     fetchCargos();
+    notificarExito("Cargo agregado correctamente.");
   };
 
   // Definir columnas para DataTable
