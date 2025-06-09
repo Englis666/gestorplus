@@ -75,7 +75,6 @@ export const agregarCargo = async (nuevoCargo) => {
     const response = await axios.post(`${API_URL}agregarCargo`, nuevoCargo, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log(response);
     return response.data;
   } catch (error) {
     console.error("Error al agregar cargo:", error);
