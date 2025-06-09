@@ -38,9 +38,7 @@ const ConvocatoriaIndividual = () => {
 
   useEffect(() => {
     axios
-      .get(API_URL, {
-        params: { action: "obtenerConvocatorias" },
-      })
+      .get(`${API_URL}obtenerConvocatorias`)
       .then((response) => {
         if (Array.isArray(response.data.convocatorias)) {
           setConvocatorias(response.data.convocatorias);
