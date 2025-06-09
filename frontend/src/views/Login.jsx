@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
 import { logearse } from "../services/Auth";
 import "../css/forms/login.css";
+import { notificarExito } from "../utils/notificaciones";
 
 const Login = () => {
   const [formData, setFormData] = useState({ num_doc: "", password: "" });
@@ -31,6 +32,7 @@ const Login = () => {
     try {
       const res = await logearse(formData.num_doc, formData.password);
       if (res.status === "success") {
+        notificarExito("Inicio de sesión exitoso");
         login({ token: res.token });
         // Decodifica el token para obtener el rol
         const payload = res.token.split(".")[1];
