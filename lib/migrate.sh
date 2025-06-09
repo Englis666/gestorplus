@@ -41,7 +41,7 @@ function migrate_excel() {
     docker cp "$file_path" "$php_container":/var/www/html/uploads/migraciones || {
       echo -e "¡Problemas al copiar el archivo al contenedor! ¿Está corriendo el contenedor?"
       pause
-      returnz
+      return
     }
 
     # 🚀 Ejecutar migración PHP dentro del contenedor
