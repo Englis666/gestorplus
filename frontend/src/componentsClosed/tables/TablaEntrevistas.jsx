@@ -12,6 +12,7 @@ import {
   enviarAsistenciaEntrevista,
   enviarNoAsistenciaEntrevista,
 } from "../../services/EntrevistasService";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const TablaEntrevistas = () => {
   const [entrevistas, setEntrevistas] = useState([]);
@@ -62,8 +63,10 @@ const TablaEntrevistas = () => {
     try {
       if (asistencia) {
         await enviarAsistenciaEntrevista(identrevista, true);
+        notificarExito("Asistencia registrada correctamente.");
       } else {
         await enviarNoAsistenciaEntrevista(identrevista, "No asistió");
+        notificarExito("No asistencia registrada correctamente.");
       }
       setEntrevistas((prev) =>
         prev.map((e) =>
@@ -73,6 +76,10 @@ const TablaEntrevistas = () => {
         )
       );
     } catch (err) {
+      notificarError(
+        err?.response?.data?.error ??
+          "Error al actualizar la asistencia. Inténtalo de nuevo."
+      );
       console.error("Error al actualizar la asistencia", err);
     }
   };
