@@ -65,7 +65,7 @@ class AuthControllerTest extends TestCase
         $this->mockAuth->expects($this->once())
             ->method('registrar')
             ->with($this->callback(function ($data) {
-                return isset($data['password']) && password_verify('1234', $data['password']);
+                return isset($data['password']) && $data['password'] === '1234';
             }))
             ->willReturn("Usuario registrado correctamente");
 

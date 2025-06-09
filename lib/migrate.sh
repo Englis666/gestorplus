@@ -35,10 +35,10 @@ function migrate_excel() {
       return
     fi
 
-    docker exec "$php_container" mkdir -p /var/www/html/public/uploads
+    docker exec "$php_container" mkdir -p /var/www/html/uploads/migraciones
 
     echo "¡Copiando tu archivo '${file_path}' al contenedor PHP! Casi listo..."
-    docker cp "$file_path" "$php_container":/var/www/html/public/uploads/ || {
+    docker cp "$file_path" "$php_container":/var/www/html/uploads/migraciones || {
       echo -e "¡Problemas al copiar el archivo al contenedor! ¿Está corriendo el contenedor?"
       pause
       return
@@ -47,7 +47,7 @@ function migrate_excel() {
     # 🚀 Ejecutar migración PHP dentro del contenedor
     basefile=$(basename "$file_path")
     echo "📥 Ejecutando la migración en el contenedor..."
-    docker exec "$php_container" php migrations/MigrarExcelRunner.php "/var/www/html/public/uploads/$basefile" || {
+    docker exec "$php_container" php migrations/MigrarExcelRunner.php "/var/www/html/uploads/migraciones/$basefile" || {
       echo -e "❌ Error al ejecutar la migración en el contenedor."
       pause
       return
