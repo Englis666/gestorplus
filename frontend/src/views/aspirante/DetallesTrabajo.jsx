@@ -3,7 +3,6 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import React from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import DetallesTrabajo from "../../components/DetallesTrabajo";
