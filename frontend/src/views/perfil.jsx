@@ -227,10 +227,13 @@ const Perfil = () => {
       const decodedToken = jwtDecode(token);
       if (isTokenExpired(decodedToken)) return;
 
-      const response = await axios.patch(API_URL, updatedData, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { action: "actualizarPerfil" },
-      });
+      const response = await axios.patch(
+        `${API_URL}actualizarPerfil`,
+        updatedData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.status === 200) {
         setFormData((prevFormData) => ({
           ...prevFormData,
