@@ -51,16 +51,58 @@ class Postulacion {
 
     public function verificarPostulacion(int $num_doc, int $idconvocatoria): ?array {
         try {
-            $sql = "
-                SELECT * FROM postulacion 
-                WHERE usuario_num_doc = :num_doc 
-                AND convocatoria_idconvocatoria = :idconvocatoria
-            ";
-            $params = [
+            $sqlHoja = "SELECT h.fechaNacimiento, h.direccion, h.ciudad, h.ciudadNacimiento, h.telefono, h.estadohojadevida, h.estadoCivil, h.genero, h.habilidades, h.portafolio
+                        FROM usuario u
+                        INNER JOIN hojadevida h ON u.hojadevida_idHojadevida = h.idHojadevida
+                        WHERE u.num_doc = :num_doc";
+            $params = [':num_doc' => $num_doc];
+            $hoja = $this->dbService->ejecutarConsulta($sqlHoja, $params, true);
+
+            if (!$hoja) {
+                return ['tieneHojaDeVida' => false];
+            }
+
+            $camposImportantes = [
+                'fechaNacimiento', 'direccion', 'ciudad', 'ciudadNacimiento', 'telefono',
+                'estadoCivil', 'genero', 'habilidades', 'portafolio'
+            ];
+            $tieneDatos = false;
+            foreach ($camposImportantes as $campo) {
+                if (!empty($hoja[$campo])) {
+                    $tieneDatos = true;
+                    break;
+                }
+            }
+            if (!$tieneDatos) {
+                return ['tieneHojaDeVida' => false];
+            }
+
+
+            $sqlId = "SELECT h.idHojadevida FROM usuario u INNER JOIN hojadevida h ON u.hojadevida_idHojadevida = h.idHojadevida WHERE u.num_doc = :num_doc";
+            $idRow = $this->dbService->ejecutarConsulta($sqlId, [':num_doc' => $num_doc], true);
+            $idHojadevida = $idRow['idHojadevida'] ?? null;
+
+
+
+            $sqlPostulacion = "SELECT idpostulacion FROM postulacion WHERE usuario_num_doc = :num_doc AND convocatoria_idconvocatoria = :idconvocatoria LIMIT 1";
+            $yaAplicadoRow = $this->dbService->ejecutarConsulta($sqlPostulacion, [
                 ':num_doc' => $num_doc,
                 ':idconvocatoria' => $idconvocatoria
+            ], true);
+            $yaAplicado = !empty($yaAplicadoRow);
+
+            $sqlEstudio = "SELECT idestudio FROM estudio WHERE hojadevida_idHojadevida = :idHojadevida LIMIT 1";
+            $estudio = $this->dbService->ejecutarConsulta($sqlEstudio, [':idHojadevida' => $idHojadevida], true);
+
+            $sqlExp = "SELECT idexperienciaLaboral FROM experiencialaboral WHERE hojadevida_idHojadevida = :idHojadevida LIMIT 1";
+            $exp = $this->dbService->ejecutarConsulta($sqlExp, [':idHojadevida' => $idHojadevida], true);
+
+            return [
+                'tieneHojaDeVida' => true,
+                'yaAplicado' => $yaAplicado, // <--- ESTA BANDERA ES CLAVE
+                'tieneEstudio' => !empty($estudio['idestudio']),
+                'tieneExperiencia' => !empty($exp['idexperienciaLaboral'])
             ];
-            return $this->dbService->ejecutarConsulta($sql, $params, true) ?? null;
         } catch (Exception $e) {
             error_log("Error al verificar postulaciones: " . $e->getMessage());
             return null;
