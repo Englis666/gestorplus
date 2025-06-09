@@ -46,6 +46,8 @@ const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
     },
   ];
 
+  const SALARIO_MAX = 40000000;
+
   const validar = (campo = null, valor = null) => {
     let nuevosErrores = { ...errores };
     const f = { ...formData, [campo]: valor ?? formData?.[campo] };
@@ -74,6 +76,10 @@ const FormularioVinculacion = ({ formData, handleChange, handleSubmit }) => {
 
     if (!f.salario || parseFloat(f.salario) <= 0)
       nuevosErrores.salario = "El salario debe ser mayor a 0.";
+    else if (parseFloat(f.salario) > SALARIO_MAX)
+      nuevosErrores.salario = `El salario no puede superar $${SALARIO_MAX.toLocaleString(
+        "es-CO"
+      )}.`;
     else delete nuevosErrores.salario;
 
     if (!f.estadoContrato || f.estadoContrato.trim().length < 3)
