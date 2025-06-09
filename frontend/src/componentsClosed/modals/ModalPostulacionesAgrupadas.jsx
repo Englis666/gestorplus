@@ -11,6 +11,7 @@ import {
   obtenerHojadevidaPorNumDoc,
   analizarHojaDeVidaPorNumDoc,
 } from "../../services/HojadevidaService";
+import { notificarExito } from "../../utils/notificaciones";
 
 const ModalPostulantes = ({ convocatoria, onClose }) => {
   const [postulantes, setPostulantes] = useState([]);
@@ -75,6 +76,10 @@ const ModalPostulantes = ({ convocatoria, onClose }) => {
     setAnalizando(true);
     analizarHojaDeVidaPorNumDoc(hoja.num_doc)
       .then((data) => {
+        notificarExito(
+          "Análisis completado",
+          "La hoja de vida ha sido analizada correctamente."
+        );
         setAnalisis(data);
       })
       .catch(() => {
