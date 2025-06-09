@@ -1,4 +1,3 @@
-
 function migrate_excel() {
   echo -e "🗂️ Paso 8: ¡Hora de traer tus datos a GestorPlus!"
 
@@ -44,24 +43,17 @@ function migrate_excel() {
       pause
       return
     }
-  fi
-}
 
-function create_admin_user() {
-  php_container=$(docker ps --filter "name=gestorplus-php" --format "{{.Names}}")
-  if [ -z "$php_container" ]; then
-    echo -e "❌ No se encontró el contenedor PHP. ¿Está corriendo Docker correctamente?"
+    # 🚀 Ejecutar migración PHP dentro del contenedor
+    basefile=$(basename "$file_path")
+    echo "📥 Ejecutando la migración en el contenedor..."
+    docker exec "$php_container" php migrations/MigrarExcelRunner.php "/var/www/html/public/uploads/$basefile" || {
+      echo -e "❌ Error al ejecutar la migración en el contenedor."
+      pause
+      return
+    }
+
+    echo -e "✅ ¡Migración completada con éxito!"
     pause
-    return
   fi
-  echo -e "👑 Paso 9: ¡Creando a tu primer súper administrador de GestorPlus!"
-  echo "Este usuario tendrá control total sobre la aplicación. ¡Elige bien sus datos!"
-  echo "Se te pedirán los detalles para este nuevo usuario."
-  docker exec "$php_container" php migrations/CrearAdministrador.php || {
-    echo -e "¡No pude crear el usuario administrador! Algo salió mal."
-    echo "Asegúrate de que el contenedor PHP esté vivo y coleando."
-    exit 1
-  }
-  echo -e "✅ ¡Usuario administrador creado con éxito! ¡Eres el jefe!"
-  pause
 }
