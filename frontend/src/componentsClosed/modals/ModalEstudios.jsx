@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import API_URL from "../../config";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
   const [formData, setFormData] = useState({
@@ -117,8 +118,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
         },
       })
       .then((res) => {
-        console.log("Respuesta del servidor:", res);
-        alert("✅ Estudio agregado correctamente.");
+        notificarExito("✅ Estudio agregado correctamente.");
 
         if (res.data && res.data.data) {
           onAgregarEstudio(res.data.data);
@@ -128,7 +128,7 @@ const Estudios = ({ modalEstudios, toggleModalEstudios, onAgregarEstudio }) => {
       })
       .catch((err) => {
         console.error("Error response:", err.response?.data || err.message);
-        alert("❌ Error al guardar estudio.");
+        notificarError("❌ Error al guardar estudio.");
       })
       .finally(() => {
         setIsSubmitting(false);
