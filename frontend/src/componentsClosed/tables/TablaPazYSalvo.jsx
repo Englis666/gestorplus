@@ -12,6 +12,7 @@ import {
   generarPazYSalvo,
 } from "../../services/PazySalvoService";
 import { obtenerEmpleados } from "../../services/EmpleadosService";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const TablaPazYSalvo = () => {
   const [Salvos, setSalvos] = useState([]);
@@ -78,13 +79,13 @@ const TablaPazYSalvo = () => {
     try {
       const res = await generarPazYSalvo(form);
       if (res.success) {
-        alert("Paz y salvo generado con éxito");
+        notificarExito("Paz y salvo generado con éxito");
         setSalvos([...Salvos, form]);
       } else {
-        alert("No se pudo generar el paz y salvo");
+        notificarError("No se pudo generar el paz y salvo");
       }
     } catch {
-      alert("Error al generar el paz y salvo");
+      notificarError("Error al generar el paz y salvo");
     }
   };
 
