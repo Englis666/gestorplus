@@ -7,6 +7,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import API_URL from "../../config";
+import { notificarExito, notificarError } from "../../utils/notificaciones";
 const getCookie = (name) => {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -52,14 +53,14 @@ const ModalEditarPublicacion = ({
         }
       );
       if (response.status === 200) {
-        alert("Se actualizo la publicacion correctamnete");
+        notificarExito("Se actualizo la publicacion correctamnete");
         guardarCambiosPublicacion(publicacionEditada);
       } else {
-        alert("Hubo un error al guardar los cambios.");
+        notificarError("Hubo un error al guardar los cambios.");
       }
     } catch (error) {
       console.error("Error al guardar cambios:", error);
-      alert("Hubo un error al guardar los cambios.");
+      notificarError("Hubo un error al guardar los cambios.");
     }
   };
 
