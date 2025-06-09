@@ -8,6 +8,7 @@ import {
   permisoRechazado,
 } from "../../services/PermisosService";
 import PermisosLineChart from "../Graphics/PermisoLineChart";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const TablaPermisos = () => {
   const [permisos, setPermisos] = useState([]);
@@ -39,7 +40,7 @@ const TablaPermisos = () => {
   const handleAceptar = async (idPermisos) => {
     try {
       await permisoAceptado(idPermisos);
-      alert("Permiso aceptado con éxito.");
+      notificarExito("Permiso aceptado con éxito.");
       setPermisos((prev) =>
         prev.map((permiso) =>
           permiso.idPermisos === idPermisos
@@ -49,14 +50,14 @@ const TablaPermisos = () => {
       );
     } catch (error) {
       console.error("Error al aceptar el permiso:", error);
-      alert("Hubo un problema al aceptar el permiso.");
+      notificarError("Hubo un problema al aceptar el permiso.");
     }
   };
 
   const handleRechazar = async (idPermisos) => {
     try {
       await permisoRechazado(idPermisos);
-      alert("Permiso rechazado con éxito.");
+      notificarExito("Permiso rechazado con éxito.");
       setPermisos((prev) =>
         prev.map((permiso) =>
           permiso.idPermisos === idPermisos
@@ -66,7 +67,7 @@ const TablaPermisos = () => {
       );
     } catch (error) {
       console.error("Error al rechazar el permiso:", error);
-      alert("Hubo un problema al rechazar el permiso.");
+      notificarError("Hubo un problema al rechazar el permiso.");
     }
   };
 
