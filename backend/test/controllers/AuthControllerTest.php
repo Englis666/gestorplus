@@ -67,13 +67,36 @@ class AuthControllerTest extends TestCase
             ->with($this->callback(function ($data) {
                 return isset($data['password']) && password_verify('1234', $data['password']);
             }))
-            ->willReturn(true);
+            ->willReturn("Usuario registrado correctamente");
 
         $this->mockResponse->expects($this->once())
             ->method('responder')
             ->with($this->callback(function ($response) {
-                return $response['status'] === 'success' && $response['message'] === true;
+                return $response['status'] === 'success'
+                    && $response['message'] === 'Usuario registrado correctamente';
             }));
+
+        $this->controller->registrar($datosSimulados);
+    }
+
+    public function testRegistrarDocumentoYaRegistrado()
+    {
+        $datosSimulados = [
+            'num_doc' => '7891011',
+            'nombres' => 'Ana López',
+            'password' => '1234'
+        ];
+
+        $this->mockAuth->expects($this->once())
+            ->method('registrar')
+            ->willReturn("El número de documento ya está registrado.");
+
+        $this->mockResponse->expects($this->once())
+            ->method('responder')
+            ->with($this->callback(function ($response) {
+                return $response['status'] === 'error'
+                    && $response['message'] === 'El número de documento ya está registrado.';
+            }), 400);
 
         $this->controller->registrar($datosSimulados);
     }
