@@ -79,6 +79,8 @@ export const obtenerPostulacionesAspirante = async () => {
       return response.data.postulaciones;
     } else if (response.data && Array.isArray(response.data.Postulaciones)) {
       return response.data.Postulaciones;
+    } else if (response.data && Array.isArray(response.data.data)) {
+      return response.data.data;
     } else {
       return [];
     }
