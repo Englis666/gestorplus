@@ -123,7 +123,20 @@ export const agregarPublicacion = async (formData) => {
         },
       }
     );
-    return response.data;
+    console.log("Respuesta de agregarPublicacion:", response.data);
+
+    if (
+      response.data.mensaje &&
+      response.data.mensaje.toLowerCase().includes("exitosamente")
+    ) {
+      return { status: "success", ...response.data };
+    } else {
+      throw new Error(
+        response.data.message ||
+          response.data.mensaje ||
+          "Error al agregar publicación"
+      );
+    }
   } catch (error) {
     console.error("Error al agregar publicación:", error);
     throw new Error("No se pudo agregar la publicación");
