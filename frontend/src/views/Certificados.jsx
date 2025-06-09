@@ -3,11 +3,12 @@
  * Prohibida su copia, redistribución o uso sin autorización expresa de CodeAdvance.
  */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
 import NavbarClosed from "../componentsClosed/Navbar";
 import { jwtDecode } from "jwt-decode";
 import { obtenerDatosParaCertificado } from "../services/CertficiadoService";
+import { notificarError } from "../utils/notificaciones";
 
 const Certificados = () => {
   const fechaEmision = new Date().toLocaleDateString("es-ES");
@@ -59,6 +60,15 @@ const Certificados = () => {
 
     getUserData();
   }, []);
+
+  // Mostrar notificación solo cuando no hay datos y no está cargando
+  useEffect(() => {
+    if (!loading && (!userData || userData.length === 0)) {
+      notificarError(
+        "No se encontraron datos para el certificado. Asegúrese de que el usuario tenga información registrada."
+      );
+    }
+  }, [loading, userData]);
 
   const handleDownload = () => {
     const doc = new jsPDF({ unit: "mm", format: "a4" });
@@ -271,16 +281,15 @@ Este certificado se emite para los fines que el interesado estime convenientes.`
           >
             Certificado Laboral
           </button>
-          {/* Desabilitado por tiempo (No hubo implementacion en la bd) 
-            <button className="btn btn-secondary px-5 py-2 ms-3" onClick={() => setTipoCertificado("arl")}>
-            Certificado ARL
-          </button> */}
-          <button
-            className="btn btn-primary px-5 py-2 ms-3"
-            onClick={handleDownload}
-          >
-            Descargar {tipoCertificado === "laboral" ? "Laboral" : "ARL"}
-          </button>
+
+          {userData && userData.length > 0 && (
+            <button
+              className="btn btn-primary px-5 py-2 ms-3"
+              onClick={handleDownload}
+            >
+              Descargar {tipoCertificado === "laboral" ? "Laboral" : "ARL"}
+            </button>
+          )}
         </div>
       </div>
     </div>
