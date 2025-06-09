@@ -75,8 +75,14 @@ class ArchivosController extends BaseController {
             echo json_encode($response);
             return;
         }
+        if (empty($response['documentoContrato'])) {
+            http_response_code(404);
+            echo json_encode(["error" => "No se encontró el contrato para el usuario."]);
+            return;
+        }
 
         $filePath = $_SERVER['DOCUMENT_ROOT'] . "/" . ltrim($response['documentoContrato'], "/");
+            
 
         if (!file_exists($filePath)) {
             http_response_code(404);
