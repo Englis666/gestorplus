@@ -61,17 +61,23 @@ export const enviarNoAsistenciaEntrevista = async (identrevista, motivo) => {
   }
 };
 
-export const rechazarEntrevistado = async (num_doc) => {
+export const rechazarEntrevistado = async (num_doc, identrevista) => {
   try {
     const token = getCookie("auth_token");
     if (!token) throw new Error("Token No encontrado");
     const response = await axios.patch(
       `${API_URL}rechazarEntrevistado`,
-      { num_doc },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      { num_doc, identrevista },
+      { headers: { Authorization: `Bearer ${token}` } }
     );
+    console.log("Respuesta de rechazarEntrevistado:", response.data);
+    if (!response || !response.data) {
+      throw new Error("No se pudo rechazar al entrevistado");
+    }
+    if (response.status !== 200) {
+      throw new Error("Error al rechazar al entrevistado");
+    }
+
     return response.data;
   } catch (error) {
     console.error("Error al rechazar entrevistado:", error);
