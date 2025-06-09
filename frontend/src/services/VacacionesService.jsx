@@ -57,11 +57,10 @@ export const solicitarVacacion = async (vacacionData) => {
   if (!token) throw new Error("Token no proporcionado");
 
   const response = await axios.post(
-    `${API_URL}solicitarVacacion`,
+    `${API_URL}solicitarVacaciones`,
     { ...vacacionData },
     { headers: { Authorization: `Bearer ${token}` } }
   );
-
   if (response.status !== 200) {
     throw new Error("Error al solicitar la vacación");
   }
