@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerDatosDelEntrevistado } from "../../services/HojadevidaService";
 import { rechazarEntrevistado } from "../../services/EntrevistasService";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const ModalHojaDeVidaEntrevistado = ({ num_doc, identrevista, onClose }) => {
   const [formData, setFormData] = useState({});
@@ -32,7 +33,7 @@ const ModalHojaDeVidaEntrevistado = ({ num_doc, identrevista, onClose }) => {
       }
     } catch (error) {
       console.error("Error al obtener la hoja de vida:", error);
-      alert("Ocurrió un error al cargar los datos.");
+      notificarError("Ocurrió un error al cargar los datos.");
       setFormData({});
       setHasData(false);
     } finally {
@@ -42,12 +43,12 @@ const ModalHojaDeVidaEntrevistado = ({ num_doc, identrevista, onClose }) => {
 
   const handleRechazar = async () => {
     try {
-      await rechazarEntrevistado(num_doc);
-      alert("Aspirante rechazado correctamente.");
+      await rechazarEntrevistado(num_doc, identrevista);
+      notificarExito("Aspirante rechazado correctamente.");
       onClose();
     } catch (error) {
       console.error("Error al rechazar al entrevistado", error);
-      alert("Ocurrió un error al rechazar al entrevistado.");
+      notificarError("Ocurrió un error al rechazar al entrevistado.");
     }
   };
 
