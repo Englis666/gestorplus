@@ -179,4 +179,15 @@ class EntrevistaController extends BaseController{
     }
 
 
+    public function rechazarEntrevistado(array $data): void
+    {
+        if (!$this->parametrosRequeridos($data, ['num_doc', 'identrevista'])) {
+            $this->jsonResponseService->responderError('Parámetros requeridos', 400);
+            return;
+        }
+        $num_doc = $this->getIntParam($data, 'num_doc');
+        $identrevista = $this->getIntParam($data, 'identrevista');
+        $resultado = $this->entrevista->rechazarEntrevistado($identrevista, $num_doc);
+        $this->jsonResponseService->responder(['Rechazo' => $resultado]);
+    }
 }
