@@ -45,7 +45,7 @@ const CalendarioDeEntrevistas = ({ entrevistas, onSelectInterview }) => {
           },
         })}
         tooltipAccessor={(event) => event.title}
-        onSelectEvent={handleSelectEvent} // Se llama para mostrar el modal
+        onSelectEvent={handleSelectEvent}
       />
     </div>
   );
