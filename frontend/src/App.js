@@ -3,7 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "material-design-icons/iconfont/material-icons.css";
 import "animate.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import React, { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -66,6 +68,7 @@ function App() {
       <BrowserRouter>
         <AuthCheck />
         <div className="App">
+          <ToastContainer position="top-right" autoClose={3000} />
           <Routes>
             {publicRoutes}
             <Route element={<RoleRoute allowedRoles={[1, 2, 3]} />}>
