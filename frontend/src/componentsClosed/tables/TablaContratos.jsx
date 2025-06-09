@@ -13,6 +13,7 @@ import {
   buscarIdEvaluacion,
   obtenerContratos,
 } from "../../services/Contratos";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
   const [vinculaciones, setVinculaciones] = useState([]);
@@ -90,8 +91,9 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
     }
     try {
       const response = await asignarVinculacion(formData);
+      console.log("Respuesta de asignarVinculacion:", response);
       if (response && response.Vinculacion) {
-        alert("Vinculación asignada con éxito");
+        notificarExito("Vinculación asignada con éxito");
         setFormData({
           num_doc,
           nombres,
@@ -104,25 +106,27 @@ const TablaContratos = ({ num_doc, nombres, identrevista, idpostulacion }) => {
           fechaFirma: "",
         });
       } else {
-        alert("Error al asignar la vinculación");
+        notificarError("Error al asignar la vinculación");
       }
     } catch (err) {
       console.error("Error al enviar los datos:", err);
-      alert("Hubo un problema al asignar la vinculación.");
+      notificarError(
+        "Hubo un problema al asignar la vinculación." + err.message
+      );
     }
   };
 
   const handleVerContrato = async (num_doc) => {
     try {
       if (!num_doc || isNaN(Number(num_doc))) {
-        alert("Número de documento inválido");
+        notificarError("Número de documento inválido");
         return;
       }
       const url = await obtenerContratos(num_doc);
       setPdfUrl(url);
       setModalVerContratoAbierto(true);
     } catch (error) {
-      alert("No se pudo obtener el contrato.");
+      notificarError("No existe contrato para ese empleado." + error.message);
     }
   };
   const closeModal = () => {
