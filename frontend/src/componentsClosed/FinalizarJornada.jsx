@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { finalizarJornada } from "../services/JornadasService";
+import { notificarError, notificarExito } from "../utils/notificaciones";
 
 const FinalizarJornada = () => {
   const [mensaje, setMensaje] = useState("");
@@ -35,10 +36,10 @@ const FinalizarJornada = () => {
     try {
       const fechaBogota = obtenerFechaBogota();
       await finalizarJornada(fechaBogota);
-      setMensaje("✅ Jornada finalizada correctamente.");
+      notificarExito("✅ Jornada finalizada correctamente.");
     } catch (error) {
       console.error("Error al finalizar jornada:", error);
-      setMensaje("❌ Error al finalizar la jornada.");
+      notificarError("❌ Error al finalizar la jornada.");
     } finally {
       setCargando(false);
     }
