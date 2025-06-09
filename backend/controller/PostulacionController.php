@@ -100,8 +100,20 @@ class PostulacionController extends BaseController{
         }
 
         try {
-            $resultados = $this->postulacion->verificarPostulacion($num_doc, $idconvocatoria);
-            $this->jsonResponseService->responder(['status' => 'PostulacionVerificada', 'data' => $resultados]);
+            $resultados = $this->postulacion->verificarPostulacion((int)$num_doc, (int)$idconvocatoria);
+
+            if (!$resultados['tieneHojaDeVida']) {
+                $this->jsonResponseService->responder([
+                    'status' => 'SinHojaDeVida',
+                    'message' => 'Debes registrar tu hoja de vida antes de postularte.'
+                ]);
+                return;
+            }
+
+            $this->jsonResponseService->responder([
+                'status' => 'PostulacionVerificada',
+                'data' => $resultados
+            ]);
         } catch (Exception $e) {
             $this->jsonResponseService->responderError($e->getMessage(), $e->getCode() ?: 400);
         }
