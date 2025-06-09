@@ -9,6 +9,7 @@ import {
   rechazarVacacion,
   solicitarVacacion,
 } from "../../services/VacacionesService";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const localizer = momentLocalizer(moment);
 
@@ -85,32 +86,32 @@ const TablaVacaciones = () => {
         fechaInicio: form.fechaInicio,
         fechaFin: form.fechaFin,
       });
-      alert("Vacaciones solicitadas correctamente.");
+      notificarExito("Vacaciones solicitadas correctamente.");
       setForm({ fechaInicio: "", fechaFin: "" });
       fetchVacaciones(rol);
     } catch {
-      alert("Error al solicitar vacaciones.");
+      notificarError("Error al solicitar vacaciones.");
     }
   };
 
   const handleAceptarVacacion = async (idvacacion) => {
     try {
       await aceptarVacacion(idvacacion);
-      alert("Vacación aceptada.");
+      notificarExito("Vacación aceptada.");
       setVacaciones((prev) =>
         prev.map((v) =>
           v.idvacacion === idvacacion ? { ...v, estadoVacacion: "Aceptada" } : v
         )
       );
     } catch {
-      alert("Error al aceptar la vacación.");
+      notificarError("Error al aceptar la vacación.");
     }
   };
 
   const handleRechazarVacacion = async (idvacacion) => {
     try {
       await rechazarVacacion(idvacacion);
-      alert("Vacación rechazada.");
+      notificarExito("Vacación rechazada.");
       setVacaciones((prev) =>
         prev.map((v) =>
           v.idvacacion === idvacacion
@@ -119,7 +120,7 @@ const TablaVacaciones = () => {
         )
       );
     } catch {
-      alert("Error al rechazar la vacación.");
+      notificarError("Error al rechazar la vacación.");
     }
   };
 
