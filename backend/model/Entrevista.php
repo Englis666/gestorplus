@@ -74,7 +74,6 @@ class Entrevista {
                 $estado
             ]);
 
-            // Obtener el número de documento del usuario relacionado con la postulacion
             $buscarNumDoc = "SELECT usuario_num_doc FROM postulacion WHERE idpostulacion = :postulacion_id";
             $usuario = $this->dbService->ejecutarConsulta($buscarNumDoc, [':postulacion_id' => $data['postulacion_idpostulaciones']]);
             if ($usuario) {
@@ -89,7 +88,7 @@ class Entrevista {
                     "Pendiente",
                     "entrevista",
                     date('Y-m-d H:i:s'),
-                    $usuario[0]['usuario_num_doc']  // Accedemos al primer elemento del array
+                    $usuario[0]['usuario_num_doc']  
                 ]);
             }
 
@@ -118,4 +117,37 @@ class Entrevista {
             throw new \Exception('Error al marcar asistencia no confirmada: ' . $e->getMessage(), 500);
         }
     }
+
+    public function rechazarEntrevistado($identrevista, $num_doc): void {
+        $sql = "UPDATE entrevista SET estadoEntrevista = 'Rechazado' WHERE identrevista = :identrevista";
+
+        try {
+            $this->dbService->ejecutarConsulta($sql, [':identrevista' => $identrevista]);
+            $this->notificacionDeEstadoDeEntrevistaAlAspirante($num_doc, 'Rechazado');
+
+        } catch (PDOException $e) {
+            throw new \Exception('Error al rechazar entrevistado: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function notificacionDeEstadoDeEntrevistaAlAspirante($num_doc, $estado): void {
+        $descripcionNotificacion = "El estado de tu entrevista ha cambiado a: " . $estado;
+        $sql = "INSERT INTO notificacion (descripcionNotificacion, estadoNotificacion, tipo, created_at, num_doc)
+                VALUES (?, ?, ?, ?, ?)";
+
+        try {
+            $this->dbService->ejecutarConsulta($sql, [
+                $descripcionNotificacion,
+                "Activa",
+                "PostulacionAspirantes",
+                date('Y-m-d H:i:s'),
+                $num_doc
+            ]);
+        } catch (PDOException $e) {
+            throw new \Exception('Error al enviar notificación de estado de entrevista: ' . $e->getMessage(), 500);
+        }
+    }
+
+
+
 }
