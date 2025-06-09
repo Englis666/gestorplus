@@ -104,4 +104,27 @@ class PostulacionControllerTest extends TestCase
 
         $this->controller->obtenerPostulacionesAgrupadasPorConvocatoria();
     }
+
+    public function testVerificarPostulacionSinHojaDeVida()
+    {
+        $_GET['idconvocatoria'] = 7;
+
+        $this->tokenServiceMock->expects($this->once())
+            ->method('validarToken')
+            ->willReturn('123456');
+
+        $this->postulacionMock->expects($this->once())
+            ->method('verificarPostulacion')
+            ->with('123456', 7)
+            ->willReturn(['tieneHojaDeVida' => false]);
+
+        $this->jsonResponseServiceMock->expects($this->once())
+            ->method('responder')
+            ->with([
+                'status' => 'SinHojaDeVida',
+                'message' => 'Debes registrar tu hoja de vida antes de postularte.'
+            ]);
+
+        $this->controller->verificarPostulacion();
+    }
 }
