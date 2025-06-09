@@ -69,6 +69,9 @@ export const finalizarJornada = async (fechaBogota) => {
       headers: { Authorization: `Bearer ${token}` },
     }
   );
+  if (!response || !response.data) {
+    throw new Error("No se pudo finalizar la jornada");
+  }
   if (response.status !== 200) {
     throw new Error("Error al finalizar la jornada");
   }
