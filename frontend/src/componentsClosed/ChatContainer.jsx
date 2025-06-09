@@ -70,7 +70,7 @@ const ChatContainer = ({ selectedChat }) => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [selectedChat]);
+  }, []);
 
   useEffect(() => {
     if (bottomRef.current) {
