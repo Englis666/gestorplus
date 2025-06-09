@@ -76,12 +76,23 @@ class AuthController extends BaseController{
      * )
      */
     public function registrar($data) {
-        $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+        $data['password'] = trim($data['password'] ?? '');
         $data['estado'] = 1;
         $data['rol_idrol'] = 4;
 
         $resultado = $this->auth->registrar($data);
-        $this->jsonResponseService->responder(['status' => 'success', 'message' => $resultado]);
+
+        if ($resultado === "Usuario registrado correctamente") {
+            $this->jsonResponseService->responder([
+                'status' => 'success',
+                'message' => $resultado
+            ]);
+        } else {
+            $this->jsonResponseService->responder([
+                'status' => 'error',
+                'message' => $resultado
+            ], 400);
+        }
     }
 
     /**
