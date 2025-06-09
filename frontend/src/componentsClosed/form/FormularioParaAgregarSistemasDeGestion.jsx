@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { asignarSistemaDeGestion } from "../../services/SistemaDeGestion";
+import { notificarError, notificarExito } from "../../utils/notificaciones";
 
 const FormularioParaAgregarSistemasDeGestion = ({
   num_doc,
@@ -49,7 +50,7 @@ const FormularioParaAgregarSistemasDeGestion = ({
     try {
       const response = await asignarSistemaDeGestion(formData);
       if (response && (response.success || response.status === "success")) {
-        alert("✅ Resultados guardados con éxito.");
+        notificarExito("✅ Resultados guardados con éxito.");
         if (formData.estadoEvaluacion === "Apto") {
           navigate("/contratos", {
             state: {
@@ -62,11 +63,11 @@ const FormularioParaAgregarSistemasDeGestion = ({
         }
       } else {
         console.warn("Respuesta inesperada del backend:", response);
-        alert("❌ Error al guardar los resultados.");
+        notificarError("❌ Error al guardar los resultados.");
       }
     } catch (error) {
       console.error("Error al enviar datos:", error);
-      alert("⚠️ Hubo un problema al conectar con el servidor.");
+      notificarError("⚠️ Hubo un problema al conectar con el servidor.");
     }
   };
 
