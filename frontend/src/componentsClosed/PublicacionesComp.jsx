@@ -13,6 +13,11 @@ import {
   eliminarPublicacion,
 } from "../services/Publicaciones";
 import { jwtDecode } from "jwt-decode";
+import {
+  confirmarAccion,
+  notificarError,
+  notificarExito,
+} from "../utils/notificaciones";
 
 const PublicacionesComp = () => {
   const [publicaciones, setPublicaciones] = useState([]);
@@ -56,7 +61,7 @@ const PublicacionesComp = () => {
   }, []);
 
   const eliminarPublicacionHandler = async (id) => {
-    const confirmDelete = window.confirm(
+    const confirmDelete = confirmarAccion(
       "¿Estás seguro de que quieres eliminar esta publicación?"
     );
     if (confirmDelete) {
@@ -64,15 +69,15 @@ const PublicacionesComp = () => {
         const response = await eliminarPublicacion(id);
         if (response.status === "success") {
           setPublicaciones(publicaciones.filter((p) => p.idPublicacion !== id));
-          alert("Publicación eliminada exitosamente");
+          notificarExito("Publicación eliminada correctamente");
         } else {
-          alert(
+          notificarError(
             response.message || "Hubo un error al eliminar la publicación."
           );
         }
       } catch (error) {
         console.error("Error al eliminar publicación:", error);
-        alert("Hubo un error al eliminar la publicación.");
+        notificarError("Hubo un error al eliminar la publicación.");
       }
     }
   };
