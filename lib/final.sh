@@ -32,7 +32,7 @@ function final_messages() {
       echo "En Arch: sudo pacman -S cloudflared"
     else
       echo "Iniciando Cloudflare Tunnel. Espera la URL pública aquí abajo (Ctrl+C para salir del túnel cuando termines):"
-      cloudflared tunnel --url http://localhost:80
+      cloudflared tunnel --url http://localhost:80 --loglevel debug
     fi
   fi
 
