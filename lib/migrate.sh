@@ -47,7 +47,7 @@ function migrate_excel() {
     }
 
     echo "🚀 Ejecutando migración en el contenedor..."
-    docker exec "$php_container" php gestorplus/backend/migrations/MigrarExcelRunner.php "/var/www/html/public/uploads/$filename" || {
+    docker exec "$php_container" php migrations/MigrarExcelRunner.php "/var/www/html/public/uploads/$filename" || {
       echo -e "${RED}❌ La migración falló. Revisa los datos del archivo.${RESET}"
       pause
       return
