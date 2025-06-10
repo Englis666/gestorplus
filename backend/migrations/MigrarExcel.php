@@ -6,7 +6,7 @@
 
 namespace Migrations;
 
-include_once '/../vendor/autoload.php';
+include_once __DIR__ . '/../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Migrations\UsuarioMigration;
