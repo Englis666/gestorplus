@@ -23,15 +23,13 @@ function final_messages() {
   if [[ "$usar_tunnel" =~ ^[sS]$ ]]; then
     echo "Configurando Cloudflare Tunnel para exponer GestorPlus a Internet..."
     echo "Asegúrate de tener una cuenta de Cloudflare y haber instalado cloudflared."
-      sudo ufw allow 80/tcp
-      sudo ufw reload
-
+     
     if ! command -v cloudflared >/dev/null 2>&1; then
       echo "cloudflared no está instalado. Instálalo antes de continuar."
       echo "En Ubuntu/Debian: sudo apt install cloudflared"
       echo "En Arch: sudo pacman -S cloudflared"
     else
-      echo "Iniciando Cloudflare Tunnel. Espera la URL pública aquí abajo (Ctrl+C para salir del túnel cuando termines):"
+      echo "Iniciando Cloudflare Tunnel. Espera la URL pública aquí abajo (Ctrl+C para salir del túnel cuando termines):"    
       cloudflared tunnel --url http://localhost:80 --loglevel debug &
     fi
   fi
