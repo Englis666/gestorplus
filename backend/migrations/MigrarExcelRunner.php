@@ -6,7 +6,7 @@
 
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once '/MigrarExcel.php';
+require_once __DIR__ . '/MigrarExcel.php';
 
 use Migrations\MigrarExcel;
 
