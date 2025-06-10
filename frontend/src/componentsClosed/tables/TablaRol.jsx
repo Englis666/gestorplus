@@ -5,7 +5,6 @@
 
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import FormularioRol from "../form/FormularioAgregarRol";
 import {
   obtenerRoles,
   desactivarRol as desactivarRolService,
@@ -17,7 +16,6 @@ const TablaRol = () => {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Cargar roles al montar
   useEffect(() => {
     fetchRoles();
   }, []);
@@ -67,11 +65,6 @@ const TablaRol = () => {
       );
       console.error("[activarRol] error al activar el rol:", err);
     }
-  };
-
-  const agregarRol = () => {
-    fetchRoles();
-    notificarExito("Rol agregado correctamente.");
   };
 
   // Definir columnas para DataTable
@@ -145,14 +138,6 @@ const TablaRol = () => {
                 dense
                 responsive
               />
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-5">
-          <div className="card shadow-sm border-0 mb-5">
-            <div className="card-body">
-              <FormularioRol onRolAgregado={agregarRol} />
             </div>
           </div>
         </div>
