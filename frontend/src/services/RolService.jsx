@@ -24,14 +24,17 @@ export const obtenerRoles = async () => {
   }
 };
 
-export const desactivarRol = async (idRol) => {
+export const desactivarRol = async (idrol) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   try {
-    const response = await axios.patch(`${API_URL}desactivarRol`, {
-      headers: { Authorization: `Bearer ${token}` },
-      data: { idRol },
-    });
+    const response = await axios.patch(
+      `${API_URL}desactivarRol`,
+      { idrol }, // <-- minúscula
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     console.log("[RolService] Respuesta de desactivarRol:", response.data);
 
     if (response.data && response.data.status === "success") {
@@ -48,13 +51,13 @@ export const desactivarRol = async (idRol) => {
   }
 };
 
-export const activarRol = async (idRol) => {
+export const activarRol = async (idrol) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   try {
     const response = await axios.patch(
       `${API_URL}activarRol`,
-      { idRol },
+      { idrol }, // <-- minúscula
       {
         headers: { Authorization: `Bearer ${token}` },
       }
