@@ -28,22 +28,36 @@ function migrate_excel() {
       return
     fi
 
-  
     php_container=$(docker ps --filter "name=gestorplus-php" --format "{{.Names}}")
 
-  if [ -z "$php_container" ]; then
-    echo -e "${RED}❌ No se encontró el contenedor PHP. ¿Está corriendo Docker correctamente?${RESET}"
+    if [ -z "$php_container" ]; then
+      echo -e "${RED}❌ No se encontró el contenedor PHP. ¿Está corriendo Docker correctamente?${RESET}"
+      pause
+      return
+    fi
+
+    docker exec "$php_container" mkdir -p /var/www/html/public/uploads
+
+    echo "¡Copiando tu archivo '${file_path}' al contenedor PHP! Casi listo..."
+    docker cp "$file_path" "$php_container":/var/www/html/public/uploads/ || {
+      echo -e "${RED}¡Problemas al copiar el archivo al contenedor! ¿Está corriendo el contenedor?${RESET}"
+      pause
+      return
+    }
+
+    echo "🚀 Ejecutando la migración dentro del contenedor..."
+    docker exec "$php_container" php gestorplus/backend/migrations/MigrarExcelRunner.php || {
+      echo -e "${RED}❌ ¡Falló la ejecución de la migración!${RESET}"
+      pause
+      return
+    }
+
+    echo -e "${GREEN}✅ ¡Migración ejecutada con éxito!${RESET}"
     pause
-    return
+  else
+    echo -e "${YELLOW}⏭️ Ok, saltando la migración de datos.${RESET}"
+    pause
   fi
-
-  docker exec "$php_container" mkdir -p /var/www/html/public/uploads
-
-  echo "¡Copiando tu archivo '${file_path}' al contenedor PHP! Casi listo..."
-  docker cp "$file_path" "$php_container":/var/www/html/public/uploads/ || {
-    echo -e "${RED}¡Problemas al copiar el archivo al contenedor! ¿Está corriendo el contenedor?${RESET}"
-  pause
-  return
 }
 function create_admin_user() {
   echo -e "${YELLOW}👑 Paso 9: ¡Creando a tu primer súper administrador de GestorPlus!${RESET}"
