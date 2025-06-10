@@ -83,6 +83,7 @@ const Registro = () => {
     axios
       .post(`${API_URL}registrarse`, data)
       .then((response) => {
+        console.log(response.data);
         const { status, message } = response.data;
         if (status === "success") {
           notificarExito(message);

@@ -16,11 +16,13 @@ class UsuarioMigration {
         try {
             [$num_doc, $nombres, $apellidos, $email, $tipodDoc, $password, $estado, $idhojadevida, $idrol] = $row;
 
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
             $stmt = $this->db->prepare("INSERT INTO usuario 
                 (num_doc, nombres, apellidos, email, tipodDoc, password, estado, hojadevida_idHojadevida, rol_idrol) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
-                $num_doc, $nombres, $apellidos, $email, $tipodDoc, $password, $estado, $idhojadevida, $idrol
+                $num_doc, $nombres, $apellidos, $email, $tipodDoc, $hashedPassword, $estado, $idhojadevida, $idrol
             ]);
 
             echo "Usuario insertado: $nombres $apellidos\n";
