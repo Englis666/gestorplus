@@ -23,13 +23,13 @@ class Rol{
 
 
    public function desactivarRol(int $idRol): bool {
-        $sql = "UPDATE rol SET estadoRol = 'inactivo' WHERE idrol = :idrol";
+        $sql = "UPDATE rol SET estadoRol = 0 WHERE idrol = :idrol";
         $params = [':idrol' => $idRol];
         return $this->dbService->ejecutarAccion($sql, $params);
     }
 
     public function activarRol(int $idRol): bool {
-        $sql = "UPDATE rol SET estadoRol = 'activo' WHERE idrol = :idrol";
+        $sql = "UPDATE rol SET estadoRol = 1 WHERE idrol = :idrol";
         $params = [':idrol' => $idRol];
         return $this->dbService->ejecutarAccion($sql, $params);
     }
