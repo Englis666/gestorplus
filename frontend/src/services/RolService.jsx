@@ -28,7 +28,7 @@ export const desactivarRol = async (idRol) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   try {
-    const response = await axios.delete(`${API_URL}desactivarRol`, {
+    const response = await axios.patch(`${API_URL}desactivarRol`, {
       headers: { Authorization: `Bearer ${token}` },
       data: { idRol },
     });
@@ -52,7 +52,7 @@ export const activarRol = async (idRol) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
   try {
-    const response = await axios.post(
+    const response = await axios.patch(
       `${API_URL}activarRol`,
       { idRol },
       {
