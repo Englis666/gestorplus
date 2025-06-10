@@ -20,6 +20,7 @@ class ControllerFactory {
         'entrevista' => \Controller\EntrevistaController::class,
         'evaluacion' => \Controller\EvaluacionController::class,
         'cargo' => \Controller\CargoController::class,
+        'rol' => \Controller\RolController::class,
         'convocatoria' => \Controller\ConvocatoriaController::class,
         'vinculacion' => \Controller\VinculacionController::class,
         'notificacion' => \Controller\NotificacionController::class,

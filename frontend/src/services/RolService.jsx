@@ -10,7 +10,7 @@ export const obtenerRoles = async () => {
     const response = await axios.get(`${API_URL}obtenerRoles`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-
+    console.log("[RolService] Respuesta de obtenerRoles:", response.data);
     if (response.data && Array.isArray(response.data.roles)) {
       return response.data.roles;
     } else if (response.data && Array.isArray(response.data.Roles)) {
@@ -19,7 +19,7 @@ export const obtenerRoles = async () => {
       return [];
     }
   } catch (error) {
-    console.error("Error al obtener roles:", error);
+    console.error("[RolService] Error al obtener roles:", error);
     throw new Error("No se pudieron obtener los roles");
   }
 };
@@ -32,6 +32,7 @@ export const desactivarRol = async (idRol) => {
       headers: { Authorization: `Bearer ${token}` },
       data: { idRol },
     });
+    console.log("[RolService] Respuesta de desactivarRol:", response.data);
 
     if (response.data && response.data.status === "success") {
       return { status: "success", message: "Rol desactivado correctamente" };
@@ -42,10 +43,11 @@ export const desactivarRol = async (idRol) => {
       };
     }
   } catch (error) {
-    console.error("Error al desactivar rol:", error);
+    console.error("[RolService] Error al desactivar rol:", error);
     return { status: "error", message: "No se pudo desactivar el rol" };
   }
 };
+
 export const activarRol = async (idRol) => {
   const token = getCookie("auth_token");
   if (!token) throw new Error("Token No Encontrado");
@@ -57,6 +59,7 @@ export const activarRol = async (idRol) => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
+    console.log("[RolService] Respuesta de activarRol:", response.data);
 
     if (response.data && response.data.status === "success") {
       return { status: "success", message: "Rol activado correctamente" };
@@ -67,7 +70,7 @@ export const activarRol = async (idRol) => {
       };
     }
   } catch (error) {
-    console.error("Error al activar rol:", error);
+    console.error("[RolService] Error al activar rol:", error);
     return { status: "error", message: "No se pudo activar el rol" };
   }
 };
