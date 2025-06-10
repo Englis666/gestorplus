@@ -52,7 +52,7 @@ services:
       MYSQL_DATABASE: "gestorplus"
       TZ: America/Bogota
     volumes:
-      - ./bd/01_baseDeDatosLimpia.sql:/docker-entrypoint-initdb.d/01_baseDeDatosLimpia.sql:ro
+      - ./bd/01_baseDeDatosLimpia.sql:/docker-entrypoint-initdb.d/01_baseDeDatosLimpia.sql
       - mariadb_data:/var/lib/mysql
     networks:
       - gestorplus-network
