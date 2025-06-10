@@ -8,7 +8,8 @@ function final_messages() {
 
   echo ""
   echo "Puedes abrir GestorPlus en tu navegador favorito en esta dirección:"
-  echo "  http://localhost"
+  echo "  http://localhost si estas en el mismo equipo"
+  echo " http://localhost:3000 si estas en desarrollo"
   echo ""
   echo "Para tu primer inicio de sesión, usa estas credenciales por defecto:"
   echo "  Número de documento (num_doc): 898989"
