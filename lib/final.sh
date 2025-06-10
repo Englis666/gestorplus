@@ -33,9 +33,10 @@ function final_messages() {
       echo "En Arch: sudo pacman -S cloudflared"
     else
       echo ""
-      echo "Iniciando el túnel de Cloudflare automáticamente..."
-      bash /var/www/gestorplus/lib/cloudflared-tunnel.sh
+      echo "Para iniciar el túnel, ejecuta el siguiente comando:"
+      echo "  cloudflared tunnel --url http://localhost:80"
       echo ""
+      echo "Esto expondrá GestorPlus a Internet. Asegúrate de que tu dominio esté configurado en Cloudflare."
       echo "Cuando termines, puedes cerrar el túnel con Ctrl+C."
     fi
   fi
