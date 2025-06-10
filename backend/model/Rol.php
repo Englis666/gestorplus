@@ -20,17 +20,4 @@ class Rol{
         $sql = "SELECT * FROM rol";
         return $this->dbService->ejecutarConsulta($sql);
     }
-
-
-   public function desactivarRol(int $idRol): bool {
-        $sql = "UPDATE rol SET estadoRol = 0 WHERE idrol = :idrol";
-        $params = [':idrol' => $idRol];
-        return $this->dbService->ejecutarAccion($sql, $params);
-    }
-
-    public function activarRol(int $idRol): bool {
-        $sql = "UPDATE rol SET estadoRol = 1 WHERE idrol = :idrol";
-        $params = [':idrol' => $idRol];
-        return $this->dbService->ejecutarAccion($sql, $params);
-    }
 }
