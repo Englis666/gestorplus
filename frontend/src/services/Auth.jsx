@@ -51,8 +51,8 @@ export const registrarse = async (formData) => {
 
 export const restablecerPassword = async (token, password) => {
   try {
-    const data = { action: "restablecerPassword", token, password };
-    const response = await axios.post(API_URL, data);
+    const data = { token, password };
+    const response = await axios.post(`${API_URL}restablecerPassword`, data);
     return response.data;
   } catch (error) {
     console.error("Error en restablecerPassword:", error);
