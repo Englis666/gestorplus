@@ -21,6 +21,11 @@ function final_messages() {
 
   read -rp "¿Quieres exponer GestorPlus a Internet usando Cloudflare Tunnel (solo recomendado en producción)? (s/n): " usar_tunnel
   if [[ "$usar_tunnel" =~ ^[sS]$ ]]; then
+    echo "Configurando Cloudflare Tunnel para exponer GestorPlus a Internet..."
+    echo "Asegúrate de tener una cuenta de Cloudflare y haber instalado cloudflared."
+      sudo ufw allow 80/tcp
+      sudo ufw reload
+
     if ! command -v cloudflared >/dev/null 2>&1; then
       echo "cloudflared no está instalado. Instálalo antes de continuar."
       echo "En Ubuntu/Debian: sudo apt install cloudflared"
