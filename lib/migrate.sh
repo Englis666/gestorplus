@@ -1,36 +1,36 @@
 function migrate_excel() {
-  echo "${YELLOW}🗂️ Paso 8: ¡Hora de traer tus datos a GestorPlus!${RESET}"
+  echo "🗂️ Paso 8: ¡Hora de traer tus datos a GestorPlus!"
 
-  echo -e "${YELLOW}📊 ¿Tienes datos en Excel o CSV que quieras importar?${RESET}"
+  echo "📊 ¿Tienes datos en Excel o CSV que quieras importar?"
   echo "Este paso es opcional. Si no tienes nada que importar, no pasa nada."
-  echo "  ${BLUE}1) Sí, quiero importar un archivo.${RESET}"
-  echo "  ${BLUE}2) No, por ahora no quiero importar nada.${RESET}"
-  read -rp "$(echo -e "${CYAN}¿Qué decides? (1 o 2): ${RESET}")" migrate_choice
+  echo "  1) Sí, quiero importar un archivo."
+  echo "  2) No, por ahora no quiero importar nada."
+  read -rp "¿Qué decides? (1 o 2): " migrate_choice
 
   if [[ "$migrate_choice" == "1" ]]; then
     local file_path=""
     if command -v zenity >/dev/null 2>&1; then
-      echo "🪟 Se abrirá una ventanita para que elijas tu archivo Excel o CSV..."
+      echo "Se abrirá una ventanita para que elijas tu archivo Excel o CSV..."
       file_path=$(zenity --file-selection --title="Selecciona tu archivo Excel o CSV para migrar")
     else
-      read -rp "$(echo -e "${CYAN}Introduce la ruta COMPLETA del archivo Excel o CSV: ${RESET}")" file_path
+      read -rp "Introduce la ruta COMPLETA del archivo Excel o CSV: " file_path
     fi
 
     if [ -z "$file_path" ]; then
-      echo -e "${YELLOW}⚠️ No seleccionaste ningún archivo. Se omite la migración.${RESET}"
+      echo "⚠️ No seleccionaste ningún archivo. Se omite la migración."
       pause
       return
     fi
 
     if [ ! -f "$file_path" ]; then
-      echo -e "${RED}❌ Archivo no encontrado: ${file_path}${RESET}"
+      echo "❌ Archivo no encontrado: ${file_path}"
       pause
       return
     fi
 
     php_container=$(docker ps --filter "name=gestorplus-php" --format "{{.Names}}")
     if [ -z "$php_container" ]; then
-      echo -e "${RED}❌ Contenedor PHP no encontrado. ¿Docker está corriendo?${RESET}"
+      echo "❌ Contenedor PHP no encontrado. ¿Docker está corriendo?"
       pause
       return
     fi
@@ -41,32 +41,31 @@ function migrate_excel() {
     filename=$(basename "$file_path")
     echo "📤 Copiando archivo '${filename}' al contenedor..."
     docker cp "$file_path" "$php_container":/var/www/html/public/uploads/"$filename" || {
-      echo -e "${RED}❌ Error al copiar el archivo al contenedor.${RESET}"
+      echo "❌ Error al copiar el archivo al contenedor."
       pause
       return
     }
 
     echo "🚀 Ejecutando migración en el contenedor..."
     docker exec "$php_container" php migrations/MigrarExcelRunner.php "/var/www/html/public/uploads/$filename" || {
-      echo -e "${RED}❌ La migración falló. Revisa los datos del archivo.${RESET}"
+      echo "❌ La migración falló. Revisa los datos del archivo."
       pause
       return
     }
 
-    echo -e "${GREEN}✅ ¡Migración desde Excel/CSV completada exitosamente!${RESET}"
+    echo "✅ ¡Migración desde Excel/CSV completada exitosamente!"
     pause
   fi
 }
 function create_admin_user() {
-  echo -e "${YELLOW}👑 Paso 9: ¡Creando a tu primer súper administrador de GestorPlus!${RESET}"
+  echo "👑 Paso 9: ¡Creando a tu primer súper administrador de GestorPlus!"
   echo "Este usuario tendrá control total sobre la aplicación. ¡Elige bien sus datos!"
   echo "Se te pedirán los detalles para este nuevo usuario."
   docker exec "$php_container" php migrations/CrearAdministrador.php || {
-    echo -e "${RED}¡No pude crear el usuario administrador! Algo salió mal.${RESET}"
+    echo "¡No pude crear el usuario administrador! Algo salió mal."
     echo "Asegúrate de que el contenedor PHP esté vivo y coleando."
     exit 1
   }
-  echo -e "${GREEN}✅ ¡Usuario administrador creado con éxito! ¡Eres el jefe!${RESET}"
+  echo "✅ ¡Usuario administrador creado con éxito! ¡Eres el jefe!"
   pause
 }
-
