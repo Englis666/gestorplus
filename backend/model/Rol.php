@@ -22,15 +22,15 @@ class Rol{
     }
 
 
-   public function desactivarRol(int $idrol): bool {
-        $sql = "UPDATE rol SET estado = 'inactivo' WHERE idrol = :idrol";
-        $params = [':idrol' => $idrol];
+   public function desactivarRol(int $idRol): bool {
+        $sql = "UPDATE rol SET estadoRol = 'inactivo' WHERE idrol = :idrol";
+        $params = [':idrol' => $idRol];
         return $this->dbService->ejecutarAccion($sql, $params);
     }
 
-    public function activarRol(int $idrol): bool {
-        $sql = "UPDATE rol SET estado = 'activo' WHERE idrol = :idrol";
-        $params = [':idrol' => $idrol];
+    public function activarRol(int $idRol): bool {
+        $sql = "UPDATE rol SET estadoRol = 'activo' WHERE idrol = :idrol";
+        $params = [':idrol' => $idRol];
         return $this->dbService->ejecutarAccion($sql, $params);
     }
 }

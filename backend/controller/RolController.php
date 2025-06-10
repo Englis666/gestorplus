@@ -120,12 +120,12 @@ class RolController extends BaseController{
      * )
     */
     public function activarRol(array $data) {
-        if (!$this->parametrosRequeridos($data, ['idrol'])) {
+        if (!$this->parametrosRequeridos($data, ['idRol'])) {
             return $this->jsonResponseService->responderError('Faltan parámetros requeridos', 400);
         }
 
         try {
-            $resultado = $this->rol->activarRol($data['idrol']);
+            $resultado = $this->rol->activarRol($data['idRol']);
             if ($resultado) {
                 $this->jsonResponseService->responder(['status' => 'success', 'message' => 'Rol activado correctamente']);
             } else {
