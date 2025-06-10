@@ -38,16 +38,16 @@ function migrate_excel() {
     echo "📁 Preparando carpeta '/var/www/html/public/uploads' dentro del contenedor..."
     docker exec "$php_container" mkdir -p /var/www/html/public/uploads
 
-    file_name=$(basename "$file_path")
-    echo "📤 Copiando archivo '${file_name}' al contenedor..."
-    docker cp "$file_path" "$php_container":/var/www/html/public/uploads/"$file_name" || {
+    filename=$(basename "$file_path")
+    echo "📤 Copiando archivo '${filename}' al contenedor..."
+    docker cp "$file_path" "$php_container":/var/www/html/public/uploads/"$filename" || {
       echo -e "${RED}❌ Error al copiar el archivo al contenedor.${RESET}"
       pause
       return
     }
 
     echo "🚀 Ejecutando migración en el contenedor..."
-    docker exec "$php_container" php gestorplus/backend/migrations/MigrarExcelRunner.php "/var/www/html/public/uploads/$file_name" || {
+    docker exec "$php_container" php gestorplus/backend/migrations/MigrarExcelRunner.php "/var/www/html/public/uploads/$filename" || {
       echo -e "${RED}❌ La migración falló. Revisa los datos del archivo.${RESET}"
       pause
       return
