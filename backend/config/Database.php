@@ -12,6 +12,11 @@ class Database {
     private PDO $connection;
 
     public function __construct() {
+        // Cargar las variables de entorno desde el archivo .env
+        if (file_exists(__DIR__ . '/../.env')) {
+            $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+            $dotenv->load();
+        }
         $host = $_ENV['DB_HOST'] ?? 'gestorplus-db';
         $dbname = $_ENV['DB_NAME'] ?? 'gestorplus';
         $port = $_ENV['DB_PORT'] ?? '';
