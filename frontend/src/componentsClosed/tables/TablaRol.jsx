@@ -5,12 +5,7 @@
 
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import {
-  obtenerRoles,
-  desactivarRol as desactivarRolService,
-  activarRol as activarRolService,
-} from "../../services/RolService";
-import { notificarError, notificarExito } from "../../utils/notificaciones";
+import { obtenerRoles } from "../../services/RolService";
 
 const TablaRol = () => {
   const [roles, setRoles] = useState([]);
@@ -18,6 +13,7 @@ const TablaRol = () => {
 
   useEffect(() => {
     fetchRoles();
+    // eslint-disable-next-line
   }, []);
 
   const fetchRoles = async () => {
@@ -32,42 +28,7 @@ const TablaRol = () => {
     setLoading(false);
   };
 
-  const desactivarRol = async (idRol) => {
-    try {
-      const res = await desactivarRolService(idRol);
-      if (res.status === "success") {
-        notificarExito("Rol desactivado correctamente.");
-      } else {
-        notificarError(res.message || "No se pudo desactivar el rol.");
-      }
-      await fetchRoles();
-    } catch (err) {
-      const mensaje =
-        err?.response?.data?.error ??
-        "No se pudo desactivar el rol. Inténtalo de nuevo.";
-      notificarError(mensaje);
-    }
-  };
-
-  const activarRol = async (idRol) => {
-    try {
-      const res = await activarRolService(idRol);
-      if (res.status === "success") {
-        notificarExito("Rol activado correctamente.");
-      } else {
-        notificarError(res.message || "No se pudo activar el rol.");
-      }
-      await fetchRoles();
-    } catch (err) {
-      notificarError(
-        err?.response?.data?.error ??
-          "No se pudo activar el rol. Inténtalo de nuevo."
-      );
-      console.error("[activarRol] error al activar el rol:", err);
-    }
-  };
-
-  // Definir columnas para DataTable
+  // Definir columnas para DataTable (solo visualización)
   const columns = [
     {
       name: "Nombre del rol",
@@ -81,50 +42,13 @@ const TablaRol = () => {
       sortable: true,
       center: true,
     },
-    {
-      name: "Desactivar",
-      cell: (row) => (
-        <button
-          className="btn btn-danger btn-sm"
-          onClick={() => desactivarRol(row.idRol ?? row.idrol ?? row.id)}
-          disabled={
-            (row.estadoRol ?? row.estado ?? row.estado_rol) !== "Activo"
-          }
-        >
-          Desactivar
-        </button>
-      ),
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
-      center: true,
-    },
-    {
-      name: "Activar",
-      cell: (row) => (
-        <button
-          className="btn btn-success btn-sm"
-          onClick={() => activarRol(row.idRol ?? row.idrol ?? row.id)}
-          disabled={
-            (row.estadoRol ?? row.estado ?? row.estado_rol) === "Activo"
-          }
-        >
-          Activar
-        </button>
-      ),
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
-      center: true,
-    },
   ];
 
   return (
     <div className="container">
       <h1 className="mb-4">Roles del sistema</h1>
-
       <div className="row">
-        <div className="col-md-7">
+        <div className="col-md-10 mx-auto">
           <div className="card shadow-sm border-0 mb-4">
             <div className="card-body">
               <p>Roles que están cargados en el sistema</p>
