@@ -37,6 +37,7 @@ return [
     // ─── Admin ──────────────────────────────────────────
     'obtenerVinculaciones'       => ['vinculacion', 'obtenerVinculaciones'],
     'obtenerCargos'              => ['cargo', 'obtenerCargos'],
+    'obtenerRoles'               => ['rol', 'obtenerRoles'],
     'obtenerPostulaciones'       => ['postulacion', 'obtenerPostulaciones'],
     'obtenerPostulacionesAgrupadasPorConvocatoria' => ['postulacion', 'obtenerPostulacionesAgrupadasPorConvocatoria'],
     'obtenerEmpleados'           => ['empleado', 'obtenerEmpleados'],

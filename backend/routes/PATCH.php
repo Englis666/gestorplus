@@ -18,6 +18,8 @@ return [
     'asistenciaNoConfirmada' => ['entrevista', 'asistenciaNoConfirmada'],
     'rechazarEntrevistado' => ['entrevista', 'rechazarEntrevistado'],
     'finalizarJornada' => ['jornada', 'finalizarJornada'],
+    'desactivarRol' => ['rol', 'desactivarRol'],
+    'activarRol' => ['rol', 'activarRol'],
 ];
 
 ?>
