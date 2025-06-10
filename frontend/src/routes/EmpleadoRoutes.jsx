@@ -18,6 +18,7 @@ import Cargos from "../views/Cargos";
 import PazySalvo from "../views/PazYSalvos";
 import Certificados from "../views/Certificados";
 import Perfil from "../views/perfil";
+import Roles from "../views/Rol";
 
 const empleadoRoutes = [
   <Route path="/Inicio" element={<Inicio />} key="/Inicio" />,
@@ -54,6 +55,7 @@ const empleadoRoutes = [
   <Route path="/PazYsalvo" element={<PazySalvo />} key="/PazYsalvo" />,
   <Route path="/Certificados" element={<Certificados />} key="/Certificados" />,
   <Route path="/Perfil" element={<Perfil />} key="/Perfil" />,
+  <Route path="/Roles" element={<Roles />} key="/Roles" />,
 ];
 
 export default empleadoRoutes;

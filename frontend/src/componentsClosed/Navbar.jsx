@@ -130,6 +130,7 @@ const NavbarClosed = ({ activeLink }) => {
             path: "/Postulaciones",
           },
           { label: "Cargos", icon: "work", path: "/Cargos" },
+          { label: "Roles", icon: "security", path: "/Roles" },
         ],
       });
     }
