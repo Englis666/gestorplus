@@ -120,7 +120,7 @@ const TablaRol = () => {
   ];
 
   return (
-    <div className="container-fluid">
+    <div className="container">
       <h1 className="mb-4">Roles del sistema</h1>
 
       <div className="row">
