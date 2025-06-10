@@ -37,8 +37,12 @@ CREATE TABLE `hojadevida` (
   `telefono` varchar(45) DEFAULT NULL,
   `telefonoFijo` bigint(20) DEFAULT NULL,
   `estadohojadevida` enum('Activa','Inactiva') DEFAULT 'Activa',
+  `estadoCivil` varchar(45) DEFAULT NULL,
+  `genero` varchar(20) DEFAULT NULL,
+  `habilidades` varchar(80) DEFAULT NULL,
+  `portafolio` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`idHojadevida`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 CREATE TABLE `cargo` (
   `idcargo` int(11) NOT NULL AUTO_INCREMENT,
@@ -111,7 +115,7 @@ CREATE TABLE `jornada` (
   `idJornada` int(11) NOT NULL AUTO_INCREMENT,
   `fecha` date NOT NULL,
   `horaEntrada` time NOT NULL,
-  `horaSalida` time NOT NULL,
+  `horaSalida` time NULL,
   `usuario_num_doc` int(11) NOT NULL,
   `estadoJornada` varchar(50) NOT NULL,
   PRIMARY KEY (`idJornada`),
