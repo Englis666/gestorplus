@@ -1,3 +1,14 @@
+ function check_docker_permissions(){
+  echo "Verificando Permisos de Docker en tu computador o servidor actual..."
+  if ! docker info >/dev/null 2>&1; then
+    echo "❌ No tienes permisos para ejecutar Docker. Por favor, agrega tu usuario al grupo 'docker' o ejecuta como root."
+    echo "Ejecuta: sudo usermod -aG docker \$USER"
+    exit 1
+  else
+    echo "✔️ Permisos de Docker verificados correctamente."
+  fi
+ }
+
 function choose_profile_and_run() {
   echo "⚙️ Paso 6: ¿Cómo quieres ejecutar GestorPlus?"
   echo "  1) Desarrollo (docker-compose.dev.yml)"

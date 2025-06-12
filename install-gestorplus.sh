@@ -21,7 +21,6 @@ detect_distro
 install_dependencies
 check_docker_permissions
 clone_or_use_repo
-install_frontend
 choose_profile_and_run
 find_php_container
 select_and_copy_env
