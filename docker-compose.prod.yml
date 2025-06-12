@@ -94,10 +94,10 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
     container_name: gestorplus-frontend-prod
-    volumes:
-      - ./frontend/build:/usr/share/nginx/html:ro
     ports:
-      - "3000:30"
+      - "3000:80"
+    depends_on:
+      - gestorplus-php
     networks:
       - gestorplus-network
     restart: unless-stopped
