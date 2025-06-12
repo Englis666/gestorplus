@@ -1,13 +1,8 @@
-FROM node:18-alpine
-
-# Instala Bun
-RUN apk add --no-cache curl && \
-    curl -fsSL https://bun.sh/install | bash && \
-    ln -s /root/.bun/bin/bun /usr/local/bin/bun
+FROM oven/bun:1.1.13 as base
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json bun.lockb ./
 RUN bun install
 
 COPY . .
