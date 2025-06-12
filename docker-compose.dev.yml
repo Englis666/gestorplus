@@ -96,6 +96,7 @@ services:
     command: bun run start
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     ports:
       - "3000:3000"
     networks:
