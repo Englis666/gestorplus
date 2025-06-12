@@ -1,9 +1,12 @@
  function check_docker_permissions(){
   echo "Verificando Permisos de Docker en tu computador o servidor actual..."
   if ! docker info >/dev/null 2>&1; then
-    echo "❌ No tienes permisos para ejecutar Docker. Por favor, agrega tu usuario al grupo 'docker' o ejecuta como root."
-    echo "Ejecuta: sudo usermod -aG docker \$USER"
-    exit 1
+    echo "❌ No tienes permisos para ejecutar Docker. Vamos a agregar tu usuario al grupo de Docker."
+    echo "⚠️ Asegúrate de que Docker esté instalado y corriendo."
+    echo "⚠️ Después de esto, tendrás que reiniciar tu sesión o ejecutar 'newgrp docker' para aplicar los cambios."
+    echo "⚠️ Si estás en un servidor, asegúrate de que el usuario tenga permisos de sudo."
+    sudo usermod -aG docker $USER
+    reload
   else
     echo "✔️ Permisos de Docker verificados correctamente."
   fi
