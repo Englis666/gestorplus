@@ -1,16 +1,22 @@
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
+
+# Instala Bun
+RUN apk add --no-cache curl && \
+    curl -fsSL https://bun.sh/install | bash && \
+    ln -s /root/.bun/bin/bun /usr/local/bin/bun
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm install
+COPY package.json bun.lockb ./
+RUN bun install
 
-RUN npm run build
+COPY . .
+
+RUN bun run build
 
 # Etapa 2: Servir los archivos estáticos con nginx
 FROM nginx:alpine
 
-# Copiamos los archivos construidos en la etapa 1 al directorio público de nginx
 COPY --from=build /app/build /usr/share/nginx/html
 
 EXPOSE 80
