@@ -1,20 +1,17 @@
-# frontend/Dockerfile
-FROM node:18
+FROM node:18-alpine
 
-# Directorio dentro del contenedor
+# Instala Bun
+RUN apk add --no-cache curl && \
+    curl -fsSL https://bun.sh/install | bash && \
+    ln -s /root/.bun/bin/bun /usr/local/bin/bun
+
 WORKDIR /app
 
-# Copiamos sólo package.json para aprovechar cache de Docker
 COPY package.json package-lock.json ./
+RUN bun install
 
-# Instalamos dependencias dentro de la imagen
-RUN npm install
-
-# Copiamos el resto del código
 COPY . .
 
-# Puerto por defecto de React
 EXPOSE 3000
 
-
-CMD ["npm", "start"]
+CMD ["bun", "run", "start"]
