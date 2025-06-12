@@ -26,7 +26,7 @@ function install_dependencies() {
 
   case "$PKG_MANAGER" in
     apt)
-      echo "Ejecutando: sudo apt update && sudo apt install -y docker.io docker-compose"
+      echo "Ejzecutando: sudo apt update && sudo apt install -y docker.io docker-compose"
       sudo apt update && sudo apt install -y docker.io docker-compose || {
         echo "Hubo un problema instalando las dependencias con apt."
         exit 1

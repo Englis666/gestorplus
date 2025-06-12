@@ -17,9 +17,6 @@ function install_frontend() {
         echo "¡Problemas al instalar las dependencias del frontend!"
         exit 1
       }
-      echo "Iniciando el frontend en modo desarrollo (npm run start)..."
-      npm run start
-      cd ..
     else
       echo "¡No encuentro la carpeta 'frontend'! ¿Se descargó todo bien?"
       exit 1
