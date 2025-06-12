@@ -93,10 +93,9 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: gestorplus-frontend-dev
-    command: npm start
+    command: bun run start
     volumes:
       - ./frontend:/app
-      - ./app/node_modules
     ports:
       - "3000:3000"
     networks:
