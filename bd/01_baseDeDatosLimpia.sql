@@ -344,3 +344,24 @@ CREATE TABLE `pazysalvo` (
   KEY `vinculacion_idvinculacion` (`vinculacion_idvinculacion`),
   CONSTRAINT `pazysalvo_ibfk_1` FOREIGN KEY (`vinculacion_idvinculacion`) REFERENCES `vinculacion` (`idvinculacion`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+
+SOURCE '02_all_userPrivileges.sql';
+SOURCE '03_all_procedures.sql';
+SOURCE '04_all_triggers.sql';
+SOURCE '05_all_views.sql';
+
+-- -Tabla de auditoría
+-- CREATE TABLE `auditoria` (
+--   `idAuditoria` INT NOT NULL AUTO_INCREMENT,
+--   `usuario_num_doc` INT NOT NULL,
+--   `accion` VARCHAR(255) NOT NULL,
+--   `tabla_afectada` VARCHAR(255) NOT NULL,
+--   `fecha_hora` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   PRIMARY KEY (`idAuditoria`),
+--   KEY `usuario_num_doc` (`usuario_num_doc`),
+--   CONSTRAINT `auditoria_ibfk_1` FOREIGN KEY (`usuario_num_doc`) REFERENCES `usuario`(`num_doc`) ON DELETE CASCADE
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- --------------------------------------------------------
