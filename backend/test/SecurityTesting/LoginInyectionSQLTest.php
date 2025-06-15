@@ -39,12 +39,14 @@ $test_inputs = [
     "' OR EXISTS(SELECT * FROM users WHERE username = 'admin') --",
 
     // Inyección de archivos toca colocar mi ruta principal de mi pc
-    "'; COPY usuarios FROM '/path/to/local/file'; --",
-    "'; LOAD DATA LOCAL INFILE '/path/to/local/file' INTO TABLE usuarios; --",
-    "'; CREATE TABLE new_table AS SELECT * FROM usuarios; --",
+   // "'; COPY usuarios FROM '/path/to/local/file'; --",
+    //"'; LOAD DATA LOCAL INFILE '/path/to/local/file' INTO TABLE usuarios; --",
+   // "'; CREATE TABLE script AS SELECT * FROM usuarios; --",
 
     // Otras inyecciones y exploits
     "'; DELETE FROM usuarios; --",
+    "'; DELETE FROM usuario; --",
+    "'; DELETE FROM user; --",
     "'; UPDATE usuarios SET password = 'newpassword' WHERE username = 'admin'; --",
     "'; INSERT INTO usuarios (username, password) VALUES ('newuser', 'newpassword'); --",
     "'; TRUNCATE TABLE usuarios; --",

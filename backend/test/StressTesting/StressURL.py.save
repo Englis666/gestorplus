@@ -9,7 +9,7 @@ def stress_test(url):
     except request.exceptions.RequestException as e:
         print(f"error en la {url}: {e}")
 
-url = 'http://baseball-defines-international-thru.trycloudflare.com/edufast/'
+url = 'https://ppc-guid/edufast/'
 
 num_threads = 600
 
